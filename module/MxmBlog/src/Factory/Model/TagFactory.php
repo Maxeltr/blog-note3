@@ -24,25 +24,21 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmBlog\Factory\Model;
 
+use MxmBlog\Model\Tag;
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\Validator\Date;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
 
-class IndexControllerFactory implements FactoryInterface
+class TagFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
+        $tagOptions = array(
+            'title' => '',
+            'weight' => 0
+        );
         
-        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
+        return new Tag($tagOptions);
     }
 }

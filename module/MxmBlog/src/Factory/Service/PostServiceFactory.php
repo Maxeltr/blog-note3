@@ -24,23 +24,27 @@
  * THE SOFTWARE.
  */
 
+namespace MxmBlog\Factory\Service;
+
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
+use MxmBlog\Mapper\MapperInterface;
+use MxmBlog\Service\DateTimeInterface;
+use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
+use MxmBlog\Service\PostService;
 
 class PostServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $mapper = $container->get('MxmBlog\Mapper\MapperInterface');
-        //$postManager = $container->get(PostManager::class);
-                
-        return new PostService(
-            $serviceLocator->get('Blog\Mapper\MapperInterface'),
-            $serviceLocator->get('Blog\Service\DateTimeInterface'),
-            $serviceLocator->get('Blog\Validator\IsPublishedRecordExistsValidatorInterface')
-        );
+        $mapper = $container->get(MapperInterface::class);
+        $dateTime = $container->get(DateTimeInterface::class);
+        $isPublishedRecordExistsValidator = $container->get(IsPublishedRecordExistsValidatorInterface::class);
         
-        return new IndexController();
+        return new PostService(
+            $mapper,
+            $dateTime,
+            $isPublishedRecordExistsValidator
+        );
     }
 }

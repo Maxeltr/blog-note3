@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmBlog\Exception;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\Validator\Date;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
-
-class IndexControllerFactory implements FactoryInterface
+class RecordNotFoundBlogException extends RuntimeBlogException implements BlogExceptionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
-        
-        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
-    }
 }

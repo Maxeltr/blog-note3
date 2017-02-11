@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
-
+namespace MxmBlog\Factory\Hydrator;
+ 
+use MxmBlog\Hydrator\Post\DatesHydrator;
+use MxmBlog\Service\DateTimeInterface;
 use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Config\Config;
 use Zend\Validator\Date;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
 
-class IndexControllerFactory implements FactoryInterface
+class DatesHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
         $config = new Config($container->get('config'));
+                
+        $datetime = $container->get(DateTimeInterface::class);
+        $dateValidator = $container->get(Date::class);
         
-        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
+        return new DatesHydrator($datetime, $dateValidator, $config->blog_module);
     }
 }

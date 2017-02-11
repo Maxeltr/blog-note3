@@ -24,25 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmBlog\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\Validator\Date;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
+use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmBlog\Hydrator\Post\TagsHydrator;
+use MxmBlog\Hydrator\Post\CategoryHydrator;
+use MxmBlog\Hydrator\Post\PostHydrator;
+use MxmBlog\Hydrator\Post\DatesHydrator;
 
-class IndexControllerFactory implements FactoryInterface
+class AggregateHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
+        $aggregatehydrator = new AggregateHydrator();
         
-        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
+        $tagsHydrator = $container->get(TagsHydrator::class);
+        $categoryHydrator = $container->get(CategoryHydrator::class);
+        $postHydrator = $container->get(PostHydrator::class);
+        $datesHydrator = $container->get(DatesHydrator::class);
+        
+        
+        $aggregatehydrator->add($postHydrator);
+        $aggregatehydrator->add($categoryHydrator);
+        $aggregatehydrator->add($tagsHydrator);
+        $aggregatehydrator->add($datesHydrator);
+        
+        return $aggregatehydrator;
     }
 }

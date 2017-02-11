@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,51 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmBlog\Model;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\Validator\Date;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
+use Zend\Tag\Item;
 
-class IndexControllerFactory implements FactoryInterface
+class Tag extends Item implements TagInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    /**
+     * @var int ID
+     */
+    protected $id;
+    
+    /**
+     * Create a new tag according to the options
+     *
+     * @param  array|Traversable $options
+     * @throws Exception\InvalidArgumentException When invalid options are provided
+     */
+    public function __construct($options)
     {
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
+        if ($options instanceof Traversable) {
+            $options = ArrayUtils::iteratorToArray($options);
+        }
+
+        if (!is_array($options)) {
+            throw new Exception\InvalidArgumentException('Invalid options provided to constructor');
+        }
         
-        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
+        $this->setOptions($options);
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * @param int $id ID
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        
+        return $this;
     }
 }

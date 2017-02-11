@@ -24,25 +24,40 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmBlog\Hydrator\Tag;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\Validator\Date;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\IndexController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
+use MxmBlog\Model\TagInterface;
+use Zend\Hydrator\ClassMethods;
+use Zend\Hydrator\HydratorInterface;
 
-class IndexControllerFactory implements FactoryInterface
+class TagHydrator extends ClassMethods implements HydratorInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __construct()
     {
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
+        parent::__construct(false);
+    }
+    
+    public function hydrate(array $data, $object)
+    {
+        if (!$object instanceof TagInterface) {
+            return $object;
+        }
         
-        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
+        if (array_key_exists('id', $data) && array_key_exists('title', $data) && array_key_exists('weight', $data)) {
+            $object->setId(!empty($data['id']) ? $data['id'] : null);
+            $object->setTitle(!empty($data['title']) ? $data['title'] : '');
+            $object->setWeight(!empty($data['weight']) ? $data['weight'] : 0);
+        }
+        
+        return $object;
+    }
+
+    public function extract($object)
+    {
+        if (!$object instanceof TagInterface) {
+            return array();
+        }
+
+        return parent::extract($object);
     }
 }
