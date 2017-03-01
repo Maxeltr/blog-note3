@@ -43,7 +43,7 @@ class CategoryHydrator extends ClassMethods implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        die('CategoryHydrator');
+        //die('CategoryHydrator');
         if (!$object instanceof PostInterface) {
             return $object;
         }

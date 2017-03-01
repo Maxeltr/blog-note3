@@ -25,7 +25,6 @@ return [
             Model\TagInterface::class => Factory\Model\TagFactory::class,
             Model\CategoryInterface::class => Factory\Model\CategoryFactory::class,
             \Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
-            //'Zend\Hydrator\Aggregate\AggregateHydrator' => 'MxmBlog\Factory\Hydrator\AggregateHydratorFactory',
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             \Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
         ],

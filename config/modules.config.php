@@ -18,4 +18,5 @@ return [
     'Zend\Validator',
     'Application',
     'MxmBlog',
+    'Soflomo\Purifier',
 ];

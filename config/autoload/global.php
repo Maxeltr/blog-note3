@@ -21,6 +21,21 @@ return [
             \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
         ]
     ],
+    'soflomo_purifier' => [
+        'config' => [
+            'HTML.Doctype' => 'HTML 4.01 Transitional',
+            'HTML.Allowed' => 'pre,br,b,i,ol,ul,li,img[src|height|width|alt|class],blockquote,code,a[href]',
+            //'CSS.MaxImgLength' => '20px',
+            'HTML.MaxImgLength' => '500',
+            //'HTML.Trusted' => 'true',
+            //'HTML.SafeEmbed' => 'true',
+            'AutoFormat.RemoveEmpty.RemoveNbsp' => 'true',
+            'AutoFormat.RemoveEmpty' => 'true',     // удаляет пустые теги
+            'Core.EscapeInvalidTags' => 'true',
+            //'AutoFormat.AutoParagraph' => 'true',   // авто добавление <p> в тексте при переносе
+            //'Output.TidyFormat' => true,
+        ],
+    ],
     'blog_module' => [
         'listController' => [
             'ItemCountPerPage' => 10,

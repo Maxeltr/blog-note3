@@ -48,7 +48,7 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        die('TagsHydrator');
+        //die('TagsHydrator');
         if (!$object instanceof PostInterface) {
             return $object;
         }

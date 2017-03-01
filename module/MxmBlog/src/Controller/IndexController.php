@@ -50,13 +50,7 @@ class IndexController extends AbstractActionController
     {
         $paginator = $this->postService->findAllPosts();
         $this->configurePaginator($paginator);
-        
-        foreach ($paginator as $qw) {
-            \Zend\Debug\Debug::dump($qw);
-        }
-        
-        die("IndexController");
-                
+                        
         return new ViewModel([
             'posts' => $paginator,
             'route' => 'blog/page'

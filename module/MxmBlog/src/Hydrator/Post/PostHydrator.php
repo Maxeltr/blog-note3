@@ -52,7 +52,7 @@ class PostHydrator implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        die('PostHydrator');
+        //die('PostHydrator');
         if (!$object instanceof PostInterface) {
             return array();
         }

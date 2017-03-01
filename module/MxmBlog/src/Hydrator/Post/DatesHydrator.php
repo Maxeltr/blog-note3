@@ -49,7 +49,7 @@ class DatesHydrator implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        die('DatesHydrator');
+        //die('DatesHydrator');
         if (!$object instanceof PostInterface) {
             return $object;
         }

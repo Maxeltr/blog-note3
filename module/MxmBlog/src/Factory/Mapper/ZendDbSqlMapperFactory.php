@@ -48,18 +48,7 @@ class ZendDbSqlMapperFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $aggregatehydrator = $container->get(AggregateHydrator::class);
-        
-//        $tagsHydrator = $container->get(TagsHydrator::class);
-//        $categoryHydrator = $container->get(CategoryHydrator::class);
-//        $postHydrator = $container->get(PostHydrator::class);
-//        $datesHydrator = $container->get(DatesHydrator::class);
-//        $aggregatehydrator = new \Zend\Hydrator\Aggregate\AggregateHydrator();
-//        $aggregatehydrator->add($postHydrator);
-//        $aggregatehydrator->add($categoryHydrator);
-//        $aggregatehydrator->add($tagsHydrator);
-//        $aggregatehydrator->add($datesHydrator);
-        
-        
+                
         $classMethodsHydrator = new ClassMethods(false);
         $tagHydrator = $container->get(TagHydrator::class);
         

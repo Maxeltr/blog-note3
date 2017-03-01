@@ -38,14 +38,14 @@ class AggregateHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = new AggregateHydrator();
-        
         $tagsHydrator = $container->get(TagsHydrator::class);
         $categoryHydrator = $container->get(CategoryHydrator::class);
         $postHydrator = $container->get(PostHydrator::class);
         $datesHydrator = $container->get(DatesHydrator::class);
         
-        
+        $aggregatehydrator = new AggregateHydrator();
+        $aggregatehydrator->setEventManager($container->get('EventManager'));
+                
         $aggregatehydrator->add($postHydrator);
         $aggregatehydrator->add($categoryHydrator);
         $aggregatehydrator->add($tagsHydrator);
