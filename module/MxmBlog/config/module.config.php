@@ -32,6 +32,15 @@ return [
             Hydrator\Tag\TagHydrator::class => Hydrator\Tag\TagHydrator::class,
         ],
     ],
+    'view_helpers' => [
+        'aliases' => [
+            'archiveDates' => View\Helper\ArchiveDates::class,
+            'FormatDateI18n' => View\Helper\FormatDateI18nFactory::class,
+        ],
+        'factories' => [
+            View\Helper\ArchiveDates::class => Factory\View\Helper\ArchiveDatesFactory::class,
+        ],
+    ],
     'router' => [
         'routes' => [
             'home' => [
@@ -57,11 +66,96 @@ return [
                         'id' => '[1-9]\d*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\Index::class,
+                        'controller'    => Controller\IndexController::class,
                         'action' => 'detailPost'
                     ],
                 ],
             ],
+            'listPosts' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/posts[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\IndexController::class,
+                        'action' => 'listPosts'
+                    ],
+                ],
+            ],
+            'listArchivesPosts' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/archives/posts[/:year[/:month[/:page]]]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                        'year' => '[1-9]\d*',
+                        'month' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\IndexController::class,
+                        'action' => 'listArchivesPosts'
+                    ],
+                ],
+            ],
+            'listTags' => [    //это название роута используется в контроллерах представлениях
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/tags[/:page]', //это будет показываться в адресной строке
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\IndexController::class,
+                        'action' => 'listTags'
+                    ],
+                ],
+            ],
+            'listCategories' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/categories[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\IndexController::class,
+                        'action' => 'listCategories'
+                    ],
+                ],
+            ],
+            'addPost' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/add/post',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'addPost'
+                    ],
+                ],
+            ],
+            'addCategory' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/add/category',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'addCategory'
+                    ],
+                ],
+            ],
+            'addTag' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/add/tag',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'addTag'
+                    ],
+                ],
+            ],
+            
         ],
     ],
     'view_manager' => [

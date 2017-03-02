@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,46 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Mapper;
+namespace MxmBlog\Factory\View\Helper;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\ClassMethods;
-use Zend\Config\Config;
-use Zend\Db\Adapter\Adapter;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
-use MxmBlog\Mapper\ZendDbSqlMapper;
-use MxmBlog\Hydrator\Tag\TagHydrator;
-use MxmBlog\Model\CategoryInterface;
-use MxmBlog\Model\TagInterface;
-use MxmBlog\Model\PostInterface;
+use MxmBlog\Mapper\MapperInterface;
+use Zend\ServiceManager\AbstractPluginManager;
+use MxmBlog\View\Helper\ArchiveDates;
 
-class ZendDbSqlMapperFactory implements FactoryInterface
+class ArchiveDatesFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
-                
-        $classMethodsHydrator = new ClassMethods(false);
-        $tagHydrator = $container->get(TagHydrator::class);
+//        if (! $container instanceof AbstractPluginManager) {
+//            // zend-servicemanager v3. v2 passes the helper manager directly.
+//            $container = $container->get('ViewHelperManager');
+//        }
+       
+        $mapper = $container->get(MapperInterface::class);
         
-        $category = $container->get(CategoryInterface::class);
-        $tag = $container->get(TagInterface::class);
-        $post = $container->get(PostInterface::class);
-        
-        $config = new Config($container->get('config'));
-        
-        $adapter = $container->get(Adapter::class);
-        
-        return new ZendDbSqlMapper(
-            $adapter,
-            $aggregatehydrator,
-            $tagHydrator,
-            $classMethodsHydrator,
-            $post,
-            $category,
-            $tag,
-            $config->blog_module
-        );
+        //$mapper = $container->getServiceLocator()->get('Blog\Mapper\MapperInterface');
+
+        return new ArchiveDates($mapper);
     }
 }

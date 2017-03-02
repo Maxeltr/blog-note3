@@ -53,7 +53,7 @@ class IndexController extends AbstractActionController
                         
         return new ViewModel([
             'posts' => $paginator,
-            'route' => 'blog/page'
+            'route' => 'listPosts'
         ]);
     }
     
@@ -64,7 +64,7 @@ class IndexController extends AbstractActionController
         
         return new ViewModel([
             'posts' => $paginator,
-            'route' => 'blog/listPosts'
+            'route' => 'listPosts'
         ]);
     }
     

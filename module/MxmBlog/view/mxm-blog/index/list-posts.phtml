@@ -1,0 +1,67 @@
+
+<div class="blog-header">
+        <h1 class="blog-title">The Bootstrap Blog</h1>
+        <p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>
+      </div>
+
+<div class="row">
+
+    <div class="col-sm-8 blog-main">
+        <div class="blog-post">
+            <?php if (count($this->posts)): ?>
+                <?php foreach ($this->posts as $post): ?>
+                    
+<!--                        <h4><?php //echo $this->escapeHtml($post->getTitle()); ?></h4>-->
+                        
+                        <h2><a href="<?php echo $this->url('detailPost',
+                            array('action' => 'detailPost', 'id' => $post->getId())); ?>">
+                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h2>
+                        <p class="blog-post-meta">
+                            Category: <?php echo $this->escapeHtml($post->getCategory()->getTitle()); ?>
+                        </p>
+                        <p>
+                            <?php echo $this->htmlPurifier($post->getText()); ?>
+                        </p>
+                                                
+                        
+<!--                        <p><a role="button" href="#" class="btn btn-default">View details »</a></p>-->
+                    
+                <?php endforeach; ?>
+            <?php endif; ?>
+            
+        </div><!-- /.blog-post -->
+
+        <?php echo $this->paginationControl($this->posts,
+            'Sliding',
+            'partial/paginator.phtml', 
+            array('route' => $this->route)); ?>
+        
+        
+
+    </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+          </div>
+          <div class="sidebar-module">
+            <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+          </div>
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              <li><a href="<?php echo $this->url('listPosts',
+                array('action' => 'listPosts')); ?>">Articles</a></li>
+              <li><a href="<?php echo $this->url('listTags',
+                array('action' => 'listTags')); ?>">Tags</a></li>
+              <li><a href="<?php echo $this->url('listCategories',
+                array('action' => 'listCategories')); ?>">Categories</a></li>
+            </ol>
+          </div>
+         <div class="sidebar-module">  
+           <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
+            </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div>
