@@ -12,28 +12,28 @@
         <p>
             <a href="<?php echo $this->url('addTag'); ?>">Add tag</a>
         </p>
-        <?php if (isset($post) && $post instanceof Blog\Model\Post): ?>
+        <?php if (isset($post) && $post instanceof MxmBlog\Model\Post): ?>
             <p>
-                <a href="<?php //echo $this->url('blog/editPost', array('action' => 'editPost', 'id' => $post->getId())); ?>">Edit article</a>
+                <a href="<?php echo $this->url('editPost', array('action' => 'editPost', 'id' => $post->getId())); ?>">Edit article</a>
             </p>
             <p>
-                <a href="<?php //echo $this->url('blog/deletePost', array('action' => 'deletePost', 'id' => $post->getId())); ?>">Delete article</a>
-            </p>
-        <?php endif; ?>
-        <?php if (isset($category) && $category instanceof Blog\Model\Category): ?>
-            <p>
-                <a href="<?php //echo $this->url('blog/editCategory', array('action' => 'editCategory', 'id' => $category->getId())); ?>">Edit category</a>
-            </p>
-            <p>
-                <a href="<?php //echo $this->url('blog/deleteCategory', array('action' => 'deleteCategory', 'id' => $category->getId())); ?>">Delete category</a>
+                <a href="<?php echo $this->url('deletePost', array('action' => 'deletePost', 'id' => $post->getId())); ?>">Delete article</a>
             </p>
         <?php endif; ?>
-        <?php if (isset($tag) && $tag instanceof Blog\Model\Tag): ?>
+        <?php if (isset($category) && $category instanceof MxmBlog\Model\Category): ?>
             <p>
-                <a href="<?php //echo $this->url('blog/editTag', array('action' => 'editTag', 'id' => $tag->getId())); ?>">Edit tag</a>
+                <a href="<?php echo $this->url('editCategory', array('action' => 'editCategory', 'id' => $category->getId())); ?>">Edit category</a>
             </p>
             <p>
-                <a href="<?php //echo $this->url('blog/deleteTag', array('action' => 'deleteTag', 'id' => $tag->getId())); ?>">Delete tag</a>
+                <a href="<?php echo $this->url('deleteCategory', array('action' => 'deleteCategory', 'id' => $category->getId())); ?>">Delete category</a>
+            </p>
+        <?php endif; ?>
+        <?php if (isset($tag) && $tag instanceof MxmBlog\Model\Tag): ?>
+            <p>
+                <a href="<?php echo $this->url('editTag', array('action' => 'editTag', 'id' => $tag->getId())); ?>">Edit tag</a>
+            </p>
+            <p>
+                <a href="<?php echo $this->url('deleteTag', array('action' => 'deleteTag', 'id' => $tag->getId())); ?>">Delete tag</a>
             </p>
         <?php endif; ?>
     </div>

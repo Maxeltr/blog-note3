@@ -17,7 +17,7 @@ use Zend\Config\Config;
 use Zend\Validator\Date;
 
 
-class IndexController extends AbstractActionController
+class ListController extends AbstractActionController
 {
     /**
      * @var \Blog\Service\PostServiceInterface
@@ -83,9 +83,9 @@ class IndexController extends AbstractActionController
         
         $model = new ViewModel([
             'posts' => $paginator,
-            'route' => 'blog/listPostsByCategory'
+            'route' => 'listPostsByCategory'
         ]);
-        $model->setTemplate('blog/list/list-posts');
+        $model->setTemplate('mxm-blog/list/list-posts');
         
         return $model;
     }
@@ -105,9 +105,9 @@ class IndexController extends AbstractActionController
         
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'blog/listPostsByTag'
+            'route' => 'listPostsByTag'
         ));
-        $model->setTemplate('blog/list/list-posts');
+        $model->setTemplate('mxm-blog/list/list-posts');
         
         return $model;
     }
@@ -116,29 +116,69 @@ class IndexController extends AbstractActionController
     {
         $since = $this->params()->fromRoute('since');
         $to = $this->params()->fromRoute('to');
-        
+
         $since . ' 00:00:00';
         $to . ' 23:59:59';
         
         $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
-                
-        if ($this->dateValidator->isValid($since)) {
-            $since = $this->datetime->createFromFormat(dateTimeFormat, $since);
+        
+        if (!$this->dateValidator->isValid($since)) {
+            $since = null;
+        } else {
+            $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
         }
         
-        if ($this->dateValidator->isValid($to)) {
-            $to = $this->datetime->createFromFormat(dateTimeFormat, $to);
+        if (!$this->dateValidator->isValid($to)) {
+            $to = null;
+        } else {
+            $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
         }
-
+        
         $paginator = $this->postService->findPostsByPublishDate($since, $to);
         $this->configurePaginator($paginator);
         
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'blog/listPostsByPublished'
+            'route' => 'listPostsByPublished'
         ));
-        $model->setTemplate('blog/list/list-posts');
+        $model->setTemplate('mxm-blog/list/list-posts');
+        
+        return $model;
+    }
+    
+    public function listArchivesPostsAction()
+    {
+        die('TODO');
+        $year = $this->params()->fromRoute('year');
+        $month = $this->params()->fromRoute('month');
+
+        $since . ' 00:00:00';
+        $to . ' 23:59:59';
+        
+        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
+        $this->dateValidator->setFormat($dateTimeFormat);
+        
+        if (!$this->dateValidator->isValid($since)) {
+            $since = null;
+        } else {
+            $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
+        }
+        
+        if (!$this->dateValidator->isValid($to)) {
+            $to = null;
+        } else {
+            $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
+        }
+        
+        $paginator = $this->postService->findPostsByPublishDate($since, $to);
+        $this->configurePaginator($paginator);
+        
+        $model = new ViewModel(array(
+            'posts' => $paginator,
+            'route' => 'listPostsByPublished'
+        ));
+        $model->setTemplate('mxm-blog/list/list-posts');
         
         return $model;
     }

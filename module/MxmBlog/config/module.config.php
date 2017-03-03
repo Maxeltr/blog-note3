@@ -8,22 +8,32 @@ use Zend\Router\Http\Literal;
 return [
     'controllers' => [
         'factories' => [
-            Controller\IndexController::class => Factory\Controller\IndexControllerFactory::class,
+            Controller\ListController::class => Factory\Controller\ListControllerFactory::class,
+            Controller\WriteController::class => Factory\Controller\WriteControllerFactory::class,
         ],
     ],
     'service_manager' => [
+        'aliases' => [
+            Service\PostServiceInterface::class => Service\PostService::class,
+            Service\DateTimeInterface::class => Service\DateTime::class,
+            Validator\IsPublishedRecordExistsValidatorInterface::class => Validator\IsPublishedRecordExistsValidator::class,
+            Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
+            Model\PostInterface::class => Model\Post::class,
+            Model\TagInterface::class => Model\Tag::class,
+            Model\CategoryInterface::class => Model\Category::class,
+        ],
         'factories' => [
-            Service\PostServiceInterface::class => Factory\Service\PostServiceFactory::class,
-            Service\DateTimeInterface::class => Factory\Service\DateTimeFactory::class,
-            Validator\IsPublishedRecordExistsValidatorInterface::class => Factory\Validator\IsPublishedRecordExistsValidatorFactory::class,
+            Service\PostService::class => Factory\Service\PostServiceFactory::class,
+            Service\DateTime::class => Factory\Service\DateTimeFactory::class,
+            Validator\IsPublishedRecordExistsValidator::class => Factory\Validator\IsPublishedRecordExistsValidatorFactory::class,
             Hydrator\Post\TagsHydrator::class => Factory\Hydrator\TagsHydratorFactory::class,
             Hydrator\Post\CategoryHydrator::class => Factory\Hydrator\CategoryHydratorFactory::class,
             Hydrator\Post\PostHydrator::class => Factory\Hydrator\PostHydratorFactory::class,
             Hydrator\Post\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
-            Mapper\MapperInterface::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
-            Model\PostInterface::class => Factory\Model\PostFactory::class,
-            Model\TagInterface::class => Factory\Model\TagFactory::class,
-            Model\CategoryInterface::class => Factory\Model\CategoryFactory::class,
+            Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
+            Model\Post::class => Factory\Model\PostFactory::class,
+            Model\Tag::class => Factory\Model\TagFactory::class,
+            Model\Category::class => Factory\Model\CategoryFactory::class,
             \Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             \Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
@@ -35,11 +45,23 @@ return [
     'view_helpers' => [
         'aliases' => [
             'archiveDates' => View\Helper\ArchiveDates::class,
-            'FormatDateI18n' => View\Helper\FormatDateI18nFactory::class,
+            'formatDateI18n' => View\Helper\FormatDateI18n::class,
         ],
         'factories' => [
             View\Helper\ArchiveDates::class => Factory\View\Helper\ArchiveDatesFactory::class,
+            View\Helper\FormatDateI18n::class => Factory\View\Helper\FormatDateI18nFactory::class,
         ],
+    ],
+    'form_elements' => [
+        'factories' => [
+            Form\PostForm::class => Factory\Form\PostFormFactory::class,
+            Form\PostFieldset::class => Factory\Form\PostFieldsetFactory::class,
+            Form\CategoriesFieldset::class => Factory\Form\CategoriesFieldsetFactory::class,
+            Form\TagFieldset::class => Factory\Form\TagFieldsetFactory::class,
+            Form\CategoryForm::class => Factory\Form\CategoryFormFactory::class,
+            Form\CategoryFieldset::class => Factory\Form\CategoryFieldsetFactory::class,
+            Form\TagForm::class => Factory\Form\TagFormFactory::class,
+        ]
     ],
     'router' => [
         'routes' => [
@@ -49,7 +71,7 @@ return [
                     // Change this to something specific to your module
                     'route'    => '/',
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
+                        'controller'    => Controller\ListController::class,
                         'action'        => 'index',
                     ],
                 ],
@@ -66,7 +88,7 @@ return [
                         'id' => '[1-9]\d*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
+                        'controller'    => Controller\ListController::class,
                         'action' => 'detailPost'
                     ],
                 ],
@@ -79,7 +101,7 @@ return [
                         'page' => '[1-9]\d*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
+                        'controller'    => Controller\ListController::class,
                         'action' => 'listPosts'
                     ],
                 ],
@@ -94,8 +116,62 @@ return [
                         'month' => '[1-9]\d*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
+                        'controller'    => Controller\ListController::class,
                         'action' => 'listArchivesPosts'
+                    ],
+                ],
+            ],
+            'listPostsByCategory' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/posts/category[/:id[/:page]]',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'listPostsByCategory'
+                    ],
+                ],
+            ],
+            'listPostsByTag' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/posts/tag[/:id[/:page]]',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'listPostsByTag'
+                    ],
+                ],
+            ],
+            'editPost' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/edit/post/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editPost'
+                    ],
+                ],
+            ],
+            'detailTag' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/detail/tag/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'detailTag'
                     ],
                 ],
             ],
@@ -107,8 +183,21 @@ return [
                         'page' => '[1-9]\d*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
+                        'controller'    => Controller\ListController::class,
                         'action' => 'listTags'
+                    ],
+                ],
+            ],
+            'detailCategory' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/detail/category/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'detailCategory'
                     ],
                 ],
             ],
@@ -120,7 +209,7 @@ return [
                         'page' => '[1-9]\d*',
                     ],
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
+                        'controller'    => Controller\ListController::class,
                         'action' => 'listCategories'
                     ],
                 ],
@@ -155,7 +244,71 @@ return [
                     ],
                 ],
             ],
-            
+            'editCategory' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/edit/category/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editCategory'
+                    ],
+                ],
+            ],
+            'editTag' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/edit/tag/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editTag'
+                    ],
+                ],
+            ],
+            'deletePost' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/delete/post/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\DeleteController::class,
+                        'action' => 'deletePost'
+                    ],
+                ],
+            ],
+            'deleteTag' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/delete/tag/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\DeleteController::class,
+                        'action' => 'deleteTag'
+                    ],
+                ],
+            ],
+            'deleteCategory' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/delete/category/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\DeleteController::class,
+                        'action' => 'deleteCategory'
+                    ],
+                ],
+            ],
         ],
     ],
     'view_manager' => [

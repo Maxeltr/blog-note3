@@ -1,0 +1,48 @@
+<!-- Filename: /module/Blog/view/blog/write/add.phtml -->
+<h1>WriteController::addAction()</h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('addPost', array(), true));
+$form->prepare();
+
+$form->get('submit')->setValue('Add Post');
+
+echo $this->form()->openTag($form);
+
+$post = $form->get('post');
+echo $this->formRow($post->get('id'));
+echo $this->formRow($post->get('title'));
+echo $this->formRow($post->get('text'));
+echo $this->formRow($post->get('summary'));
+
+$category = $post->get('category');
+echo $this->formRow($category->get('id'));
+//echo $this->formRow($category->get('title'));
+
+echo $this->formRow($post->get('isPublished'));
+
+echo $this->formCollection($post->get('tags'));
+
+echo $this->formElement($form->get('submit'));
+
+//echo $this->formCollection($form);
+?>
+
+<button onclick="return add_category()">Add a new tag</button>
+<script>
+    function add_category() {
+        var currentCount = $('form > fieldset > fieldset').length;
+        var template = $('form > fieldset > span').data('template');
+        template = template.replace(/__index__/g, currentCount);
+        $('form > fieldset').append(template);
+
+        return false;
+    }
+</script>
+
+<?php
+echo $this->form()->closeTag();
+
+
+

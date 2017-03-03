@@ -19,6 +19,15 @@
                         <p class="blog-post-meta">
                             Category: <?php echo $this->escapeHtml($post->getCategory()->getTitle()); ?>
                         </p>
+                        <p class="blog-post-meta">
+                            Tags: <?php $tags = $post->getTags();
+                            $tags->spreadWeightValues([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+                            foreach ($tags as $tag): ?>
+                                <?php echo $this->escapeHtml($tag->getTitle());?>
+                                <?php echo $this->escapeHtml($tag->getWeight());?>
+                                (<?php echo $this->escapeHtml($tag->getParam('weightValue'));?>)
+                            <?php endforeach; ?>
+                        </p>
                         <p>
                             <?php echo $this->htmlPurifier($post->getText()); ?>
                         </p>

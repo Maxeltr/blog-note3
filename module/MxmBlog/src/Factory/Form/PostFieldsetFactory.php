@@ -24,19 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\View\Helper;
+namespace MxmBlog\Factory\Form;
 
+use MxmBlog\Form\PostFieldset;
+use MxmBlog\Model\PostInterface;
 use Interop\Container\ContainerInterface;
+use Zend\Hydrator\Aggregate\AggregateHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\View\Helper\FormatDateI18n;
-use Zend\Config\Config;
 
-class FormatDateI18nFactory implements FactoryInterface
+class PostFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
-
-        return new FormatDateI18n($config->blog_module);
+        return new PostFieldset(
+            $container->get(PostInterface::class),
+            $container->get(AggregateHydrator::class),
+            $requestedName,
+            $options
+        );
     }
 }

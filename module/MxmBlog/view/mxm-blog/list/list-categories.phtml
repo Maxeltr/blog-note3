@@ -1,0 +1,77 @@
+<!--
+The MIT License
+
+Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+<div class="row row-offcanvas row-offcanvas-right">
+    <div class="page-header">
+      <h1>Example page header <small>Subtext for header</small></h1>
+    </div>
+    <div class="col-xs-12 col-sm-9">
+        <p class="pull-right visible-xs">
+            <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
+        </p>
+        <div class="row">
+            <?php if (count($this->categories)): ?>
+                <?php foreach ($this->categories as $category): ?>
+                    <div class="col-xs-6 col-lg-4">
+                        <div class="div-1">
+                        <h3><a href="<?php echo $this->url('detailCategory',
+                            array('action' => 'detailCategory', 'id' => $category->getId())); ?>">
+                            <?php echo $this->escapeHtml($category->getTitle()); ?></a></h3>
+                        
+                        <p>
+                           Category id: <?php echo $this->escapeHtml($category->getId()); ?>
+                        </p>
+                        <p>
+                           Category description: <?php echo $this->escapeHtml($category->getDescription()); ?>
+                        </p>
+                        <p>
+                           Просмотреть статьи этой категории: <a href="<?php echo $this->url('listPostsByCategory',
+                            array('action' => 'listPostsByCategory', 'id' => $category->getId())); ?>">
+                            тыц</a>
+                        </p>
+                        </div>
+                    </div><!--/.col-xs-6.col-lg-4-->
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div><!--/row-->
+    </div><!--/.col-xs-12.col-sm-9-->
+
+    <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
+        <div class="list-group">
+            <a class="list-group-item" href="<?php echo $this->url('listPosts',
+                array('action' => 'listPosts')); ?>">Articles</a>
+            <a class="list-group-item" href="<?php echo $this->url('listCategories',
+                array('action' => 'listCategories')); ?>">Categories</a>
+            <a class="list-group-item" href="#">Archives</a>
+            <a class="list-group-item" href="<?php echo $this->url('listTags',
+                array('action' => 'listTags')); ?>">Tags</a>
+        </div>
+        <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
+    </div><!--/.sidebar-offcanvas-->
+</div><!--/row-->
+
+<?php echo $this->paginationControl($this->categories,
+        'Sliding',
+        'partial/paginator.phtml', 
+        array('route' => 'listCategories')); ?>

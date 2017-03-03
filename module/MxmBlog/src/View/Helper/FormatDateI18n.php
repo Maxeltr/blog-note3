@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace Blog\View\Helper;
+namespace MxmBlog\View\Helper;
 
 use Zend\I18n\View\Helper\DateFormat;
 use Zend\Config\Config;
-use Blog\Service\DateTimeInterface;
+use MxmBlog\Service\DateTimeInterface;
 
 class FormatDateI18n extends DateFormat
 {

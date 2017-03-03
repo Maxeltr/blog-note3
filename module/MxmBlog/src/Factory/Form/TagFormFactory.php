@@ -24,19 +24,21 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\View\Helper;
+namespace MxmBlog\Factory\Form;
 
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\View\Helper\FormatDateI18n;
-use Zend\Config\Config;
+use Interop\Container\ContainerInterface;
+use MxmBlog\Form\TagForm;
+use Zend\InputFilter\InputFilter;
+use Zend\Hydrator\ClassMethods;
 
-class FormatDateI18nFactory implements FactoryInterface
+class TagFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
-
-        return new FormatDateI18n($config->blog_module);
+        return new TagForm(
+            new ClassMethods(false),
+            new InputFilter()
+        );
     }
 }

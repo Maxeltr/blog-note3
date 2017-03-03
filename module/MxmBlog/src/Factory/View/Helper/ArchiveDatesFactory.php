@@ -29,22 +29,14 @@ namespace MxmBlog\Factory\View\Helper;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
-use Zend\ServiceManager\AbstractPluginManager;
 use MxmBlog\View\Helper\ArchiveDates;
 
 class ArchiveDatesFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-//        if (! $container instanceof AbstractPluginManager) {
-//            // zend-servicemanager v3. v2 passes the helper manager directly.
-//            $container = $container->get('ViewHelperManager');
-//        }
-       
         $mapper = $container->get(MapperInterface::class);
         
-        //$mapper = $container->getServiceLocator()->get('Blog\Mapper\MapperInterface');
-
         return new ArchiveDates($mapper);
     }
 }

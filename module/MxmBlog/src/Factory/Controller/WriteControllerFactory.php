@@ -24,19 +24,32 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\View\Helper;
+namespace MxmBlog\Factory\Controller;
 
-use Interop\Container\ContainerInterface;
+use MxmBlog\Controller\WriteController;
+use MxmBlog\Form\PostForm;
+use MxmBlog\Form\TagForm;
+use MxmBlog\Form\CategoryForm;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\View\Helper\FormatDateI18n;
-use Zend\Config\Config;
+use Interop\Container\ContainerInterface;
+use MxmBlog\Service\PostServiceInterface;
 
-class FormatDateI18nFactory implements FactoryInterface
+class WriteControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
+        $postService = $container->get(PostServiceInterface::class);
 
-        return new FormatDateI18n($config->blog_module);
+        $formManager = $container->get('FormElementManager');
+        $postInsertForm = $formManager->get(PostForm::class);
+        $tagInsertForm = $formManager->get(TagForm::class);
+        $categoryInsertForm = $formManager->get(CategoryForm::class);
+        
+        return new WriteController(
+            $postService,
+            $postInsertForm,
+            $tagInsertForm,
+            $categoryInsertForm
+        );
     }
 }

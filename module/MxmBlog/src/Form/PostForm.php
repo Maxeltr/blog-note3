@@ -24,19 +24,43 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\View\Helper;
+namespace MxmBlog\Form;
+ 
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
+use Zend\Hydrator\HydratorInterface;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\View\Helper\FormatDateI18n;
-use Zend\Config\Config;
-
-class FormatDateI18nFactory implements FactoryInterface
+class PostForm extends Form
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
+    public function __construct(
+        HydratorInterface $hydrator,
+        InputFilter $inputFilter,
+        $name = "post_form",
+        $options = array()
+    ) {
+        parent::__construct($name, $options);
 
-        return new FormatDateI18n($config->blog_module);
+        $this->setAttribute('method', 'post')
+            ->setHydrator($hydrator)
+            ->setInputFilter($inputFilter);
+    }
+    
+    public function init() {
+        //parent::init();
+        $this->add(array(
+            'name' => 'post',
+            'type' => 'MxmBlog\Form\PostFieldset',
+            'options' => array(
+                'use_as_base_fieldset' => true
+            )
+        ));
+        
+        $this->add(array(
+            'type' => 'submit',
+            'name' => 'submit',
+            'attributes' => array(
+                'value' => 'Send'
+            )
+        ));
     }
 }
