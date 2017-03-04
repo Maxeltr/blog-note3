@@ -1,0 +1,14 @@
+<h1>WriteController::editAction()</h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('editCategory', array(), true));
+$form->prepare();
+
+$form->get('submit')->setValue('Update Category');
+
+echo $this->form()->openTag($form);
+
+echo $this->formCollection($form);
+
+echo $this->form()->closeTag();

@@ -90,7 +90,7 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('blog/detailPost', 
+                return $this->redirect()->toRoute('detailPost', 
                     array('action' => 'detail', 'id' => $savedPost->getId()));
             }
         }
@@ -121,7 +121,7 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('blog/detailPost', 
+                return $this->redirect()->toRoute('detailPost', 
                     array('action' => 'detail', 'id' => $post->getId()));
             }
         }
@@ -144,7 +144,7 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('blog/detailTag', 
+                return $this->redirect()->toRoute('detailTag', 
                     array('action' => 'detail', 'id' => $savedTag->getId()));
             }
         }
@@ -175,7 +175,7 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('blog/detailTag', 
+                return $this->redirect()->toRoute('detailTag', 
                     array('action' => 'detail', 'id' => $tag->getId()));
             }
         }
@@ -198,7 +198,7 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('blog/detailCategory', 
+                return $this->redirect()->toRoute('detailCategory', 
                     array('action' => 'detail', 'id' => $savedCategory->getId()));
             }
         }
@@ -229,7 +229,7 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('blog/detailCategory', 
+                return $this->redirect()->toRoute('detailCategory', 
                     array('action' => 'detail', 'id' => $category->getId()));
             }
         }

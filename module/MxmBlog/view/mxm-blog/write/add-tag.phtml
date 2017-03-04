@@ -1,0 +1,24 @@
+<h1>WriteController::addAction()</h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('addTag', array(), true));
+$form->prepare();
+
+$form->get('submit')->setValue('Add Tag');
+
+echo $this->form()->openTag($form);
+
+$tag = $form->get('tag');
+echo $this->formRow($tag->get('id'));
+echo $this->formRow($tag->get('title'));
+?><br><?php
+echo $this->formElement($form->get('submit'));
+
+?>
+
+<?php
+echo $this->form()->closeTag();
+
+
+

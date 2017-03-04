@@ -167,6 +167,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 'filters'=>array(
                     array(
                         'name' => 'htmlpurifier'
+                        //'name' => 'Soflomo\Purifier\Factory\PurifierFilterFactory'
                     ),
                 ),
                 'validators' => array(
