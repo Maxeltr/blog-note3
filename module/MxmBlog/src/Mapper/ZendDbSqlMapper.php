@@ -498,7 +498,7 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findPostsByPublishDate(DateTimeInterface $since = null, DateTimeInterface $to = null, $hideUnpublished = true)
+    public function findPostsByPublishDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null)
     {
         $parameters = array(
             'group' => array(
@@ -521,9 +521,7 @@ class ZendDbSqlMapper implements MapperInterface
             );
         }
         
-        if($hideUnpublished === true) {
-            $parameters['where']['isPublished'] = true;
-        }
+        $parameters['where']['isPublished'] = true;
         
         $select = $this->createPostSelectQuery($parameters);
 
@@ -542,9 +540,9 @@ class ZendDbSqlMapper implements MapperInterface
         switch ($group) {
             case "day":
                 $select->columns(array(
-                    'year' => new Expression('YEAR(created)'), 
-                    'month' => new Expression('MONTH(created)'),
-                    'day' => new Expression('DAY(created)'),
+                    'year' => new Expression('YEAR(published)'),
+                    'month' => new Expression('MONTH(published)'),
+                    'day' => new Expression('DAY(published)'),
                     'total' => new Expression('COUNT(*)')
                 ));
                 $select->group('day');
@@ -554,8 +552,8 @@ class ZendDbSqlMapper implements MapperInterface
             
             case "month":
                 $select->columns(array(
-                    'year' => new Expression('YEAR(created)'), 
-                    'month' => new Expression('MONTH(created)'),
+                    'year' => new Expression('YEAR(published)'),
+                    'month' => new Expression('MONTH(published)'),
                     'total' => new Expression('COUNT(*)')
                 ));
                 $select->group('month');
@@ -564,17 +562,19 @@ class ZendDbSqlMapper implements MapperInterface
             
             case "year":
                 $select->columns(array(
-                    'year' => new Expression('YEAR(created)'),
+                    'year' => new Expression('YEAR(published)'),
                     'total' => new Expression('COUNT(*)')
                 ));
                 $select->group('year');
                 break;
-                
+            
             default:
                 throw new InvalidArgumentBlogException("ZendDbSqlMapper. findPublishDates. Invalid param: group.");
         }
-
-        $select->order('created DESC');
+        
+        $select->where(['articles.isPublished' => true]);
+        
+        $select->order('published DESC');
         
         if (StaticValidator::execute($limit, 'Digits')) {
             $select->limit($limit);

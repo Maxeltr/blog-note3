@@ -15,7 +15,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Validator\Date;
-
+use Zend\Filter\Digits;
 
 class ListController extends AbstractActionController
 {
@@ -27,7 +27,8 @@ class ListController extends AbstractActionController
     protected $dateValidator;
     
     protected $datetime;
-
+    
+    protected $digitsFilter;
 
     /**
      * @var Zend\Config\Config
@@ -38,12 +39,14 @@ class ListController extends AbstractActionController
         PostServiceInterface $postService, 
         Date $dateValidator, 
         DateTimeInterface $datetime, 
-        Config $config
+        Config $config,
+        Digits $digitsFilter
     ) {
         $this->postService = $postService;
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
         $this->config = $config;
+        $this->digitsFilter = $digitsFilter;
     }
 
     public function indexAction()
@@ -117,20 +120,20 @@ class ListController extends AbstractActionController
         $since = $this->params()->fromRoute('since');
         $to = $this->params()->fromRoute('to');
 
-        $since . ' 00:00:00';
-        $to . ' 23:59:59';
+        $since = $since . ' 00:00:00';
+        $to = $to . ' 23:59:59';
         
         $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
         
         if (!$this->dateValidator->isValid($since)) {
-            $since = null;
+            return $this->notFoundAction();
         } else {
             $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
         }
         
         if (!$this->dateValidator->isValid($to)) {
-            $to = null;
+            return $this->notFoundAction();
         } else {
             $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
         }
@@ -149,34 +152,58 @@ class ListController extends AbstractActionController
     
     public function listArchivesPostsAction()
     {
-        die('TODO');
         $year = $this->params()->fromRoute('year');
         $month = $this->params()->fromRoute('month');
 
-        $since . ' 00:00:00';
-        $to . ' 23:59:59';
+        $year = $this->digitsFilter->filter($year);
+        if (!$year) {
+            return $this->notFoundAction();
+        }
+        
+        $month = $this->digitsFilter->filter($month);
+        if (!$month) {
+            $since = $year . '-01-01';
+            $interval = \DateInterval::createFromDateString('1 year');
+        } else {
+            $since = $year . '-' . $month . '-01';
+            $interval = \DateInterval::createFromDateString('1 month');
+        }
+        
+        $since = $since . ' 00:00:00';
+        
+        
         
         $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
         
         if (!$this->dateValidator->isValid($since)) {
-            $since = null;
+            return $this->notFoundAction();
         } else {
             $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
         }
         
-        if (!$this->dateValidator->isValid($to)) {
-            $to = null;
-        } else {
-            $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
-        }
+        $to = $since->add($interval);
+        
+        
+        $daterange = new \DatePeriod($since, $interval ,$to);
+        
+        \Zend\Debug\Debug::dump($since);
+        \Zend\Debug\Debug::dump($to);
+        \Zend\Debug\Debug::dump($daterange);
+        die();
+        
+//        if (!$this->dateValidator->isValid($to)) {
+//            return $this->notFoundAction();
+//        } else {
+//            $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
+//        }
         
         $paginator = $this->postService->findPostsByPublishDate($since, $to);
         $this->configurePaginator($paginator);
         
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'listPostsByPublished'
+            'route' => 'listArchivesPosts'
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
         

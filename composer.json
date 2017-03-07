@@ -21,7 +21,8 @@
         "zendframework/zend-tag": "^2.6",
         "zendframework/zend-paginator": "^2.7",
         "zendframework/zend-debug": "^2.5",
-        "soflomo/purifier": "^2.0.0"
+        "soflomo/purifier": "^2.0.0",
+        "zendframework/zend-i18n": "^2.7"
     },
     "autoload": {
         "psr-4": {

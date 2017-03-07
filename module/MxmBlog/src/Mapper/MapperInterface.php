@@ -139,11 +139,10 @@ interface MapperInterface
      *
      * @param DateTime $since
      * @param DateTime $to
-     * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
      * @return Paginator
      */
-    public function findPostsByPublishDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished);
+    public function findPostsByPublishDate(\DateTimeInterface $since, \DateTimeInterface $to);
     
     /**
      * Найти даты, когда были публикации и подсчитать кол-во публикаций.

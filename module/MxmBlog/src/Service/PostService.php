@@ -87,7 +87,7 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function findPostsByPublishDate(DateTimeInterface $since = null, DateTimeInterface $to = null)
+    public function findPostsByPublishDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null)
     {
         return $this->mapper->findPostsByPublishDate($since, $to);
     }

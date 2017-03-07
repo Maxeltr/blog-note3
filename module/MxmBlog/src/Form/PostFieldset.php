@@ -120,6 +120,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 ),
             ),
         ));
+        
     }
     
     /**

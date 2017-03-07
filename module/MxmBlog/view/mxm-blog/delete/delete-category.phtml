@@ -1,0 +1,9 @@
+<h1>DeleteController::deleteAction()</h1>
+ <p>
+     Are you sure that you want to delete
+     '<?php echo $this->escapeHtml($this->category->getTitle()); ?>'
+ </p>
+ <form action="<?php echo $this->url('deleteCategory', array(), true) ?>" method="post">
+     <input type="submit" name="delete_confirmation" value="yes">
+     <input type="submit" name="delete_confirmation" value="no">
+ </form>

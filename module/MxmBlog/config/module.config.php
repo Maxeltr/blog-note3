@@ -10,6 +10,7 @@ return [
         'factories' => [
             Controller\ListController::class => Factory\Controller\ListControllerFactory::class,
             Controller\WriteController::class => Factory\Controller\WriteControllerFactory::class,
+            Controller\DeleteController::class => Factory\Controller\DeleteControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -37,6 +38,8 @@ return [
             \Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             \Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
+            \Zend\I18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
+            //Soflomo\Purifier\PurifierFilter::class => Soflomo\Purifier\Factory\PurifierFilterFactory::class,
         ],
         'invokables' => [
             Hydrator\Tag\TagHydrator::class => Hydrator\Tag\TagHydrator::class,
@@ -51,6 +54,20 @@ return [
             View\Helper\ArchiveDates::class => Factory\View\Helper\ArchiveDatesFactory::class,
             View\Helper\FormatDateI18n::class => Factory\View\Helper\FormatDateI18nFactory::class,
         ],
+        'invokables' => [
+            'translate' => \Zend\I18n\View\Helper\Translate::class
+        ]
+    ],
+    'filters' => [
+        'aliases' => [
+            //'htmlpurifier' => Soflomo\Purifier\PurifierFilter::class,
+        ],
+        'factories' => [
+            //Soflomo\Purifier\PurifierFilter::class => Soflomo\Purifier\Factory\PurifierFilterFactory::class,
+        ],
+        'invokables' => [
+            
+        ]
     ],
     'form_elements' => [
         'factories' => [
@@ -314,6 +331,9 @@ return [
     'view_manager' => [
         'template_path_stack' => [
             'MxmBlog' => __DIR__ . '/../view',
+        ],
+        'template_map' => [
+            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml'
         ],
     ],
 ];

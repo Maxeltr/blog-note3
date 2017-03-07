@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,25 +26,17 @@
 
 namespace MxmBlog\Factory\Controller;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\Filter\Digits;
-use Zend\Validator\Date;
+use MxmBlog\Controller\DeleteController;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\ListController;
+use Interop\Container\ContainerInterface;
 use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
 
-class ListControllerFactory implements FactoryInterface
+class DeleteControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
-        $filter = new Digits();
-        
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $filter);
+
+        return new DeleteController($postService);
     }
 }
