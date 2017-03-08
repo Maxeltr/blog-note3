@@ -126,7 +126,7 @@ return [
             'listArchivesPosts' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/list/archives/posts[/:year[/:month[/:page]]]',
+                    'route'    => '/list/archives/posts[/:page[/:year[/:month]]]',
                     'constraints' => [
                         'page' => '[1-9]\d*',
                         'year' => '[1-9]\d*',
@@ -141,7 +141,7 @@ return [
             'listPostsByCategory' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/list/posts/category[/:id[/:page]]',
+                    'route'    => '/list/posts/category/:id[/:page]',
                     'constraints' => [
                         'id' => '[1-9]\d*',
                         'page' => '[1-9]\d*',
@@ -155,7 +155,7 @@ return [
             'listPostsByTag' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/list/posts/tag[/:id[/:page]]',
+                    'route'    => '/list/posts/tag/:id[/:page]',
                     'constraints' => [
                         'id' => '[1-9]\d*',
                         'page' => '[1-9]\d*',

@@ -4,7 +4,7 @@
     if (count($dates)) {
         foreach ($dates as $year => $months) { ?>
             <a href="<?php echo $this->url('listArchivesPosts',
-                array('action' => 'listArchivesPosts', 'year' => $year)); ?>">
+                array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $year)); ?>">
                 <?php echo $this->escapeHtml($year); ?></a>
             <ol class="list-unstyled">
                 <li>
@@ -12,7 +12,7 @@
                         <?php foreach ($months as $month) { ?>
                             <li>
                                 <a href="<?php echo $this->url('listArchivesPosts',
-                                    array('action' => 'listArchivesPosts', 'year' => $year, 'month' => key($month))); ?>">
+                                    array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $year, 'month' => key($month))); ?>">
                                     <?php echo $this->escapeHtml(key($month)); ?></a>
                                 (<?php echo $this->escapeHtml($month[key($month)]); ?>)
                             </li>

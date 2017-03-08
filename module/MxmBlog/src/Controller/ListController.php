@@ -160,44 +160,29 @@ class ListController extends AbstractActionController
             return $this->notFoundAction();
         }
         
-        $month = $this->digitsFilter->filter($month);
-        if (!$month) {
-            $since = $year . '-01-01';
-            $interval = \DateInterval::createFromDateString('1 year');
-        } else {
-            $since = $year . '-' . $month . '-01';
-            $interval = \DateInterval::createFromDateString('1 month');
-        }
-        
-        $since = $since . ' 00:00:00';
-        
-        
-        
         $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
         
-        if (!$this->dateValidator->isValid($since)) {
-            return $this->notFoundAction();
+        $month = $this->digitsFilter->filter($month);
+        if (!$month) {
+            $since = $year . '-01-01 00:00:00';
+            if (!$this->dateValidator->isValid($since)) {
+                return $this->notFoundAction();
+            } else {
+                $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
+            }
+            $interval = \DateInterval::createFromDateString('1 year - 1 day');
+            $to = $since->add( $interval );
         } else {
-            $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
+            $since = $year . '-' . $month . '-01 00:00:00';
+            if (!$this->dateValidator->isValid($since)) {
+                return $this->notFoundAction();
+            } else {
+                $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
+            }
+            $to = $since->modify( 'last day of this month' );
         }
-        
-        $to = $since->add($interval);
-        
-        
-        $daterange = new \DatePeriod($since, $interval ,$to);
-        
-        \Zend\Debug\Debug::dump($since);
-        \Zend\Debug\Debug::dump($to);
-        \Zend\Debug\Debug::dump($daterange);
-        die();
-        
-//        if (!$this->dateValidator->isValid($to)) {
-//            return $this->notFoundAction();
-//        } else {
-//            $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
-//        }
-        
+                
         $paginator = $this->postService->findPostsByPublishDate($since, $to);
         $this->configurePaginator($paginator);
         
