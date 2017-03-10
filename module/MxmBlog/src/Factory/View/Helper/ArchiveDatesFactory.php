@@ -30,13 +30,15 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\View\Helper\ArchiveDates;
+use Zend\Validator\Date;
 
 class ArchiveDatesFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $mapper = $container->get(MapperInterface::class);
+        $dateValidator = $container->get(Date::class);
         
-        return new ArchiveDates($mapper);
+        return new ArchiveDates($mapper, $dateValidator);
     }
 }

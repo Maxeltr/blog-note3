@@ -34,6 +34,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Controller\ListController;
 use MxmBlog\Service\PostServiceInterface;
 use MxmBlog\Service\DateTimeInterface;
+use Zend\Validator\NotEmpty;
 
 class ListControllerFactory implements FactoryInterface
 {
@@ -44,7 +45,9 @@ class ListControllerFactory implements FactoryInterface
         $datetime = $container->get(DateTimeInterface::class);
         $config = new Config($container->get('config'));
         $filter = new Digits();
+        $notEmptyValidator = new NotEmpty();
+        $notEmptyValidator->setType(NotEmpty::ALL);
         
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $filter);
+        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $filter, $notEmptyValidator);
     }
 }

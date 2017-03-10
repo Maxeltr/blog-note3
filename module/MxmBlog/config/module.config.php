@@ -138,6 +138,21 @@ return [
                     ],
                 ],
             ],
+            'listPostsByPublished' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/posts/published[/:page[/:since[/:to]]]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                        'since' => '[0-9-]*',
+                        'to' => '[0-9-]*',
+                    ],
+                    'defaults' => [
+                        'controller'    =>  Controller\ListController::class,
+                        'action' => 'listPostsByPublished'
+                    ],
+                ],
+            ],
             'listPostsByCategory' => [
                 'type'    => 'Segment',
                 'options' => [

@@ -16,6 +16,7 @@ use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Validator\Date;
 use Zend\Filter\Digits;
+use Zend\Validator\NotEmpty;
 
 class ListController extends AbstractActionController
 {
@@ -29,6 +30,8 @@ class ListController extends AbstractActionController
     protected $datetime;
     
     protected $digitsFilter;
+    
+    protected $notEmptyValidator;
 
     /**
      * @var Zend\Config\Config
@@ -40,13 +43,15 @@ class ListController extends AbstractActionController
         Date $dateValidator, 
         DateTimeInterface $datetime, 
         Config $config,
-        Digits $digitsFilter
+        Digits $digitsFilter,
+        NotEmpty $notEmptyValidator
     ) {
         $this->postService = $postService;
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
         $this->config = $config;
         $this->digitsFilter = $digitsFilter;
+        $this->notEmptyValidator = $notEmptyValidator;
     }
 
     public function indexAction()
@@ -123,7 +128,7 @@ class ListController extends AbstractActionController
         $since = $since . ' 00:00:00';
         $to = $to . ' 23:59:59';
         
-        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
+        $dateTimeFormat = 'Y-m-d H:i:s'; //$this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
         
         if (!$this->dateValidator->isValid($since)) {
@@ -152,19 +157,21 @@ class ListController extends AbstractActionController
     
     public function listArchivesPostsAction()
     {
-        $year = $this->params()->fromRoute('year');
-        $month = $this->params()->fromRoute('month');
-
-        $year = $this->digitsFilter->filter($year);
-        if (!$year) {
+        $year = $this->digitsFilter->filter(
+            $this->params()->fromRoute('year')
+        );
+        if (!$this->notEmptyValidator->isValid($year)) {
             return $this->notFoundAction();
         }
         
-        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
+        $month = $this->digitsFilter->filter(
+            $this->params()->fromRoute('month')
+        );
+                
+        $dateTimeFormat = 'Y-m-d H:i:s'; //$this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
-        
-        $month = $this->digitsFilter->filter($month);
-        if (!$month) {
+                
+        if (!$this->notEmptyValidator->isValid($month)) {
             $since = $year . '-01-01 00:00:00';
             if (!$this->dateValidator->isValid($since)) {
                 return $this->notFoundAction();
@@ -182,7 +189,7 @@ class ListController extends AbstractActionController
             }
             $to = $since->modify( 'last day of this month' );
         }
-                
+        
         $paginator = $this->postService->findPostsByPublishDate($since, $to);
         $this->configurePaginator($paginator);
         

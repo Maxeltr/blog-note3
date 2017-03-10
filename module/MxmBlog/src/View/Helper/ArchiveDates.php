@@ -28,14 +28,16 @@ namespace MxmBlog\View\Helper;
 
 use MxmBlog\Mapper\MapperInterface;
 use Zend\View\Helper\AbstractHelper;
+use Zend\Validator\Date;
 
 class ArchiveDates extends AbstractHelper
 {
     protected $mapper;
     
-    public function __construct(MapperInterface $mapper)
+    public function __construct(MapperInterface $mapper, Date $dateValidator)
     {
         $this->mapper = $mapper;
+        $this->dateValidator = $dateValidator;
     }
 
     public function __invoke()
@@ -46,10 +48,21 @@ class ArchiveDates extends AbstractHelper
         foreach ($resultSet as $result) {
             if (array_key_exists('year', $result) && array_key_exists('month', $result) && 
                 array_key_exists('total', $result)) {
+                $this->dateValidator->setFormat('Y');
+                if (!$this->dateValidator->isValid($result['year'])) {
+                    break;
+                }
+                $this->dateValidator->setFormat('m');
+                if (!$this->dateValidator->isValid($result['month'])) {
+                    break;
+                }
+                if (!$result['year']) {
+                    break;
+                }
                 $archive[$result['year']][] = [$result['month'] => $result['total']];
             }
         }
-        
+
         return $archive;
     }
 }
