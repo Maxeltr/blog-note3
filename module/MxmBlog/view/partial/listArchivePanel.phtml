@@ -12,9 +12,9 @@
                         <?php foreach ($months as $month) { ?>
                             <li>
                                 <a href="<?php echo $this->url('listArchivesPosts',
-                                    array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $year, 'month' => key($month))); ?>">
-                                    <?php echo $this->escapeHtml(key($month)); ?></a>
-                                (<?php echo $this->escapeHtml($month[key($month)]); ?>)
+                                    array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $year, 'month' => $month['monthNum'])); ?>">
+                                    <?php echo $this->escapeHtml($month['monthName']); ?></a>
+                                (<?php echo $this->escapeHtml($month['total']); ?>)
                             </li>
                         <?php } ?>
                     </ul>

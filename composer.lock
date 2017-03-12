@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8619caba7e35aba00b806e5a06aa58b5",
+    "content-hash": "7976a36ee1f1aa275fa2574d22bb029a",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -268,16 +268,16 @@
         },
         {
             "name": "zendframework/zend-component-installer",
-            "version": "0.3.1",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-component-installer.git",
-                "reference": "e72934397b123282ebf2eb23f4cf57a6a9bdfeb1"
+                "reference": "e6ae4413a461f2b1ac1a9149ce6fd3817aa70321"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-component-installer/zipball/e72934397b123282ebf2eb23f4cf57a6a9bdfeb1",
-                "reference": "e72934397b123282ebf2eb23f4cf57a6a9bdfeb1",
+                "url": "https://api.github.com/repos/zendframework/zend-component-installer/zipball/e6ae4413a461f2b1ac1a9149ce6fd3817aa70321",
+                "reference": "e6ae4413a461f2b1ac1a9149ce6fd3817aa70321",
                 "shasum": ""
             },
             "require": {
@@ -285,11 +285,11 @@
                 "php": "^5.6 || ^7.0"
             },
             "require-dev": {
-                "composer/composer": ">=1.0.0-alpha10",
+                "composer/composer": "^1.2.2",
                 "mikey179/vfsstream": "^1.6",
                 "phpunit/phpunit": "^4.7",
                 "roave/security-advisories": "dev-master",
-                "squizlabs/php_codesniffer": "^2.5"
+                "zendframework/zend-coding-standard": "~1.0.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -308,7 +308,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Composer plugin for automating component registration in zend-mvc and Expressive applications",
-            "time": "2016-09-12T21:15:53+00:00"
+            "time": "2016-12-20T21:38:04+00:00"
         },
         {
             "name": "zendframework/zend-config",

@@ -31,6 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\View\Helper\ArchiveDates;
 use Zend\Validator\Date;
+use Zend\Config\Config;
 
 class ArchiveDatesFactory implements FactoryInterface
 {
@@ -38,7 +39,8 @@ class ArchiveDatesFactory implements FactoryInterface
     {
         $mapper = $container->get(MapperInterface::class);
         $dateValidator = $container->get(Date::class);
+        $config = new Config($container->get('config'));
         
-        return new ArchiveDates($mapper, $dateValidator);
+        return new ArchiveDates($mapper, $dateValidator, $config->blog_module);
     }
 }

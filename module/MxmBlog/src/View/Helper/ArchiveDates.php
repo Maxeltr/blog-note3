@@ -29,23 +29,43 @@ namespace MxmBlog\View\Helper;
 use MxmBlog\Mapper\MapperInterface;
 use Zend\View\Helper\AbstractHelper;
 use Zend\Validator\Date;
+use Zend\Config\Config;
 
 class ArchiveDates extends AbstractHelper
 {
     protected $mapper;
     
-    public function __construct(MapperInterface $mapper, Date $dateValidator)
+    protected $dateValidator;
+    
+    protected $config;
+    
+    public function __construct(MapperInterface $mapper, Date $dateValidator, Config $config)
     {
         $this->mapper = $mapper;
         $this->dateValidator = $dateValidator;
+        $this->config = $config;
     }
 
     public function __invoke()
     {
         $resultSet = $this->mapper->findPublishDates('month', 12);
         
+        $monthFormatter = new \IntlDateFormatter(
+            $this->config->dateTime->locale,
+            \IntlDateFormatter::FULL,
+            \IntlDateFormatter::FULL
+        );
+        $monthFormatter->setPattern('LLLL');
+        
+        $yearFormatter = new \IntlDateFormatter(
+            $this->config->dateTime->locale,
+            \IntlDateFormatter::FULL,
+            \IntlDateFormatter::FULL
+        );
+        $yearFormatter->setPattern('Y');
+        
         $archive = array();
-        foreach ($resultSet as $result) {
+        foreach ($resultSet as $key => $result) {
             if (array_key_exists('year', $result) && array_key_exists('month', $result) && 
                 array_key_exists('total', $result)) {
                 $this->dateValidator->setFormat('Y');
@@ -59,10 +79,20 @@ class ArchiveDates extends AbstractHelper
                 if (!$result['year']) {
                     break;
                 }
-                $archive[$result['year']][] = [$result['month'] => $result['total']];
+                
+                $year = $yearFormatter->format(
+                    \DateTime::createFromFormat('Y|', $result['year'])
+                );
+                $month = $monthFormatter->format(
+                    \DateTime::createFromFormat('m|', $result['month'])
+                );
+                
+                $archive[$year][$key]['monthNum'] = $result['month'];
+                $archive[$year][$key]['monthName'] = $month;
+                $archive[$year][$key]['total'] = $result['total'];
             }
         }
-
+        
         return $archive;
     }
 }
