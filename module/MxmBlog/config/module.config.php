@@ -126,11 +126,12 @@ return [
             'listArchivesPosts' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/list/archives/posts[/:page[/:year[/:month]]]',
+                    'route'    => '/list/archives/posts[/:page[/:year[/:month[/:day]]]]',
                     'constraints' => [
                         'page' => '[1-9]\d*',
                         'year' => '[1-9]\d*',
                         'month' => '[1-9]\d*',
+                        'day' => '[1-9]\d*',
                     ],
                     'defaults' => [
                         'controller'    => Controller\ListController::class,
@@ -178,6 +179,19 @@ return [
                     'defaults' => [
                         'controller'    => Controller\ListController::class,
                         'action' => 'listPostsByTag'
+                    ],
+                ],
+            ],
+            'listArchives' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/archives[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'listArchives'
                     ],
                 ],
             ],

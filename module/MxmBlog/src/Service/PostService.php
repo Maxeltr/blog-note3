@@ -218,4 +218,12 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->deleteTag($tag);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function findPublishDates($group)
+    {
+        return $this->mapper->findPublishDates($group, null, true);
+    }
 }

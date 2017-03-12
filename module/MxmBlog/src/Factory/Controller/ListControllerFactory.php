@@ -28,7 +28,6 @@ namespace MxmBlog\Factory\Controller;
 
 use Interop\Container\ContainerInterface;
 use Zend\Config\Config;
-use Zend\Filter\Digits;
 use Zend\Validator\Date;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Controller\ListController;
@@ -44,10 +43,9 @@ class ListControllerFactory implements FactoryInterface
         $dateValidator = $container->get(Date::class);
         $datetime = $container->get(DateTimeInterface::class);
         $config = new Config($container->get('config'));
-        $filter = new Digits();
-        $notEmptyValidator = new NotEmpty();
+         $notEmptyValidator = new NotEmpty();
         $notEmptyValidator->setType(NotEmpty::ALL);
         
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $filter, $notEmptyValidator);
+        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $notEmptyValidator);
     }
 }

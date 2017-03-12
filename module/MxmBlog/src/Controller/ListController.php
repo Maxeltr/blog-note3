@@ -15,7 +15,6 @@ use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Validator\Date;
-use Zend\Filter\Digits;
 use Zend\Validator\NotEmpty;
 
 class ListController extends AbstractActionController
@@ -43,14 +42,12 @@ class ListController extends AbstractActionController
         Date $dateValidator, 
         DateTimeInterface $datetime, 
         Config $config,
-        Digits $digitsFilter,
         NotEmpty $notEmptyValidator
     ) {
         $this->postService = $postService;
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
         $this->config = $config;
-        $this->digitsFilter = $digitsFilter;
         $this->notEmptyValidator = $notEmptyValidator;
     }
 
@@ -157,16 +154,13 @@ class ListController extends AbstractActionController
     
     public function listArchivesPostsAction()
     {
-        $year = $this->digitsFilter->filter(
-            $this->params()->fromRoute('year')
-        );
+        $year = $this->params()->fromRoute('year');
+        
         if (!$this->notEmptyValidator->isValid($year)) {
             return $this->notFoundAction();
         }
         
-        $month = $this->digitsFilter->filter(
-            $this->params()->fromRoute('month')
-        );
+        $month = $this->params()->fromRoute('month');
                 
         $dateTimeFormat = 'Y-m-d H:i:s'; //$this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
@@ -198,6 +192,20 @@ class ListController extends AbstractActionController
             'route' => 'listArchivesPosts'
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
+        
+        return $model;
+    }
+    
+    public function listArchivesAction()
+    {
+        $paginator = $this->postService->findPublishDates('day');
+        $this->configurePaginator($paginator);
+        
+        $model = new ViewModel(array(
+            'archives' => $paginator,
+            'route' => 'listArchives'
+        ));
+        $model->setTemplate('mxm-blog/list/list-archives');
         
         return $model;
     }

@@ -42,7 +42,7 @@ class ArchiveDates extends AbstractHelper
 
     public function __invoke()
     {
-        $resultSet = $this->mapper->findPublishDates('month');
+        $resultSet = $this->mapper->findPublishDates('month', 12);
         
         $archive = array();
         foreach ($resultSet as $result) {

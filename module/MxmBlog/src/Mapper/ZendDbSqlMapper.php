@@ -40,6 +40,8 @@ use Zend\Db\Sql\Predicate\Expression;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\Iterator;
+use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Validator\StaticValidator;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Tag\ItemList;
@@ -531,7 +533,7 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findPublishDates($group = 'year', $limit = null)
+    public function findPublishDates($group = 'year', $limit = null, $paginated = false)
     {
         $sql = new Sql($this->dbAdapter);
         $select = $sql->select('articles');
@@ -578,6 +580,17 @@ class ZendDbSqlMapper implements MapperInterface
         
         if (StaticValidator::execute($limit, 'Digits')) {
             $select->limit($limit);
+        }
+        
+        if($paginated === true) {
+            $paginatorAdapter = new DbSelect(
+                // our configured select object:
+                $select,
+                // the adapter to run it against:
+                $this->dbAdapter
+            );
+            return new Paginator($paginatorAdapter);
+        
         }
         
         $statement = $sql->prepareStatementForSqlObject($select);

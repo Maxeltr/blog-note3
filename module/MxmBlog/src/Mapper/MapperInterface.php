@@ -146,13 +146,14 @@ interface MapperInterface
     
     /**
      * Найти даты, когда были публикации и подсчитать кол-во публикаций.
-     * Сгруппировать по годам (year), месяцам (month) или дням (day).
      *
-     * @param string $group
+     * @param string $group Сгруппировать по годам ('year'), месяцам ('month') или дням ('day').
+     * @param int $limit Вернуть не больше чем $limit
+     * @param bool $paginated Вернуть пагинатор
      *
      * @return Zend\Db\ResultSet
      */
-    public function findPublishDates($group, $limit);
+    public function findPublishDates($group, $limit, $paginated);
     
     /**
      * @param int|string $id
