@@ -50,7 +50,7 @@ class FormatDateI18n extends DateFormat
         parent::setTimezone($this->config->dateTime->timezone); //TODO устанавливать зону юзера
         parent::setLocale($this->config->dateTime->locale); //TODO устанавливать локаль юзера
         
-        $date = new \DateTime($datetime->format('Y-m-d H:i:s'));
+        $date = new \DateTime($datetime->format($this->config->dateTime->dateTimeFormat));
         
         return parent::__invoke(
             $date,

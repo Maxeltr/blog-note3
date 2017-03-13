@@ -40,7 +40,12 @@ class ArchiveDatesFactory implements FactoryInterface
         $mapper = $container->get(MapperInterface::class);
         $dateValidator = $container->get(Date::class);
         $config = new Config($container->get('config'));
+        $formatter = new \IntlDateFormatter(
+            $config->blog_module->dateTime->locale,
+            \IntlDateFormatter::FULL,
+            \IntlDateFormatter::FULL
+        );
         
-        return new ArchiveDates($mapper, $dateValidator, $config->blog_module);
+        return new ArchiveDates($mapper, $dateValidator, $formatter);
     }
 }

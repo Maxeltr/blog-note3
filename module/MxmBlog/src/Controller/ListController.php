@@ -125,7 +125,7 @@ class ListController extends AbstractActionController
         $since = $since . ' 00:00:00';
         $to = $to . ' 23:59:59';
         
-        $dateTimeFormat = 'Y-m-d H:i:s'; //$this->config->dateTime->dateTimeFormat;
+        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
         
         if (!$this->dateValidator->isValid($since)) {
@@ -161,10 +161,10 @@ class ListController extends AbstractActionController
         }
         
         $month = $this->params()->fromRoute('month');
-                
-        $dateTimeFormat = 'Y-m-d H:i:s'; //$this->config->dateTime->dateTimeFormat;
+        
+        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->dateValidator->setFormat($dateTimeFormat);
-                
+        
         if (!$this->notEmptyValidator->isValid($month)) {
             $since = $year . '-01-01 00:00:00';
             if (!$this->dateValidator->isValid($since)) {

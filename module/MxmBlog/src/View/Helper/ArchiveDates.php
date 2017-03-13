@@ -37,32 +37,18 @@ class ArchiveDates extends AbstractHelper
     
     protected $dateValidator;
     
-    protected $config;
+    protected $formatter;
     
-    public function __construct(MapperInterface $mapper, Date $dateValidator, Config $config)
+    public function __construct(MapperInterface $mapper, Date $dateValidator, \IntlDateFormatter $formatter)
     {
         $this->mapper = $mapper;
         $this->dateValidator = $dateValidator;
-        $this->config = $config;
+        $this->formatter = $formatter;
     }
 
     public function __invoke()
     {
         $resultSet = $this->mapper->findPublishDates('month', 12);
-        
-        $monthFormatter = new \IntlDateFormatter(
-            $this->config->dateTime->locale,
-            \IntlDateFormatter::FULL,
-            \IntlDateFormatter::FULL
-        );
-        $monthFormatter->setPattern('LLLL');
-        
-        $yearFormatter = new \IntlDateFormatter(
-            $this->config->dateTime->locale,
-            \IntlDateFormatter::FULL,
-            \IntlDateFormatter::FULL
-        );
-        $yearFormatter->setPattern('Y');
         
         $archive = array();
         foreach ($resultSet as $key => $result) {
@@ -80,10 +66,13 @@ class ArchiveDates extends AbstractHelper
                     break;
                 }
                 
-                $year = $yearFormatter->format(
+                $this->formatter->setPattern('Y');
+                $year = $this->formatter->format(
                     \DateTime::createFromFormat('Y|', $result['year'])
                 );
-                $month = $monthFormatter->format(
+                
+                $this->formatter->setPattern('LLLL');
+                $month = $this->formatter->format(
                     \DateTime::createFromFormat('m|', $result['month'])
                 );
                 
