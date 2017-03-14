@@ -155,36 +155,15 @@ class ListController extends AbstractActionController
     public function listArchivesPostsAction()
     {
         $year = $this->params()->fromRoute('year');
+        $month = $this->params()->fromRoute('month');
+        $day = $this->params()->fromRoute('day');
         
-        if (!$this->notEmptyValidator->isValid($year)) {
+        $period = $this->createPeriod($year, $month, $day);
+        if ($period === false) {
             return $this->notFoundAction();
         }
         
-        $month = $this->params()->fromRoute('month');
-        
-        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
-        $this->dateValidator->setFormat($dateTimeFormat);
-        
-        if (!$this->notEmptyValidator->isValid($month)) {
-            $since = $year . '-01-01 00:00:00';
-            if (!$this->dateValidator->isValid($since)) {
-                return $this->notFoundAction();
-            } else {
-                $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
-            }
-            $interval = \DateInterval::createFromDateString('1 year - 1 day');
-            $to = $since->add( $interval );
-        } else {
-            $since = $year . '-' . $month . '-01 00:00:00';
-            if (!$this->dateValidator->isValid($since)) {
-                return $this->notFoundAction();
-            } else {
-                $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
-            }
-            $to = $since->modify( 'last day of this month' );
-        }
-        
-        $paginator = $this->postService->findPostsByPublishDate($since, $to);
+        $paginator = $this->postService->findPostsByPublishDate($period['since'], $period['to']);
         $this->configurePaginator($paginator);
         
         $model = new ViewModel(array(
@@ -194,6 +173,47 @@ class ListController extends AbstractActionController
         $model->setTemplate('mxm-blog/list/list-posts');
         
         return $model;
+    }
+    
+    /**
+     * Формирует из года, месяца, дня определенный период 
+     * времени (год, месяц или день). Возвращает массив из DateTime'ов.
+     * 
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * 
+     * @return mixed
+     */
+    private function createPeriod($year, $month, $day) 
+    {
+        if (!$this->notEmptyValidator->isValid($year)) {
+            return false;
+        }
+        
+        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
+        $this->dateValidator->setFormat($dateTimeFormat);
+        
+        if ($this->notEmptyValidator->isValid($month)) {
+            if ($this->notEmptyValidator->isValid($day)) {
+                $since = $year . '-' . $month . '-' . $day . ' 00:00:00';
+                $interval = \DateInterval::createFromDateString('23 hours + 59 minutes + 59 seconds');
+            } else {
+                $since = $year . '-' . $month . '-01 00:00:00';
+                $interval = \DateInterval::createFromDateString('1 month - 1 day + 23 hours + 59 minutes + 59 seconds');
+            }   
+        } else {
+            $since = $year . '-01-01 00:00:00';
+            $interval = \DateInterval::createFromDateString('1 year - 1 day + 23 hours + 59 minutes + 59 seconds');
+        }
+        
+        if (!$this->dateValidator->isValid($since)) {
+            return false;
+        }
+        $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
+        $to = $since->add( $interval );
+        
+        return ['since' => $since, 'to' => $to];
     }
     
     public function listArchivesAction()

@@ -182,5 +182,24 @@ interface PostServiceInterface
      * @return bool
      */
     public function deleteTag(TagInterface $tag);
+    
+    /**
+     * Найти статьи за определенный период времени.
+     *
+     * @param  string $since Найти даты с этой даты.
+     * @param  string $to Найти статьи до данной даты..
+     * 
+     * @return Paginator
+     */
+    public function findPostsByPublishDate(\DateTimeInterface $since, \DateTimeInterface $to);
+            
+    /**
+     * Найти даты, в которые были опубликованы статьи.
+     *
+     * @param  string $group Сгруппировать по дням, месяцам или годам.
+     * 
+     * @return Paginator
+     */
+    public function findPublishDates($group);
      
 }
