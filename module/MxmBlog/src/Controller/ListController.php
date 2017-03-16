@@ -1,8 +1,27 @@
 <?php
-/**
- * @link      http://github.com/zendframework/ZendSkeletonModule for the canonical source repository
- * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+
+/* 
+ * The MIT License
+ *
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 namespace MxmBlog\Controller;
@@ -31,6 +50,8 @@ class ListController extends AbstractActionController
     protected $digitsFilter;
     
     protected $notEmptyValidator;
+    
+    protected $dateTimeFormat;
 
     /**
      * @var Zend\Config\Config
@@ -49,6 +70,7 @@ class ListController extends AbstractActionController
         $this->datetime = $datetime;
         $this->config = $config;
         $this->notEmptyValidator = $notEmptyValidator;
+        $this->dateTimeFormat = $this->config->dateTime->dateTimeFormat;
     }
 
     public function indexAction()
@@ -125,20 +147,15 @@ class ListController extends AbstractActionController
         $since = $since . ' 00:00:00';
         $to = $to . ' 23:59:59';
         
-        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
-        $this->dateValidator->setFormat($dateTimeFormat);
-        
         if (!$this->dateValidator->isValid($since)) {
             return $this->notFoundAction();
-        } else {
-            $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
         }
+        $since = $this->datetime->createFromFormat($this->dateTimeFormat, $since);
         
         if (!$this->dateValidator->isValid($to)) {
             return $this->notFoundAction();
-        } else {
-            $to = $this->datetime->createFromFormat($dateTimeFormat, $to);
         }
+        $to = $this->datetime->createFromFormat($this->dateTimeFormat, $to);
         
         $paginator = $this->postService->findPostsByPublishDate($since, $to);
         $this->configurePaginator($paginator);
@@ -190,10 +207,7 @@ class ListController extends AbstractActionController
         if (!$this->notEmptyValidator->isValid($year)) {
             return false;
         }
-        
-        $dateTimeFormat = $this->config->dateTime->dateTimeFormat;
-        $this->dateValidator->setFormat($dateTimeFormat);
-        
+                
         if ($this->notEmptyValidator->isValid($month)) {
             if ($this->notEmptyValidator->isValid($day)) {
                 $since = $year . '-' . $month . '-' . $day . ' 00:00:00';
@@ -210,7 +224,7 @@ class ListController extends AbstractActionController
         if (!$this->dateValidator->isValid($since)) {
             return false;
         }
-        $since = $this->datetime->createFromFormat($dateTimeFormat, $since);
+        $since = $this->datetime->createFromFormat($this->dateTimeFormat, $since);
         $to = $since->add( $interval );
         
         return ['since' => $since, 'to' => $to];

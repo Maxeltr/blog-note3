@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\View\Helper;
+namespace MxmUser;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\View\Helper\FormatDateI18n;
-use Zend\Config\Config;
-use MxmBlog\Service\DateTimeInterface;
-
-class FormatDateI18nFactory implements FactoryInterface
+class Module
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function getConfig()
     {
-        $config = new Config($container->get('config'));
-        $datetime = new \DateTime();
-
-        return new FormatDateI18n($config->blog_module, $datetime);
+        return include __DIR__ . '/../config/module.config.php';
     }
 }

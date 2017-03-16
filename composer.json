@@ -27,7 +27,8 @@
     "autoload": {
         "psr-4": {
             "Application\\": "module/Application/src/",
-            "MxmBlog\\": "module/MxmBlog/src/"
+            "MxmBlog\\": "module/MxmBlog/src/",
+            "MxmUser\\": "module/MxmUser/src/"
         }
     },
     "autoload-dev": {

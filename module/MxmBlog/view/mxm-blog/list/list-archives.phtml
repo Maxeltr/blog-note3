@@ -9,9 +9,7 @@
     <div class="col-sm-8 blog-main">
         <div class="blog-post">
             <?php if (count($this->archives)): ?>
-                <?php foreach ($this->archives as $archive):
-
-                ?>
+                <?php foreach ($this->archives as $archive): ?>
                 
                 <a href="<?php echo $this->url('listArchivesPosts',
                     array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $archive->year, 'month' => $archive->month, 'day' => $archive->day)); ?>">

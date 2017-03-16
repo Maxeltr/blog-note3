@@ -39,10 +39,11 @@ class ListControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $config = new Config($container->get('config'));
         $postService = $container->get(PostServiceInterface::class);
         $dateValidator = $container->get(Date::class);
+        $dateValidator->setFormat($config->blog_module->dateTime->dateTimeFormat);
         $datetime = $container->get(DateTimeInterface::class);
-        $config = new Config($container->get('config'));
         $notEmptyValidator = new NotEmpty();
         $notEmptyValidator->setType(NotEmpty::ALL);
         

@@ -23,4 +23,5 @@ return [
     'Application',
     'MxmBlog',
     'Soflomo\Purifier',
+    'MxmUser',
 ];

@@ -32,11 +32,14 @@ use MxmBlog\Service\DateTimeInterface;
 
 class FormatDateI18n extends DateFormat
 {
+    protected $datetime;
+    
     protected $config;
     
-    public function __construct(Config $config)
+    public function __construct(Config $config, \DateTimeInterface $datetime)
     {
         $this->config = $config;
+        $this->datetime = $datetime;
         parent::__construct();
     }
 
@@ -50,8 +53,8 @@ class FormatDateI18n extends DateFormat
         parent::setTimezone($this->config->dateTime->timezone); //TODO устанавливать зону юзера
         parent::setLocale($this->config->dateTime->locale); //TODO устанавливать локаль юзера
         
-        $date = new \DateTime($datetime->format($this->config->dateTime->dateTimeFormat));
-        
+        $date = $this->datetime->modify($datetime->format($this->config->dateTime->dateTimeFormat));
+
         return parent::__invoke(
             $date,
             $dateType,
