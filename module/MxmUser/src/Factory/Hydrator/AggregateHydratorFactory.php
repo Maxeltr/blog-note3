@@ -24,29 +24,30 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmUser\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmBlog\Date;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\ListController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
-use Zend\Validator\NotEmpty;
+use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmUser\Hydrator\UserHydrator;
+use MxmUser\Hydrator\DatesHydrator;
+use MxmUser\Hydrator\TimezoneHydrator;
 
-class ListControllerFactory implements FactoryInterface
+class AggregateHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $dateValidator->setFormat($config->blog_module->dateTime->dateTimeFormat);
-        $datetime = $container->get(DateTimeInterface::class);
-        $notEmptyValidator = new NotEmpty();
-        $notEmptyValidator->setType(NotEmpty::ALL);
+        $userHydrator = $container->get(UserHydrator::class);
+        $datesHydrator = $container->get(DatesHydrator::class);
+        $timezoneHydrator = $container->get(TimezoneHydrator::class);
         
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $notEmptyValidator);
+        $aggregatehydrator = new AggregateHydrator();
+        $aggregatehydrator->setEventManager($container->get('EventManager'));
+                
+        $aggregatehydrator->add($userHydrator);
+        $aggregatehydrator->add($datesHydrator);
+        $aggregatehydrator->add($timezoneHydrator);
+        
+        return $aggregatehydrator;
     }
 }

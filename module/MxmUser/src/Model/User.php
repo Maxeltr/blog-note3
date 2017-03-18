@@ -26,6 +26,9 @@
 
 namespace MxmUser\Model;
 
+use \DateTimeInterface;
+use \DateTimeZone;
+
 class User implements UserInterface
 {
     /**
@@ -47,6 +50,8 @@ class User implements UserInterface
     protected $role;
     
     protected $timezone;
+    
+    protected $created;
 
     /**
      *  {@inheritDoc}
@@ -167,9 +172,27 @@ class User implements UserInterface
     /**
      *  {@inheritDoc}
      */
-    public function setTimezone($timezone)
+    public function setTimezone(DateTimeZone $timezone)
     {
         $this->timezone = $timezone;
+        
+        return $this;
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    public function setCreated(DateTimeInterface $created)
+    {
+        $this->created = $created;
         
         return $this;
     }

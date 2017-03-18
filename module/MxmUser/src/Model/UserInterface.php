@@ -26,15 +26,135 @@
 
 namespace MxmUser\Model;
 
+use \DateTimeInterface;
+use \DateTimeZone;
+
 interface UserInterface
 {
     /**
-     *  {@inheritDoc}
+     * Возвращает ID записи
+     * 
+     * @return int ID
      */
     public function getId();
     
     /**
-     *  {@inheritDoc}
+     * Устанавливает ID записи
+     * @param int $id ID записи.
+     * 
+     * @return $this
      */
     public function setId($id);
+    
+    /**
+     * Возвращает имя юзера
+     * @param string $username
+     * 
+     * @return $this
+     */
+    public function getUsername();
+    
+    /**
+     * Устанавливает имя юзера
+     * @param string $username
+     * 
+     * @return $this
+     */
+    public function setUsername($username);
+    
+    /**
+     * Возвращает почту юзера
+     * @param string $email
+     * 
+     * @return $this
+     */
+    public function getEmail();
+    
+    /**
+     * Устанавливает почту юзера
+     * @param string $email
+     * 
+     * @return $this
+     */
+    public function setEmail($email);
+    
+    /**
+     * Возвращает пароль юзера
+     * @param string $password
+     * 
+     * @return $this
+     */
+    public function getPassword();
+    
+    /**
+     * Устанавливает пароль юзера
+     * @param string $password
+     * 
+     * @return $this
+     */
+    public function setPassword($password);
+    
+    /**
+     * Возвращает соль пароля
+     * @param string $passwordSalt
+     * 
+     * @return $this
+     */
+    public function getPasswordSalt();
+    
+    /**
+     * Устанавливает соль пароля
+     * @param string $passwordSalt
+     * 
+     * @return $this
+     */
+    public function setPasswordSalt($passwordSalt);
+    
+    /**
+     * Возвращает роль юзера
+     * @param string $passwordSalt
+     * 
+     * @return $this
+     */
+    public function getRole();
+    
+    /**
+     * Устанавливает роль юзера
+     * @param string $role
+     * 
+     * @return $this
+     */
+    public function setRole($role);
+    
+    /**
+     * Возвращает часовой пояс юзера
+     * @param string $timezone
+     * 
+     * @return $this
+     */
+    public function getTimezone();
+    
+    /**
+     * Устанавливает часовой пояс юзера
+     * @param string $timezone
+     * 
+     * @return $this
+     */
+    public function setTimezone(DateTimeZone $timezone);
+    
+    /**
+     * Возвращает время создания юзера
+     * @param DateTimeInterface $created
+     * 
+     * @return $this
+     */
+    public function getCreated();
+    
+    /**
+     * Устанавливает время создания юзера
+     * @param DateTimeInterface $created
+     * 
+     * @return $this
+     */
+    public function setCreated(DateTimeInterface $created);
 }

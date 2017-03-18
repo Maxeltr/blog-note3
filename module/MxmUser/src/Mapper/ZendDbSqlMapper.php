@@ -58,7 +58,7 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * @var \Zend\Hydrator\HydratorInterface
      */
-    protected $classMethodsHydrator;
+    protected $aggregateHydrator;
 
     /**
      * @var \Blog\Model\PostInterface
@@ -77,12 +77,12 @@ class ZendDbSqlMapper implements MapperInterface
      */
     public function __construct(
         AdapterInterface $dbAdapter,
-        HydratorInterface $classMethodsHydrator,
+        HydratorInterface $aggregateHydrator,
         UserInterface $userPrototype,
         Config $config
     ) {
         $this->dbAdapter = $dbAdapter;
-        $this->classMethodsHydrator = $classMethodsHydrator;
+        $this->aggregateHydrator = $aggregateHydrator;
         $this->userPrototype = $userPrototype;
         $this->config = $config;
     }
@@ -97,7 +97,7 @@ class ZendDbSqlMapper implements MapperInterface
         
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createObject($select, $this->classMethodsHydrator, $this->userPrototype);
+        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
     }
     
     /**
@@ -144,7 +144,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->classMethodsHydrator, $this->userPrototype);
+        return $this->createPaginator($select, $this->aggregateHydrator, $this->userPrototype);
     }
 
    /**
@@ -183,7 +183,7 @@ class ZendDbSqlMapper implements MapperInterface
      */
     public function insertUser(UserInterface $userObject)
     {
-        $data = $this->classMethodsHydrator->extract($userObject);
+        $data = $this->aggregateHydrator->extract($userObject);
 
         $action = new Insert('users');
         $action->values($data);
@@ -198,7 +198,7 @@ class ZendDbSqlMapper implements MapperInterface
      */
     public function updateUser(UserInterface $userObject)
     {
-        $data = $this->classMethodsHydrator->extract($userObject);
+        $data = $this->aggregateHydrator->extract($userObject);
 
         $action = new Update('users');	
         $action->set($data);
@@ -300,6 +300,7 @@ class ZendDbSqlMapper implements MapperInterface
             'passwordSalt' => 'passwordSalt',
             'role' => 'role',
             'timezone' => 'timezone',
+            'created' => 'created',
         ));
         
         if (array_key_exists('group', $parameters) && is_array($parameters['group'])) {

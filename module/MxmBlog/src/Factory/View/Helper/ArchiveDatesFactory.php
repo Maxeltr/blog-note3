@@ -30,7 +30,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\View\Helper\ArchiveDates;
-use Zend\Validator\Date;
+use MxmBlog\Date;
 use Zend\Config\Config;
 
 class ArchiveDatesFactory implements FactoryInterface

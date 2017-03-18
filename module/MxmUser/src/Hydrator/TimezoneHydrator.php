@@ -24,34 +24,51 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Mapper;
+namespace MxmUser\Hydrator;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\AggregateHydrator;
-use Zend\Config\Config;
-use Zend\Db\Adapter\Adapter;
-use MxmUser\Mapper\ZendDbSqlMapper;
 use MxmUser\Model\UserInterface;
+use Zend\Hydrator\HydratorInterface;
+use \DateTimeZone;
 
-class ZendDbSqlMapperFactory implements FactoryInterface
+class TimezoneHydrator implements HydratorInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    
+    public function __construct()
     {
-        //$classMethodsHydrator = new ClassMethods(false);
-        $aggregateHydrator = $container->get(AggregateHydrator::class);
+    }
+    
+    public function hydrate(array $data, $object)
+    {
+        if (!$object instanceof UserInterface) {
+            return $object;
+        }
+
+        if (array_key_exists('timezone', $data)) {
+            try{
+                $timezone = new \DateTimeZone($data['timezone']);
+            }catch(Exception $e){
+                //TODO записать в лог
+                return $object;
+            }
+            $object->setTimezone($timezone);
+        }
         
-        $user = $container->get(UserInterface::class);
+        return $object;
+    }
+
+    public function extract($object)
+    {
+        if (!$object instanceof UserInterface) {
+            return array();
+        }
         
-        $config = new Config($container->get('config'));
+        $values = array();
         
-        $adapter = $container->get(Adapter::class);
-        
-        return new ZendDbSqlMapper(
-            $adapter,
-            $aggregateHydrator,
-            $user,
-            $config//->user_module
-        );
+        $timezone = $object->getTimezone();
+        if ($timezone instanceof DateTimeZone) {
+            $values ['timezone'] = $timezone->getLocation(); //getName()?
+        }
+
+        return $values;
     }
 }

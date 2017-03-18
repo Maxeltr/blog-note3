@@ -31,7 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Hydrator\ClassMethods;
 use Zend\Config\Config;
 use Zend\Db\Adapter\Adapter;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmBlog\AggregateHydrator;
 use MxmBlog\Mapper\ZendDbSqlMapper;
 use MxmBlog\Hydrator\Tag\TagHydrator;
 use MxmBlog\Model\CategoryInterface;

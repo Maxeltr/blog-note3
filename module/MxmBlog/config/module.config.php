@@ -35,11 +35,11 @@ return [
             Model\Post::class => Factory\Model\PostFactory::class,
             Model\Tag::class => Factory\Model\TagFactory::class,
             Model\Category::class => Factory\Model\CategoryFactory::class,
-            \Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
-            \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
-            \Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
+            AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
+            Date::class => Factory\Validator\DateValidatorFactory::class,
             \Zend\I18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
-            //Soflomo\Purifier\PurifierFilter::class => Soflomo\Purifier\Factory\PurifierFilterFactory::class,
+            \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            
         ],
         'invokables' => [
             Hydrator\Tag\TagHydrator::class => Hydrator\Tag\TagHydrator::class,

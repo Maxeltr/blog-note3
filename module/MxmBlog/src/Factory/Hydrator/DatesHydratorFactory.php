@@ -31,7 +31,7 @@ use MxmBlog\Service\DateTimeInterface;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Config\Config;
-use Zend\Validator\Date;
+use MxmBlog\Date;
 
 class DatesHydratorFactory implements FactoryInterface
 {

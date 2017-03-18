@@ -9,6 +9,7 @@ return [
             Controller\ListController::class => Factory\Controller\ListControllerFactory::class,
             Controller\WriteController::class => Factory\Controller\WriteControllerFactory::class,
             Controller\DeleteController::class => Factory\Controller\DeleteControllerFactory::class,
+            Controller\AuthController::class => Factory\Controller\AuthControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -24,9 +25,18 @@ return [
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            Hydrator\UserHydrator::class => Factory\Hydrator\UserHydratorFactory::class,
+            Hydrator\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
+            Hydrator\TimezoneHydrator::class => Factory\Hydrator\TimezoneHydratorFactory::class,
+            //Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
+            //Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
+            AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
+            Date::class => Factory\Validator\DateValidatorFactory::class,
+            //Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            
         ],
         'invokables' => [
-            
+            //Hydrator\TimezoneHydrator::class => InvokableFactory::class,
         ],
     ],
     'router' => [

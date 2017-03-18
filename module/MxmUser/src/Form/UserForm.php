@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,43 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmUser\Form;
+ 
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
+use Zend\Hydrator\HydratorInterface;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmBlog\Date;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\ListController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
-use Zend\Validator\NotEmpty;
-
-class ListControllerFactory implements FactoryInterface
+class UserForm extends Form
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $dateValidator->setFormat($config->blog_module->dateTime->dateTimeFormat);
-        $datetime = $container->get(DateTimeInterface::class);
-        $notEmptyValidator = new NotEmpty();
-        $notEmptyValidator->setType(NotEmpty::ALL);
+    public function __construct(
+        HydratorInterface $hydrator,
+        InputFilter $inputFilter,
+        $name = "user_form",
+        $options = array()
+    ) {
+        parent::__construct($name, $options);
+
+        $this->setAttribute('method', 'post')
+            ->setHydrator($hydrator)
+            ->setInputFilter($inputFilter);
+    }
+    
+    public function init() {
+        //parent::init();
+        $this->add(array(
+            'name' => 'post',
+            'type' => 'MxmUser\Form\UserFieldset',
+            'options' => array(
+                'use_as_base_fieldset' => true
+            )
+        ));
         
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $notEmptyValidator);
+        $this->add(array(
+            'type' => 'submit',
+            'name' => 'submit',
+            'attributes' => array(
+                'value' => 'Send'
+            )
+        ));
     }
 }
