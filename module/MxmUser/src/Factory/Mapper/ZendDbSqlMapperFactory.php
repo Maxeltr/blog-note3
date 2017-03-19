@@ -51,7 +51,7 @@ class ZendDbSqlMapperFactory implements FactoryInterface
             $adapter,
             $aggregateHydrator,
             $user,
-            $config//->user_module
+            $config->user_module
         );
     }
 }

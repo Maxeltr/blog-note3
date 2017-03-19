@@ -37,7 +37,7 @@ class DateTimeFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
         
-        $timezone = new \DateTimeZone($config->blog_module->dateTime->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
+        $timezone = new \DateTimeZone($config->user_module->dateTime->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
         $datetime = new DateTimeImmutable('now', $timezone);
 
         return $datetime;

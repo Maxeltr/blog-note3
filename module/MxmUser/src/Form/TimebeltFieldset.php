@@ -31,12 +31,12 @@ use Zend\Hydrator\HydratorInterface;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class TimezoneFieldset extends Fieldset implements InputFilterProviderInterface
+class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
 {
     public function __construct(
         DateTimeZone $timezone,
         HydratorInterface $hydrator,
-        $name = "timezone",
+        $name = "timebelt",
         $options = array()
     ) {
         parent::__construct($name, $options);

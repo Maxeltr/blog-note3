@@ -4,6 +4,17 @@ namespace MxmUser;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
+    'user_module' => [
+        'listController' => [
+            'ItemCountPerPage' => 10,
+        ],
+        'dateTime' => [
+            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
+            'locale' => 'ru_RU',
+            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
+        ]
+        
+    ],
     'controllers' => [
         'factories' => [
             Controller\ListController::class => Factory\Controller\ListControllerFactory::class,
@@ -27,7 +38,8 @@ return [
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             Hydrator\User\UserHydrator::class => Factory\Hydrator\UserHydratorFactory::class,
             Hydrator\User\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
-            Hydrator\User\TimezoneHydrator::class => Factory\Hydrator\TimezoneHydratorFactory::class,
+            Hydrator\User\TimebeltHydrator::class => InvokableFactory::class,
+            Hydrator\Timezone\TimezoneHydrator::class => InvokableFactory::class,
             //Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
             //Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
@@ -43,7 +55,7 @@ return [
         'factories' => [
             Form\UserForm::class => Factory\Form\UserFormFactory::class,
             Form\UserFieldset::class => Factory\Form\UserFieldsetFactory::class,
-            Form\TimezoneFieldset::class => Factory\Form\TimezoneFieldsetFactory::class,
+            Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
         ]
     ],
     'router' => [

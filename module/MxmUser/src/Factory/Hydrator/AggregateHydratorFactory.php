@@ -31,7 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Hydrator\Aggregate\AggregateHydrator;
 use MxmUser\Hydrator\User\UserHydrator;
 use MxmUser\Hydrator\User\DatesHydrator;
-use MxmUser\Hydrator\User\TimezoneHydrator;
+use MxmUser\Hydrator\User\TimebeltHydrator;
 
 class AggregateHydratorFactory implements FactoryInterface
 {
@@ -39,14 +39,14 @@ class AggregateHydratorFactory implements FactoryInterface
     {
         $userHydrator = $container->get(UserHydrator::class);
         $datesHydrator = $container->get(DatesHydrator::class);
-        $timezoneHydrator = $container->get(TimezoneHydrator::class);
+        $timebeltHydrator = $container->get(TimebeltHydrator::class);
         
         $aggregatehydrator = new AggregateHydrator();
         $aggregatehydrator->setEventManager($container->get('EventManager'));
                 
         $aggregatehydrator->add($userHydrator);
         $aggregatehydrator->add($datesHydrator);
-        $aggregatehydrator->add($timezoneHydrator);
+        $aggregatehydrator->add($timebeltHydrator);
         
         return $aggregatehydrator;
     }

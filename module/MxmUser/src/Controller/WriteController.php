@@ -28,8 +28,6 @@ namespace MxmUser\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\Config\Config;
-use \DateTimeInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\DataBaseErrorUserException;
 use Zend\Form\FormInterface;
@@ -45,11 +43,6 @@ class WriteController extends AbstractActionController
      * @var \DateTimeInterface
      */
     protected $datetime;
-
-    /**
-     * @var Zend\Config\Config
-     */
-    protected $config;
     
     /**
      *

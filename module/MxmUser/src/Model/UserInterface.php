@@ -132,7 +132,7 @@ interface UserInterface
      * 
      * @return $this
      */
-    public function getTimezone();
+    public function getTimebelt();
     
     /**
      * Устанавливает часовой пояс юзера
@@ -140,7 +140,7 @@ interface UserInterface
      * 
      * @return $this
      */
-    public function setTimezone(DateTimeZone $timezone);
+    public function setTimebelt(DateTimeZone $timebelt);
     
     /**
      * Возвращает время создания юзера

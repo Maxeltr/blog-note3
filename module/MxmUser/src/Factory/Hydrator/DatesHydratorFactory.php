@@ -42,6 +42,6 @@ class DatesHydratorFactory implements FactoryInterface
         $datetime = $container->get(DateTimeInterface::class);
         $dateValidator = $container->get(Date::class);
         
-        return new DatesHydrator($datetime, $dateValidator, $config);
+        return new DatesHydrator($datetime, $dateValidator, $config->user_module);
     }
 }

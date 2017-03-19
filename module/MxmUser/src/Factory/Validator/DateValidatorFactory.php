@@ -36,7 +36,7 @@ class DateValidatorFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $dateTimeFormat = $config->blog_module->dateTime->dateTimeFormat;
+        $dateTimeFormat = $config->user_module->dateTime->dateTimeFormat;
         $validator = new Date(['format' => $dateTimeFormat]);
 
         return $validator;

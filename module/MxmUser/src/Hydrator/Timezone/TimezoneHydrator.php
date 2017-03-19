@@ -57,7 +57,7 @@ class TimezoneHydrator implements HydratorInterface
         
         $values = array();
         
-        $values ['timezone'] = $object->getName();
+        $values ['timebelt'] = $object->getName();
         
         return $values;
     }

@@ -84,7 +84,7 @@ class ListController extends AbstractActionController
         $page = (int) $this->params()->fromRoute('page');
         $page = ($page < 1) ? 1 : $page;
         $paginator->setCurrentPageNumber($page);
-        $paginator->setItemCountPerPage($this->config->blog_module->listController->ItemCountPerPage);
+        $paginator->setItemCountPerPage($this->config->listController->ItemCountPerPage);
         
         return $this;
     }

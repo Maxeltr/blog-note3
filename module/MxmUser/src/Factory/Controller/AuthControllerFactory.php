@@ -39,6 +39,6 @@ class AuthControllerFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $userService = $container->get(UserServiceInterface::class);
         
-        return new AuthController($userService, $config);
+        return new AuthController($userService, $config->user_module);
     }
 }

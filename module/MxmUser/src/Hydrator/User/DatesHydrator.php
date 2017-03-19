@@ -70,7 +70,7 @@ class DatesHydrator implements HydratorInterface
         
         $datetimeCreated = $object->getCreated();
         if ($datetimeCreated instanceof DateTimeInterface) {
-            $values ['created'] = $datetimeCreated->format($this->config->blog_module->dateTime->dateTimeFormat);
+            $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
         }
 
         return $values;

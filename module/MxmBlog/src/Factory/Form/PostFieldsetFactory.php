@@ -29,7 +29,7 @@ namespace MxmBlog\Factory\Form;
 use MxmBlog\Form\PostFieldset;
 use MxmBlog\Model\PostInterface;
 use Interop\Container\ContainerInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmBlog\AggregateHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PostFieldsetFactory implements FactoryInterface

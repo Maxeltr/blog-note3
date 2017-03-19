@@ -39,6 +39,6 @@ class ListControllerFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $userService = $container->get(UserServiceInterface::class);
         
-        return new ListController($userService, $config);
+        return new ListController($userService, $config->user_module);
     }
 }

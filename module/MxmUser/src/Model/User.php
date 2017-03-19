@@ -49,7 +49,7 @@ class User implements UserInterface
     
     protected $role;
     
-    protected $timezone;
+    protected $timebelt;
     
     protected $created;
 
@@ -164,17 +164,17 @@ class User implements UserInterface
     /**
      *  {@inheritDoc}
      */
-    public function getTimezone()
+    public function getTimebelt()
     {
-        return $this->timezone;
+        return $this->timebelt;
     }
     
     /**
      *  {@inheritDoc}
      */
-    public function setTimezone(DateTimeZone $timezone)
+    public function setTimebelt(DateTimeZone $timebelt)
     {
-        $this->timezone = $timezone;
+        $this->timebelt = $timebelt;
         
         return $this;
     }

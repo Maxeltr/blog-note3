@@ -28,7 +28,7 @@ namespace MxmBlog\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmBlog\AggregateHydrator;
 use MxmBlog\Form\PostForm;
 use Zend\InputFilter\InputFilter;
 

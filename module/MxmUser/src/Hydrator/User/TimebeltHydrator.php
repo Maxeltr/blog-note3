@@ -24,26 +24,49 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Form;
+namespace MxmUser\Hydrator\User;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Form\TimezoneFieldset;
+use MxmUser\Model\UserInterface;
+use Zend\Hydrator\HydratorInterface;
 use \DateTimeZone;
-use Zend\Hydrator\ClassMethods;
-use Interop\Container\ContainerInterface;
-use MxmUser\Hydrator\Timezone\TimezoneHydrator;
 
-class TimezoneFieldsetFactory implements FactoryInterface
+class TimebeltHydrator implements HydratorInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    
+    public function __construct()
     {
-        return new TimezoneFieldset(
-            new DateTimeZone('Asia/Irkutsk'), //TODO
-            //new ClassMethods(false),
-            //$container->get(TimezoneHydrator::class),
-            new TimezoneHydrator(),
-            $requestedName,
-            $options
-        );
+    }
+    
+    public function hydrate(array $data, $object)
+    {
+        if (!$object instanceof UserInterface) {
+            return $object;
+        }
+        
+        if (array_key_exists('timebelt', $data)) {
+            if ($data['timebelt'] instanceof DateTimeZone) {
+                $object->setTimebelt($data['timebelt']);
+            } else {
+                $object->setTimebelt(new DateTimeZone($data['timebelt']));
+            }
+        }
+
+        return $object;
+    }
+
+    public function extract($object)
+    {
+        if (!$object instanceof UserInterface) {
+            return array();
+        }
+        
+        $values = array();
+        
+        $timezone = $object->getTimebelt();
+        if ($timezone instanceof DateTimeZone) {
+            $values ['timebelt'] = $timezone->getName();
+        }
+        
+        return $values;
     }
 }

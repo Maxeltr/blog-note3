@@ -299,7 +299,7 @@ class ZendDbSqlMapper implements MapperInterface
             'password' => 'password',
             'passwordSalt' => 'passwordSalt',
             'role' => 'role',
-            'timezone' => 'timezone',
+            'timebelt' => 'timebelt',
             'created' => 'created',
         ));
         

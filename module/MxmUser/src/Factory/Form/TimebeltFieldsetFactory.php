@@ -24,16 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Hydrator;
+namespace MxmUser\Factory\Form;
 
-use MxmUser\Hydrator\User\TimezoneHydrator;
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Form\TimebeltFieldset;
+use \DateTimeZone;
+use Zend\Config\Config;
+use Interop\Container\ContainerInterface;
+use MxmUser\Hydrator\Timezone\TimezoneHydrator;
 
-class TimezoneHydratorFactory implements FactoryInterface
+class TimebeltFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {   
-        return new TimezoneHydrator();
+    {
+        $config = new Config($container->get('config'));
+        $timezone = $config->user_module->dateTime->timezone;   //default timezone
+        
+        return new TimebeltFieldset(
+            new DateTimeZone($timezone),
+            $container->get(TimezoneHydrator::class),
+            $requestedName,
+            $options
+        );
     }
 }

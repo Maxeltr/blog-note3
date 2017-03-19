@@ -24,49 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\User;
+namespace MxmUser\Factory\Hydrator;
 
-use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
+use MxmUser\Hydrator\User\TimebeltHydrator;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
-class TimezoneHydrator implements HydratorInterface
+class TimebeltHydratorFactory implements FactoryInterface
 {
-    
-    public function __construct()
-    {
-    }
-    
-    public function hydrate(array $data, $object)
-    {
-        if (!$object instanceof UserInterface) {
-            return $object;
-        }
-        
-        if (array_key_exists('timezone', $data)) {
-            if ($data['timezone'] instanceof DateTimeZone) {
-                $object->setTimezone($data['timezone']);
-            } else {
-                $object->setTimezone(new DateTimeZone($data['timezone']));
-            }
-        }
-
-        return $object;
-    }
-
-    public function extract($object)
-    {
-        if (!$object instanceof UserInterface) {
-            return array();
-        }
-        
-        $values = array();
-        
-        $timezone = $object->getTimezone();
-        if ($timezone instanceof DateTimeZone) {
-            $values ['timezone'] = $timezone->getName();
-        }
-        
-        return $values;
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {   
+        return new TimebeltHydrator();
     }
 }

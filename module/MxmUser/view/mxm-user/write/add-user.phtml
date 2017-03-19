@@ -38,7 +38,7 @@ echo $this->formRow($user->get('username'));
 echo $this->formRow($user->get('email'));
 echo $this->formRow($user->get('password'));
 echo $this->formRow($user->get('confirmPassword'));
-$timezone = $user->get('timezone');
+$timezone = $user->get('timebelt');
 echo $this->formRow($timezone->get('id'));
 
 echo $this->formElement($form->get('submit'));

@@ -38,7 +38,7 @@ class UserHydrator implements HydratorInterface
      */
     protected $skipProperties = [
         'created',
-        'timezone',
+        'timebelt',
         '__construct'
     ];
     
@@ -48,7 +48,6 @@ class UserHydrator implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        //die('PostHydrator');
         if (!$object instanceof UserInterface) {
             return array();
         }

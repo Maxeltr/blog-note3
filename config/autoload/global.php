@@ -36,15 +36,4 @@ return [
             //'Output.TidyFormat' => true,
         ],
     ],
-    'blog_module' => [
-        'listController' => [
-            'ItemCountPerPage' => 10,
-        ],
-        'dateTime' => [
-            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
-            'locale' => 'ru_RU',
-            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-        ]
-        
-    ],
 ];

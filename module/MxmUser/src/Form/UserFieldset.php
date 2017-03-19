@@ -97,8 +97,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
     public function init() {
         //parent::init();
         $this->add(array(
-            'name' => 'timezone',
-            'type' => 'MxmUser\Form\TimezoneFieldset',
+            'name' => 'timebelt',
+            'type' => 'MxmUser\Form\TimebeltFieldset',
             'options' => array(
                 'use_as_base_fieldset' => true
             )
