@@ -29,9 +29,9 @@ namespace MxmUser\Factory\Hydrator;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Hydrator\Aggregate\AggregateHydrator;
-use MxmUser\Hydrator\UserHydrator;
-use MxmUser\Hydrator\DatesHydrator;
-use MxmUser\Hydrator\TimezoneHydrator;
+use MxmUser\Hydrator\User\UserHydrator;
+use MxmUser\Hydrator\User\DatesHydrator;
+use MxmUser\Hydrator\User\TimezoneHydrator;
 
 class AggregateHydratorFactory implements FactoryInterface
 {

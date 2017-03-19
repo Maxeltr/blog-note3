@@ -24,23 +24,41 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Form;
+namespace MxmUser\Hydrator\Timezone;
 
-use MxmUser\Form\UserFieldset;
-use MxmUser\Model\UserInterface;
-use Interop\Container\ContainerInterface;
-use MxmUser\AggregateHydrator;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\Hydrator\HydratorInterface;
+use \DateTimeZone;
 
-class PostFieldsetFactory implements FactoryInterface
+class TimezoneHydrator implements HydratorInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    
+    public function __construct()
     {
-        return new UserFieldset(
-            $container->get(UserInterface::class),
-            $container->get(AggregateHydrator::class),
-            $requestedName,
-            $options
-        );
+    }
+    
+    public function hydrate(array $data, $object)
+    {
+        if (!$object instanceof DateTimeZone) {
+            return $object;
+        }
+        
+        $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
+        
+        $timezone = new DateTimeZone($timezones[$data['id']]);
+        
+        return $timezone;
+    }
+
+    public function extract($object)
+    {
+        if (!$object instanceof DateTimeZone) {
+            return array();
+        }
+        
+        $values = array();
+        
+        $values ['timezone'] = $object->getName();
+        
+        return $values;
     }
 }

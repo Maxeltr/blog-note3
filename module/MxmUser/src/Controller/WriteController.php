@@ -34,7 +34,7 @@ use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\DataBaseErrorUserException;
 use Zend\Form\FormInterface;
 
-class ListController extends AbstractActionController
+class WriteController extends AbstractActionController
 {
     /**
      * @var \MxmUser\Service\UserServiceInterface
@@ -59,17 +59,13 @@ class ListController extends AbstractActionController
     
     public function __construct(
         UserServiceInterface $userService, 
-        DateTimeInterface $datetime, 
-        Config $config,
         FormInterface $userForm
     ) {
         $this->userService = $userService;
-        $this->datetime = $datetime;
-        $this->config = $config;
         $this->userForm = $userForm;
     }
     
-    public function AddAction()
+    public function AddUserAction()
     {
         $request = $this->getRequest();
         if ($request->isPost()) {

@@ -24,24 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Hydrator;
+namespace MxmUser\Factory\Form;
 
-use MxmUser\Hydrator\User\DatesHydrator;
-use MxmUser\Service\DateTimeInterface;
+use MxmUser\Form\UserFieldset;
+use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
+use MxmUser\AggregateHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
-use MxmUser\Date;
 
-class DatesHydratorFactory implements FactoryInterface
+class UserFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
-                
-        $datetime = $container->get(DateTimeInterface::class);
-        $dateValidator = $container->get(Date::class);
-        
-        return new DatesHydrator($datetime, $dateValidator, $config);
+        return new UserFieldset(
+            $container->get(UserInterface::class),
+            $container->get(AggregateHydrator::class),
+            $requestedName,
+            $options
+        );
     }
 }

@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator;
+namespace MxmUser\Hydrator\User;
 
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;

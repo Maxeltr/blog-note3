@@ -25,42 +25,60 @@
  */
 
 namespace MxmUser\Form;
- 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\HydratorInterface;
 
-class UserForm extends Form
+use \DateTimeZone;
+use Zend\Hydrator\HydratorInterface;
+use Zend\Form\Fieldset;
+use Zend\InputFilter\InputFilterProviderInterface;
+
+class TimezoneFieldset extends Fieldset implements InputFilterProviderInterface
 {
     public function __construct(
+        DateTimeZone $timezone,
         HydratorInterface $hydrator,
-        InputFilter $inputFilter,
-        $name = "user_form",
+        $name = "timezone",
         $options = array()
     ) {
         parent::__construct($name, $options);
-
-        $this->setAttribute('method', 'post')
-            ->setHydrator($hydrator)
-            ->setInputFilter($inputFilter);
-    }
-    
-    public function init() {
-        //parent::init();
-        $this->add(array(
-            'name' => 'user',
-            'type' => 'MxmUser\Form\UserFieldset',
-            'options' => array(
-                'use_as_base_fieldset' => true
-            )
-        ));
+        
+        $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
+        
+        $this->setHydrator($hydrator);
+        $this->setObject($timezone);
         
         $this->add(array(
-            'type' => 'submit',
-            'name' => 'submit',
-            'attributes' => array(
-                'value' => 'Send'
-            )
+            'name'=>'id',
+            'type' => 'Zend\Form\Element\Select',
+            'attributes'=>array(
+                'type'=>'select',
+                'required' => 'required',
+                'class' => 'form-control',
+            ),
+            'options'=>array(
+                'label'=>'Timezone',
+                //'disable_inarray_validator' => true,
+                'value_options' => $timezones,
+            ),
         ));
+        
+    }
+    
+    /**
+     * Should return an array specification compatible with
+     * {@link ZendInputFilterFactory::createInputFilter()}.
+     *
+     * @return array
+     */
+    public function getInputFilterSpecification()
+    {
+        return array(
+            'id' => array(
+                'filters'=>array(
+                    array(
+                        'name' => 'Int'
+                    ),
+                ),
+            ),
+        );
     }
 }

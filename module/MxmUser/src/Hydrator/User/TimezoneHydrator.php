@@ -24,24 +24,49 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Hydrator;
+namespace MxmUser\Hydrator\User;
 
-use MxmUser\Hydrator\User\DatesHydrator;
-use MxmUser\Service\DateTimeInterface;
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
-use MxmUser\Date;
+use MxmUser\Model\UserInterface;
+use Zend\Hydrator\HydratorInterface;
+use \DateTimeZone;
 
-class DatesHydratorFactory implements FactoryInterface
+class TimezoneHydrator implements HydratorInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    
+    public function __construct()
     {
-        $config = new Config($container->get('config'));
-                
-        $datetime = $container->get(DateTimeInterface::class);
-        $dateValidator = $container->get(Date::class);
+    }
+    
+    public function hydrate(array $data, $object)
+    {
+        if (!$object instanceof UserInterface) {
+            return $object;
+        }
         
-        return new DatesHydrator($datetime, $dateValidator, $config);
+        if (array_key_exists('timezone', $data)) {
+            if ($data['timezone'] instanceof DateTimeZone) {
+                $object->setTimezone($data['timezone']);
+            } else {
+                $object->setTimezone(new DateTimeZone($data['timezone']));
+            }
+        }
+
+        return $object;
+    }
+
+    public function extract($object)
+    {
+        if (!$object instanceof UserInterface) {
+            return array();
+        }
+        
+        $values = array();
+        
+        $timezone = $object->getTimezone();
+        if ($timezone instanceof DateTimeZone) {
+            $values ['timezone'] = $timezone->getName();
+        }
+        
+        return $values;
     }
 }

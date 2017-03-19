@@ -32,7 +32,7 @@ use MxmUser\AggregateHydrator;
 use MxmUser\Form\UserForm;
 use Zend\InputFilter\InputFilter;
 
-class PostFormFactory implements FactoryInterface
+class UserFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

@@ -26,7 +26,7 @@
 
 namespace MxmUser\Factory\Hydrator;
 
-use MxmUser\Hydrator\TimezoneHydrator;
+use MxmUser\Hydrator\User\TimezoneHydrator;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 

@@ -26,7 +26,7 @@
 
 namespace MxmUser\Factory\Hydrator;
  
-use MxmUser\Hydrator\UserHydrator;
+use MxmUser\Hydrator\User\UserHydrator;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
  

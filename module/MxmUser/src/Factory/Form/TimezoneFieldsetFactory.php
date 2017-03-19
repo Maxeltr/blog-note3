@@ -24,51 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator;
+namespace MxmUser\Factory\Form;
 
-use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Form\TimezoneFieldset;
 use \DateTimeZone;
+use Zend\Hydrator\ClassMethods;
+use Interop\Container\ContainerInterface;
+use MxmUser\Hydrator\Timezone\TimezoneHydrator;
 
-class TimezoneHydrator implements HydratorInterface
+class TimezoneFieldsetFactory implements FactoryInterface
 {
-    
-    public function __construct()
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-    }
-    
-    public function hydrate(array $data, $object)
-    {
-        if (!$object instanceof UserInterface) {
-            return $object;
-        }
-
-        if (array_key_exists('timezone', $data)) {
-            try{
-                $timezone = new \DateTimeZone($data['timezone']);
-            }catch(Exception $e){
-                //TODO записать в лог
-                return $object;
-            }
-            $object->setTimezone($timezone);
-        }
-        
-        return $object;
-    }
-
-    public function extract($object)
-    {
-        if (!$object instanceof UserInterface) {
-            return array();
-        }
-        
-        $values = array();
-        
-        $timezone = $object->getTimezone();
-        if ($timezone instanceof DateTimeZone) {
-            $values ['timezone'] = $timezone->getLocation(); //getName()?
-        }
-
-        return $values;
+        return new TimezoneFieldset(
+            new DateTimeZone('Asia/Irkutsk'), //TODO
+            //new ClassMethods(false),
+            //$container->get(TimezoneHydrator::class),
+            new TimezoneHydrator(),
+            $requestedName,
+            $options
+        );
     }
 }

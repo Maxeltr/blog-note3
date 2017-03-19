@@ -25,9 +25,9 @@ return [
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
-            Hydrator\UserHydrator::class => Factory\Hydrator\UserHydratorFactory::class,
-            Hydrator\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
-            Hydrator\TimezoneHydrator::class => Factory\Hydrator\TimezoneHydratorFactory::class,
+            Hydrator\User\UserHydrator::class => Factory\Hydrator\UserHydratorFactory::class,
+            Hydrator\User\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
+            Hydrator\User\TimezoneHydrator::class => Factory\Hydrator\TimezoneHydratorFactory::class,
             //Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
             //Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
@@ -38,6 +38,13 @@ return [
         'invokables' => [
             //Hydrator\TimezoneHydrator::class => InvokableFactory::class,
         ],
+    ],
+    'form_elements' => [
+        'factories' => [
+            Form\UserForm::class => Factory\Form\UserFormFactory::class,
+            Form\UserFieldset::class => Factory\Form\UserFieldsetFactory::class,
+            Form\TimezoneFieldset::class => Factory\Form\TimezoneFieldsetFactory::class,
+        ]
     ],
     'router' => [
         'routes' => [
@@ -67,6 +74,29 @@ return [
                     'defaults' => [
                         'controller'    => Controller\ListController::class,
                         'action' => 'listUsers'
+                    ],
+                ],
+            ],
+            'detailUser' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/detail/user/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'detailUser'
+                    ],
+                ],
+            ],
+            'addUser' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/add/user',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'addUser'
                     ],
                 ],
             ],
