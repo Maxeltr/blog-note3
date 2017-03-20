@@ -91,7 +91,7 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailPost', 
-                    array('action' => 'detail', 'id' => $savedPost->getId()));
+                    array('id' => $savedPost->getId()));
             }
         }
 
@@ -122,7 +122,7 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailPost', 
-                    array('action' => 'detail', 'id' => $post->getId()));
+                    array('id' => $post->getId()));
             }
         }
  
@@ -145,7 +145,7 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailTag', 
-                    array('action' => 'detail', 'id' => $savedTag->getId()));
+                    array('id' => $savedTag->getId()));
             }
         }
 
@@ -176,7 +176,7 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailTag', 
-                    array('action' => 'detail', 'id' => $tag->getId()));
+                    array('id' => $tag->getId()));
             }
         }
  
@@ -199,7 +199,7 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailCategory', 
-                    array('action' => 'detail', 'id' => $savedCategory->getId()));
+                    array('id' => $savedCategory->getId()));
             }
         }
 
@@ -230,7 +230,7 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailCategory', 
-                    array('action' => 'detail', 'id' => $category->getId()));
+                    array('id' => $category->getId()));
             }
         }
  

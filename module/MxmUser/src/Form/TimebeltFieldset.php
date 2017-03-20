@@ -47,12 +47,13 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
         $this->setObject($timezone);
         
         $this->add(array(
-            'name'=>'id',
+            'name'=>'timezoneId',
             'type' => 'Zend\Form\Element\Select',
             'attributes'=>array(
                 'type'=>'select',
                 'required' => 'required',
                 'class' => 'form-control',
+                'value' => $timezone->getName()
             ),
             'options'=>array(
                 'label'=>'Timezone',

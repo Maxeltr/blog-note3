@@ -24,43 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Form;
- 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\HydratorInterface;
+namespace MxmUser\Factory\Form;
 
-class UserForm extends Form
+use MxmUser\Form\RegisterFieldset;
+use MxmUser\Model\UserInterface;
+use Interop\Container\ContainerInterface;
+use MxmUser\AggregateHydrator;
+use Zend\ServiceManager\Factory\FactoryInterface;
+
+class RegisterFieldsetFactory implements FactoryInterface
 {
-    public function __construct(
-        HydratorInterface $hydrator,
-        InputFilter $inputFilter,
-        $name = "user_form",
-        $options = array()
-    ) {
-        parent::__construct($name, $options);
-
-        $this->setAttribute('method', 'post')
-            ->setHydrator($hydrator)
-            ->setInputFilter($inputFilter);
-    }
-    
-    public function init() {
-        //parent::init();
-        $this->add(array(
-            'name' => 'user',
-            'type' => 'MxmUser\Form\UserFieldset',
-            'options' => array(
-                'use_as_base_fieldset' => true
-            )
-        ));
-        
-        $this->add(array(
-            'type' => 'submit',
-            'name' => 'submit',
-            'attributes' => array(
-                'value' => 'Send'
-            )
-        ));
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        return new RegisterFieldset(
+            $container->get(UserInterface::class),
+            $container->get(AggregateHydrator::class),
+            $requestedName,
+            $options
+        );
     }
 }

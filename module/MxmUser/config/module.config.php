@@ -53,9 +53,11 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            Form\UserForm::class => Factory\Form\UserFormFactory::class,
-            Form\UserFieldset::class => Factory\Form\UserFieldsetFactory::class,
+            Form\RegisterForm::class => Factory\Form\RegisterFormFactory::class,
+            Form\RegisterFieldset::class => Factory\Form\RegisterFieldsetFactory::class,
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
+            Form\EditUserForm::class => Factory\Form\EditUserFormFactory::class,
+            Form\UserFieldset::class => Factory\Form\UserFieldsetFactory::class,
         ]
     ],
     'router' => [
@@ -109,6 +111,19 @@ return [
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action' => 'addUser'
+                    ],
+                ],
+            ],
+            'editUser' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/edit/user/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editUser'
                     ],
                 ],
             ],

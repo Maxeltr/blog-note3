@@ -31,7 +31,7 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 
-class UserFieldset extends Fieldset implements InputFilterProviderInterface
+class RegisterFieldset extends Fieldset implements InputFilterProviderInterface
 {
     public function __construct(UserInterface $post, HydratorInterface $hydrator, $name = "user", $options = array())
     {
@@ -57,10 +57,45 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
             )
         ));
         
+        $this->add(array(
+            'type' => 'text',
+            'name' => 'email',
+            'attributes'=>array(
+                'class' => 'form-control',
+                'required' => 'required',
+            ),
+            'options' => array(
+                'label' => 'Email'
+            )
+        ));
+
+        $this->add(array(
+            'type' => 'password',
+            'name' => 'password',
+            'attributes'=>array(
+                'class' => 'form-control',
+                'required' => 'required',
+            ),
+            'options' => array(
+                'label' => 'Password'
+            )
+        ));
         
+        $this->add(array(
+            'type' => 'password',
+            'name' => 'confirmPassword',
+            'attributes'=>array(
+                'class' => 'form-control',
+                'required' => 'required',
+            ),
+            'options' => array(
+                'label' => 'Confirm Password'
+            )
+        ));
     }
     
     public function init() {
+        //parent::init();
         $this->add(array(
             'name' => 'timebelt',
             'type' => TimebeltFieldset::class,
@@ -68,6 +103,8 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
                 'use_as_base_fieldset' => true
             )
         ));
+        
+        
     }
     
     /**
@@ -110,7 +147,79 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
                     )
                 )
             ),
-                        
+            'email' => array(
+                'required' => true,
+                'filters'=>array(
+                    array(
+                        'name' => 'StripTags'
+                    ),
+                    array(
+                        'name' => 'StringTrim'
+                    ),
+                    array(
+                        'name' => 'StripNewlines'
+                    ),
+                ),
+                'validators' => array(
+                    array(
+                        'name'=>'StringLength',
+                        'options'=>array(
+                            'encoding'=>'UTF-8',
+                            'min'=>1,
+                            'max'=>250,
+                        )
+                    )
+                )
+            ),
+            'password' => array(
+                'required' => true,
+                'filters'=>array(
+                    array(
+                        'name' => 'StripTags'
+                    ),
+                    array(
+                        'name' => 'StringTrim'
+                    ),
+                    array(
+                        'name' => 'StripNewlines'
+                    ),
+                ),
+                'validators' => array(
+                    array(
+                        'name'=>'StringLength',
+                        'options'=>array(
+                            'encoding'=>'UTF-8',
+                            'min'=>1,
+                            'max'=>250,
+                        )
+                    )
+                )
+            ),
+            'confirmPassword' => array(
+                'required' => true,
+                'filters'=>array(
+                    array(
+                        'name' => 'StripTags'
+                    ),
+                    array(
+                        'name' => 'StringTrim'
+                    ),
+                    array(
+                        'name' => 'StripNewlines'
+                    ),
+                ),
+                'validators' => array(
+                    array(
+                        'name'=>'StringLength',
+                        'options'=>array(
+                            'encoding'=>'UTF-8',
+                            'min'=>1,
+                            'max'=>250,
+                        )
+                    )
+                )
+            ),
+            
         );
     }
 }

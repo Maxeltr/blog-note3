@@ -48,40 +48,48 @@ class WriteController extends AbstractActionController
      *
      * @var Zend\Form\FormInterface 
      */
-    protected $userForm;
+    protected $registerForm;
+    
+    /**
+     *
+     * @var Zend\Form\FormInterface 
+     */
+    protected $editUserForm;
     
     public function __construct(
         UserServiceInterface $userService, 
-        FormInterface $userForm
+        FormInterface $registerForm,
+        FormInterface $editUserForm
     ) {
         $this->userService = $userService;
-        $this->userForm = $userForm;
+        $this->registerForm = $registerForm;
+        $this->editUserForm = $editUserForm;
     }
     
     public function AddUserAction()
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->userForm->setData($request->getPost());
-            if ($this->userForm->isValid()) {
+            $this->registerForm->setData($request->getPost());
+            if ($this->registerForm->isValid()) {
                 try {
-                    $savedUser = $this->userService->insertUser($this->userForm->getData());
+                    $savedUser = $this->userService->insertUser($this->registerForm->getData());
                 } catch (DataBaseErrorUserException $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('action' => 'detail', 'id' => $savedUser->getId()));
+                    array('id' => $savedUser->getId()));
             }
         }
 
         return new ViewModel(array(
-            'form' => $this->userForm
+            'form' => $this->registerForm
         ));
     }
     
-    public function EditAction()
+    public function EditUserAction()
     {
         $request = $this->getRequest();
         try {
@@ -91,10 +99,10 @@ class WriteController extends AbstractActionController
             return $this->notFoundAction();
         }
         
-        $this->userForm->bind($user);
+        $this->editUserForm->bind($user);
         if ($request->isPost()) {
-            $this->userForm->setData($request->getPost());
-            if ($this->userForm->isValid()) {
+            $this->editUserForm->setData($request->getPost());
+            if ($this->editUserForm->isValid()) {
                 try {
                     $this->userService->updateUser($user);
                 } catch (DataBaseErrorUserException $e) {
@@ -103,12 +111,12 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('action' => 'detail', 'id' => $user->getId()));
+                    array('id' => $user->getId()));
             }
         }
  
         return new ViewModel(array(
-                'form' => $this->userForm
+                'form' => $this->editUserForm
         ));
     }
     
