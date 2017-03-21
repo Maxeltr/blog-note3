@@ -31,32 +31,15 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 
-class RegisterFieldset extends Fieldset implements InputFilterProviderInterface
+class CredentialsFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(UserInterface $post, HydratorInterface $hydrator, $name = "user", $options = array())
+    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "user", $options = array())
     {
         parent::__construct($name, $options);
         
         $this->setHydrator($hydrator);
-        $this->setObject($post);
+        $this->setObject($user);
 
-        $this->add(array(
-            'type' => 'hidden',
-            'name' => 'id'
-        ));
-        
-        $this->add(array(
-            'type' => 'text',
-            'name' => 'username',
-            'attributes'=>array(
-                'class' => 'form-control',
-                'required' => 'required',
-            ),
-            'options' => array(
-                'label' => 'Username'
-            )
-        ));
-        
         $this->add(array(
             'type' => 'text',
             'name' => 'email',
@@ -95,15 +78,6 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface
     }
     
     public function init() {
-        //parent::init();
-        $this->add(array(
-            'name' => 'timebelt',
-            'type' => TimebeltFieldset::class,
-            'options' => array(
-                'use_as_base_fieldset' => true
-            )
-        ));
-        
         
     }
     
@@ -116,37 +90,6 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return array(
-            'id' => array(
-                'filters'=>array(
-                    array(
-                        'name' => 'Int'
-                    ),
-                ),
-            ),
-            'username' => array(
-                'required' => true,
-                'filters'=>array(
-                    array(
-                        'name' => 'StripTags'
-                    ),
-                    array(
-                        'name' => 'StringTrim'
-                    ),
-                    array(
-                        'name' => 'StripNewlines'
-                    ),
-                ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
-                            'encoding'=>'UTF-8',
-                            'min'=>1,
-                            'max'=>250,
-                        )
-                    )
-                )
-            ),
             'email' => array(
                 'required' => true,
                 'filters'=>array(
@@ -208,16 +151,18 @@ class RegisterFieldset extends Fieldset implements InputFilterProviderInterface
                         'name' => 'StripNewlines'
                     ),
                 ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
-                            'encoding'=>'UTF-8',
-                            'min'=>1,
-                            'max'=>250,
-                        )
-                    )
-                )
+                'validators' => [
+                    ['name' => 'Identical',
+                     'options' => [
+                        'token' => 'password',                            
+                    ]],
+                    ['name' => 'StringLength',
+                     'options' => [
+                        'encoding' => 'UTF-8',
+                        'min' => 1,
+                        'max' => 250,
+                    ]],
+                ]
             ),
             
         );

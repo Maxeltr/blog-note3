@@ -24,52 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Form;
- 
-use Zend\Form\Form;
+namespace MxmUser\Factory\Form;
+
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\AggregateHydrator;
+use MxmUser\Form\UserForm;
 use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\HydratorInterface;
 
-class EditUserForm extends Form
+class UserFormFactory implements FactoryInterface
 {
-    public function __construct(
-        HydratorInterface $hydrator,
-        InputFilter $inputFilter,
-        $name = "edit_user",
-        $options = array()
-    ) {
-        parent::__construct($name, $options);
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $aggregatehydrator = $container->get(AggregateHydrator::class);
 
-        $this->setAttribute('method', 'post')
-            ->setHydrator($hydrator)
-            ->setInputFilter($inputFilter);
-    }
-    
-    public function init() {
-        //parent::init();
-        
-        $this->add(array(
-            'name' => 'user',
-            'type' => UserFieldset::class,
-            'options' => array(
-                'use_as_base_fieldset' => true
-            )
-        ));
-        
-//        $this->add(array(
-//            'name' => 'timebelt',
-//            'type' => TimebeltFieldset::class,
-//            'options' => array(
-//                'use_as_base_fieldset' => true
-//            )
-//        ));
-        
-        $this->add(array(
-            'type' => 'submit',
-            'name' => 'submit',
-            'attributes' => array(
-                'value' => 'Send'
-            )
-        ));
+        return new UserForm(
+            $aggregatehydrator,
+            new InputFilter()
+        );
     }
 }

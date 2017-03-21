@@ -44,7 +44,7 @@ class TimezoneHydrator implements HydratorInterface
         
         $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
         
-        $timezone = new DateTimeZone($timezones[$data['id']]);
+        $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
         
         return $timezone;
     }

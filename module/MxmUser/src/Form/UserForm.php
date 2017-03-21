@@ -24,27 +24,51 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmUser\Form;
+ 
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
+use Zend\Hydrator\HydratorInterface;
 
-use MxmUser\Controller\WriteController;
-use MxmUser\Form\RegisterForm;
-use MxmUser\Form\UserForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Interop\Container\ContainerInterface;
-use MxmUser\Service\UserServiceInterface;
-
-class WriteControllerFactory implements FactoryInterface
+class UserForm extends Form
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $userService = $container->get(UserServiceInterface::class);
+    public function __construct(
+        HydratorInterface $hydrator,
+        InputFilter $inputFilter,
+        $name = "user",
+        $options = array()
+    ) {
+        parent::__construct($name, $options);
 
-        $formManager = $container->get('FormElementManager');
-        $userForm = $formManager->get(UserForm::class);
+        $this->setAttribute('method', 'post')
+            ->setHydrator($hydrator)
+            ->setInputFilter($inputFilter);
+    }
+    
+    public function init() {
+        //parent::init();
+        $this->add(array(
+            'name' => 'user',
+            'type' => UserFieldset::class,
+            'options' => array(
+                'use_as_base_fieldset' => true
+            )
+        ));
         
-        return new WriteController(
-            $userService,
-            $userForm
-        );
+        $this->add(array(
+            'name' => 'timebelt',
+            'type' => TimebeltFieldset::class,
+            'options' => array(
+                'use_as_base_fieldset' => true
+            )
+        ));
+        
+        $this->add(array(
+            'type' => 'submit',
+            'name' => 'submit',
+            'attributes' => array(
+                'value' => 'Send'
+            )
+        ));
     }
 }

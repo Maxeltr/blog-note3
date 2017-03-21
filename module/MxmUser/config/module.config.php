@@ -53,11 +53,12 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            Form\RegisterForm::class => Factory\Form\RegisterFormFactory::class,
-            Form\RegisterFieldset::class => Factory\Form\RegisterFieldsetFactory::class,
+            //Form\RegisterForm::class => Factory\Form\RegisterFormFactory::class,
+            //Form\RegisterFieldset::class => Factory\Form\RegisterFieldsetFactory::class,
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
-            Form\EditUserForm::class => Factory\Form\EditUserFormFactory::class,
+            Form\UserForm::class => Factory\Form\UserFormFactory::class,
             Form\UserFieldset::class => Factory\Form\UserFieldsetFactory::class,
+            Form\CredentialsFieldset::class => Factory\Form\CredentialsFieldsetFactory::class,
         ]
     ],
     'router' => [

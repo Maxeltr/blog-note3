@@ -34,9 +34,7 @@ echo $this->form()->openTag($form);
 $user = $form->get('user');
 echo $this->formRow($user->get('id'));
 echo $this->formRow($user->get('username'));
-//echo $this->formRow($user->get('email'));
-//echo $this->formRow($user->get('password'));
-//echo $this->formRow($user->get('confirmPassword'));
+
 $timezone = $user->get('timebelt');
 echo $this->formRow($timezone->get('timezoneId'));
 

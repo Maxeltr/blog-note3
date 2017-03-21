@@ -48,32 +48,24 @@ class WriteController extends AbstractActionController
      *
      * @var Zend\Form\FormInterface 
      */
-    protected $registerForm;
-    
-    /**
-     *
-     * @var Zend\Form\FormInterface 
-     */
-    protected $editUserForm;
+    protected $userForm;
     
     public function __construct(
         UserServiceInterface $userService, 
-        FormInterface $registerForm,
-        FormInterface $editUserForm
+        FormInterface $userForm
     ) {
         $this->userService = $userService;
-        $this->registerForm = $registerForm;
-        $this->editUserForm = $editUserForm;
+        $this->userForm = $userForm;
     }
     
     public function AddUserAction()
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->registerForm->setData($request->getPost());
-            if ($this->registerForm->isValid()) {
+            $this->userForm->setData($request->getPost());
+            if ($this->userForm->isValid()) {
                 try {
-                    $savedUser = $this->userService->insertUser($this->registerForm->getData());
+                    $savedUser = $this->userService->insertUser($this->userForm->getData());
                 } catch (DataBaseErrorUserException $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
@@ -85,7 +77,7 @@ class WriteController extends AbstractActionController
         }
 
         return new ViewModel(array(
-            'form' => $this->registerForm
+            'form' => $this->userForm
         ));
     }
     
@@ -99,10 +91,10 @@ class WriteController extends AbstractActionController
             return $this->notFoundAction();
         }
         
-        $this->editUserForm->bind($user);
+        $this->userForm->bind($user);
         if ($request->isPost()) {
-            $this->editUserForm->setData($request->getPost());
-            if ($this->editUserForm->isValid()) {
+            $this->userForm->setData($request->getPost());
+            if ($this->userForm->isValid()) {
                 try {
                     $this->userService->updateUser($user);
                 } catch (DataBaseErrorUserException $e) {
@@ -116,7 +108,7 @@ class WriteController extends AbstractActionController
         }
  
         return new ViewModel(array(
-                'form' => $this->editUserForm
+                'form' => $this->userForm
         ));
     }
     

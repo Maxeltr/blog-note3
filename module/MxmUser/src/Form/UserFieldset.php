@@ -33,12 +33,12 @@ use Zend\Hydrator\HydratorInterface;
 
 class UserFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(UserInterface $post, HydratorInterface $hydrator, $name = "user", $options = array())
+    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "user", $options = array())
     {
         parent::__construct($name, $options);
         
         $this->setHydrator($hydrator);
-        $this->setObject($post);
+        $this->setObject($user);
 
         $this->add(array(
             'type' => 'hidden',
@@ -56,11 +56,10 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => 'Username'
             )
         ));
-        
-        
     }
     
     public function init() {
+        //parent::init();
         $this->add(array(
             'name' => 'timebelt',
             'type' => TimebeltFieldset::class,
@@ -68,6 +67,15 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
                 'use_as_base_fieldset' => true
             )
         ));
+        
+        $this->add(array(
+            'name' => 'credentials',
+            'type' => CredentialsFieldset::class,
+            'options' => array(
+                'use_as_base_fieldset' => true
+            )
+        ));
+        
     }
     
     /**
@@ -110,7 +118,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
                     )
                 )
             ),
-                        
+            
         );
     }
 }

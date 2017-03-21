@@ -53,7 +53,6 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
                 'type'=>'select',
                 'required' => 'required',
                 'class' => 'form-control',
-                'value' => $timezone->getName()
             ),
             'options'=>array(
                 'label'=>'Timezone',
@@ -73,7 +72,7 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return array(
-            'id' => array(
+            'timezoneId' => array(
                 'filters'=>array(
                     array(
                         'name' => 'Int'

@@ -49,7 +49,7 @@ class RegisterForm extends Form
         //parent::init();
         $this->add(array(
             'name' => 'user',
-            'type' => RegisterFieldset::class,
+            'type' => UserFieldset::class,
             'options' => array(
                 'use_as_base_fieldset' => true
             )
