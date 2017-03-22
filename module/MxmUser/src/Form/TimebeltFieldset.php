@@ -46,20 +46,19 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
         $this->setHydrator($hydrator);
         $this->setObject($timezone);
         
-        $this->add(array(
-            'name'=>'timezoneId',
+        $this->add([
+            'name' => 'timezoneId',
             'type' => 'Zend\Form\Element\Select',
-            'attributes'=>array(
-                'type'=>'select',
+            'attributes' => [
+                'type' => 'select',
                 'required' => 'required',
                 'class' => 'form-control',
-            ),
-            'options'=>array(
-                'label'=>'Timezone',
-                //'disable_inarray_validator' => true,
+            ],
+            'options' => [
+                'label' => 'Timezone',
                 'value_options' => $timezones,
-            ),
-        ));
+            ],
+        ]);
         
     }
     
@@ -71,14 +70,12 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification()
     {
-        return array(
-            'timezoneId' => array(
-                'filters'=>array(
-                    array(
-                        'name' => 'Int'
-                    ),
-                ),
-            ),
-        );
+        return [
+            'timezoneId' => [
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ],
+        ];
     }
 }

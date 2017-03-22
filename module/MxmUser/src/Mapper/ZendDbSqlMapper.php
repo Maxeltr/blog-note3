@@ -205,7 +205,6 @@ class ZendDbSqlMapper implements MapperInterface
         $action->where(array('id = ?' => $userObject->getId()));
         
         $this->saveInDb($userObject, $action);
-        $this->saveTagsAndTagPostAssociations($userObject);
         
         return $userObject;
     }

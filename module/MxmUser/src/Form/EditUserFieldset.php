@@ -31,51 +31,42 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 
-class UserFieldset extends Fieldset implements InputFilterProviderInterface
+class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "user", $options = array())
+    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "edit_user", $options = array())
     {
         parent::__construct($name, $options);
         
         $this->setHydrator($hydrator);
         $this->setObject($user);
 
-        $this->add(array(
+        $this->add([
             'type' => 'hidden',
             'name' => 'id'
-        ));
+        ]);
         
-        $this->add(array(
+        $this->add([
             'type' => 'text',
             'name' => 'username',
-            'attributes'=>array(
+            'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
-            ),
-            'options' => array(
+            ],
+            'options' => [
                 'label' => 'Username'
-            )
-        ));
+            ]
+        ]);
     }
     
     public function init() {
         //parent::init();
-        $this->add(array(
+        $this->add([
             'name' => 'timebelt',
             'type' => TimebeltFieldset::class,
-            'options' => array(
+            'options' => [
                 'use_as_base_fieldset' => true
-            )
-        ));
-        
-        $this->add(array(
-            'name' => 'credentials',
-            'type' => CredentialsFieldset::class,
-            'options' => array(
-                'use_as_base_fieldset' => true
-            )
-        ));
-        
+            ]
+        ]);
     }
     
     /**
@@ -86,39 +77,31 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification()
     {
-        return array(
-            'id' => array(
-                'filters'=>array(
-                    array(
-                        'name' => 'Int'
-                    ),
-                ),
-            ),
-            'username' => array(
+        return [
+            'id' => [
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            'username' => [
                 'required' => true,
-                'filters'=>array(
-                    array(
-                        'name' => 'StripTags'
-                    ),
-                    array(
-                        'name' => 'StringTrim'
-                    ),
-                    array(
-                        'name' => 'StripNewlines'
-                    ),
-                ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StripNewlines'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
                             'encoding'=>'UTF-8',
                             'min'=>1,
                             'max'=>250,
-                        )
-                    )
-                )
-            ),
+                        ]
+                    ]
+                ]
+            ],
             
-        );
+        ];
     }
 }

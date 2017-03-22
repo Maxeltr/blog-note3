@@ -26,21 +26,21 @@
 
 namespace MxmUser\Factory\Form;
 
+use MxmUser\Form\EditUserFieldset;
+use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\AggregateHydrator;
-use MxmUser\Form\UserForm;
-use Zend\InputFilter\InputFilter;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
-class UserFormFactory implements FactoryInterface
+class EditUserFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
-
-        return new UserForm(
-            $aggregatehydrator,
-            new InputFilter()
+        return new EditUserFieldset(
+            $container->get(UserInterface::class),
+            $container->get(AggregateHydrator::class),
+            $requestedName,
+            $options
         );
     }
 }

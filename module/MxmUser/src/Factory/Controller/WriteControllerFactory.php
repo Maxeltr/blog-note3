@@ -27,8 +27,8 @@
 namespace MxmUser\Factory\Controller;
 
 use MxmUser\Controller\WriteController;
-use MxmUser\Form\RegisterForm;
-use MxmUser\Form\UserForm;
+use MxmUser\Form\EditUserForm;
+use MxmUser\Form\RegisterUserForm;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Service\UserServiceInterface;
@@ -40,11 +40,13 @@ class WriteControllerFactory implements FactoryInterface
         $userService = $container->get(UserServiceInterface::class);
 
         $formManager = $container->get('FormElementManager');
-        $userForm = $formManager->get(UserForm::class);
+        $editUserForm = $formManager->get(EditUserForm::class);
+        $registerUserForm = $formManager->get(RegisterUserForm::class);
         
         return new WriteController(
             $userService,
-            $userForm
+            $editUserForm,
+            $registerUserForm
         );
     }
 }

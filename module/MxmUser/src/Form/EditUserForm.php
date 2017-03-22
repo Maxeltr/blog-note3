@@ -30,12 +30,12 @@ use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
 
-class UserForm extends Form
+class EditUserForm extends Form
 {
     public function __construct(
         HydratorInterface $hydrator,
         InputFilter $inputFilter,
-        $name = "user",
+        $name = "edit_user",
         $options = array()
     ) {
         parent::__construct($name, $options);
@@ -47,28 +47,20 @@ class UserForm extends Form
     
     public function init() {
         //parent::init();
-        $this->add(array(
+        $this->add([
             'name' => 'user',
-            'type' => UserFieldset::class,
-            'options' => array(
+            'type' => EditUserFieldset::class,
+            'options' => [
                 'use_as_base_fieldset' => true
-            )
-        ));
-        
-        $this->add(array(
-            'name' => 'timebelt',
-            'type' => TimebeltFieldset::class,
-            'options' => array(
-                'use_as_base_fieldset' => true
-            )
-        ));
-        
-        $this->add(array(
+            ]
+        ]);
+                
+        $this->add([
             'type' => 'submit',
             'name' => 'submit',
-            'attributes' => array(
+            'attributes' => [
                 'value' => 'Send'
-            )
-        ));
+            ]
+        ]);
     }
 }

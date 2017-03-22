@@ -72,7 +72,7 @@ class UserService implements UserServiceInterface
     public function insertUser(UserInterface $user)
     {
         $user->setCreated($this->datetime->modify('now'));
-
+        
         return $this->mapper->insertUser($user);
     }
     

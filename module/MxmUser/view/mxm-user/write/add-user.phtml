@@ -34,18 +34,12 @@ echo $this->form()->openTag($form);
 
 $user = $form->get('user');
 
-echo $this->formRow($user->get('id'));
+//echo $this->formRow($user->get('id'));
 echo $this->formRow($user->get('username'));
 
-$cred = $user->get('credentials');
-$this->formRow($cred->get('email'));
-$this->formRow($cred->get('password'));
-$this->formRow($cred->get('confirmPassword'));
-//echo $this->formRow($user->get('email'));
-//echo $this->formRow($user->get('password'));
-//echo $this->formRow($user->get('confirmPassword'));
-//$timezone = $form->get('timebelt');
-//echo $this->formRow($timezone->get('timezoneId'));
+echo $this->formRow($user->get('email'));
+echo $this->formRow($user->get('password'));
+echo $this->formRow($user->get('confirmPassword'));
 
 $timezone = $user->get('timebelt');
 echo $this->formRow($timezone->get('timezoneId'));

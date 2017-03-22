@@ -30,7 +30,7 @@ use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
 
-class RegisterForm extends Form
+class RegisterUserForm extends Form
 {
     public function __construct(
         HydratorInterface $hydrator,
@@ -47,20 +47,20 @@ class RegisterForm extends Form
     
     public function init() {
         //parent::init();
-        $this->add(array(
+        $this->add([
             'name' => 'user',
-            'type' => UserFieldset::class,
-            'options' => array(
+            'type' => RegisterUserFieldset::class,
+            'options' => [
                 'use_as_base_fieldset' => true
-            )
-        ));
+            ]
+        ]);
         
-        $this->add(array(
+        $this->add([
             'type' => 'submit',
             'name' => 'submit',
-            'attributes' => array(
+            'attributes' => [
                 'value' => 'Send'
-            )
-        ));
+            ]
+        ]);
     }
 }
