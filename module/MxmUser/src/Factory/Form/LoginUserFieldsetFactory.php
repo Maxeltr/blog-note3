@@ -24,32 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmUser\Factory\Form;
 
-use MxmUser\Controller\WriteController;
-use MxmUser\Form\EditUserForm;
-use MxmUser\Form\RegisterUserForm;
-use MxmUser\Form\ChangePasswordForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Form\LoginUserFieldset;
+use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\Service\UserServiceInterface;
+use MxmUser\AggregateHydrator;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
-class WriteControllerFactory implements FactoryInterface
+class LoginUserFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userService = $container->get(UserServiceInterface::class);
-
-        $formManager = $container->get('FormElementManager');
-        $editUserForm = $formManager->get(EditUserForm::class);
-        $registerUserForm = $formManager->get(RegisterUserForm::class);
-        $changePasswordForm = $formManager->get(ChangePasswordForm::class);
-        
-        return new WriteController(
-            $userService,
-            $editUserForm,
-            $registerUserForm,
-            $changePasswordForm
+        return new LoginUserFieldset(
+            $container->get(UserInterface::class),
+            $container->get(AggregateHydrator::class),
+            $requestedName,
+            $options
         );
     }
 }

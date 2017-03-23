@@ -24,32 +24,43 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmUser\Form;
+ 
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
+use Zend\Hydrator\HydratorInterface;
 
-use MxmUser\Controller\WriteController;
-use MxmUser\Form\EditUserForm;
-use MxmUser\Form\RegisterUserForm;
-use MxmUser\Form\ChangePasswordForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Interop\Container\ContainerInterface;
-use MxmUser\Service\UserServiceInterface;
-
-class WriteControllerFactory implements FactoryInterface
+class LoginUserForm extends Form
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $userService = $container->get(UserServiceInterface::class);
+    public function __construct(
+        HydratorInterface $hydrator,
+        InputFilter $inputFilter,
+        $name = "login_user",
+        $options = array()
+    ) {
+        parent::__construct($name, $options);
 
-        $formManager = $container->get('FormElementManager');
-        $editUserForm = $formManager->get(EditUserForm::class);
-        $registerUserForm = $formManager->get(RegisterUserForm::class);
-        $changePasswordForm = $formManager->get(ChangePasswordForm::class);
+        $this->setAttribute('method', 'post')
+            ->setHydrator($hydrator)
+            ->setInputFilter($inputFilter);
+    }
+    
+    public function init() {
+        //parent::init();
+        $this->add([
+            'name' => 'loginUser',
+            'type' => LoginUserFieldset::class,
+            'options' => [
+                'use_as_base_fieldset' => true
+            ]
+        ]);
         
-        return new WriteController(
-            $userService,
-            $editUserForm,
-            $registerUserForm,
-            $changePasswordForm
-        );
+        $this->add([
+            'type' => 'submit',
+            'name' => 'submit',
+            'attributes' => [
+                'value' => 'Send'
+            ]
+        ]);
     }
 }

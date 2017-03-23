@@ -43,12 +43,8 @@ class WriteController extends AbstractActionController
      * @var \DateTimeInterface
      */
     protected $datetime;
-    
-    /**
-     *
-     * @var Zend\Form\FormInterface 
-     */
     protected $registerUserForm;
+    protected $changePasswordForm;
     
     /**
      *
@@ -59,11 +55,13 @@ class WriteController extends AbstractActionController
     public function __construct(
         UserServiceInterface $userService,
         FormInterface $editUserForm,
-        FormInterface $registerUserForm
+        FormInterface $registerUserForm,
+        FormInterface $changePasswordForm
     ) {
         $this->userService = $userService;
         $this->editUserForm = $editUserForm;
         $this->registerUserForm = $registerUserForm;
+        $this->changePasswordForm = $changePasswordForm;
     }
     
     public function AddUserAction()
@@ -122,9 +120,34 @@ class WriteController extends AbstractActionController
     
     public function ChangePasswordAction()
     {
-        return new ViewModel([
-            'message' => 'ChangePasswordAction'
-        ]);
+        $request = $this->getRequest();
+        try {
+            $user = $this->userService->findUserById($this->params('id'));
+        } catch (DataBaseErrorUserException $e) {
+            //TODO Записать в лог
+            return $this->notFoundAction();
+        }
+        
+        if ($request->isPost()) {
+            $this->changePasswordForm->setData($request->getPost());
+            if ($this->changePasswordForm->isValid()) {
+                try {
+                    $qw=$this->changePasswordForm->getData();
+                    \Zend\Debug\Debug::dump($qw);
+                    die('change password');
+                } catch (DataBaseErrorUserException $e) {
+                    //TODO Записать в лог
+                    return $this->notFoundAction();
+                }
+                
+                return $this->redirect()->toRoute('detailUser', 
+                    array('id' => $user->getId()));
+            }
+        }
+ 
+        return new ViewModel(array(
+                'form' => $this->changePasswordForm
+        ));
     }
     
     public function ResetPasswordAction()

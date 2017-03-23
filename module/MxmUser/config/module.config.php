@@ -58,6 +58,12 @@ return [
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
             Form\RegisterUserForm::class => Factory\Form\RegisterUserFormFactory::class,
             Form\RegisterUserFieldset::class => Factory\Form\RegisterUserFieldsetFactory::class,
+            Form\ChangeEmailFieldset::class => Factory\Form\ChangeEmailFieldsetFactory::class,
+            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class,
+            Form\ChangePasswordFieldset::class => Factory\Form\ChangePasswordFieldsetFactory::class,
+            Form\ChangePasswordForm::class => Factory\Form\ChangePasswordFormFactory::class,
+            Form\LoginUserForm::class => Factory\Form\LoginUserFormFactory::class,
+            Form\LoginUserFieldset::class => Factory\Form\LoginUserFieldsetFactory::class,
         ]
     ],
     'router' => [
@@ -105,7 +111,7 @@ return [
                 ],
             ],
             'addUser' => [
-                'type'    => 'literal',
+                'type'    => 'Literal',
                 'options' => [
                     'route'    => '/add/user',
                     'defaults' => [
@@ -124,6 +130,19 @@ return [
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action' => 'editUser'
+                    ],
+                ],
+            ],
+            'changePassword' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/change/password/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'changePassword',
                     ],
                 ],
             ],
