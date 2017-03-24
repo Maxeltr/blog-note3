@@ -28,12 +28,11 @@ namespace MxmUser\Form;
  
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\HydratorInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class ChangeEmailForm extends Form
+class ChangeEmailForm extends Form implements InputFilterProviderInterface
 {
     public function __construct(
-        HydratorInterface $hydrator,
         InputFilter $inputFilter,
         $name = "change_email",
         $options = array()
@@ -41,17 +40,46 @@ class ChangeEmailForm extends Form
         parent::__construct($name, $options);
 
         $this->setAttribute('method', 'post')
-            ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
-    }
-    
-    public function init() {
-        //parent::init();
+        
+        $this->add(array(
+            'type' => 'hidden',
+            'name' => 'id'
+        ));
+        
         $this->add([
-            'name' => 'changeEmail',
-            'type' => ChangeEmilFieldset::class,
+            'type' => 'text',
+            'name' => 'newEmail',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
             'options' => [
-                'use_as_base_fieldset' => true
+                'label' => 'New email'
+            ]
+        ]);
+        
+        $this->add([
+            'type' => 'text',
+            'name' => 'confirmEmail',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => 'Confirm email'
+            ]
+        ]);
+        
+        $this->add([
+            'type' => 'password',
+            'name' => 'password',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => 'Password'
             ]
         ]);
         
@@ -62,5 +90,68 @@ class ChangeEmailForm extends Form
                 'value' => 'Send'
             ]
         ]);
+    }
+    
+    public function getInputFilterSpecification()
+    {
+        return [
+            'id' => [
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            'newEmail' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'useMxCheck' => false,                            
+                        ],
+                    ],
+                ]
+            ],
+            'confirmEmail' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'useMxCheck' => false,                            
+                        ],
+                    ],
+                    [
+                        'name'    => 'Identical',
+                        'options' => [
+                            'token' => 'newEmail',                            
+                        ],
+                    ],
+                ]
+            ],
+            'password' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250,
+                        ]
+                    ]
+                ]
+            ],
+        ];
     }
 }

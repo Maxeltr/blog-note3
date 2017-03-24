@@ -28,12 +28,11 @@ namespace MxmUser\Form;
  
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\HydratorInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class LoginUserForm extends Form
+class LoginUserForm extends Form implements InputFilterProviderInterface
 {
     public function __construct(
-        HydratorInterface $hydrator,
         InputFilter $inputFilter,
         $name = "login_user",
         $options = array()
@@ -41,17 +40,29 @@ class LoginUserForm extends Form
         parent::__construct($name, $options);
 
         $this->setAttribute('method', 'post')
-            ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
-    }
-    
-    public function init() {
-        //parent::init();
+        
         $this->add([
-            'name' => 'loginUser',
-            'type' => LoginUserFieldset::class,
+            'type' => 'text',
+            'name' => 'email',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
             'options' => [
-                'use_as_base_fieldset' => true
+                'label' => 'Email'
+            ]
+        ]);
+        
+        $this->add([
+            'type' => 'password',
+            'name' => 'password',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => 'Password'
             ]
         ]);
         
@@ -62,5 +73,42 @@ class LoginUserForm extends Form
                 'value' => 'Send'
             ]
         ]);
+    }
+
+    public function getInputFilterSpecification()
+    {
+        return [
+            'email' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'useMxCheck' => false,                            
+                        ],
+                    ],
+                ]
+            ],
+            'password' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250,
+                        ]
+                    ]
+                ]
+            ],
+        ];
     }
 }

@@ -91,4 +91,31 @@ class UserService implements UserServiceInterface
     {
         return $this->mapper->deleteUser($user);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function changePassword(array $data)
+    {
+        \Zend\Debug\Debug::dump($data);
+        die('UserService changePassword');
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function loginUser(array $data)
+    {
+        \Zend\Debug\Debug::dump($data);
+        die('UserService loginUser');
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function changeEmail(array $data)
+    {
+        \Zend\Debug\Debug::dump($data);
+        die('UserService changeEmail');
+    }
 }

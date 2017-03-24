@@ -28,7 +28,6 @@ namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\AggregateHydrator;
 use MxmUser\Form\ChangeEmailForm;
 use Zend\InputFilter\InputFilter;
 
@@ -36,10 +35,8 @@ class ChangeEmailFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
 
         return new ChangeEmailForm(
-            $aggregatehydrator,
             new InputFilter()
         );
     }

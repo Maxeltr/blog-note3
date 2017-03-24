@@ -58,12 +58,9 @@ return [
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
             Form\RegisterUserForm::class => Factory\Form\RegisterUserFormFactory::class,
             Form\RegisterUserFieldset::class => Factory\Form\RegisterUserFieldsetFactory::class,
-            Form\ChangeEmailFieldset::class => Factory\Form\ChangeEmailFieldsetFactory::class,
-            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class,
-            Form\ChangePasswordFieldset::class => Factory\Form\ChangePasswordFieldsetFactory::class,
+            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class, 
             Form\ChangePasswordForm::class => Factory\Form\ChangePasswordFormFactory::class,
             Form\LoginUserForm::class => Factory\Form\LoginUserFormFactory::class,
-            Form\LoginUserFieldset::class => Factory\Form\LoginUserFieldsetFactory::class,
         ]
     ],
     'router' => [
@@ -134,15 +131,32 @@ return [
                 ],
             ],
             'changePassword' => [
-                'type' => 'Segment',
+                'type' => 'Literal',
                 'options' => [
-                    'route' => '/change/password/:id',
-                    'constraints' => [
-                        'id' => '[1-9]\d*',
-                    ],
+                    'route' => '/change/password',
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action'     => 'changePassword',
+                    ],
+                ],
+            ],
+            'loginUser' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/login',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'loginUser',
+                    ],
+                ],
+            ],
+            'changeEmail' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/change/email',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'changeEmail',
                     ],
                 ],
             ],

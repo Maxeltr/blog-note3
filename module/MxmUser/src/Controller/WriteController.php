@@ -43,27 +43,56 @@ class WriteController extends AbstractActionController
      * @var \DateTimeInterface
      */
     protected $datetime;
-    protected $registerUserForm;
-    protected $changePasswordForm;
     
     /**
      *
      * @var Zend\Form\FormInterface 
      */
     protected $editUserForm;
-    
+    protected $registerUserForm;
+    protected $changePasswordForm;
+    protected $loginUserForm;
+    protected $changeEmailForm;
+        
     public function __construct(
         UserServiceInterface $userService,
         FormInterface $editUserForm,
         FormInterface $registerUserForm,
-        FormInterface $changePasswordForm
+        FormInterface $changePasswordForm,
+        FormInterface $loginUserForm,
+        FormInterface $changeEmailForm
     ) {
         $this->userService = $userService;
         $this->editUserForm = $editUserForm;
         $this->registerUserForm = $registerUserForm;
         $this->changePasswordForm = $changePasswordForm;
+        $this->loginUserForm = $loginUserForm;
+        $this->changeEmailForm = $changeEmailForm;
     }
     
+    public function LoginUserAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $this->loginUserForm->setData($request->getPost());
+            if ($this->loginUserForm->isValid()) {
+                try {
+                    $this->userService->loginUser($this->loginUserForm->getData());
+                } catch (DataBaseErrorUserException $e) {
+                    //TODO Записать в лог
+                    return $this->notFoundAction();
+                }
+                
+                return $this->redirect()->toRoute('detailUser', 
+                    array('id' => $savedUser->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+            }
+        }
+
+        return new ViewModel(array(
+            'form' => $this->loginUserForm
+        ));
+    }
+
     public function AddUserAction()
     {
         $request = $this->getRequest();
@@ -84,6 +113,29 @@ class WriteController extends AbstractActionController
 
         return new ViewModel(array(
             'form' => $this->registerUserForm
+        ));
+    }
+    
+    public function ChangeEmailAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $this->changeEmailForm->setData($request->getPost());
+            if ($this->changeEmailForm->isValid()) {
+                try {
+                    $this->userService->changeEmail($this->changeEmailForm->getData());
+                } catch (DataBaseErrorUserException $e) {
+                    //TODO Записать в лог
+                    return $this->notFoundAction();
+                }
+                
+                return $this->redirect()->toRoute('detailUser', 
+                    array('id' => $savedUser->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+            }
+        }
+
+        return new ViewModel(array(
+            'form' => $this->changeEmailForm
         ));
     }
     
@@ -120,28 +172,22 @@ class WriteController extends AbstractActionController
     
     public function ChangePasswordAction()
     {
+        //TODO проверить авторизацию если нет то перенаправить
+        
         $request = $this->getRequest();
-        try {
-            $user = $this->userService->findUserById($this->params('id'));
-        } catch (DataBaseErrorUserException $e) {
-            //TODO Записать в лог
-            return $this->notFoundAction();
-        }
         
         if ($request->isPost()) {
             $this->changePasswordForm->setData($request->getPost());
             if ($this->changePasswordForm->isValid()) {
                 try {
-                    $qw=$this->changePasswordForm->getData();
-                    \Zend\Debug\Debug::dump($qw);
-                    die('change password');
+                    $this->userService->changePassword($this->changePasswordForm->getData());
                 } catch (DataBaseErrorUserException $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('id' => $user->getId()));
+                    array('id' => $user->getId()));     //TODO получить id текущего юзера добавить flashmessenger
             }
         }
  
@@ -156,4 +202,5 @@ class WriteController extends AbstractActionController
             'message' => 'ResetPasswordAction'
         ]);
     }
+    
 }

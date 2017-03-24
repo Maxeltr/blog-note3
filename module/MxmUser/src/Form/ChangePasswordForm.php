@@ -28,12 +28,11 @@ namespace MxmUser\Form;
  
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\HydratorInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class ChangePasswordForm extends Form
+class ChangePasswordForm extends Form implements InputFilterProviderInterface
 {
     public function __construct(
-        HydratorInterface $hydrator,
         InputFilter $inputFilter,
         $name = "change_password",
         $options = array()
@@ -41,7 +40,6 @@ class ChangePasswordForm extends Form
         parent::__construct($name, $options);
 
         $this->setAttribute('method', 'post')
-            ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
         
         $this->add(array(
@@ -92,25 +90,6 @@ class ChangePasswordForm extends Form
                 'value' => 'Send'
             ]
         ]);
-    }
-    
-    public function init() {
-        //parent::init();
-//        $this->add([
-//            'name' => 'changePassword',
-//            'type' => ChangePasswordFieldset::class,
-//            'options' => [
-//                'use_as_base_fieldset' => true
-//            ]
-//        ]);
-        
-//        $this->add([
-//            'type' => 'submit',
-//            'name' => 'submit',
-//            'attributes' => [
-//                'value' => 'Send'
-//            ]
-//        ]);
     }
     
     public function getInputFilterSpecification()
@@ -178,5 +157,4 @@ class ChangePasswordForm extends Form
             
         ];
     }
-    
 }

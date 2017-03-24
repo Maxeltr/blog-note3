@@ -33,6 +33,8 @@ use MxmUser\Form\ChangePasswordForm;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Service\UserServiceInterface;
+use MxmUser\Form\LoginUserForm;
+use MxmUser\Form\ChangeEmailForm;
 
 class WriteControllerFactory implements FactoryInterface
 {
@@ -44,12 +46,16 @@ class WriteControllerFactory implements FactoryInterface
         $editUserForm = $formManager->get(EditUserForm::class);
         $registerUserForm = $formManager->get(RegisterUserForm::class);
         $changePasswordForm = $formManager->get(ChangePasswordForm::class);
+        $loginUserForm = $formManager->get(LoginUserForm::class);
+        $changeEmailForm = $formManager->get(ChangeEmailForm::class);
         
         return new WriteController(
             $userService,
             $editUserForm,
             $registerUserForm,
-            $changePasswordForm
+            $changePasswordForm,
+            $loginUserForm,
+            $changeEmailForm
         );
     }
 }
