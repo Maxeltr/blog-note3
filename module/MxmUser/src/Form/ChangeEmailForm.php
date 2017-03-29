@@ -107,6 +107,14 @@ class ChangeEmailForm extends Form implements InputFilterProviderInterface
                 ],
                 'validators' => [
                     [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250,
+                        ]
+                    ],
+                    [
                         'name' => 'EmailAddress',
                         'options' => [
                             'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
@@ -121,6 +129,14 @@ class ChangeEmailForm extends Form implements InputFilterProviderInterface
                     ['name' => 'StringTrim'],
                 ],
                 'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250,
+                        ]
+                    ],
                     [
                         'name' => 'EmailAddress',
                         'options' => [

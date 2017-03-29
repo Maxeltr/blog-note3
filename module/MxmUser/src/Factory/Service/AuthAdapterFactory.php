@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,42 +24,20 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmUser\Factory\Service;
 
-use MxmUser\Controller\WriteController;
-use MxmUser\Form\EditUserForm;
-use MxmUser\Form\RegisterUserForm;
-use MxmUser\Form\ChangePasswordForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmUser\Form\LoginUserForm;
-use MxmUser\Form\ChangeEmailForm;
-use Zend\Router\RouteInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Mapper\MapperInterface;
+use MxmUser\Service\Authentication\Adapter\AuthAdapter;
 
-class WriteControllerFactory implements FactoryInterface
+class AuthAdapterFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userService = $container->get(UserServiceInterface::class);
-        $router = $container->get('Router');
-        $formManager = $container->get('FormElementManager');
+        $mapper = $container->get(MapperInterface::class);
+        $authAdapter = new AuthAdapter($mapper);
         
-        $editUserForm = $formManager->get(EditUserForm::class);
-        $registerUserForm = $formManager->get(RegisterUserForm::class);
-        $changePasswordForm = $formManager->get(ChangePasswordForm::class);
-        $loginUserForm = $formManager->get(LoginUserForm::class);
-        $changeEmailForm = $formManager->get(ChangeEmailForm::class);
-        
-        
-        return new WriteController(
-            $userService,
-            $editUserForm,
-            $registerUserForm,
-            $changePasswordForm,
-            $loginUserForm,
-            $changeEmailForm,
-            $router
-        );
+        return $authAdapter;
     }
 }

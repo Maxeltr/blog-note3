@@ -129,9 +129,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             'email' => [
                 'required' => true,
                 'filters' => [
-                    ['name' => 'StripTags'],
                     ['name' => 'StringTrim'],
-                    ['name' => 'StripNewlines'],
                 ],
                 'validators' => [
                     [
@@ -147,15 +145,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             'password' => [
                 'required' => true,
                 'filters' => [
-                    [
-                        'name' => 'StripTags'
-                    ],
-                    [
-                        'name' => 'StringTrim'
-                    ],
-                    [
-                        'name' => 'StripNewlines'
-                    ],
+                    ['name' => 'StringTrim'],
                 ],
                 'validators' => [
                     [
@@ -163,7 +153,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 35,
                         ]
                     ]
                 ]
@@ -171,9 +161,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             'confirmPassword' => [
                 'required' => true,
                 'filters' => [
-                    ['name' => 'StripTags'],
                     ['name' => 'StringTrim'],
-                    ['name' => 'StripNewlines'],
                 ],
                 'validators' => [
                     [
@@ -187,7 +175,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 35,
                         ]
                     ],
                 ]

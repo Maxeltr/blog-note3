@@ -42,9 +42,9 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Validator\StaticValidator;
 use Zend\Db\Sql\PreparableSqlInterface;
-use MxmBlog\Exception\RecordNotFoundUserException;
-use MxmBlog\Exception\InvalidArgumentUserException;
-use MxmBlog\Exception\DataBaseErrorUserException;
+use MxmUser\Exception\RecordNotFoundUserException;
+use MxmUser\Exception\InvalidArgumentUserException;
+use MxmUser\Exception\DataBaseErrorUserException;
 use MxmUser\Service\DateTimeInterface;
 use MxmUser\Model\UserInterface;
 
@@ -94,6 +94,19 @@ class ZendDbSqlMapper implements MapperInterface
     {
         
         $parameters['where']['id'] = $id;
+        
+        $select = $this->createUserSelectQuery($parameters);
+
+        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function findUserByEmail($email)
+    {
+        
+        $parameters['where']['email'] = $email;
         
         $select = $this->createUserSelectQuery($parameters);
 

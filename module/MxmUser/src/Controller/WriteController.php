@@ -29,8 +29,10 @@ namespace MxmUser\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
-use MxmUser\Exception\DataBaseErrorUserException;
+use MxmUser\Exception\RuntimeException;
 use Zend\Form\FormInterface;
+use Zend\Router\RouteInterface;
+use Zend\Authentication\Result;
 
 class WriteController extends AbstractActionController
 {
@@ -60,7 +62,8 @@ class WriteController extends AbstractActionController
         FormInterface $registerUserForm,
         FormInterface $changePasswordForm,
         FormInterface $loginUserForm,
-        FormInterface $changeEmailForm
+        FormInterface $changeEmailForm,
+        RouteInterface $router
     ) {
         $this->userService = $userService;
         $this->editUserForm = $editUserForm;
@@ -68,23 +71,32 @@ class WriteController extends AbstractActionController
         $this->changePasswordForm = $changePasswordForm;
         $this->loginUserForm = $loginUserForm;
         $this->changeEmailForm = $changeEmailForm;
+        $this->router = $router;
     }
     
     public function LoginUserAction()
     {
         $request = $this->getRequest();
+        $redirectUrl = $this->getRedirectRouteFromQuery();
         if ($request->isPost()) {
             $this->loginUserForm->setData($request->getPost());
             if ($this->loginUserForm->isValid()) {
+                $data = $this->loginUserForm->getData();
                 try {
-                    $this->userService->loginUser($this->loginUserForm->getData());
-                } catch (DataBaseErrorUserException $e) {
+                    $result = $this->userService->loginUser($data['email'], $data['password']);
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('detailUser', 
-                    array('id' => $savedUser->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+                if ($result->getCode() === Result::SUCCESS) {
+                    $redirectUrl = $this->getRedirectRouteFromPost();
+                    if(empty($redirectUrl)) {
+                        return $this->redirect()->toRoute('home');
+                    } else {
+                        $this->redirect()->toUrl($redirectUrl);
+                    }
+                }
             }
         }
 
@@ -101,7 +113,7 @@ class WriteController extends AbstractActionController
             if ($this->registerUserForm->isValid()) {
                 try {
                     $savedUser = $this->userService->insertUser($this->registerUserForm->getData());
-                } catch (DataBaseErrorUserException $e) {
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
@@ -124,7 +136,7 @@ class WriteController extends AbstractActionController
             if ($this->changeEmailForm->isValid()) {
                 try {
                     $this->userService->changeEmail($this->changeEmailForm->getData());
-                } catch (DataBaseErrorUserException $e) {
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
@@ -144,7 +156,7 @@ class WriteController extends AbstractActionController
         $request = $this->getRequest();
         try {
             $user = $this->userService->findUserById($this->params('id'));
-        } catch (DataBaseErrorUserException $e) {
+        } catch (\Exception $e) {
             //TODO Записать в лог
             return $this->notFoundAction();
         }
@@ -155,7 +167,7 @@ class WriteController extends AbstractActionController
             if ($this->editUserForm->isValid()) {
                 try {
                     $this->userService->updateUser($user);
-                } catch (DataBaseErrorUserException $e) {
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
@@ -181,7 +193,7 @@ class WriteController extends AbstractActionController
             if ($this->changePasswordForm->isValid()) {
                 try {
                     $this->userService->changePassword($this->changePasswordForm->getData());
-                } catch (DataBaseErrorUserException $e) {
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
@@ -203,4 +215,47 @@ class WriteController extends AbstractActionController
         ]);
     }
     
+    /**
+     * Проверяет параметр 'redirect' в GET. Возвращает путь на который перенаправить юзера.
+     *
+     * @return string
+     */
+    private function getRedirectRouteFromQuery()
+    {
+        $redirect = $this->params()->fromQuery('redirect', '');
+        if ($redirect && $this->routeExists($redirect)) {
+            return $redirect;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Проверяет параметр 'redirect' в POST. Возвращает путь на который перенаправить юзера.
+     *
+     * @return string
+     */
+    private function getRedirectRouteFromPost()
+    {
+        $redirect = $this->params()->fromPost('redirect_url', '');
+        if ($redirect && $this->routeExists($redirect)) {
+            return $redirect;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $route
+     * @return bool
+     */
+    private function routeExists($route)
+    {
+        try {
+            $this->router->assemble(array(), array('name' => $route));
+        } catch (Exception\RuntimeException $e) {
+            return false;
+        }
+        return true;
+    }
 }

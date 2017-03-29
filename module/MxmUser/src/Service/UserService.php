@@ -29,6 +29,8 @@ namespace MxmUser\Service;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
+use Zend\Authentication\AuthenticationService;
+use MxmUser\Exception\RuntimeException;
 
 class UserService implements UserServiceInterface
 {
@@ -42,12 +44,19 @@ class UserService implements UserServiceInterface
      */
     protected $datetime;
     
+    /**
+     * @var Zend\Authentication\AuthenticationService;
+     */
+    protected $authService;
+    
     public function __construct(
         MapperInterface $mapper,
-        DateTimeInterface $datetime
+        DateTimeInterface $datetime,
+        AuthenticationService $authService
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
+        $this->authService = $authService;
     }
     
     /**
@@ -104,10 +113,18 @@ class UserService implements UserServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function loginUser(array $data)
+    public function loginUser($email, $password)
     {
-        \Zend\Debug\Debug::dump($data);
-        die('UserService loginUser');
+        if ($this->authService->hasIdentity()) {
+            throw new RuntimeException('Already logged in');
+        }
+
+        $authAdapter = $this->authService->getAdapter();
+        $authAdapter->setEmail($email);
+        $authAdapter->setPassword($password);
+        $result = $this->authService->authenticate();
+        
+        return $result;
     }
     
     /**

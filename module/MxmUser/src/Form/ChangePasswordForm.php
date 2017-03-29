@@ -127,7 +127,7 @@ class ChangePasswordForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 35,
                         ]
                     ]
                 ]
@@ -143,7 +143,7 @@ class ChangePasswordForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 35,
                         ]
                     ],
                     [
