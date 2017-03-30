@@ -30,7 +30,10 @@ use MxmUser\Mapper\MapperInterface;
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
-use MxmUser\Exception\RuntimeException;
+use MxmUser\Exception\RuntimeUserException;
+use Zend\Crypt\Password\Bcrypt;
+use MxmUser\Exception\RecordNotFoundUserException;
+use MxmUser\Exception\AlreadyExistsUserException;
 
 class UserService implements UserServiceInterface
 {
@@ -79,7 +82,15 @@ class UserService implements UserServiceInterface
      * {@inheritDoc}
      */
     public function insertUser(UserInterface $user)
-    {
+    {      
+        if ($this->IsUserExists($user)) {
+            throw new AlreadyExistsUserException("User with email address " . $user->getEmail() . " already exists");
+        }
+        
+        $bcrypt = new Bcrypt();
+        $passwordHash = $bcrypt->create($user->getPassword());
+        $user->setPassword($passwordHash);
+        
         $user->setCreated($this->datetime->modify('now'));
         
         return $this->mapper->insertUser($user);
@@ -116,7 +127,7 @@ class UserService implements UserServiceInterface
     public function loginUser($email, $password)
     {
         if ($this->authService->hasIdentity()) {
-            throw new RuntimeException('Already logged in');
+            throw new RuntimeUserException('Already logged in');
         }
 
         $authAdapter = $this->authService->getAdapter();
@@ -127,6 +138,15 @@ class UserService implements UserServiceInterface
         return $result;
     }
     
+    public function logoutUser()
+    {
+        if (!$this->authService->hasIdentity()) {
+            throw new RuntimeUserException('The user is not logged in');
+        }
+
+        $this->authService->clearIdentity();               
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -134,5 +154,16 @@ class UserService implements UserServiceInterface
     {
         \Zend\Debug\Debug::dump($data);
         die('UserService changeEmail');
+    }
+    
+    private function IsUserExists($user)
+    {
+        try {
+            $this->mapper->findUserByEmail($user->getEmail());  //TODO  заменить на валидатор?
+        } catch (RecordNotFoundUserException $e) {
+            return false;
+        }
+        
+        return true;
     }
 }

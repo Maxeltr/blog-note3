@@ -151,6 +151,16 @@ return [
                     ],
                 ],
             ],
+            'logoutUser' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/logout',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'logoutUser',
+                    ],
+                ],
+            ],
             'changeEmail' => [
                 'type' => 'Literal',
                 'options' => [

@@ -24,25 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Service;
+namespace MxmUser\Exception;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
-use Zend\Session\SessionManager;
-use MxmUser\Service\Authentication\Adapter\AuthAdapter;
-use Zend\Authentication\Storage\Session as SessionStorage;
-
-class AuthServiceFactory implements FactoryInterface
+class AlreadyExistsUserException extends RuntimeUserException implements UserExceptionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $authStorage = new SessionStorage('someNamespace');
-        $authAdapter = $container->get(AuthAdapter::class);
-        $authService = new AuthenticationService();
-        $authService->setStorage($authStorage);
-        $authService->setAdapter($authAdapter);
-        
-        return $authService;
-    }
 }

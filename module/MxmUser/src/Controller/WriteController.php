@@ -30,6 +30,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\RuntimeException;
+use MxmUser\Exception\AlreadyExistsUserException;
 use Zend\Form\FormInterface;
 use Zend\Router\RouteInterface;
 use Zend\Authentication\Result;
@@ -78,6 +79,8 @@ class WriteController extends AbstractActionController
     {
         $request = $this->getRequest();
         $redirectUrl = $this->getRedirectRouteFromQuery();
+        $loginError = false;
+        
         if ($request->isPost()) {
             $this->loginUserForm->setData($request->getPost());
             if ($this->loginUserForm->isValid()) {
@@ -89,30 +92,50 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
                 
-                if ($result->getCode() === Result::SUCCESS) {
+                $resultCode = $result->getCode();
+                if ($resultCode === Result::SUCCESS) {
                     $redirectUrl = $this->getRedirectRouteFromPost();
                     if(empty($redirectUrl)) {
                         return $this->redirect()->toRoute('home');
                     } else {
                         $this->redirect()->toUrl($redirectUrl);
                     }
+                } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
+                    $loginError = 'Incorrect login.';
+                } else {
+                    $loginError = 'Incorrect login and/or password.';
                 }
+            } else {
+                $loginError = 'Incorrect login and/or password.';
             }
         }
 
         return new ViewModel(array(
-            'form' => $this->loginUserForm
+            'form' => $this->loginUserForm,
+            'redirect' => $redirectUrl,
+            'error' => $loginError
         ));
     }
 
+    public function LogoutUserAction() 
+    {
+        $result = $this->userService->logoutUser();
+        
+        return $this->redirect()->toRoute('login');
+    }
+    
     public function AddUserAction()
     {
         $request = $this->getRequest();
+        $registerError = false;
+        
         if ($request->isPost()) {
             $this->registerUserForm->setData($request->getPost());
             if ($this->registerUserForm->isValid()) {
                 try {
                     $savedUser = $this->userService->insertUser($this->registerUserForm->getData());
+                } catch (AlreadyExistsUserException $e) {
+                    $registerError = $e->getMessage();
                 } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
@@ -124,7 +147,8 @@ class WriteController extends AbstractActionController
         }
 
         return new ViewModel(array(
-            'form' => $this->registerUserForm
+            'form' => $this->registerUserForm,
+            'error' => $registerError ? $registerError : false
         ));
     }
     
