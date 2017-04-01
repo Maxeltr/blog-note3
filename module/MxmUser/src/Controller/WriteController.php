@@ -102,10 +102,11 @@ class WriteController extends AbstractActionController
                 
                 $resultCode = $result->getCode();
                 if ($resultCode === Result::SUCCESS) {
-                    if(empty($data['redirect'])) {
+                    $redirectUrl = $this->getRedirectRouteFromPost();
+                    if(empty($redirectUrl)) {
                         return $this->redirect()->toRoute('home');
                     } else {
-                        $this->redirect()->toUrl($data['redirect']);
+                        $this->redirect()->toUrl($redirectUrl);
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
                     $loginError = 'Incorrect login.';
@@ -126,7 +127,12 @@ class WriteController extends AbstractActionController
 
     public function LogoutUserAction() 
     {
-        $result = $this->userService->logoutUser();
+        try {
+            $this->userService->logoutUser();
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+            return $this->notFoundAction();
+        }
         
         return $this->redirect()->toRoute('login');
     }

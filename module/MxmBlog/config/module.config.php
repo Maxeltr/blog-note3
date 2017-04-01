@@ -372,8 +372,5 @@ return [
         'template_path_stack' => [
             'MxmBlog' => __DIR__ . '/../view',
         ],
-        'template_map' => [
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml'
-        ],
     ],
 ];

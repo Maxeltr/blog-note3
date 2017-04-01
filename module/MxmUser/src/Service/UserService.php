@@ -127,13 +127,19 @@ class UserService implements UserServiceInterface
     public function loginUser($email, $password)
     {
         if ($this->authService->hasIdentity()) {
-            throw new RuntimeUserException('Already logged in');
+            throw new RuntimeUserException('The user already logged in');
         }
 
         $authAdapter = $this->authService->getAdapter();
         $authAdapter->setEmail($email);
         $authAdapter->setPassword($password);
         $result = $this->authService->authenticate();
+
+        if ($result->isValid()) {
+            $user = $this->mapper->findUserByEmail($email);
+            $storage = $this->authService->getStorage();
+            $storage->write($user);
+        }
 
         return $result;
     }
