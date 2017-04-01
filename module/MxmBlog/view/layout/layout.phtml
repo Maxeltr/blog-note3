@@ -60,9 +60,8 @@
                         <li><a href="../navbar-static-top/">Static top</a></li>
                         <li class="active"><a href="./">
                             
-                                <?php if ($user = $this->identity()) {
-     \Zend\Debug\Debug::dump($user);
-                                    echo 'Logged in as ' . $this->escapeHtml($user->getUsername());
+                                <?php if ($this->identity()) {
+                                    echo 'Logged in';
                                 } else {
                                     echo 'Not logged in'; 
                                 } ?>

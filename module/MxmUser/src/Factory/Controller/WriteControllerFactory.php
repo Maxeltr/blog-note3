@@ -36,11 +36,13 @@ use MxmUser\Service\UserServiceInterface;
 use MxmUser\Form\LoginUserForm;
 use MxmUser\Form\ChangeEmailForm;
 use Zend\Router\RouteInterface;
+use MxmUser\Logger;
 
 class WriteControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $logger = $container->get(Logger::class);
         $userService = $container->get(UserServiceInterface::class);
         $router = $container->get('Router');
         $formManager = $container->get('FormElementManager');
@@ -51,8 +53,8 @@ class WriteControllerFactory implements FactoryInterface
         $loginUserForm = $formManager->get(LoginUserForm::class);
         $changeEmailForm = $formManager->get(ChangeEmailForm::class);
         
-        
         return new WriteController(
+            $logger,
             $userService,
             $editUserForm,
             $registerUserForm,

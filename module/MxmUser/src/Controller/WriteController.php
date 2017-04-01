@@ -34,9 +34,15 @@ use MxmUser\Exception\AlreadyExistsUserException;
 use Zend\Form\FormInterface;
 use Zend\Router\RouteInterface;
 use Zend\Authentication\Result;
+use Zend\Log\Logger;
 
 class WriteController extends AbstractActionController
 {
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+    
     /**
      * @var \MxmUser\Service\UserServiceInterface
      */
@@ -58,6 +64,7 @@ class WriteController extends AbstractActionController
     protected $changeEmailForm;
         
     public function __construct(
+        Logger $logger,
         UserServiceInterface $userService,
         FormInterface $editUserForm,
         FormInterface $registerUserForm,
@@ -66,6 +73,7 @@ class WriteController extends AbstractActionController
         FormInterface $changeEmailForm,
         RouteInterface $router
     ) {
+        $this->logger = $logger;
         $this->userService = $userService;
         $this->editUserForm = $editUserForm;
         $this->registerUserForm = $registerUserForm;
@@ -88,7 +96,7 @@ class WriteController extends AbstractActionController
                 try {
                     $result = $this->userService->loginUser($data['email'], $data['password']);
                 } catch (\Exception $e) {
-                    //TODO Записать в лог
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
                 
@@ -136,7 +144,7 @@ class WriteController extends AbstractActionController
                 } catch (AlreadyExistsUserException $e) {
                     $registerError = $e->getMessage();
                 } catch (\Exception $e) {
-                    //TODO Записать в лог
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
                 
@@ -160,7 +168,7 @@ class WriteController extends AbstractActionController
                 try {
                     $this->userService->changeEmail($this->changeEmailForm->getData());
                 } catch (\Exception $e) {
-                    //TODO Записать в лог
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
                 
@@ -180,7 +188,7 @@ class WriteController extends AbstractActionController
         try {
             $user = $this->userService->findUserById($this->params('id'));
         } catch (\Exception $e) {
-            //TODO Записать в лог
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
         
@@ -191,7 +199,7 @@ class WriteController extends AbstractActionController
                 try {
                     $this->userService->updateUser($user);
                 } catch (\Exception $e) {
-                    //TODO Записать в лог
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
                 
@@ -217,7 +225,7 @@ class WriteController extends AbstractActionController
                 try {
                     $this->userService->changePassword($this->changePasswordForm->getData());
                 } catch (\Exception $e) {
-                    //TODO Записать в лог
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
                 
