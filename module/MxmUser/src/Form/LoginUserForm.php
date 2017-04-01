@@ -66,7 +66,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             ]
         ]);
         
-        $this->add([                //add
+        $this->add([
             'type' => 'csrf',
             'name' => 'csrf',
             'options' => [
@@ -76,7 +76,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             ],
         ]);
         
-        $this->add([                    //add
+        $this->add([
             'type'  => 'hidden',
             'name' => 'redirect'
         ]);
@@ -124,11 +124,11 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                     ]
                 ]
             ],
-            'redirect' => [                             //add
+            'redirect' => [
                 'required' => false,
                 'filters'  => [
                     ['name'=>'StringTrim']
-                ],                
+                ],
                 'validators' => [
                     [
                         'name'    => 'StringLength',

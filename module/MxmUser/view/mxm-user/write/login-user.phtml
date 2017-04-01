@@ -48,9 +48,9 @@ echo $this->formElementErrors($form->get('email'));
 echo $this->formElement($form->get('password'));
 echo $this->formElementErrors($form->get('password'));
 
-echo $this->formElement($form->get('redirect_url')); //add
-echo $this->formElement($form->get('csrf'));            //add
-            
+echo $this->formElement($form->get('redirect'));
+echo $this->formElement($form->get('csrf'));
+
 echo $this->formElement($form->get('submit'));
 
 echo $this->form()->closeTag();

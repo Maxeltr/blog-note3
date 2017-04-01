@@ -2,6 +2,9 @@
 namespace MxmUser;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
+use Zend\Session\Storage\SessionArrayStorage;
+use Zend\Session\Validator\RemoteAddr;
+use Zend\Session\Validator\HttpUserAgent;
 
 return [
     'user_module' => [
@@ -14,7 +17,7 @@ return [
             'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
         ],
         'logger' => [
-            'path' => __DIR__ . '/../data/log/blog-note3.log',  //add
+            'path' => __DIR__ . '/../../../data/logs/MxmUser.log',
         ],
         
     ],
@@ -32,6 +35,7 @@ return [
             Service\DateTimeInterface::class => Service\DateTime::class,
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
+            \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
         ],
         'factories' => [
             Service\UserService::class => Factory\Service\UserServiceFactory::class,
@@ -49,7 +53,7 @@ return [
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
             //Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
-            Logger\Logger::class => Factory\Logger\LoggerFactory::class,    //add
+            Logger::class => Factory\Logger\LoggerFactory::class,
             
         ],
         'invokables' => [
@@ -181,5 +185,22 @@ return [
         'template_path_stack' => [
             'MxmUser' => __DIR__ . '/../view',
         ],
+    ],
+    // Session configuration.
+    'session_config' => [
+        'cookie_lifetime'     => 60*60*1, // Session cookie will expire in 1 hour.
+        'gc_maxlifetime'      => 60*60*24*30, // How long to store session data on server (for 1 month).        
+    ],
+    // Session manager configuration.
+    'session_manager' => [
+        // Session validators (used for security).
+        'validators' => [
+            RemoteAddr::class,
+            HttpUserAgent::class,
+        ]
+    ],
+    // Session storage configuration.
+    'session_storage' => [
+        'type' => SessionArrayStorage::class
     ],
 ];

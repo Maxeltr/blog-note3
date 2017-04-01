@@ -37,7 +37,10 @@ class AuthServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $authStorage = new SessionStorage('someNamespace');
+        $sessionManager =  $container->get(SessionManager::class);
+        $authStorage = new SessionStorage('Zend_Auth', 'session', $sessionManager);
+        
+        //$authStorage = new SessionStorage('someNamespace');
         $authAdapter = $container->get(AuthAdapter::class);
         $authService = new AuthenticationService();
         $authService->setStorage($authStorage);

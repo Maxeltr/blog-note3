@@ -11,6 +11,8 @@
  * This should be an array of module namespaces used in the application.
  */
 return [
+    'Zend\Log',
+    'Zend\Session',
     'Zend\I18n',
     'Zend\InputFilter',
     'Zend\Hydrator',

@@ -134,7 +134,7 @@ class UserService implements UserServiceInterface
         $authAdapter->setEmail($email);
         $authAdapter->setPassword($password);
         $result = $this->authService->authenticate();
-        
+
         return $result;
     }
     
