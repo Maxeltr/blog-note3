@@ -29,8 +29,11 @@ namespace MxmUser\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
-use MxmUser\Exception\DataBaseErrorUserException;
+use MxmUser\Exception\RuntimeException;
+use MxmUser\Exception\AlreadyExistsUserException;
 use Zend\Form\FormInterface;
+use Zend\Router\RouteInterface;
+use Zend\Authentication\Result;
 
 class WriteController extends AbstractActionController
 {
@@ -48,75 +51,184 @@ class WriteController extends AbstractActionController
      *
      * @var Zend\Form\FormInterface 
      */
-    protected $userForm;
-    
+    protected $editUserForm;
+    protected $registerUserForm;
+    protected $changePasswordForm;
+    protected $loginUserForm;
+    protected $changeEmailForm;
+        
     public function __construct(
-        UserServiceInterface $userService, 
-        FormInterface $userForm
+        UserServiceInterface $userService,
+        FormInterface $editUserForm,
+        FormInterface $registerUserForm,
+        FormInterface $changePasswordForm,
+        FormInterface $loginUserForm,
+        FormInterface $changeEmailForm,
+        RouteInterface $router
     ) {
         $this->userService = $userService;
-        $this->userForm = $userForm;
+        $this->editUserForm = $editUserForm;
+        $this->registerUserForm = $registerUserForm;
+        $this->changePasswordForm = $changePasswordForm;
+        $this->loginUserForm = $loginUserForm;
+        $this->changeEmailForm = $changeEmailForm;
+        $this->router = $router;
+    }
+    
+    public function LoginUserAction()
+    {
+        $request = $this->getRequest();
+        $redirectUrl = $this->getRedirectRouteFromQuery();
+        $loginError = false;
+        
+        if ($request->isPost()) {
+            $this->loginUserForm->setData($request->getPost());
+            if ($this->loginUserForm->isValid()) {
+                $data = $this->loginUserForm->getData();
+                try {
+                    $result = $this->userService->loginUser($data['email'], $data['password']);
+                } catch (\Exception $e) {
+                    //TODO Записать в лог
+                    return $this->notFoundAction();
+                }
+                
+                $resultCode = $result->getCode();
+                if ($resultCode === Result::SUCCESS) {
+                    if(empty($data['redirect'])) {                      //add
+                        return $this->redirect()->toRoute('home');
+                    } else {
+                        $this->redirect()->toUrl($data['redirect']);    //add
+                    }
+                } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
+                    $loginError = 'Incorrect login.';
+                } else {
+                    $loginError = 'Incorrect login and/or password.';
+                }
+            } else {
+                $loginError = 'Incorrect login and/or password.';       //add del?
+            }
+        }
+
+        return new ViewModel(array(
+            'form' => $this->loginUserForm,
+            'redirect' => $redirectUrl,
+            'error' => $loginError
+        ));
+    }
+
+    public function LogoutUserAction() 
+    {
+        $result = $this->userService->logoutUser();
+        
+        return $this->redirect()->toRoute('login');
     }
     
     public function AddUserAction()
     {
         $request = $this->getRequest();
+        $registerError = false;
+        
         if ($request->isPost()) {
-            $this->userForm->setData($request->getPost());
-            if ($this->userForm->isValid()) {
+            $this->registerUserForm->setData($request->getPost());
+            if ($this->registerUserForm->isValid()) {
                 try {
-                    $savedUser = $this->userService->insertUser($this->userForm->getData());
-                } catch (DataBaseErrorUserException $e) {
+                    $savedUser = $this->userService->insertUser($this->registerUserForm->getData());
+                } catch (AlreadyExistsUserException $e) {
+                    $registerError = $e->getMessage();
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('action' => 'detail', 'id' => $savedUser->getId()));
+                    array('id' => $savedUser->getId()));
             }
         }
 
         return new ViewModel(array(
-            'form' => $this->userForm
+            'form' => $this->registerUserForm,
+            'error' => $registerError ? $registerError : false
         ));
     }
     
-    public function EditAction()
+    public function ChangeEmailAction()
     {
         $request = $this->getRequest();
-        try {
-            $user = $this->userService->findUserById($this->params('id'));
-        } catch (DataBaseErrorUserException $e) {
-            //TODO Записать в лог
-            return $this->notFoundAction();
-        }
-        
-        $this->userForm->bind($user);
         if ($request->isPost()) {
-            $this->userForm->setData($request->getPost());
-            if ($this->userForm->isValid()) {
+            $this->changeEmailForm->setData($request->getPost());
+            if ($this->changeEmailForm->isValid()) {
                 try {
-                    $this->userService->updateUser($user);
-                } catch (DataBaseErrorUserException $e) {
+                    $this->userService->changeEmail($this->changeEmailForm->getData());
+                } catch (\Exception $e) {
                     //TODO Записать в лог
                     return $this->notFoundAction();
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('action' => 'detail', 'id' => $user->getId()));
+                    array('id' => $savedUser->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+            }
+        }
+
+        return new ViewModel(array(
+            'form' => $this->changeEmailForm
+        ));
+    }
+    
+    public function EditUserAction()
+    {
+        $request = $this->getRequest();
+        try {
+            $user = $this->userService->findUserById($this->params('id'));
+        } catch (\Exception $e) {
+            //TODO Записать в лог
+            return $this->notFoundAction();
+        }
+        
+        $this->editUserForm->bind($user);   //связываем форму и объект
+        if ($request->isPost()) {
+            $this->editUserForm->setData($request->getPost());  //данные устанавливаются и в форму и в объект, т.к. форма и объект связаны
+            if ($this->editUserForm->isValid()) {
+                try {
+                    $this->userService->updateUser($user);
+                } catch (\Exception $e) {
+                    //TODO Записать в лог
+                    return $this->notFoundAction();
+                }
+                
+                return $this->redirect()->toRoute('detailUser', 
+                    array('id' => $user->getId()));
             }
         }
  
         return new ViewModel(array(
-                'form' => $this->userForm
+                'form' => $this->editUserForm
         ));
     }
     
     public function ChangePasswordAction()
     {
-        return new ViewModel([
-            'message' => 'ChangePasswordAction'
-        ]);
+        //TODO проверить авторизацию если нет то перенаправить
+        
+        $request = $this->getRequest();
+        
+        if ($request->isPost()) {
+            $this->changePasswordForm->setData($request->getPost());
+            if ($this->changePasswordForm->isValid()) {
+                try {
+                    $this->userService->changePassword($this->changePasswordForm->getData());
+                } catch (\Exception $e) {
+                    //TODO Записать в лог
+                    return $this->notFoundAction();
+                }
+                
+                return $this->redirect()->toRoute('detailUser', 
+                    array('id' => $user->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+            }
+        }
+ 
+        return new ViewModel(array(
+                'form' => $this->changePasswordForm
+        ));
     }
     
     public function ResetPasswordAction()
@@ -124,5 +236,49 @@ class WriteController extends AbstractActionController
         return new ViewModel([
             'message' => 'ResetPasswordAction'
         ]);
+    }
+    
+    /**
+     * Проверяет параметр 'redirect' в GET. Возвращает путь на который перенаправить юзера.
+     *
+     * @return string
+     */
+    private function getRedirectRouteFromQuery()
+    {
+        $redirect = $this->params()->fromQuery('redirect', '');
+        if ($redirect && $this->routeExists($redirect)) {
+            return $redirect;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Проверяет параметр 'redirect' в POST. Возвращает путь на который перенаправить юзера.
+     *
+     * @return string
+     */
+    private function getRedirectRouteFromPost()
+    {
+        $redirect = $this->params()->fromPost('redirect', '');  //add del redirect_url
+        if ($redirect && $this->routeExists($redirect)) {
+            return $redirect;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $route
+     * @return bool
+     */
+    private function routeExists($route)
+    {
+        try {
+            $this->router->assemble(array(), array('name' => $route));
+        } catch (Exception\RuntimeException $e) {
+            return false;
+        }
+        return true;
     }
 }

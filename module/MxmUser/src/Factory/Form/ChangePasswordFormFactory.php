@@ -28,18 +28,15 @@ namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\AggregateHydrator;
-use MxmUser\Form\UserForm;
+use MxmUser\Form\ChangePasswordForm;
 use Zend\InputFilter\InputFilter;
 
-class UserFormFactory implements FactoryInterface
+class ChangePasswordFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
 
-        return new UserForm(
-            $aggregatehydrator,
+        return new ChangePasswordForm(
             new InputFilter()
         );
     }

@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,41 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\Timezone;
+namespace MxmUser\Exception;
 
-use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
-
-class TimezoneHydrator implements HydratorInterface
+class AlreadyExistsUserException extends RuntimeUserException implements UserExceptionInterface
 {
-    
-    public function __construct()
-    {
-    }
-    
-    public function hydrate(array $data, $object)
-    {
-        if (!$object instanceof DateTimeZone) {
-            return $object;
-        }
-        
-        $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-        
-        $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
-        
-        return $timezone;
-    }
-
-    public function extract($object)
-    {
-        if (!$object instanceof DateTimeZone) {
-            return array();
-        }
-        
-        $values = array();
-        
-        $values ['timebelt'] = $object->getName();
-        
-        return $values;
-    }
 }

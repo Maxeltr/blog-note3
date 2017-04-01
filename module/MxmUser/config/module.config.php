@@ -12,7 +12,10 @@ return [
             'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
             'locale' => 'ru_RU',
             'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-        ]
+        ],
+        'logger' => [
+            'path' => __DIR__ . '/../data/log/blog-note3.log',  //add
+        ],
         
     ],
     'controllers' => [
@@ -40,11 +43,13 @@ return [
             Hydrator\User\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
             Hydrator\User\TimebeltHydrator::class => InvokableFactory::class,
             Hydrator\Timezone\TimezoneHydrator::class => InvokableFactory::class,
-            //Zend\Validator\Date::class => Factory\Validator\DateValidatorFactory::class,
+            AuthenticationService::class => Factory\Service\AuthServiceFactory::class,
+            Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
             //Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
             //Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            Logger\Logger::class => Factory\Logger\LoggerFactory::class,    //add
             
         ],
         'invokables' => [
@@ -53,9 +58,14 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            Form\UserForm::class => Factory\Form\UserFormFactory::class,
-            Form\UserFieldset::class => Factory\Form\UserFieldsetFactory::class,
+            Form\EditUserForm::class => Factory\Form\EditUserFormFactory::class,
+            Form\EditUserFieldset::class => Factory\Form\EditUserFieldsetFactory::class,
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
+            Form\RegisterUserForm::class => Factory\Form\RegisterUserFormFactory::class,
+            Form\RegisterUserFieldset::class => Factory\Form\RegisterUserFieldsetFactory::class,
+            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class, 
+            Form\ChangePasswordForm::class => Factory\Form\ChangePasswordFormFactory::class,
+            Form\LoginUserForm::class => Factory\Form\LoginUserFormFactory::class,
         ]
     ],
     'router' => [
@@ -103,12 +113,65 @@ return [
                 ],
             ],
             'addUser' => [
-                'type'    => 'literal',
+                'type'    => 'Literal',
                 'options' => [
                     'route'    => '/add/user',
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action' => 'addUser'
+                    ],
+                ],
+            ],
+            'editUser' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/edit/user/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editUser'
+                    ],
+                ],
+            ],
+            'changePassword' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/change/password',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'changePassword',
+                    ],
+                ],
+            ],
+            'loginUser' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/login',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'loginUser',
+                    ],
+                ],
+            ],
+            'logoutUser' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/logout',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'logoutUser',
+                    ],
+                ],
+            ],
+            'changeEmail' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/change/email',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'changeEmail',
                     ],
                 ],
             ],

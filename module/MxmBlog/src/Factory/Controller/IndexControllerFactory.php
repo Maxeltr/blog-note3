@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,42 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmBlog\Factory\Controller;
 
-use MxmUser\Controller\WriteController;
-use MxmUser\Form\EditUserForm;
-use MxmUser\Form\RegisterUserForm;
-use MxmUser\Form\ChangePasswordForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmUser\Form\LoginUserForm;
-use MxmUser\Form\ChangeEmailForm;
-use Zend\Router\RouteInterface;
+use Zend\Config\Config;
+use Zend\Validator\Date;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmBlog\Controller\IndexController;
+use MxmBlog\Service\PostServiceInterface;
+use MxmBlog\Service\DateTimeInterface;
 
-class WriteControllerFactory implements FactoryInterface
+class IndexControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userService = $container->get(UserServiceInterface::class);
-        $router = $container->get('Router');
-        $formManager = $container->get('FormElementManager');
+        $postService = $container->get(PostServiceInterface::class);
+        $dateValidator = $container->get(Date::class);
+        $datetime = $container->get(DateTimeInterface::class);
+        $config = new Config($container->get('config'));
         
-        $editUserForm = $formManager->get(EditUserForm::class);
-        $registerUserForm = $formManager->get(RegisterUserForm::class);
-        $changePasswordForm = $formManager->get(ChangePasswordForm::class);
-        $loginUserForm = $formManager->get(LoginUserForm::class);
-        $changeEmailForm = $formManager->get(ChangeEmailForm::class);
-        
-        
-        return new WriteController(
-            $userService,
-            $editUserForm,
-            $registerUserForm,
-            $changePasswordForm,
-            $loginUserForm,
-            $changeEmailForm,
-            $router
-        );
+        return new IndexController($postService, $dateValidator, $datetime, $config->blog_module);
     }
 }

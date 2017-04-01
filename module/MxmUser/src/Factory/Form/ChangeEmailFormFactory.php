@@ -26,21 +26,18 @@
 
 namespace MxmUser\Factory\Form;
 
-use MxmUser\Form\UserFieldset;
-use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\AggregateHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Form\ChangeEmailForm;
+use Zend\InputFilter\InputFilter;
 
-class UserFieldsetFactory implements FactoryInterface
+class ChangeEmailFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new UserFieldset(
-            $container->get(UserInterface::class),
-            $container->get(AggregateHydrator::class),
-            $requestedName,
-            $options
+
+        return new ChangeEmailForm(
+            new InputFilter()
         );
     }
 }

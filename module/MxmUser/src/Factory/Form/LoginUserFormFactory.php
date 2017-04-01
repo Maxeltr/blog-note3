@@ -24,42 +24,20 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmUser\Factory\Form;
 
-use MxmUser\Controller\WriteController;
-use MxmUser\Form\EditUserForm;
-use MxmUser\Form\RegisterUserForm;
-use MxmUser\Form\ChangePasswordForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\Service\UserServiceInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\LoginUserForm;
-use MxmUser\Form\ChangeEmailForm;
-use Zend\Router\RouteInterface;
+use Zend\InputFilter\InputFilter;
 
-class WriteControllerFactory implements FactoryInterface
+class LoginUserFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userService = $container->get(UserServiceInterface::class);
-        $router = $container->get('Router');
-        $formManager = $container->get('FormElementManager');
-        
-        $editUserForm = $formManager->get(EditUserForm::class);
-        $registerUserForm = $formManager->get(RegisterUserForm::class);
-        $changePasswordForm = $formManager->get(ChangePasswordForm::class);
-        $loginUserForm = $formManager->get(LoginUserForm::class);
-        $changeEmailForm = $formManager->get(ChangeEmailForm::class);
-        
-        
-        return new WriteController(
-            $userService,
-            $editUserForm,
-            $registerUserForm,
-            $changePasswordForm,
-            $loginUserForm,
-            $changeEmailForm,
-            $router
+
+        return new LoginUserForm(
+            new InputFilter()
         );
     }
 }

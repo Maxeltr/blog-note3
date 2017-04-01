@@ -25,57 +25,42 @@
  */
 
 namespace MxmUser\Form;
-
-use \DateTimeZone;
+ 
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
 
-class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
+class RegisterUserForm extends Form
 {
     public function __construct(
-        DateTimeZone $timezone,
         HydratorInterface $hydrator,
-        $name = "timebelt",
+        InputFilter $inputFilter,
+        $name = "register_user",
         $options = array()
     ) {
         parent::__construct($name, $options);
-        
-        $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-        
-        $this->setHydrator($hydrator);
-        $this->setObject($timezone);
-        
-        $this->add([
-            'name' => 'timezoneId',
-            'type' => 'Zend\Form\Element\Select',
-            'attributes' => [
-                'type' => 'select',
-                'required' => 'required',
-                'class' => 'form-control',
-            ],
-            'options' => [
-                'label' => 'Timezone',
-                'value_options' => $timezones,
-            ],
-        ]);
-        
+
+        $this->setAttribute('method', 'post')
+            ->setHydrator($hydrator)
+            ->setInputFilter($inputFilter);
     }
     
-    /**
-     * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
-    {
-        return [
-            'timezoneId' => [
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ],
-        ];
+    public function init() {
+        //parent::init();
+        $this->add([
+            'name' => 'user',
+            'type' => RegisterUserFieldset::class,
+            'options' => [
+                'use_as_base_fieldset' => true
+            ]
+        ]);
+        
+        $this->add([
+            'type' => 'submit',
+            'name' => 'submit',
+            'attributes' => [
+                'value' => 'Send'
+            ]
+        ]);
     }
 }

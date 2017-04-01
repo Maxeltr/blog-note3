@@ -26,40 +26,47 @@
 
 namespace MxmUser\Form;
 
-use \DateTimeZone;
-use Zend\Hydrator\HydratorInterface;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
+use MxmUser\Model\UserInterface;
+use Zend\Hydrator\HydratorInterface;
 
-class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
+class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(
-        DateTimeZone $timezone,
-        HydratorInterface $hydrator,
-        $name = "timebelt",
-        $options = array()
-    ) {
+    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "edit_user", $options = array())
+    {
         parent::__construct($name, $options);
         
-        $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-        
         $this->setHydrator($hydrator);
-        $this->setObject($timezone);
-        
+        $this->setObject($user);
+
         $this->add([
-            'name' => 'timezoneId',
-            'type' => 'Zend\Form\Element\Select',
-            'attributes' => [
-                'type' => 'select',
-                'required' => 'required',
-                'class' => 'form-control',
-            ],
-            'options' => [
-                'label' => 'Timezone',
-                'value_options' => $timezones,
-            ],
+            'type' => 'hidden',
+            'name' => 'id'
         ]);
         
+        $this->add([
+            'type' => 'text',
+            'name' => 'username',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => 'Username'
+            ]
+        ]);
+    }
+    
+    public function init() {
+        //parent::init();
+        $this->add([
+            'name' => 'timebelt',
+            'type' => TimebeltFieldset::class,
+            'options' => [
+                'use_as_base_fieldset' => true
+            ]
+        ]);
     }
     
     /**
@@ -71,11 +78,30 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
-            'timezoneId' => [
+            'id' => [
                 'filters' => [
                     ['name' => 'Int'],
                 ],
             ],
+            'username' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StripNewlines'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding'=>'UTF-8',
+                            'min'=>1,
+                            'max'=>250,
+                        ]
+                    ]
+                ]
+            ],
+            
         ];
     }
 }

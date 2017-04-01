@@ -39,6 +39,15 @@ interface MapperInterface
      */
     public function findUserById($id);
     
+        /**
+     * @param string $email
+     *
+     * @return UserInterface
+     * @throw RecordNotFoundUserException
+     * @throw InvalidArgumentUserException
+     */
+    public function findUserByEmail($email);
+    
     /**
      * 
      * @return Paginator

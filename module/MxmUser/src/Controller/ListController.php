@@ -32,7 +32,6 @@ use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use \DateTimeInterface;
 use MxmUser\Service\UserServiceInterface;
-use MxmUser\Exception\RecordNotFoundUserException;
 
 class ListController extends AbstractActionController
 {
@@ -70,7 +69,7 @@ class ListController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $user = $this->userService->findUserById($id);
-        } catch (RecordNotFoundUserException $ex) {
+        } catch (\Exception $ex) {
             return $this->notFoundAction();
         }
 

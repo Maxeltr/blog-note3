@@ -2,7 +2,7 @@
 <!--
 The MIT License
 
-Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,29 +23,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 
-        <?php
+<?php if ($this->error) : ?>
+<p class="error">
+    There were one or more issues with your submission. Please correct them as
+    indicated below.
+</p>
+<p>
+    <?php echo $this->escapeHtml($this->error); ?>
+</p>
+<?php endif; ?>
+
+<?php
 $form = $this->form;
-$form->setAttribute('action', $this->url('addUser', array(), true));
+$form->setAttribute('action', $this->url('loginUser', array(), true));
 $form->prepare();
 
-$form->get('submit')->setValue('Add User');
+$form->get('submit')->setValue('Login');
 
 echo $this->form()->openTag($form);
 
-$user = $form->get('user');
+echo $this->formElement($form->get('email'));
+echo $this->formElementErrors($form->get('email'));
 
-//echo $this->formRow($user->get('id'));
-echo $this->formRow($user->get('username'));
+echo $this->formElement($form->get('password'));
+echo $this->formElementErrors($form->get('password'));
 
-echo $this->formRow($user->get('email'));
-echo $this->formRow($user->get('password'));
-echo $this->formRow($user->get('confirmPassword'));
-
-$timezone = $user->get('timebelt');
-echo $this->formRow($timezone->get('timezoneId'));
-
+echo $this->formElement($form->get('redirect_url')); //add
+echo $this->formElement($form->get('csrf'));            //add
+            
 echo $this->formElement($form->get('submit'));
 
 echo $this->form()->closeTag();
 ?>
-

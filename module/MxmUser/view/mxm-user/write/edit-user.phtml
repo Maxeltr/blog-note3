@@ -22,24 +22,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-
-        <?php
+<?php
 $form = $this->form;
-$form->setAttribute('action', $this->url('addUser', array(), true));
+$form->setAttribute('action', $this->url('editUser', array(), true));
 $form->prepare();
 
-$form->get('submit')->setValue('Add User');
+$form->get('submit')->setValue('Edit User');
 
 echo $this->form()->openTag($form);
 
 $user = $form->get('user');
-
-//echo $this->formRow($user->get('id'));
+echo $this->formRow($user->get('id'));
 echo $this->formRow($user->get('username'));
-
-echo $this->formRow($user->get('email'));
-echo $this->formRow($user->get('password'));
-echo $this->formRow($user->get('confirmPassword'));
 
 $timezone = $user->get('timebelt');
 echo $this->formRow($timezone->get('timezoneId'));
@@ -48,4 +42,3 @@ echo $this->formElement($form->get('submit'));
 
 echo $this->form()->closeTag();
 ?>
-

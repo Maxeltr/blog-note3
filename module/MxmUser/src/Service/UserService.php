@@ -29,6 +29,11 @@ namespace MxmUser\Service;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
+use Zend\Authentication\AuthenticationService;
+use MxmUser\Exception\RuntimeUserException;
+use Zend\Crypt\Password\Bcrypt;
+use MxmUser\Exception\RecordNotFoundUserException;
+use MxmUser\Exception\AlreadyExistsUserException;
 
 class UserService implements UserServiceInterface
 {
@@ -42,12 +47,19 @@ class UserService implements UserServiceInterface
      */
     protected $datetime;
     
+    /**
+     * @var Zend\Authentication\AuthenticationService;
+     */
+    protected $authService;
+    
     public function __construct(
         MapperInterface $mapper,
-        DateTimeInterface $datetime
+        DateTimeInterface $datetime,
+        AuthenticationService $authService
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
+        $this->authService = $authService;
     }
     
     /**
@@ -70,9 +82,17 @@ class UserService implements UserServiceInterface
      * {@inheritDoc}
      */
     public function insertUser(UserInterface $user)
-    {
+    {      
+        if ($this->IsUserExists($user)) {
+            throw new AlreadyExistsUserException("User with email address " . $user->getEmail() . " already exists");
+        }
+        
+        $bcrypt = new Bcrypt();
+        $passwordHash = $bcrypt->create($user->getPassword());
+        $user->setPassword($passwordHash);
+        
         $user->setCreated($this->datetime->modify('now'));
-
+        
         return $this->mapper->insertUser($user);
     }
     
@@ -90,5 +110,60 @@ class UserService implements UserServiceInterface
     public function deleteUser(UserInterface $user)
     {
         return $this->mapper->deleteUser($user);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function changePassword(array $data)
+    {
+        \Zend\Debug\Debug::dump($data);
+        die('UserService changePassword');
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function loginUser($email, $password)
+    {
+        if ($this->authService->hasIdentity()) {
+            throw new RuntimeUserException('Already logged in');
+        }
+
+        $authAdapter = $this->authService->getAdapter();
+        $authAdapter->setEmail($email);
+        $authAdapter->setPassword($password);
+        $result = $this->authService->authenticate();
+        
+        return $result;
+    }
+    
+    public function logoutUser()
+    {
+        if (!$this->authService->hasIdentity()) {
+            throw new RuntimeUserException('The user is not logged in');
+        }
+
+        $this->authService->clearIdentity();               
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function changeEmail(array $data)
+    {
+        \Zend\Debug\Debug::dump($data);
+        die('UserService changeEmail');
+    }
+    
+    private function IsUserExists($user)
+    {
+        try {
+            $this->mapper->findUserByEmail($user->getEmail());  //TODO  заменить на валидатор?
+        } catch (RecordNotFoundUserException $e) {
+            return false;
+        }
+        
+        return true;
     }
 }

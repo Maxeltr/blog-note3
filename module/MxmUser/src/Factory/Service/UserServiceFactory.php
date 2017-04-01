@@ -31,6 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Service\DateTimeInterface;
 use MxmUser\Service\UserService;
+use MxmUser\AuthenticationService;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -39,10 +40,12 @@ class UserServiceFactory implements FactoryInterface
         $mapper = $container->get(MapperInterface::class);
         
         $dateTime = $container->get(DateTimeInterface::class);
+        $authService = $container->get(AuthenticationService::class);
         
         return new UserService(
             $mapper,
-            $dateTime
+            $dateTime,
+            $authService
         );
     }
 }
