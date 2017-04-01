@@ -12,7 +12,10 @@ return [
             'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
             'locale' => 'ru_RU',
             'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-        ]
+        ],
+        'logger' => [
+            'path' => __DIR__ . '/../data/logs/blog-note3.log',
+        ],
         
     ],
     'controllers' => [
@@ -29,6 +32,7 @@ return [
             Service\DateTimeInterface::class => Service\DateTime::class,
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
+            \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
         ],
         'factories' => [
             Service\UserService::class => Factory\Service\UserServiceFactory::class,
@@ -46,6 +50,7 @@ return [
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
             //Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            Logger\Logger::class => Factory\Logger\LoggerFactory::class,
             
         ],
         'invokables' => [
@@ -178,4 +183,5 @@ return [
             'MxmUser' => __DIR__ . '/../view',
         ],
     ],
+    
 ];

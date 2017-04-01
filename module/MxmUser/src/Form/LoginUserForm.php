@@ -67,6 +67,21 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
         ]);
         
         $this->add([
+            'type' => 'csrf',
+            'name' => 'csrf',
+            'options' => [
+                'csrf_options' => [
+                'timeout' => 600
+                ]
+            ],
+        ]);
+        
+        $this->add([
+            'type'  => 'hidden',
+            'name' => 'redirect'
+        ]);
+        
+        $this->add([
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
@@ -108,6 +123,21 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                         ]
                     ]
                 ]
+            ],
+            'redirect' => [
+                'required' => false,
+                'filters'  => [
+                    ['name'=>'StringTrim']
+                ],
+                'validators' => [
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'min' => 0,
+                            'max' => 2048
+                        ]
+                    ],
+                ],
             ],
         ];
     }

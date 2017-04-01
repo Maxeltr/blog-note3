@@ -94,20 +94,19 @@ class WriteController extends AbstractActionController
                 
                 $resultCode = $result->getCode();
                 if ($resultCode === Result::SUCCESS) {
-                    $redirectUrl = $this->getRedirectRouteFromPost();
-                    if(empty($redirectUrl)) {
+                    if(empty($data['redirect'])) {
                         return $this->redirect()->toRoute('home');
                     } else {
-                        $this->redirect()->toUrl($redirectUrl);
+                        $this->redirect()->toUrl($data['redirect']);
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
                     $loginError = 'Incorrect login.';
                 } else {
                     $loginError = 'Incorrect login and/or password.';
                 }
-            } else {
-                $loginError = 'Incorrect login and/or password.';
-            }
+            } //else {
+//                $loginError = 'Incorrect login and/or password.';
+//            }
         }
 
         return new ViewModel(array(
@@ -261,7 +260,7 @@ class WriteController extends AbstractActionController
      */
     private function getRedirectRouteFromPost()
     {
-        $redirect = $this->params()->fromPost('redirect_url', '');
+        $redirect = $this->params()->fromPost('redirect', '');
         if ($redirect && $this->routeExists($redirect)) {
             return $redirect;
         }
