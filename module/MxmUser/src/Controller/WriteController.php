@@ -113,9 +113,7 @@ class WriteController extends AbstractActionController
                 } else {
                     $loginError = 'Incorrect login and/or password.';
                 }
-            } //else {
-//                $loginError = 'Incorrect login and/or password.';
-//            }
+            }
         }
 
         return new ViewModel(array(
