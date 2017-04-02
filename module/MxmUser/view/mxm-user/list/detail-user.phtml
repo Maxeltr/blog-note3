@@ -52,6 +52,9 @@ THE SOFTWARE.
                     echo $this->escapeHtml($user->getCreated()->format('Y-m-d H:i:s'));
                 } ?>
             </p>
+            <p>
+                <a href="<?php echo $this->url('changePassword', array('action' => 'changePassword')); ?>">Change password</a>
+            </p>
            
             
         </div><!-- /.blog-post -->

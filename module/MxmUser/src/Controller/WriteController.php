@@ -31,6 +31,8 @@ use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\RuntimeException;
 use MxmUser\Exception\AlreadyExistsUserException;
+use MxmUser\Exception\InvalidPasswordUserException;
+use MxmUser\Exception\NotAuthenticatedUserException;
 use Zend\Form\FormInterface;
 use Zend\Router\RouteInterface;
 use Zend\Authentication\Result;
@@ -103,9 +105,10 @@ class WriteController extends AbstractActionController
                 $resultCode = $result->getCode();
                 if ($resultCode === Result::SUCCESS) {
                     $redirectUrl = $this->getRedirectRouteFromPost();
-                    if(empty($redirectUrl)) {
+                    if (empty($redirectUrl)) {
                         return $this->redirect()->toRoute('home');
                     } else {
+                        $redirectUrl = $this->router->assemble([], ['name' => $redirectUrl]);
                         $this->redirect()->toUrl($redirectUrl);
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
@@ -115,12 +118,12 @@ class WriteController extends AbstractActionController
                 }
             }
         }
-
-        return new ViewModel(array(
+        $this->loginUserForm->get('redirect')->setValue($redirectUrl);
+        
+        return new ViewModel([
             'form' => $this->loginUserForm,
-            'redirect' => $redirectUrl,
             'error' => $loginError
-        ));
+        ]);
     }
 
     public function LogoutUserAction() 
@@ -138,7 +141,6 @@ class WriteController extends AbstractActionController
     public function AddUserAction()
     {
         $request = $this->getRequest();
-        $registerError = false;
         
         if ($request->isPost()) {
             $this->registerUserForm->setData($request->getPost());
@@ -146,21 +148,26 @@ class WriteController extends AbstractActionController
                 try {
                     $savedUser = $this->userService->insertUser($this->registerUserForm->getData());
                 } catch (AlreadyExistsUserException $e) {
-                    $registerError = $e->getMessage();
+                    
+                    return new ViewModel([
+                        'form' => $this->registerUserForm,
+                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                    ]);
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    
                     return $this->notFoundAction();
                 }
                 
-                return $this->redirect()->toRoute('detailUser', 
-                    array('id' => $savedUser->getId()));
+                return $this->redirect()->toRoute('detailUser',    //TODO автоматически логинить юзера или перенаправить на страницу login? 
+                    ['id' => $savedUser->getId()]
+                );
             }
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
             'form' => $this->registerUserForm,
-            'error' => $registerError ? $registerError : false
-        ));
+        ]);
     }
     
     public function ChangeEmailAction()
@@ -208,39 +215,47 @@ class WriteController extends AbstractActionController
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('id' => $user->getId()));
+                    ['id' => $user->getId()]);
             }
         }
  
-        return new ViewModel(array(
-                'form' => $this->editUserForm
-        ));
+        return new ViewModel([
+            'form' => $this->editUserForm
+        ]);
     }
     
     public function ChangePasswordAction()
     {
-        //TODO проверить авторизацию если нет то перенаправить
-        
         $request = $this->getRequest();
         
         if ($request->isPost()) {
             $this->changePasswordForm->setData($request->getPost());
             if ($this->changePasswordForm->isValid()) {
                 try {
-                    $this->userService->changePassword($this->changePasswordForm->getData());
+                    $user = $this->userService->changePassword($this->changePasswordForm->getData());
+                } catch (InvalidPasswordUserException $e) {
+                    
+                    return new ViewModel([
+                        'form' => $this->changePasswordForm,
+                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                    ]);
+                } catch (NotAuthenticatedUserException $e) {
+                    
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'changePassword']]); //TODO использовать flashmessenger?
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    
                     return $this->notFoundAction();
                 }
                 
                 return $this->redirect()->toRoute('detailUser', 
-                    array('id' => $user->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+                    ['id' => $user->getId()]);     //TODO добавить flashmessenger
             }
         }
  
-        return new ViewModel(array(
+        return new ViewModel([
                 'form' => $this->changePasswordForm
-        ));
+        ]);
     }
     
     public function ResetPasswordAction()

@@ -74,22 +74,22 @@ return [
     ],
     'router' => [
         'routes' => [
-            'login' => [
-                'type'    => 'Literal',
-                'options' => [
-                    // Change this to something specific to your module
-                    'route'    => '/login',
-                    'defaults' => [
-                        'controller'    => Controller\AuthController::class,
-                        'action'        => 'login',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    // You can place additional routes that match under the
-                    // route defined above here.
-                ],
-            ],
+//            'login' => [
+//                'type'    => 'Literal',
+//                'options' => [
+//                    // Change this to something specific to your module
+//                    'route'    => '/login',
+//                    'defaults' => [
+//                        'controller'    => Controller\AuthController::class,
+//                        'action'        => 'login',
+//                    ],
+//                ],
+//                'may_terminate' => true,
+//                'child_routes' => [
+//                    // You can place additional routes that match under the
+//                    // route defined above here.
+//                ],
+//            ],
             'listUsers' => [
                 'type'    => 'Segment',
                 'options' => [

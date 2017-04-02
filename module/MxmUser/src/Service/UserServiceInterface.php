@@ -48,18 +48,15 @@ interface UserServiceInterface
     
     /**
      * Должен сохранять объект, реализующий UserInterface и возвращать его же.
-     * Также должен сохранять связи тег-статья в соответствующей таблице БД и тег
-     * если он отсутствует в базе.
      * 
      * @param  UserInterface $user
      * @return UserInterface
+     * @throws AlreadyExistsUserException
      */
     public function insertUser(UserInterface $user);
     
     /**
      * Должен обновить объект, реализующий UserInterface и возвращать его же.
-     * Также должен сохранять связи тег-статья в соответствующей таблице БД и тег
-     * если он отсутствует в базе.
      * 
      * @param  UserInterface $user
      * @return UserInterface
@@ -67,12 +64,24 @@ interface UserServiceInterface
     public function updateUser(UserInterface $user);
     
     /**
-     * Должен удалить полученный объект, реализующий UserInterface, и его связи 
-     * с тегами, и вернуть true (если удалено) или false (если неудача).
+     * Должен удалить полученный объект, реализующий UserInterface
+     * и вернуть true (если удалено) или false (если неудача).
      *
      * @param  UserInterface $user
      * 
      * @return bool
      */
-    public function deleteUser(UserInterface $user);     
+    public function deleteUser(UserInterface $user);
+    
+    /**
+     * Изменить пароль
+     *
+     * @param array $data ['oldPassword', 'newPassword']
+     * 
+     * @return bool
+     * @throws NotAuthenticatedUserException
+     * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
+     */
+    public function changePassword(array $data);
+    
 }

@@ -31,9 +31,11 @@ use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmUser\Exception\RuntimeUserException;
+use MxmUser\Exception\NotAuthenticatedUserException;
 use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
+use MxmUser\Exception\InvalidPasswordUserException;
 
 class UserService implements UserServiceInterface
 {
@@ -117,8 +119,24 @@ class UserService implements UserServiceInterface
      */
     public function changePassword(array $data)
     {
-        \Zend\Debug\Debug::dump($data);
-        die('UserService changePassword');
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+        
+        $currentUser = $this->authService->getIdentity();
+        
+        $oldPass = $data['oldPassword'];
+        $newPass = $data['newPassword'];
+
+        $bcrypt = new Bcrypt;
+        if (!$bcrypt->verify($oldPass, $currentUser->getPassword())) {
+            throw new InvalidPasswordUserException('Incorrect old password.');
+        }
+        
+        $pass = $bcrypt->create($newPass);
+        $currentUser->setPassword($pass);
+        
+        return $this->mapper->updateUser($currentUser); 
     }
     
     /**

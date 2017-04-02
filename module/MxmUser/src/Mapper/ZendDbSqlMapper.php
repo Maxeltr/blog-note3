@@ -212,6 +212,7 @@ class ZendDbSqlMapper implements MapperInterface
     public function updateUser(UserInterface $userObject)
     {
         $data = $this->aggregateHydrator->extract($userObject);
+        unset($data['id']);
 
         $action = new Update('users');	
         $action->set($data);
