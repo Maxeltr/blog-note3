@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -36,10 +36,10 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
     public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "register_user", $options = array())
     {
         parent::__construct($name, $options);
-        
+
         $this->setHydrator($hydrator);
         $this->setObject($user);
-        
+
         $this->add([
             'type' => 'text',
             'name' => 'username',
@@ -51,7 +51,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'label' => 'Username'
             ]
         ]);
-        
+
         $this->add([
             'type' => 'text',
             'name' => 'email',
@@ -75,7 +75,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'label' => 'Password'
             ]
         ]);
-        
+
         $this->add([
             'type' => 'password',
             'name' => 'confirmPassword',
@@ -88,7 +88,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             ]
         ]);
     }
-    
+
     public function init() {
         $this->add([
             'name' => 'timebelt',
@@ -98,7 +98,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             ]
         ]);
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.
@@ -133,13 +133,12 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 ],
                 'validators' => [
                     [
-                        'name' => 'StringLength',
+                        'name' => 'EmailAddress',
                         'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 250,
-                        ]
-                    ]
+                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'useMxCheck' => false,
+                        ],
+                    ],
                 ]
             ],
             'password' => [
@@ -167,7 +166,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                     [
                         'name' => 'Identical',
                         'options' => [
-                            'token' => 'password',                            
+                            'token' => 'password',
                         ]
                     ],
                     [

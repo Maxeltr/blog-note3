@@ -42,9 +42,11 @@ $form->get('submit')->setValue('Login');
 
 echo $this->form()->openTag($form);
 
+echo $this->formLabel($form->get('email'));
 echo $this->formElement($form->get('email'));
 echo $this->formElementErrors($form->get('email'));
 
+echo $this->formLabel($form->get('password'));
 echo $this->formElement($form->get('password'));
 echo $this->formElementErrors($form->get('password'));
 

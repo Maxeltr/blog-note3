@@ -32,9 +32,18 @@ $form->get('submit')->setValue('Change Email');
 echo $this->form()->openTag($form);
 
 echo $this->formElement($form->get('id'));
+
+echo $this->formLabel($form->get('newEmail'));
 echo $this->formElement($form->get('newEmail'));
+echo $this->formElementErrors($form->get('newEmail'));
+
+echo $this->formLabel($form->get('confirmEmail'));
 echo $this->formElement($form->get('confirmEmail'));
+echo $this->formElementErrors($form->get('confirmEmail'));
+
+echo $this->formLabel($form->get('password'));
 echo $this->formElement($form->get('password'));
+echo $this->formElementErrors($form->get('password'));
 
 echo $this->formElement($form->get('submit'));
 

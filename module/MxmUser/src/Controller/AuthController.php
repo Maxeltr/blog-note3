@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -31,7 +31,7 @@ use Zend\View\Model\ViewModel;
 
 class AuthController extends AbstractActionController
 {
-    public function LoginAction()
+    public function loginAction()
     {
         return new ViewModel([
             'message' => 'MxmUser'

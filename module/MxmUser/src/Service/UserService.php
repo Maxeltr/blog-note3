@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -32,6 +32,7 @@ use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmUser\Exception\RuntimeUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmUser\Exception\InvalidArgumentUserException;
 use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
@@ -43,17 +44,17 @@ class UserService implements UserServiceInterface
      * @var \User\Mapper\MapperInterface;
      */
     protected $mapper;
-    
+
     /**
      * @var DateTimeInterface;
      */
     protected $datetime;
-    
+
     /**
      * @var Zend\Authentication\AuthenticationService;
      */
     protected $authService;
-    
+
     public function __construct(
         MapperInterface $mapper,
         DateTimeInterface $datetime,
@@ -63,7 +64,7 @@ class UserService implements UserServiceInterface
         $this->datetime = $datetime;
         $this->authService = $authService;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -71,7 +72,7 @@ class UserService implements UserServiceInterface
     {
         return $this->mapper->findAllUsers();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -79,25 +80,25 @@ class UserService implements UserServiceInterface
     {
 	return $this->mapper->findUserById($id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function insertUser(UserInterface $user)
-    {      
+    {
         if ($this->IsUserExists($user)) {
             throw new AlreadyExistsUserException("User with email address " . $user->getEmail() . " already exists");
         }
-        
+
         $bcrypt = new Bcrypt();
         $passwordHash = $bcrypt->create($user->getPassword());
         $user->setPassword($passwordHash);
-        
+
         $user->setCreated($this->datetime->modify('now'));
-        
+
         return $this->mapper->insertUser($user);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +106,7 @@ class UserService implements UserServiceInterface
     {
         return $this->mapper->updateUser($user);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -113,32 +114,55 @@ class UserService implements UserServiceInterface
     {
         return $this->mapper->deleteUser($user);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public function changeEmail(array $data)
+    {
+        if (!array_key_exists('newEmail', $data) or !array_key_exists('password', $data)) {
+            throw new InvalidArgumentUserException("No params given: email or password.");
+        }
+
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+        $currentUser = $this->authService->getIdentity();
+
+        $bcrypt = new Bcrypt();
+        if (!$bcrypt->verify($data['password'], $currentUser->getPassword())) {
+            throw new InvalidPasswordUserException('Incorrect password.');
+        }
+
+        $currentUser->setEmail($data['newEmail']);
+
+        return $this->mapper->updateUser($currentUser);
+    }
+
     /**
      * {@inheritDoc}
      */
     public function changePassword(array $data)
     {
+        if (array_key_exists('oldPassword', $data) or array_key_exists('newPassword', $data)) {
+            throw new InvalidArgumentUserException("No params given: oldPassword or newPassword.");
+        }
+
         if (!$this->authService->hasIdentity()) {
             throw new NotAuthenticatedUserException('The user is not logged in');
         }
-        
         $currentUser = $this->authService->getIdentity();
-        
-        $oldPass = $data['oldPassword'];
-        $newPass = $data['newPassword'];
 
-        $bcrypt = new Bcrypt;
-        if (!$bcrypt->verify($oldPass, $currentUser->getPassword())) {
+        $bcrypt = new Bcrypt();
+        if (!$bcrypt->verify($data['oldPassword'], $currentUser->getPassword())) {
             throw new InvalidPasswordUserException('Incorrect old password.');
         }
-        
-        $pass = $bcrypt->create($newPass);
-        $currentUser->setPassword($pass);
-        
-        return $this->mapper->updateUser($currentUser); 
+
+        $currentUser->setPassword($bcrypt->create($data['newPassword']));
+
+        return $this->mapper->updateUser($currentUser);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -161,33 +185,25 @@ class UserService implements UserServiceInterface
 
         return $result;
     }
-    
+
     public function logoutUser()
     {
         if (!$this->authService->hasIdentity()) {
             throw new RuntimeUserException('The user is not logged in');
         }
 
-        $this->authService->clearIdentity();               
+        $this->authService->clearIdentity();
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function changeEmail(array $data)
-    {
-        \Zend\Debug\Debug::dump($data);
-        die('UserService changeEmail');
-    }
-    
-    private function IsUserExists($user)
+
+    private function isUserExists($user)
     {
         try {
             $this->mapper->findUserByEmail($user->getEmail());  //TODO  заменить на валидатор?
         } catch (RecordNotFoundUserException $e) {
+
             return false;
         }
-        
+
         return true;
     }
 }

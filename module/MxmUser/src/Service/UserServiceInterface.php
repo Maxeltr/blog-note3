@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -32,56 +32,70 @@ interface UserServiceInterface
 {
     /**
      * Должен вернуть массив объектов, реализующих UserInterface или Paginator
-     * 
+     *
      * @return Array of Paginator
      */
     public function findAllUsers();
-        
+
     /**
      * Должен вернуть один объект по id, реализующий UserInterface
-     * 
+     *
      * @param int $id
      * @return UserInterface
      * @throw RecordNotFoundUserException
      */
     public function findUserById($id);
-    
+
     /**
      * Должен сохранять объект, реализующий UserInterface и возвращать его же.
-     * 
+     *
      * @param  UserInterface $user
      * @return UserInterface
      * @throws AlreadyExistsUserException
      */
     public function insertUser(UserInterface $user);
-    
+
     /**
      * Должен обновить объект, реализующий UserInterface и возвращать его же.
-     * 
+     *
      * @param  UserInterface $user
      * @return UserInterface
      */
     public function updateUser(UserInterface $user);
-    
+
     /**
      * Должен удалить полученный объект, реализующий UserInterface
      * и вернуть true (если удалено) или false (если неудача).
      *
      * @param  UserInterface $user
-     * 
+     *
      * @return bool
      */
     public function deleteUser(UserInterface $user);
-    
+
     /**
      * Изменить пароль
      *
      * @param array $data ['oldPassword', 'newPassword']
-     * 
-     * @return bool
+     *
+     * @return UserInterface
+     *
      * @throws NotAuthenticatedUserException
+     * @throws InvalidArgumentUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
     public function changePassword(array $data);
-    
+
+    /**
+     * Изменить email
+     *
+     * @param array $data ['email', 'password']
+     *
+     * @return UserInterface
+     *
+     * @throws NotAuthenticatedUserException
+     * @throws InvalidArgumentUserException
+     * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
+     */
+    public function changeEmail(array $data);
 }

@@ -55,8 +55,10 @@ THE SOFTWARE.
             <p>
                 <a href="<?php echo $this->url('changePassword', array('action' => 'changePassword')); ?>">Change password</a>
             </p>
-           
-            
+           <p>
+                <a href="<?php echo $this->url('changeEmail', array('action' => 'changeEmail')); ?>">Change email</a>
+            </p>
+
         </div><!-- /.blog-post -->
     </div><!-- /.blog-main -->
 
@@ -76,7 +78,7 @@ THE SOFTWARE.
               <li><a href="#">Facebook</a></li>
             </ol>
         </div>
-        <div class="sidebar-module">  
+        <div class="sidebar-module">
             <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
         </div>
     </div><!-- /.blog-sidebar -->

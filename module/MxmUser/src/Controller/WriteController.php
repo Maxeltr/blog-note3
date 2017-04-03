@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -44,27 +44,27 @@ class WriteController extends AbstractActionController
      * @var Zend\Log\Logger
      */
     protected $logger;
-    
+
     /**
      * @var \MxmUser\Service\UserServiceInterface
      */
     protected $userService;
-    
+
     /**
      * @var \DateTimeInterface
      */
     protected $datetime;
-    
+
     /**
      *
-     * @var Zend\Form\FormInterface 
+     * @var Zend\Form\FormInterface
      */
     protected $editUserForm;
     protected $registerUserForm;
     protected $changePasswordForm;
     protected $loginUserForm;
     protected $changeEmailForm;
-        
+
     public function __construct(
         Logger $logger,
         UserServiceInterface $userService,
@@ -84,13 +84,12 @@ class WriteController extends AbstractActionController
         $this->changeEmailForm = $changeEmailForm;
         $this->router = $router;
     }
-    
-    public function LoginUserAction()
+
+    public function loginUserAction()
     {
         $request = $this->getRequest();
-        $redirectUrl = $this->getRedirectRouteFromQuery();
         $loginError = false;
-        
+
         if ($request->isPost()) {
             $this->loginUserForm->setData($request->getPost());
             if ($this->loginUserForm->isValid()) {
@@ -99,16 +98,17 @@ class WriteController extends AbstractActionController
                     $result = $this->userService->loginUser($data['email'], $data['password']);
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
                     return $this->notFoundAction();
                 }
-                
+
                 $resultCode = $result->getCode();
                 if ($resultCode === Result::SUCCESS) {
-                    $redirectUrl = $this->getRedirectRouteFromPost();
-                    if (empty($redirectUrl)) {
+                    if (!$this->isRouteExists($data['redirect'])) {
+
                         return $this->redirect()->toRoute('home');
                     } else {
-                        $redirectUrl = $this->router->assemble([], ['name' => $redirectUrl]);
+                        $redirectUrl = $this->router->assemble([], ['name' => $data['redirect']]);
                         $this->redirect()->toUrl($redirectUrl);
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
@@ -118,48 +118,49 @@ class WriteController extends AbstractActionController
                 }
             }
         }
-        $this->loginUserForm->get('redirect')->setValue($redirectUrl);
-        
+        $this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());
+
         return new ViewModel([
             'form' => $this->loginUserForm,
             'error' => $loginError
         ]);
     }
 
-    public function LogoutUserAction() 
+    public function logoutUserAction()
     {
         try {
             $this->userService->logoutUser();
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return $this->notFoundAction();
         }
-        
-        return $this->redirect()->toRoute('login');
+
+        return $this->redirect()->toRoute('loginUser');
     }
-    
-    public function AddUserAction()
+
+    public function addUserAction()
     {
         $request = $this->getRequest();
-        
+
         if ($request->isPost()) {
             $this->registerUserForm->setData($request->getPost());
             if ($this->registerUserForm->isValid()) {
                 try {
                     $savedUser = $this->userService->insertUser($this->registerUserForm->getData());
                 } catch (AlreadyExistsUserException $e) {
-                    
+
                     return new ViewModel([
                         'form' => $this->registerUserForm,
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    
+
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailUser',    //TODO автоматически логинить юзера или перенаправить на страницу login? 
+
+                return $this->redirect()->toRoute('detailUser',    //TODO автоматически логинить юзера или перенаправить на страницу login?
                     ['id' => $savedUser->getId()]
                 );
             }
@@ -169,22 +170,32 @@ class WriteController extends AbstractActionController
             'form' => $this->registerUserForm,
         ]);
     }
-    
-    public function ChangeEmailAction()
+
+    public function changeEmailAction()
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->changeEmailForm->setData($request->getPost());
             if ($this->changeEmailForm->isValid()) {
                 try {
-                    $this->userService->changeEmail($this->changeEmailForm->getData());
+                    $user = $this->userService->changeEmail($this->changeEmailForm->getData());
+                } catch (InvalidPasswordUserException $e) {
+
+                    return new ViewModel([
+                        'form' => $this->changeEmailForm,
+                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                    ]);
+                } catch (NotAuthenticatedUserException $e) {
+
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'changeEmail']]); //TODO использовать flashmessenger?
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailUser', 
-                    array('id' => $savedUser->getId()));     //TODO получить id текущего юзера добавить flashmessenger
+
+                return $this->redirect()->toRoute('detailUser',
+                    array('id' => $user->getId()));     //TODO добавить flashmessenger
             }
         }
 
@@ -192,17 +203,18 @@ class WriteController extends AbstractActionController
             'form' => $this->changeEmailForm
         ));
     }
-    
-    public function EditUserAction()
+
+    public function editUserAction()
     {
         $request = $this->getRequest();
         try {
             $user = $this->userService->findUserById($this->params('id'));
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return $this->notFoundAction();
         }
-        
+
         $this->editUserForm->bind($user);   //связываем форму и объект
         if ($request->isPost()) {
             $this->editUserForm->setData($request->getPost());  //данные устанавливаются и в форму и в объект, т.к. форма и объект связаны
@@ -211,60 +223,60 @@ class WriteController extends AbstractActionController
                     $this->userService->updateUser($user);
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailUser', 
+
+                return $this->redirect()->toRoute('detailUser',
                     ['id' => $user->getId()]);
             }
         }
- 
+
         return new ViewModel([
             'form' => $this->editUserForm
         ]);
     }
-    
-    public function ChangePasswordAction()
+
+    public function changePasswordAction()
     {
         $request = $this->getRequest();
-        
         if ($request->isPost()) {
             $this->changePasswordForm->setData($request->getPost());
             if ($this->changePasswordForm->isValid()) {
                 try {
                     $user = $this->userService->changePassword($this->changePasswordForm->getData());
                 } catch (InvalidPasswordUserException $e) {
-                    
+
                     return new ViewModel([
                         'form' => $this->changePasswordForm,
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
                 } catch (NotAuthenticatedUserException $e) {
-                    
+
                     return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'changePassword']]); //TODO использовать flashmessenger?
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    
+
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailUser', 
+
+                return $this->redirect()->toRoute('detailUser',
                     ['id' => $user->getId()]);     //TODO добавить flashmessenger
             }
         }
- 
+
         return new ViewModel([
                 'form' => $this->changePasswordForm
         ]);
     }
-    
-    public function ResetPasswordAction()
+
+    public function resetPasswordAction()
     {
         return new ViewModel([
             'message' => 'ResetPasswordAction'
         ]);
     }
-    
+
     /**
      * Проверяет параметр 'redirect' в GET. Возвращает путь на который перенаправить юзера.
      *
@@ -273,37 +285,39 @@ class WriteController extends AbstractActionController
     private function getRedirectRouteFromQuery()
     {
         $redirect = $this->params()->fromQuery('redirect', '');
-        if ($redirect && $this->routeExists($redirect)) {
+        if ($redirect && $this->isRouteExists($redirect)) {
+
             return $redirect;
         }
 
         return false;
     }
-    
+
     /**
      * Проверяет параметр 'redirect' в POST. Возвращает путь на который перенаправить юзера.
      *
      * @return string
      */
-    private function getRedirectRouteFromPost()
-    {
-        $redirect = $this->params()->fromPost('redirect', '');
-        if ($redirect && $this->routeExists($redirect)) {
-            return $redirect;
-        }
-
-        return false;
-    }
+//    private function getRedirectRouteFromPost()
+//    {
+//        $redirect = $this->params()->fromPost('redirect', '');
+//        if ($redirect && $this->isRouteExists($redirect)) {
+//            return $redirect;
+//        }
+//
+//        return false;
+//    }
 
     /**
      * @param $route
      * @return bool
      */
-    private function routeExists($route)
+    private function isRouteExists($route)
     {
         try {
             $this->router->assemble(array(), array('name' => $route));
-        } catch (Exception\RuntimeException $e) {
+        } catch (\Zend\Router\Exception\RuntimeException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return false;
         }
         return true;

@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -44,27 +44,27 @@ class ListController extends AbstractActionController
      * @var Zend\Config\Config
      */
     protected $config;
-    
+
     public function __construct(
-        UserServiceInterface $userService, 
+        UserServiceInterface $userService,
         Config $config
     ) {
         $this->userService = $userService;
         $this->config = $config;
     }
-    
-    public function ListUsersAction()
+
+    public function listUsersAction()
     {
         $paginator = $this->userService->findAllUsers();
         $this->configurePaginator($paginator);
-                        
+
         return new ViewModel([
             'users' => $paginator,
             'route' => 'listUsers'
         ]);
     }
-  
-    public function DetailUserAction()
+
+    public function detailUserAction()
     {
         $id = $this->params()->fromRoute('id');
         try {
@@ -78,13 +78,13 @@ class ListController extends AbstractActionController
         ));
     }
 
-    private function configurePaginator(Paginator $paginator) 
+    private function configurePaginator(Paginator $paginator)
     {
         $page = (int) $this->params()->fromRoute('page');
         $page = ($page < 1) ? 1 : $page;
         $paginator->setCurrentPageNumber($page);
         $paginator->setItemCountPerPage($this->config->listController->ItemCountPerPage);
-        
+
         return $this;
     }
 }
