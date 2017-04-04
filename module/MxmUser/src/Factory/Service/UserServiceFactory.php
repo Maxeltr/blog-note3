@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,6 +28,9 @@ namespace MxmUser\Factory\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\Validator\Db\RecordExists;
+use Zend\Validator\EmailAddress;
+use Zend\Validator\NotEmpty;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Service\DateTimeInterface;
 use MxmUser\Service\UserService;
@@ -38,14 +41,25 @@ class UserServiceFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $mapper = $container->get(MapperInterface::class);
-        
+
         $dateTime = $container->get(DateTimeInterface::class);
         $authService = $container->get(AuthenticationService::class);
-        
+        $emailValidator = new EmailAddress();
+        $notEmptyValidator = new NotEmpty();
+        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+        $recordExistsValidator = new RecordExists([
+            'table'   => 'users',
+            'field'   => 'email',
+            'adapter' => $dbAdapter,
+        ]);
+
         return new UserService(
             $mapper,
             $dateTime,
-            $authService
+            $authService,
+            $emailValidator,
+            $notEmptyValidator,
+            $recordExistsValidator
         );
     }
 }

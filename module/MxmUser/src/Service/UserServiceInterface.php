@@ -76,7 +76,8 @@ interface UserServiceInterface
     /**
      * Изменить пароль
      *
-     * @param array $data ['oldPassword', 'newPassword']
+     * @param string $oldPassword
+     * @param string $newPassword
      *
      * @return UserInterface
      *
@@ -84,12 +85,13 @@ interface UserServiceInterface
      * @throws InvalidArgumentUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
-    public function changePassword(array $data);
+    public function changePassword($oldPassword, $newPassword);
 
     /**
      * Изменить email
      *
-     * @param array $data ['email', 'password']
+     * @param string $email
+     * @param string $password
      *
      * @return UserInterface
      *
@@ -97,5 +99,22 @@ interface UserServiceInterface
      * @throws InvalidArgumentUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
-    public function changeEmail(array $data);
+    public function changeEmail($email, $password);
+
+    /**
+     *
+     * @param string $email
+     * @param string $password
+     *
+     * @return Zend\Authentication\Result
+     * @throws InvalidArgumentUserException
+     * @throws RuntimeUserException
+     */
+    public function loginUser($email, $password);
+
+    /**
+     * @return $this
+     * @throws RuntimeUserException
+     */
+    public function logoutUser();
 }

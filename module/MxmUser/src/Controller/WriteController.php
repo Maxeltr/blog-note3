@@ -30,6 +30,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\RuntimeException;
+use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
@@ -177,8 +178,9 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->changeEmailForm->setData($request->getPost());
             if ($this->changeEmailForm->isValid()) {
+                $data = $this->changeEmailForm->getData();
                 try {
-                    $user = $this->userService->changeEmail($this->changeEmailForm->getData());
+                    $user = $this->userService->changeEmail($data['newEmail'], $data['password']);
                 } catch (InvalidPasswordUserException $e) {
 
                     return new ViewModel([
@@ -243,8 +245,9 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->changePasswordForm->setData($request->getPost());
             if ($this->changePasswordForm->isValid()) {
+                $data = $this->changePasswordForm->getData();
                 try {
-                    $user = $this->userService->changePassword($this->changePasswordForm->getData());
+                    $user = $this->userService->changePassword($data['oldPassword'], $data['newPassword']);
                 } catch (InvalidPasswordUserException $e) {
 
                     return new ViewModel([
@@ -272,8 +275,30 @@ class WriteController extends AbstractActionController
 
     public function resetPasswordAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $this->resetPasswordForm->setData($request->getPost());
+            if ($this->resetPasswordForm->isValid()) {
+                $data = $this->resetPasswordForm->getData();
+                try {
+                    $result = $this->userService->resetPassword($data['email']);
+                } catch (RecordNotFoundUserException $e) {
+                    
+                    return new ViewModel([
+                        'form' => $this->resetPasswordForm,
+                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                    ]);
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
+                }
+
+            }
+        }
+
         return new ViewModel([
-            'message' => 'ResetPasswordAction'
+            'form' => $this->resetPasswordForm
         ]);
     }
 
@@ -294,21 +319,6 @@ class WriteController extends AbstractActionController
     }
 
     /**
-     * Проверяет параметр 'redirect' в POST. Возвращает путь на который перенаправить юзера.
-     *
-     * @return string
-     */
-//    private function getRedirectRouteFromPost()
-//    {
-//        $redirect = $this->params()->fromPost('redirect', '');
-//        if ($redirect && $this->isRouteExists($redirect)) {
-//            return $redirect;
-//        }
-//
-//        return false;
-//    }
-
-    /**
      * @param $route
      * @return bool
      */
@@ -318,8 +328,10 @@ class WriteController extends AbstractActionController
             $this->router->assemble(array(), array('name' => $route));
         } catch (\Zend\Router\Exception\RuntimeException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return false;
         }
+
         return true;
     }
 }

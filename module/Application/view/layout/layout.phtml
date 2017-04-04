@@ -23,7 +23,7 @@
             //->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
             //->prependFile($this->basePath('js/html5shiv.min.js'),   'text/javascript', array('conditional' => 'lt IE 9',))
         ; ?>
-        
+
     </head>
     <body>
         <nav class="navbar navbar-default navbar-fixed-top">
@@ -52,7 +52,7 @@
                                 if ($user) {
                                     echo 'Logged in';
                                 } else {
-                                    echo 'Not logged in'; 
+                                    echo 'Not logged in';
                                 } ?>
                                 <span class="caret"></span>
                             </a>
@@ -61,15 +61,17 @@
                                     <?php if ($user) {
                                         echo $this->escapeHtml($user->getUserName());
                                     } else {
-                                        echo 'Not logged in'; 
+                                        echo 'Not logged in';
                                     } ?>
                                 </li>
                                 <li class="divider" role="separator"></li>
                                 <?php if ($user) { ?>
-                                    <li><a href="<?php echo $this->url('detailUser', ['action' => 'detailUser', 'id' => $user->getId()]); ?>">View profile</a></li>
+                                    <li>
+                                        <a href="<?php echo $this->url('detailUser', ['action' => 'detailUser', 'id' => $user->getId()]); ?>">View profile</a>
+                                    </li>
                                 <?php } ?>
                                 <li>
-                                    <a href="<?php if ($user) { 
+                                    <a href="<?php if ($user) {
                                             echo $this->url('logoutUser');
                                         } else {
                                             echo $this->url('loginUser');
@@ -81,6 +83,11 @@
                                         <?php } ?>
                                     </a>
                                 </li>
+                                <?php if (!$user) { ?>
+                                    <li>
+                                        <a href="<?php echo $this->url('resetPassword', ['action' => 'resetPassword']); ?>">Reset password</a>
+                                    </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     </ul>

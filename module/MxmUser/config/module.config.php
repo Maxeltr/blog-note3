@@ -19,7 +19,7 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmUser.log',
         ],
-        
+
     ],
     'controllers' => [
         'factories' => [
@@ -54,7 +54,7 @@ return [
             Date::class => Factory\Validator\DateValidatorFactory::class,
             //Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
-            
+
         ],
         'invokables' => [
             //Hydrator\TimezoneHydrator::class => InvokableFactory::class,
@@ -67,7 +67,7 @@ return [
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
             Form\RegisterUserForm::class => Factory\Form\RegisterUserFormFactory::class,
             Form\RegisterUserFieldset::class => Factory\Form\RegisterUserFieldsetFactory::class,
-            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class, 
+            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class,
             Form\ChangePasswordForm::class => Factory\Form\ChangePasswordFormFactory::class,
             Form\LoginUserForm::class => Factory\Form\LoginUserFormFactory::class,
         ]
@@ -149,6 +149,16 @@ return [
                     ],
                 ],
             ],
+            'resetPassword' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/reset/password',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'resetPassword',
+                    ],
+                ],
+            ],
             'loginUser' => [
                 'type' => 'Literal',
                 'options' => [
@@ -189,7 +199,7 @@ return [
     // Session configuration.
     'session_config' => [
         'cookie_lifetime'     => 60*60*1, // Session cookie will expire in 1 hour.
-        'gc_maxlifetime'      => 60*60*24*30, // How long to store session data on server (for 1 month).        
+        'gc_maxlifetime'      => 60*60*24*30, // How long to store session data on server (for 1 month).
     ],
     // Session manager configuration.
     'session_manager' => [
