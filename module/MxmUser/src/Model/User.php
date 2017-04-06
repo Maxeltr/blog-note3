@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -35,23 +35,25 @@ class User implements UserInterface
      * @var int ID
      */
     protected $id;
-    
+
     /**
      * @var string
      */
     protected $username;
-    
+
     protected $email;
-    
+
     protected $password;
-    
-    protected $passwordSalt;
-    
+
     protected $role;
-    
+
     protected $timebelt;
-    
+
     protected $created;
+
+    protected $passwordToken;
+
+    protected $dateToken;
 
     /**
      *  {@inheritDoc}
@@ -60,17 +62,17 @@ class User implements UserInterface
     {
         return $this->id;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setId($id)
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -78,17 +80,17 @@ class User implements UserInterface
     {
         return $this->username;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setUsername($username)
     {
         $this->username = $username;
-        
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -96,17 +98,17 @@ class User implements UserInterface
     {
         return $this->email;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setEmail($email)
     {
         $this->email = $email;
-        
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -114,35 +116,17 @@ class User implements UserInterface
     {
         return $this->password;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setPassword($password)
     {
         $this->password = $password;
-        
+
         return $this;
     }
-    
-    /**
-     *  {@inheritDoc}
-     */
-    public function getPasswordSalt()
-    {
-        return $this->passwordSalt;
-    }
-    
-    /**
-     *  {@inheritDoc}
-     */
-    public function setPasswordSalt($passwordSalt)
-    {
-        $this->passwordSalt = $passwordSalt;
-        
-        return $this;
-    }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -150,17 +134,17 @@ class User implements UserInterface
     {
         return $this->role;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setRole($role)
     {
         $this->role = $role;
-        
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -168,17 +152,17 @@ class User implements UserInterface
     {
         return $this->timebelt;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setTimebelt(DateTimeZone $timebelt)
     {
         $this->timebelt = $timebelt;
-        
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -186,14 +170,50 @@ class User implements UserInterface
     {
         return $this->created;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setCreated(DateTimeInterface $created)
     {
         $this->created = $created;
-        
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getPasswordToken()
+    {
+        return $this->passwordToken;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setPasswordToken($passwordToken)
+    {
+        $this->passwordToken = $passwordToken;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getDateToken()
+    {
+        return $this->dateToken;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setDateToken(DateTimeInterface  $dateToken)
+    {
+        $this->dateToken = $dateToken;
+
         return $this;
     }
 }

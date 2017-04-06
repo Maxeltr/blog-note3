@@ -67,9 +67,10 @@ return [
             Form\TimebeltFieldset::class => Factory\Form\TimebeltFieldsetFactory::class,
             Form\RegisterUserForm::class => Factory\Form\RegisterUserFormFactory::class,
             Form\RegisterUserFieldset::class => Factory\Form\RegisterUserFieldsetFactory::class,
-            Form\ChangeEmailForm::class => Factory\Form\ChangeEmailFormFactory::class,
-            Form\ChangePasswordForm::class => Factory\Form\ChangePasswordFormFactory::class,
+            Form\EditEmailForm::class => Factory\Form\EditEmailFormFactory::class,
+            Form\EditPasswordForm::class => Factory\Form\EditPasswordFormFactory::class,
             Form\LoginUserForm::class => Factory\Form\LoginUserFormFactory::class,
+            Form\ResetPasswordForm::class => Factory\Form\ResetPasswordFormFactory::class,
         ]
     ],
     'router' => [
@@ -139,13 +140,13 @@ return [
                     ],
                 ],
             ],
-            'changePassword' => [
+            'editPassword' => [
                 'type' => 'Literal',
                 'options' => [
-                    'route' => '/change/password',
+                    'route' => '/edit/password',
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
-                        'action'     => 'changePassword',
+                        'action'     => 'editPassword',
                     ],
                 ],
             ],
@@ -156,6 +157,19 @@ return [
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action'     => 'resetPassword',
+                    ],
+                ],
+            ],
+            'setPassword' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/set/password/:token',
+                    'constraints' => [
+                        'token' => '[a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'setPassword',
                     ],
                 ],
             ],
@@ -179,13 +193,13 @@ return [
                     ],
                 ],
             ],
-            'changeEmail' => [
+            'editEmail' => [
                 'type' => 'Literal',
                 'options' => [
-                    'route' => '/change/email',
+                    'route' => '/edit/email',
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
-                        'action'     => 'changeEmail',
+                        'action'     => 'editEmail',
                     ],
                 ],
             ],

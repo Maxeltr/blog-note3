@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,64 +25,67 @@
  */
 
 namespace MxmUser\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class ChangePasswordForm extends Form implements InputFilterProviderInterface
+class ResetPasswordForm extends Form implements InputFilterProviderInterface
 {
     public function __construct(
         InputFilter $inputFilter,
-        $name = "change_password",
+        $name = "reset_password",
         $options = array()
     ) {
         parent::__construct($name, $options);
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
-        
-        $this->add(array(
-            'type' => 'hidden',
-            'name' => 'id'
-        ));
-        
+
         $this->add([
-            'type' => 'password',
-            'name' => 'oldPassword',
+            'type' => 'text',
+            'name' => 'email',
             'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Old password'
+                'label' => 'Email'
             ]
         ]);
-        
+
+//        $this->add([
+//            'type' => 'captcha',
+//            'name' => 'captcha',
+//            'options' => [
+//                'label' => 'Human check',
+//                'captcha' => [
+//                    'class' => 'Image',
+//                    'imgDir' => 'public/img/captcha',
+//                    'suffix' => '.png',
+//                    'imgUrl' => '/img/captcha/',
+//                    'imgAlt' => 'CAPTCHA Image',
+//                    'font' => './data/font/thorne_shaded.ttf',
+//                    'fsize' => 24,
+//                    'width' => 350,
+//                    'height' => 100,
+//                    'expiration' => 600,
+//                    'dotNoiseLevel' => 40,
+//                    'lineNoiseLevel' => 3
+//                ],
+//            ],
+//        ]);
+
         $this->add([
-            'type' => 'password',
-            'name' => 'newPassword',
-            'attributes' => [
-                'class' => 'form-control',
-                'required' => 'required',
-            ],
+            'type' => 'csrf',
+            'name' => 'csrf',
             'options' => [
-                'label' => 'New password'
-            ]
-        ]);
-        
-        $this->add([
-            'type' => 'password',
-            'name' => 'confirmPassword',
-            'attributes' => [
-                'class' => 'form-control',
-                'required' => 'required',
+                'csrf_options' => [
+                'timeout' => 600
+                ]
             ],
-            'options' => [
-                'label' => 'Confirm password'
-            ]
         ]);
-        
+
         $this->add([
             'type' => 'submit',
             'name' => 'submit',
@@ -91,16 +94,11 @@ class ChangePasswordForm extends Form implements InputFilterProviderInterface
             ]
         ]);
     }
-    
+
     public function getInputFilterSpecification()
     {
         return [
-            'id' => [
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ],
-            'oldPassword' => [
+            'email' => [
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
@@ -113,48 +111,16 @@ class ChangePasswordForm extends Form implements InputFilterProviderInterface
                             'min' => 1,
                             'max' => 250,
                         ]
-                    ]
-                ]
-            ],
-            'newPassword' => [
-                'required' => true,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 35,
-                        ]
-                    ]
-                ]
-            ],
-            'confirmPassword' => [
-                'required' => true,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 35,
-                        ]
                     ],
                     [
-                        'name'    => 'Identical',
+                        'name' => 'EmailAddress',
                         'options' => [
-                            'token' => 'newPassword',                            
+                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'useMxCheck' => false,
                         ],
                     ],
                 ]
             ],
-            
         ];
     }
 }

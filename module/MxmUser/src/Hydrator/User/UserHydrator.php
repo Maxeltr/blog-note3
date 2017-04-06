@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -37,15 +37,16 @@ class UserHydrator implements HydratorInterface
      * @var array
      */
     protected $skipProperties = [
+        'datetoken',
         'created',
         'timebelt',
         '__construct'
     ];
-    
+
     public function __construct()
     {
     }
-    
+
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof UserInterface) {
@@ -71,24 +72,24 @@ class UserHydrator implements HydratorInterface
         if (!$object instanceof UserInterface) {
             return array();
         }
-        
+
         $methods = get_class_methods($object);
         $values = [];
-        
+
         foreach ($methods as $method) {
-            
+
             if (strpos($method, 'get') === 0) {
                 $attribute = substr($method, 3);
-                
+
                 if (in_array(strtolower($attribute), $this->skipProperties)) {
                     continue;
                 }
-            
+
                 if (!property_exists($object, $attribute)) {
                     $attribute = lcfirst($attribute);
                 }
                 $values[$attribute] = $object->$method();
-                
+
             }
         }
 

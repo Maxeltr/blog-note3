@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,15 +28,15 @@ namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Form\ChangeEmailForm;
+use MxmUser\Form\EditEmailForm;
 use Zend\InputFilter\InputFilter;
 
-class ChangeEmailFormFactory implements FactoryInterface
+class EditEmailFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
 
-        return new ChangeEmailForm(
+        return new EditEmailForm(
             new InputFilter()
         );
     }

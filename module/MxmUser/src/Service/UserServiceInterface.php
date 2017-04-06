@@ -85,7 +85,7 @@ interface UserServiceInterface
      * @throws InvalidArgumentUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
-    public function changePassword($oldPassword, $newPassword);
+    public function editPassword($oldPassword, $newPassword);
 
     /**
      * Изменить email
@@ -99,7 +99,7 @@ interface UserServiceInterface
      * @throws InvalidArgumentUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
-    public function changeEmail($email, $password);
+    public function editEmail($email, $password);
 
     /**
      *

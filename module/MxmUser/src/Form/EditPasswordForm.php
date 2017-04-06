@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,64 +25,64 @@
  */
 
 namespace MxmUser\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class ChangeEmailForm extends Form implements InputFilterProviderInterface
+class EditPasswordForm extends Form implements InputFilterProviderInterface
 {
     public function __construct(
         InputFilter $inputFilter,
-        $name = "change_email",
+        $name = "edit_password",
         $options = array()
     ) {
         parent::__construct($name, $options);
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
-        
+
         $this->add(array(
             'type' => 'hidden',
             'name' => 'id'
         ));
-        
-        $this->add([
-            'type' => 'text',
-            'name' => 'newEmail',
-            'attributes' => [
-                'class' => 'form-control',
-                'required' => 'required',
-            ],
-            'options' => [
-                'label' => 'New email'
-            ]
-        ]);
-        
-        $this->add([
-            'type' => 'text',
-            'name' => 'confirmEmail',
-            'attributes' => [
-                'class' => 'form-control',
-                'required' => 'required',
-            ],
-            'options' => [
-                'label' => 'Confirm email'
-            ]
-        ]);
-        
+
         $this->add([
             'type' => 'password',
-            'name' => 'password',
+            'name' => 'oldPassword',
             'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Password'
+                'label' => 'Old password'
             ]
         ]);
-        
+
+        $this->add([
+            'type' => 'password',
+            'name' => 'newPassword',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => 'New password'
+            ]
+        ]);
+
+        $this->add([
+            'type' => 'password',
+            'name' => 'confirmPassword',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => 'Confirm password'
+            ]
+        ]);
+
         $this->add([
             'type' => 'submit',
             'name' => 'submit',
@@ -91,7 +91,7 @@ class ChangeEmailForm extends Form implements InputFilterProviderInterface
             ]
         ]);
     }
-    
+
     public function getInputFilterSpecification()
     {
         return [
@@ -100,59 +100,7 @@ class ChangeEmailForm extends Form implements InputFilterProviderInterface
                     ['name' => 'Int'],
                 ],
             ],
-            'newEmail' => [
-                'required' => true,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 250,
-                        ]
-                    ],
-                    [
-                        'name' => 'EmailAddress',
-                        'options' => [
-                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
-                            'useMxCheck' => false,                            
-                        ],
-                    ],
-                ]
-            ],
-            'confirmEmail' => [
-                'required' => true,
-                'filters' => [
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 250,
-                        ]
-                    ],
-                    [
-                        'name' => 'EmailAddress',
-                        'options' => [
-                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
-                            'useMxCheck' => false,                            
-                        ],
-                    ],
-                    [
-                        'name'    => 'Identical',
-                        'options' => [
-                            'token' => 'newEmail',                            
-                        ],
-                    ],
-                ]
-            ],
-            'password' => [
+            'oldPassword' => [
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
@@ -168,6 +116,45 @@ class ChangeEmailForm extends Form implements InputFilterProviderInterface
                     ]
                 ]
             ],
+            'newPassword' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 35,
+                        ]
+                    ]
+                ]
+            ],
+            'confirmPassword' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 35,
+                        ]
+                    ],
+                    [
+                        'name'    => 'Identical',
+                        'options' => [
+                            'token' => 'newPassword',
+                        ],
+                    ],
+                ]
+            ],
+
         ];
     }
 }

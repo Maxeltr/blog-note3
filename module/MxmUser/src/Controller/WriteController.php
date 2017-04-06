@@ -62,27 +62,30 @@ class WriteController extends AbstractActionController
      */
     protected $editUserForm;
     protected $registerUserForm;
-    protected $changePasswordForm;
+    protected $editPasswordForm;
     protected $loginUserForm;
-    protected $changeEmailForm;
+    protected $editEmailForm;
+    protected $resetPasswordForm;
 
     public function __construct(
         Logger $logger,
         UserServiceInterface $userService,
         FormInterface $editUserForm,
         FormInterface $registerUserForm,
-        FormInterface $changePasswordForm,
+        FormInterface $editPasswordForm,
         FormInterface $loginUserForm,
-        FormInterface $changeEmailForm,
+        FormInterface $editEmailForm,
+        FormInterface $resetPasswordForm,
         RouteInterface $router
     ) {
         $this->logger = $logger;
         $this->userService = $userService;
         $this->editUserForm = $editUserForm;
         $this->registerUserForm = $registerUserForm;
-        $this->changePasswordForm = $changePasswordForm;
+        $this->editPasswordForm = $editPasswordForm;
         $this->loginUserForm = $loginUserForm;
-        $this->changeEmailForm = $changeEmailForm;
+        $this->editEmailForm = $editEmailForm;
+        $this->resetPasswordForm = $resetPasswordForm;
         $this->router = $router;
     }
 
@@ -172,24 +175,24 @@ class WriteController extends AbstractActionController
         ]);
     }
 
-    public function changeEmailAction()
+    public function editEmailAction()
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->changeEmailForm->setData($request->getPost());
-            if ($this->changeEmailForm->isValid()) {
-                $data = $this->changeEmailForm->getData();
+            $this->editEmailForm->setData($request->getPost());
+            if ($this->editEmailForm->isValid()) {
+                $data = $this->editEmailForm->getData();
                 try {
-                    $user = $this->userService->changeEmail($data['newEmail'], $data['password']);
+                    $user = $this->userService->editEmail($data['newEmail'], $data['password']);
                 } catch (InvalidPasswordUserException $e) {
 
                     return new ViewModel([
-                        'form' => $this->changeEmailForm,
+                        'form' => $this->editEmailForm,
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
                 } catch (NotAuthenticatedUserException $e) {
 
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'changeEmail']]); //TODO использовать flashmessenger?
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editEmail']]); //TODO использовать flashmessenger?
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -202,7 +205,7 @@ class WriteController extends AbstractActionController
         }
 
         return new ViewModel(array(
-            'form' => $this->changeEmailForm
+            'form' => $this->editEmailForm
         ));
     }
 
@@ -239,24 +242,24 @@ class WriteController extends AbstractActionController
         ]);
     }
 
-    public function changePasswordAction()
+    public function editPasswordAction()
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->changePasswordForm->setData($request->getPost());
-            if ($this->changePasswordForm->isValid()) {
-                $data = $this->changePasswordForm->getData();
+            $this->editPasswordForm->setData($request->getPost());
+            if ($this->editPasswordForm->isValid()) {
+                $data = $this->editPasswordForm->getData();
                 try {
-                    $user = $this->userService->changePassword($data['oldPassword'], $data['newPassword']);
+                    $user = $this->userService->editPassword($data['oldPassword'], $data['newPassword']);
                 } catch (InvalidPasswordUserException $e) {
 
                     return new ViewModel([
-                        'form' => $this->changePasswordForm,
+                        'form' => $this->editPasswordForm,
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
                 } catch (NotAuthenticatedUserException $e) {
 
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'changePassword']]); //TODO использовать flashmessenger?
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editPassword']]); //TODO использовать flashmessenger?
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -269,7 +272,7 @@ class WriteController extends AbstractActionController
         }
 
         return new ViewModel([
-                'form' => $this->changePasswordForm
+                'form' => $this->editPasswordForm
         ]);
     }
 
@@ -283,7 +286,7 @@ class WriteController extends AbstractActionController
                 try {
                     $result = $this->userService->resetPassword($data['email']);
                 } catch (RecordNotFoundUserException $e) {
-                    
+
                     return new ViewModel([
                         'form' => $this->resetPasswordForm,
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
@@ -294,12 +297,22 @@ class WriteController extends AbstractActionController
                     return $this->notFoundAction();
                 }
 
+                return $this->redirect()->toRoute('home');  //TODO приделать flashmessenger с инструкциями?
             }
         }
 
         return new ViewModel([
             'form' => $this->resetPasswordForm
         ]);
+    }
+
+    public function setPasswordAction()
+    {
+        $token = $this->params()->fromRoute('token', null);
+
+
+
+        die("$token");
     }
 
     /**

@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,21 +26,18 @@
 
 namespace MxmUser\Factory\Form;
 
-use MxmUser\Form\ChangeEmailFieldset;
-use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\AggregateHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Form\ResetPasswordForm;
+use Zend\InputFilter\InputFilter;
 
-class ChangeEmailFieldsetFactory implements FactoryInterface
+class ResetPasswordFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ChangeEmailFieldset(
-            $container->get(UserInterface::class),
-            $container->get(AggregateHydrator::class),
-            $requestedName,
-            $options
+
+        return new ResetPasswordForm(
+            new InputFilter()
         );
     }
 }

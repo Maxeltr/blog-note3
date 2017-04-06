@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -33,128 +33,136 @@ interface UserInterface
 {
     /**
      * Возвращает ID записи
-     * 
+     *
      * @return int ID
      */
     public function getId();
-    
+
     /**
      * Устанавливает ID записи
      * @param int $id ID записи.
-     * 
+     *
      * @return $this
      */
     public function setId($id);
-    
+
     /**
      * Возвращает имя юзера
-     * @param string $username
-     * 
+     *
      * @return $this
      */
     public function getUsername();
-    
+
     /**
      * Устанавливает имя юзера
      * @param string $username
-     * 
+     *
      * @return $this
      */
     public function setUsername($username);
-    
+
     /**
      * Возвращает почту юзера
-     * @param string $email
-     * 
+     *
      * @return $this
      */
     public function getEmail();
-    
+
     /**
      * Устанавливает почту юзера
      * @param string $email
-     * 
+     *
      * @return $this
      */
     public function setEmail($email);
-    
+
     /**
      * Возвращает пароль юзера
-     * @param string $password
-     * 
+     *
      * @return $this
      */
     public function getPassword();
-    
+
     /**
      * Устанавливает пароль юзера
      * @param string $password
-     * 
+     *
      * @return $this
      */
     public function setPassword($password);
-    
-    /**
-     * Возвращает соль пароля
-     * @param string $passwordSalt
-     * 
-     * @return $this
-     */
-    public function getPasswordSalt();
-    
-    /**
-     * Устанавливает соль пароля
-     * @param string $passwordSalt
-     * 
-     * @return $this
-     */
-    public function setPasswordSalt($passwordSalt);
-    
+
     /**
      * Возвращает роль юзера
-     * @param string $passwordSalt
-     * 
+     *
      * @return $this
      */
     public function getRole();
-    
+
     /**
      * Устанавливает роль юзера
      * @param string $role
-     * 
+     *
      * @return $this
      */
     public function setRole($role);
-    
+
     /**
      * Возвращает часовой пояс юзера
-     * @param string $timezone
-     * 
+     *
      * @return $this
      */
     public function getTimebelt();
-    
+
     /**
      * Устанавливает часовой пояс юзера
-     * @param string $timezone
-     * 
+     * @param DateTimeZone $timezone
+     *
      * @return $this
      */
     public function setTimebelt(DateTimeZone $timebelt);
-    
+
     /**
      * Возвращает время создания юзера
-     * @param DateTimeInterface $created
-     * 
+     *
      * @return $this
      */
     public function getCreated();
-    
+
     /**
      * Устанавливает время создания юзера
      * @param DateTimeInterface $created
-     * 
+     *
      * @return $this
      */
     public function setCreated(DateTimeInterface $created);
+
+    /**
+     * Возвращает токен для сброса пароля
+     *
+     * @return $this
+     */
+    public function getPasswordToken();
+
+    /**
+     * Устанавливает токен для сброса пароля
+     * @param string $passwordToken
+     *
+     * @return $this
+     */
+    public function setPasswordToken($passwordToken);
+
+    /**
+     * Возвращает дату создания токена для сброса пароля
+     *
+     * @return $this
+     */
+    public function getDateToken();
+
+    /**
+     * Устанавливает дату создания токена для сброса пароля
+     * @param DateTimeInterface $dateToken
+     *
+     * @return $this
+     */
+    public function setDateToken(DateTimeInterface $dateToken);
 }

@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -35,28 +35,31 @@ use Zend\Config\Config;
 class DatesHydrator implements HydratorInterface
 {
     private $datetime;
-    
+
     private $dateValidator;
-    
+
     private $config;
-    
+
     public function __construct(DateTimeInterface $datetime, Date $dateValidator, Config $config)
     {
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
         $this->config = $config;
     }
-    
+
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof UserInterface) {
             return $object;
         }
-        
+
         if (array_key_exists('created', $data) && $this->dateValidator->isValid($data['created'])) {
             $object->setCreated($this->datetime->modify($data['created']));
         }
-        
+        if (array_key_exists('dateToken', $data) && $this->dateValidator->isValid($data['dateToken'])) {
+            $object->setDateToken($this->datetime->modify($data['dateToken']));
+        }
+
         return $object;
     }
 
@@ -65,12 +68,16 @@ class DatesHydrator implements HydratorInterface
         if (!$object instanceof UserInterface) {
             return array();
         }
-        
+
         $values = array();
-        
+
         $datetimeCreated = $object->getCreated();
         if ($datetimeCreated instanceof DateTimeInterface) {
             $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
+        }
+        $datetimeDateToken = $object->getDateToken();
+        if ($datetimeDateToken instanceof DateTimeInterface) {
+            $values ['dateToken'] = $datetimeDateToken->format($this->config->dateTime->dateTimeFormat);
         }
 
         return $values;

@@ -40,6 +40,7 @@ use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
+use Zend\Math\Rand;
 
 class UserService implements UserServiceInterface
 {
@@ -160,7 +161,7 @@ class UserService implements UserServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function changeEmail($email, $password)
+    public function editEmail($email, $password)
     {
         if (!$this->notEmptyValidator->isValid($password)) {
             throw new InvalidArgumentUserException("No params given: password.");
@@ -188,7 +189,7 @@ class UserService implements UserServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function changePassword($oldPassword, $newPassword)
+    public function editPassword($oldPassword, $newPassword)
     {
         if (!$this->notEmptyValidator->isValid($oldPassword) or !$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: oldPassword or newPassword.");
@@ -252,9 +253,38 @@ class UserService implements UserServiceInterface
 
     public function resetPassword($email)
     {
-        if (!$this->isUserExists->isValid($email)) {
+//        if (!$this->isUserExists->isValid($email)) {
+//            throw new RecordNotFoundUserException("User with email address " . $email . " doesn't exists");
+//        }
+
+        if (!$this->emailValidator->isValid($email)) {
+            throw new InvalidArgumentUserException("No params given: email.");
+        }
+
+        try {
+            $user = $this->mapper->findUserByEmail($email);
+        } catch (\Exception $e) {
             throw new RecordNotFoundUserException("User with email address " . $email . " doesn't exists");
         }
-        
+
+        $token = Rand::getString(32, '0123456789abcdefghijklmnopqrstuvwxyz', true);
+        $user->setPasswordToken($token);
+
+        $user->setDateToken($this->datetime->modify('now'));
+
+        $this->mapper->updateUser($user);
+
+        $subject = 'Password Reset';
+
+        $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+        $passwordResetUrl = 'http://' . $httpHost . '/set/password/' . $token;
+die("$passwordResetUrl");
+        $body = 'Please follow the link below to reset your password:\n';
+        $body .= "$passwordResetUrl\n";
+        $body .= "If you haven't asked to reset your password, please ignore this message.\n";
+
+        // Send email to user.
+        mail($user->getEmail(), $subject, $body);
+
     }
 }

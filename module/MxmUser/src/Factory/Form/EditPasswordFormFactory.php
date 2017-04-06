@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,15 +28,15 @@ namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Form\ChangePasswordForm;
+use MxmUser\Form\EditPasswordForm;
 use Zend\InputFilter\InputFilter;
 
-class ChangePasswordFormFactory implements FactoryInterface
+class EditPasswordFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
 
-        return new ChangePasswordForm(
+        return new EditPasswordForm(
             new InputFilter()
         );
     }

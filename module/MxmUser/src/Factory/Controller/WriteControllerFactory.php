@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -29,13 +29,14 @@ namespace MxmUser\Factory\Controller;
 use MxmUser\Controller\WriteController;
 use MxmUser\Form\EditUserForm;
 use MxmUser\Form\RegisterUserForm;
-use MxmUser\Form\ChangePasswordForm;
+use MxmUser\Form\EditPasswordForm;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Form\LoginUserForm;
-use MxmUser\Form\ChangeEmailForm;
+use MxmUser\Form\EditEmailForm;
 use Zend\Router\RouteInterface;
+use MxmUser\Form\ResetPasswordForm;
 use MxmUser\Logger;
 
 class WriteControllerFactory implements FactoryInterface
@@ -46,21 +47,23 @@ class WriteControllerFactory implements FactoryInterface
         $userService = $container->get(UserServiceInterface::class);
         $router = $container->get('Router');
         $formManager = $container->get('FormElementManager');
-        
+
         $editUserForm = $formManager->get(EditUserForm::class);
         $registerUserForm = $formManager->get(RegisterUserForm::class);
-        $changePasswordForm = $formManager->get(ChangePasswordForm::class);
+        $editPasswordForm = $formManager->get(EditPasswordForm::class);
         $loginUserForm = $formManager->get(LoginUserForm::class);
-        $changeEmailForm = $formManager->get(ChangeEmailForm::class);
-        
+        $editEmailForm = $formManager->get(EditEmailForm::class);
+        $resetPasswordForm = $formManager->get(ResetPasswordForm::class);
+
         return new WriteController(
             $logger,
             $userService,
             $editUserForm,
             $registerUserForm,
-            $changePasswordForm,
+            $editPasswordForm,
             $loginUserForm,
-            $changeEmailForm,
+            $editEmailForm,
+            $resetPasswordForm,
             $router
         );
     }
