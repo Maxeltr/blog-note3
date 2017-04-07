@@ -26,7 +26,9 @@
         "zendframework/zend-authentication": "^2.5",
         "zendframework/zend-session": "^2.7",
         "zendframework/zend-crypt": "^3.2",
-        "zendframework/zend-log": "^2.9"
+        "zendframework/zend-log": "^2.9",
+        "zendframework/zend-mail": "^2.7",
+        "zendframework/zend-mime": "^2.6"
     },
     "autoload": {
         "psr-4": {
