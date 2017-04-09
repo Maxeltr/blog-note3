@@ -88,6 +88,20 @@ interface UserServiceInterface
     public function editPassword($oldPassword, $newPassword);
 
     /**
+     * Установить новый пароль
+     *
+     * @param string $newPassword
+     * @param string $token
+     *
+     * @return UserInterface
+     *
+     * @throws RecordNotFoundUserException
+     * @throws InvalidArgumentUserException
+     * @throws ExpiredUserException
+     */
+    public function setPassword($newPassword, $token);
+
+    /**
      * Изменить email
      *
      * @param string $email

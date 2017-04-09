@@ -34,6 +34,7 @@ use Zend\Validator\Db\RecordExists;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\NotEmpty;
 use MxmUser\Exception\RuntimeUserException;
+use MxmUser\Exception\ExpiredUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\InvalidArgumentUserException;
 use Zend\Crypt\Password\Bcrypt;
@@ -306,5 +307,34 @@ class UserService implements UserServiceInterface
         $transport = new SendMailTransport();
         $transport->send($message);
 
+    }
+
+    public function setPassword($newPassword, $token)
+    {
+        if (!$this->notEmptyValidator->isValid($newPassword)) {
+            throw new InvalidArgumentUserException("No params given: password.");
+        }
+        if (!$this->notEmptyValidator->isValid($token)) {
+            throw new InvalidArgumentUserException("No params given: token.");
+        }
+
+        try {
+            $user = $this->mapper->findUserByResetPasswordToken($token);
+        } catch (\Exception $e) {
+            throw new RecordNotFoundUserException("Token doesn't exists");
+        }
+
+        $tokenCreationDate = $user->getDateToken();
+        $currentDate = $this->datetime->modify('now');
+        $interval = $tokenCreationDate->diff($currentDate);
+        if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
+            throw new ExpiredUserException("Token " . $token . " expired. User id " . $user->getId());
+        }
+
+        $bcrypt = new Bcrypt();
+        $passwordHash = $bcrypt->create($newPassword);
+        $user->setPassword($passwordHash);
+
+        return $this->mapper->updateUser($user);
     }
 }

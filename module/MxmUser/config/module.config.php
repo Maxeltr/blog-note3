@@ -71,6 +71,7 @@ return [
             Form\EditPasswordForm::class => Factory\Form\EditPasswordFormFactory::class,
             Form\LoginUserForm::class => Factory\Form\LoginUserFormFactory::class,
             Form\ResetPasswordForm::class => Factory\Form\ResetPasswordFormFactory::class,
+            Form\SetPasswordForm::class => Factory\Form\SetPasswordFormFactory::class,
         ]
     ],
     'router' => [

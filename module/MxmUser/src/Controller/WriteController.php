@@ -66,6 +66,7 @@ class WriteController extends AbstractActionController
     protected $loginUserForm;
     protected $editEmailForm;
     protected $resetPasswordForm;
+    protected $setPasswordForm;
 
     public function __construct(
         Logger $logger,
@@ -76,6 +77,7 @@ class WriteController extends AbstractActionController
         FormInterface $loginUserForm,
         FormInterface $editEmailForm,
         FormInterface $resetPasswordForm,
+        FormInterface $setPasswordForm,
         RouteInterface $router
     ) {
         $this->logger = $logger;
@@ -86,6 +88,7 @@ class WriteController extends AbstractActionController
         $this->loginUserForm = $loginUserForm;
         $this->editEmailForm = $editEmailForm;
         $this->resetPasswordForm = $resetPasswordForm;
+        $this->setPasswordForm = $setPasswordForm;
         $this->router = $router;
     }
 
@@ -308,11 +311,41 @@ class WriteController extends AbstractActionController
 
     public function setPasswordAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $this->setPasswordForm->setData($request->getPost());
+            if ($this->setPasswordForm->isValid()) {
+                $data = $this->setPasswordForm->getData();
+                try {
+                    $result = $this->userService->setPassword($data['password'], $data['token']);
+                } catch (RecordNotFoundUserException $e) {
+
+                    return new ViewModel([
+                        'form' => $this->setPasswordForm,
+                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                    ]);
+                } catch (ExpiredUserException $e) {
+
+                    return new ViewModel([
+                        'form' => $this->setPasswordForm,
+                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                    ]);
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
+                }
+
+                return $this->redirect()->toRoute('loginUser');  //TODO приделать flashmessenger с инструкциями?
+            }
+        }
+
         $token = $this->params()->fromRoute('token', null);
+        $this->setPasswordForm->get('token')->setValue($token);
 
-
-
-        die("$token");
+        return new ViewModel([
+            'form' => $this->setPasswordForm
+        ]);
     }
 
     /**

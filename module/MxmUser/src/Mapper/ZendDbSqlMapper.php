@@ -114,6 +114,19 @@ class ZendDbSqlMapper implements MapperInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function findUserByResetPasswordToken($token)
+    {
+
+        $parameters['where']['passwordToken'] = $token;
+
+        $select = $this->createUserSelectQuery($parameters);
+
+        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
+    }
+
+    /**
      *
      * @param Select $select
      * @param HydratorInterface $hydrator

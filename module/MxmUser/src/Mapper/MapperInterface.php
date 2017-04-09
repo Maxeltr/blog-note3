@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -38,7 +38,7 @@ interface MapperInterface
      * @throw InvalidArgumentUserException
      */
     public function findUserById($id);
-    
+
         /**
      * @param string $email
      *
@@ -47,13 +47,13 @@ interface MapperInterface
      * @throw InvalidArgumentUserException
      */
     public function findUserByEmail($email);
-    
+
     /**
-     * 
+     *
      * @return Paginator
      */
     public function findAllUsers();
-    
+
     /**
      * @param UserInterface $user
      *
@@ -62,7 +62,7 @@ interface MapperInterface
      * @throw DataBaseErrorUserException
      */
     public function insertUser(UserInterface $user);
-    
+
     /**
      * @param UserInterface $user
      *
@@ -71,13 +71,20 @@ interface MapperInterface
      * @throw DataBaseErrorUserException
      */
     public function updateUser(UserInterface $user);
-    
+
     /**
      * @param UserInterface $user
      * Должен удалить полученный объект, реализующий UserInterface, и его связи
      * с тегами, и вернуть true (если удалено) или false (если неудача).
-     * 
+     *
      * @return bool
      */
     public function deleteUser(UserInterface $user);
+
+    /**
+     * @param string $token
+     *
+     * @return UserInterface
+     */
+    public function findUserByResetPasswordToken($token);
 }
