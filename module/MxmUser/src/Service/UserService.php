@@ -44,9 +44,7 @@ use MxmUser\Exception\InvalidPasswordUserException;
 use Zend\Math\Rand;
 use Zend\Mail\Message as MailMessage;
 use Zend\Mime\Message as MimeMessage;
-use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\Sendmail as SendMailTransport;
-use Zend\Mail\Transport\SmtpOptions;
 use Zend\Mime\Part as MimePart;
 
 
@@ -149,7 +147,7 @@ class UserService implements UserServiceInterface
             throw new NotAuthenticatedUserException('The user is not logged in');
         }
         $currentUser = $this->authService->getIdentity();
-
+        //$currentUser проверить полномочия
         return $this->mapper->updateUser($user);
     }
 

@@ -30,6 +30,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\RuntimeException;
+use MxmUser\Exception\ExpiredUserException;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
@@ -289,11 +290,12 @@ class WriteController extends AbstractActionController
                 try {
                     $result = $this->userService->resetPassword($data['email']);
                 } catch (RecordNotFoundUserException $e) {
-
-                    return new ViewModel([
-                        'form' => $this->resetPasswordForm,
+                    $model = new ViewModel([
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
+                    $model->setTemplate('mxm-user/write/error');
+
+                    return $model;
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -319,17 +321,19 @@ class WriteController extends AbstractActionController
                 try {
                     $result = $this->userService->setPassword($data['password'], $data['token']);
                 } catch (RecordNotFoundUserException $e) {
-
-                    return new ViewModel([
-                        'form' => $this->setPasswordForm,
+                    $model = new ViewModel([
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
+                    $model->setTemplate('mxm-user/write/error');
+
+                    return $model;
                 } catch (ExpiredUserException $e) {
-
-                    return new ViewModel([
-                        'form' => $this->setPasswordForm,
+                    $model = new ViewModel([
                         'error' => $e->getMessage()     //TODO использовать flashmessenger?
                     ]);
+                    $model->setTemplate('mxm-user/write/error');
+
+                    return $model;
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 

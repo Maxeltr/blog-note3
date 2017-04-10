@@ -28,7 +28,9 @@
         "zendframework/zend-crypt": "^3.2",
         "zendframework/zend-log": "^2.9",
         "zendframework/zend-mail": "^2.7",
-        "zendframework/zend-mime": "^2.6"
+        "zendframework/zend-mime": "^2.6",
+        "zendframework/zend-captcha": "^2.7",
+        "zendframework/zend-text": "^2.6"
     },
     "autoload": {
         "psr-4": {
