@@ -15,7 +15,7 @@ return [
             'locale' => 'ru_RU',
             'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
         ]
-        
+
     ],
     'controllers' => [
         'factories' => [
@@ -77,7 +77,7 @@ return [
             //Soflomo\Purifier\PurifierFilter::class => Soflomo\Purifier\Factory\PurifierFilterFactory::class,
         ],
         'invokables' => [
-            
+
         ]
     ],
     'form_elements' => [
@@ -105,7 +105,7 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    
+
                 ],
             ],
             'detailPost' => [

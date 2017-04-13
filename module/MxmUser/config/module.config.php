@@ -47,7 +47,7 @@ return [
             Hydrator\User\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
             Hydrator\User\TimebeltHydrator::class => InvokableFactory::class,
             Hydrator\Timezone\TimezoneHydrator::class => InvokableFactory::class,
-            AuthenticationService::class => Factory\Service\AuthServiceFactory::class,
+            Service\AuthenticationService::class => Factory\Service\AuthServiceFactory::class,
             Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
             //Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,

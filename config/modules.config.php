@@ -27,4 +27,5 @@ return [
     'MxmBlog',
     'Soflomo\Purifier',
     'MxmUser',
+    'MxmRbac',
 ];

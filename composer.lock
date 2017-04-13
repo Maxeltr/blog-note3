@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "487a6ecd5b45a46e5bda782e577fbc8a",
+    "content-hash": "01d05edc3fb364bb56299dd509bc7af4",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -1709,6 +1709,51 @@
                 "zf2"
             ],
             "time": "2016-04-11T21:18:13+00:00"
+        },
+        {
+            "name": "zendframework/zend-permissions-rbac",
+            "version": "2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-permissions-rbac.git",
+                "reference": "4213a4889ae7d7607c7974124965d12d1c395115"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-permissions-rbac/zipball/4213a4889ae7d7607c7974124965d12d1c395115",
+                "reference": "4213a4889ae7d7607c7974124965d12d1c395115",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev",
+                    "dev-develop": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Permissions\\Rbac\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "provides a role-based access control management",
+            "homepage": "https://github.com/zendframework/zend-permissions-rbac",
+            "keywords": [
+                "rbac",
+                "zf2"
+            ],
+            "time": "2015-06-03T14:05:54+00:00"
         },
         {
             "name": "zendframework/zend-router",

@@ -1,0 +1,79 @@
+<?php
+
+/*
+ * The MIT License
+ *
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+namespace MxmRbac;
+
+use Zend\ServiceManager\Factory\InvokableFactory;
+
+use Zend\Router\Http\Literal;
+
+return [
+    'service_manager' => [
+        'aliases' => [
+
+        ],
+        'factories' => [
+            Factory\Service\AuthorizationService::class => Factory\Service\AuthorizationServiceFactory::class,
+
+        ],
+        'invokables' => [
+
+        ],
+    ],
+    'rbac_module' => [
+        'rbac_config' => [
+            'roles' => [
+                [
+                    'name' => 'anonymous',
+                    'parent' => '',
+                    'permissions' => []
+                ],
+                [
+                    'name' => 'author',
+                    'parent' => 'anonymous',
+                    'permissions' => [
+                        'add.article',
+                        'edit.article',
+                        'delete.article',
+                        'upload.image',
+                        'delete.image',
+                        'add.category',
+
+                    ],
+                ],
+                [
+                    'name' => 'admin',
+                    'parent' => 'author',
+                    'permissions' => [
+                        'admin.access'
+                    ]
+                ],
+            ],
+        ],
+
+    ],
+
+];

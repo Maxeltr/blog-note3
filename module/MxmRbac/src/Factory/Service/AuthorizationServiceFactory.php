@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,42 +24,48 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Service;
+namespace MxmRbac\Factory\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Validator\Db\RecordExists;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
-use MxmUser\Mapper\MapperInterface;
-use MxmUser\Service\DateTimeInterface;
-use MxmUser\Service\UserService;
+use Zend\Config\Config;
+use Zend\Permissions\Rbac\Rbac;
+use Zend\Permissions\Rbac\Role;
 use MxmUser\Service\AuthenticationService;
 
-class UserServiceFactory implements FactoryInterface
+class AuthorizationServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $mapper = $container->get(MapperInterface::class);
-
-        $dateTime = $container->get(DateTimeInterface::class);
         $authService = $container->get(AuthenticationService::class);
-        $emailValidator = new EmailAddress();
-        $notEmptyValidator = new NotEmpty();
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
-        $recordExistsValidator = new RecordExists([
-            'table'   => 'users',
-            'field'   => 'email',
-            'adapter' => $dbAdapter,
-        ]);
 
-        return new UserService(
-            $mapper,
-            $dateTime,
-            $authService,
-            $emailValidator,
-            $notEmptyValidator,
-            $recordExistsValidator
-        );
+        $config = new Config($container->get('config'));
+        $roles = $config->rbac_module->rbac_config->roles;
+
+        $rbac = new Rbac();
+
+        foreach ($roles as $value) {
+
+            \Zend\Debug\Debug::dump($value->name);
+            $role = new Role($value->name);
+
+            foreach ($value->permissions as $permission) {
+                \Zend\Debug\Debug::dump($permission);
+                $role->addPermission($permission);
+            }
+
+            \Zend\Debug\Debug::dump($value->parent);
+            $rbac->addRole($role, $value->parent);
+
+        }
+        \Zend\Debug\Debug::dump($rbac);
+
+        die();
+
+
+
+
+        return $rbac;
     }
+
 }
