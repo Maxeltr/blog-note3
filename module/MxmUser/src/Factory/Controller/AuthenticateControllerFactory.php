@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Service;
+namespace MxmUser\Factory\Controller;
 
 use Interop\Container\ContainerInterface;
+use Zend\Config\Config;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
-use Zend\Session\SessionManager;
-use MxmUser\Service\Authentication\Adapter\AuthAdapter;
-use Zend\Authentication\Storage\Session as SessionStorage;
+use MxmUser\Controller\AuthenticateController;
+use MxmUser\Service\UserServiceInterface;
+use MxmUser\Form\LoginUserForm;
+use MxmUser\Logger;
 
-class AuthServiceFactory implements FactoryInterface
+class AuthenticateControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $sessionManager =  $container->get(SessionManager::class);
-        $authStorage = new SessionStorage('Zend_Auth', 'session', $sessionManager);
-        
-        //$authStorage = new SessionStorage('someNamespace');
-        $authAdapter = $container->get(AuthAdapter::class);
-        $authService = new AuthenticationService();
-        $authService->setStorage($authStorage);
-        $authService->setAdapter($authAdapter);
-        
-        return $authService;
+        $logger = $container->get(Logger::class);
+        $config = new Config($container->get('config'));
+        $userService = $container->get(UserServiceInterface::class);
+        $router = $container->get('Router');
+        $formManager = $container->get('FormElementManager');
+        $loginUserForm = $formManager->get(LoginUserForm::class);
+
+        return new AuthenticateController($userService, $loginUserForm, $router, $logger, $config->user_module);
     }
 }

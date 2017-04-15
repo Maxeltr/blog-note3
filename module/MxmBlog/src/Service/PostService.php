@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -32,34 +32,50 @@ use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
 use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
+use Zend\Authentication\AuthenticationService;
+use MxmRbac\Service\AuthorizationService;
 
 class PostService implements PostServiceInterface
 {
     /**
-     * @var \Blog\Mapper\MapperInterface;
+     * @var \Blog\Mapper\MapperInterface
      */
     protected $mapper;
-    
+
     /**
-     * @var DateTimeInterface;
+     * @var DateTimeInterface
      */
     protected $datetime;
-    
+
     /**
-     * @var IsPublishedValidatorInterface;
+     * @var IsPublishedValidatorInterface
      */
     protected $isPublishedRecordExistsValidator;
-    
+
+    /**
+     * @var MxmRbac\Service\AthorizationService
+     */
+    protected $authorizationService;
+
+    /**
+     * @var Zend\Authentication\AuthenticationService
+     */
+    protected $authenticationService;
+
     public function __construct(
         MapperInterface $mapper,
         DateTimeInterface $datetime,
-        IsPublishedRecordExistsValidatorInterface $isPublishedValidator
+        IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
+        AuthorizationService $authorizationService,
+            $authenticationService
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
         $this->IsPublishedRecordExistsValidator = $isPublishedValidator;
+        $this->authorizationService = $authorizationService;
+        $this->authenticationService = $authenticationService;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -67,7 +83,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->findPostsByCategory($category);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -75,7 +91,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->findPostsByTag($tag);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +99,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->findAllPosts();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -91,15 +107,21 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->findPostsByPublishDate($since, $to);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function findPostById($id)
     {
+        $post = $this->mapper->findPostById($id);
+
+        if (!$this->authorizationService->isGranted('view', 'MustBeAuthorAssertion', $post)) {
+            throw new \Exception('access deny');
+        }
+
 	return $this->mapper->findPostById($id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -109,28 +131,28 @@ class PostService implements PostServiceInterface
         if ($post->getIsPublished() === 1) {
             $post->setPublished($this->datetime->modify('now'));
         }
- 
+
         $post->setVersion(1);
 
         return $this->mapper->insertPost($post);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function updatePost(PostInterface $post)
     {
         $post->setUpdated($this->datetime->modify('now'));
-        
+
         if ($post->getIsPublished() === true && $this->IsPublishedRecordExistsValidator->isPublished() !== true) {
             $post->setPublished($this->datetime->modify('now'));
         }
-        
+
         $post->setVersion($post->getVersion() + 1);
-        
+
         return $this->mapper->updatePost($post);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -138,7 +160,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->deletePost($post);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -146,7 +168,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->findAllCategories();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -154,7 +176,7 @@ class PostService implements PostServiceInterface
     {
 	return $this->mapper->findCategoryById($id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -162,7 +184,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->insertCategory($category);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -170,7 +192,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->updateCategory($category);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -178,7 +200,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->deleteCategory($category);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -186,7 +208,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->findAllTags();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -194,7 +216,7 @@ class PostService implements PostServiceInterface
     {
 	return $this->mapper->findTagById($id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -202,7 +224,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->insertTag($tag);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -210,7 +232,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->updateTag($tag);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -218,7 +240,7 @@ class PostService implements PostServiceInterface
     {
         return $this->mapper->deleteTag($tag);
     }
-    
+
     /**
      * {@inheritDoc}
      */

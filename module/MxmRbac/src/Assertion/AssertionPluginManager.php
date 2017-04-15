@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Controller;
+namespace MxmRbac\Assertion;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Controller\AuthController;
-use MxmUser\Service\UserServiceInterface;
+use Zend\ServiceManager\AbstractPluginManager;
 
-class AuthControllerFactory implements FactoryInterface
+class AssertionPluginManager extends AbstractPluginManager
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $userService = $container->get(UserServiceInterface::class);
-        
-        return new AuthController($userService, $config->user_module);
-    }
+//    public function validatePlugin($plugin)
+//    {
+//        if ($plugin instanceof AssertionInterface) {
+//            return;
+//        }
+//
+//        throw new Exception\RuntimeException(sprintf(
+//            'Assertions must implement "AssertionInterface", but "%s" was given',
+//            is_object($plugin) ? get_class($plugin) : gettype($plugin)
+//        ));
+//    }
+//
+//    protected function canonicalizeName($name)
+//    {
+//        return $name;
+//    }
 }

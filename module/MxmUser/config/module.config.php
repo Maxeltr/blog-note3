@@ -26,7 +26,7 @@ return [
             Controller\ListController::class => Factory\Controller\ListControllerFactory::class,
             Controller\WriteController::class => Factory\Controller\WriteControllerFactory::class,
             Controller\DeleteController::class => Factory\Controller\DeleteControllerFactory::class,
-            Controller\AuthController::class => Factory\Controller\AuthControllerFactory::class,
+            Controller\AuthenticateController::class => Factory\Controller\AuthenticateControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -47,17 +47,15 @@ return [
             Hydrator\User\DatesHydrator::class => Factory\Hydrator\DatesHydratorFactory::class,
             Hydrator\User\TimebeltHydrator::class => InvokableFactory::class,
             Hydrator\Timezone\TimezoneHydrator::class => InvokableFactory::class,
-            Service\AuthenticationService::class => Factory\Service\AuthServiceFactory::class,
+            AuthenticationService::class => Factory\Service\AuthenticationServiceFactory::class,
             Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
-            //Zend\Hydrator\Aggregate\AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             AggregateHydrator::class => Factory\Hydrator\AggregateHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
-            //Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
 
         ],
         'invokables' => [
-            //Hydrator\TimezoneHydrator::class => InvokableFactory::class,
+
         ],
     ],
     'form_elements' => [
@@ -76,22 +74,6 @@ return [
     ],
     'router' => [
         'routes' => [
-//            'login' => [
-//                'type'    => 'Literal',
-//                'options' => [
-//                    // Change this to something specific to your module
-//                    'route'    => '/login',
-//                    'defaults' => [
-//                        'controller'    => Controller\AuthController::class,
-//                        'action'        => 'login',
-//                    ],
-//                ],
-//                'may_terminate' => true,
-//                'child_routes' => [
-//                    // You can place additional routes that match under the
-//                    // route defined above here.
-//                ],
-//            ],
             'listUsers' => [
                 'type'    => 'Segment',
                 'options' => [
@@ -179,7 +161,7 @@ return [
                 'options' => [
                     'route' => '/login',
                     'defaults' => [
-                        'controller' => Controller\WriteController::class,
+                        'controller' => Controller\AuthenticateController::class,
                         'action'     => 'loginUser',
                     ],
                 ],
@@ -189,7 +171,7 @@ return [
                 'options' => [
                     'route' => '/logout',
                     'defaults' => [
-                        'controller' => Controller\WriteController::class,
+                        'controller' => Controller\AuthenticateController::class,
                         'action'     => 'logoutUser',
                     ],
                 ],

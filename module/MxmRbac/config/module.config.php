@@ -33,14 +33,15 @@ use Zend\Router\Http\Literal;
 return [
     'service_manager' => [
         'aliases' => [
-
+            //'MustBeAuthorAssertion' => Assertion\MustBeAuthorAssertion::class
         ],
         'factories' => [
-            Factory\Service\AuthorizationService::class => Factory\Service\AuthorizationServiceFactory::class,
-
+            Service\AuthorizationService::class => Factory\Service\AuthorizationServiceFactory::class,
+            Assertion\AssertionPluginManager::class => Factory\Assertion\AssertionPluginManagerFactory::class,
+            //MustBeAuthorAssertion::class => InvokableFactory::class,
         ],
         'invokables' => [
-
+            //Assertion\MustBeAuthorAssertion::class => Assertion\MustBeAuthorAssertion::class,
         ],
     ],
     'rbac_module' => [
@@ -49,7 +50,7 @@ return [
                 [
                     'name' => 'anonymous',
                     'parent' => '',
-                    'permissions' => []
+                    'permissions' => ['view']
                 ],
                 [
                     'name' => 'author',

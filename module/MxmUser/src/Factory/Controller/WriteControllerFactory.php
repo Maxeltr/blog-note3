@@ -33,9 +33,7 @@ use MxmUser\Form\EditPasswordForm;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Service\UserServiceInterface;
-use MxmUser\Form\LoginUserForm;
 use MxmUser\Form\EditEmailForm;
-use Zend\Router\RouteInterface;
 use MxmUser\Form\ResetPasswordForm;
 use MxmUser\Form\SetPasswordForm;
 use MxmUser\Logger;
@@ -46,16 +44,14 @@ class WriteControllerFactory implements FactoryInterface
     {
         $logger = $container->get(Logger::class);
         $userService = $container->get(UserServiceInterface::class);
-        $router = $container->get('Router');
         $formManager = $container->get('FormElementManager');
 
         $editUserForm = $formManager->get(EditUserForm::class);
         $registerUserForm = $formManager->get(RegisterUserForm::class);
         $editPasswordForm = $formManager->get(EditPasswordForm::class);
-        $loginUserForm = $formManager->get(LoginUserForm::class);
         $editEmailForm = $formManager->get(EditEmailForm::class);
         $resetPasswordForm = $formManager->get(ResetPasswordForm::class);
-        $SetPasswordForm = $formManager->get(SetPasswordForm::class);
+        $setPasswordForm = $formManager->get(SetPasswordForm::class);
 
         return new WriteController(
             $logger,
@@ -63,11 +59,9 @@ class WriteControllerFactory implements FactoryInterface
             $editUserForm,
             $registerUserForm,
             $editPasswordForm,
-            $loginUserForm,
             $editEmailForm,
             $resetPasswordForm,
-            $SetPasswordForm,
-            $router
+            $setPasswordForm
         );
     }
 }

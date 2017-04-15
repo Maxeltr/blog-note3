@@ -35,7 +35,6 @@ use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Validator\Date;
 use Zend\Validator\NotEmpty;
-use Zend\Permissions\Rbac\Rbac;
 
 class ListController extends AbstractActionController
 {
@@ -61,14 +60,12 @@ class ListController extends AbstractActionController
 
     public function __construct(
         PostServiceInterface $postService,
-         $authorizationService,
         Date $dateValidator,
         DateTimeInterface $datetime,
         Config $config,
         NotEmpty $notEmptyValidator
     ) {
         $this->postService = $postService;
-        $this->authorizationService = $authorizationService;
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
         $this->config = $config;

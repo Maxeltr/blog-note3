@@ -31,41 +31,40 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Config\Config;
 use Zend\Permissions\Rbac\Rbac;
 use Zend\Permissions\Rbac\Role;
-use MxmUser\Service\AuthenticationService;
+use Zend\Authentication\AuthenticationService;
+use MxmRbac\Service\AuthorizationService;
+use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmRbac\Assertion\AssertionPluginManager;
 
 class AuthorizationServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $authService = $container->get(AuthenticationService::class);
-
+        $authenticationService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
-        $roles = $config->rbac_module->rbac_config->roles;
 
         $rbac = new Rbac();
-
+        $roles = $config->rbac_module->rbac_config->roles;
         foreach ($roles as $value) {
-
-            \Zend\Debug\Debug::dump($value->name);
             $role = new Role($value->name);
-
             foreach ($value->permissions as $permission) {
-                \Zend\Debug\Debug::dump($permission);
                 $role->addPermission($permission);
             }
-
-            \Zend\Debug\Debug::dump($value->parent);
             $rbac->addRole($role, $value->parent);
-
         }
-        \Zend\Debug\Debug::dump($rbac);
 
-        die();
+//        if (!$authenticationService->hasIdentity()) {
+//            throw new NotAuthenticatedUserException('The user is not logged in');
+//        }
+        $currentUser = $authenticationService->getIdentity();
 
+        //\Zend\Debug\Debug::dump($currentUser);
 
+        $assertionPluginManager = $container->get(AssertionPluginManager::class);
 
+        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $currentUser);
 
-        return $rbac;
+        return $authorizationService;
     }
 
 }

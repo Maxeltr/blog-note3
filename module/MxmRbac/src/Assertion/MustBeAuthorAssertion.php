@@ -24,33 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Service;
+namespace MxmRbac\Assertion;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Mapper\MapperInterface;
-use MxmBlog\Service\DateTimeInterface;
-use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
-use MxmBlog\Service\PostService;
-use MxmRbac\Service\AuthorizationService;
-use Zend\Authentication\AuthenticationService;
+use Zend\Permissions\Rbac\AssertionInterface;
+use Zend\Permissions\Rbac\Rbac;
 
-class PostServiceFactory implements FactoryInterface
+class MustBeAuthorAssertion implements AssertionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function assert(Rbac $rbac)
     {
-        $mapper = $container->get(MapperInterface::class);
-        $dateTime = $container->get(DateTimeInterface::class);
-        $isPublishedRecordExistsValidator = $container->get(IsPublishedRecordExistsValidatorInterface::class);
-        $authorizationService = $container->get(AuthorizationService::class);
-        $authenticationService = $container->get(AuthenticationService::class);
-
-        return new PostService(
-            $mapper,
-            $dateTime,
-            $isPublishedRecordExistsValidator,
-            $authorizationService,
-            $authenticationService
-        );
+       die('MustBeAuthorAssertion');
     }
 }

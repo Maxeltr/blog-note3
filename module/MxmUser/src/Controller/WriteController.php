@@ -29,15 +29,12 @@ namespace MxmUser\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
-use MxmUser\Exception\RuntimeException;
 use MxmUser\Exception\ExpiredUserException;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use Zend\Form\FormInterface;
-use Zend\Router\RouteInterface;
-use Zend\Authentication\Result;
 use Zend\Log\Logger;
 
 class WriteController extends AbstractActionController
@@ -64,7 +61,6 @@ class WriteController extends AbstractActionController
     protected $editUserForm;
     protected $registerUserForm;
     protected $editPasswordForm;
-    protected $loginUserForm;
     protected $editEmailForm;
     protected $resetPasswordForm;
     protected $setPasswordForm;
@@ -75,82 +71,23 @@ class WriteController extends AbstractActionController
         FormInterface $editUserForm,
         FormInterface $registerUserForm,
         FormInterface $editPasswordForm,
-        FormInterface $loginUserForm,
         FormInterface $editEmailForm,
         FormInterface $resetPasswordForm,
-        FormInterface $setPasswordForm,
-        RouteInterface $router
+        FormInterface $setPasswordForm
     ) {
         $this->logger = $logger;
         $this->userService = $userService;
         $this->editUserForm = $editUserForm;
         $this->registerUserForm = $registerUserForm;
         $this->editPasswordForm = $editPasswordForm;
-        $this->loginUserForm = $loginUserForm;
         $this->editEmailForm = $editEmailForm;
         $this->resetPasswordForm = $resetPasswordForm;
         $this->setPasswordForm = $setPasswordForm;
-        $this->router = $router;
-    }
-
-    public function loginUserAction()
-    {
-        $request = $this->getRequest();
-        $loginError = false;
-
-        if ($request->isPost()) {
-            $this->loginUserForm->setData($request->getPost());
-            if ($this->loginUserForm->isValid()) {
-                $data = $this->loginUserForm->getData();
-                try {
-                    $result = $this->userService->loginUser($data['email'], $data['password']);
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
-                }
-
-                $resultCode = $result->getCode();
-                if ($resultCode === Result::SUCCESS) {
-                    if (!$this->isRouteExists($data['redirect'])) {
-
-                        return $this->redirect()->toRoute('home');
-                    } else {
-                        $redirectUrl = $this->router->assemble([], ['name' => $data['redirect']]);
-                        $this->redirect()->toUrl($redirectUrl);
-                    }
-                } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
-                    $loginError = 'Incorrect login.';
-                } else {
-                    $loginError = 'Incorrect login and/or password.';
-                }
-            }
-        }
-        $this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());
-
-        return new ViewModel([
-            'form' => $this->loginUserForm,
-            'error' => $loginError
-        ]);
-    }
-
-    public function logoutUserAction()
-    {
-        try {
-            $this->userService->logoutUser();
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
-
-        return $this->redirect()->toRoute('loginUser');
     }
 
     public function addUserAction()
     {
         $request = $this->getRequest();
-
         if ($request->isPost()) {
             $this->registerUserForm->setData($request->getPost());
             if ($this->registerUserForm->isValid()) {
@@ -350,38 +287,5 @@ class WriteController extends AbstractActionController
         return new ViewModel([
             'form' => $this->setPasswordForm
         ]);
-    }
-
-    /**
-     * Проверяет параметр 'redirect' в GET. Возвращает путь на который перенаправить юзера.
-     *
-     * @return string
-     */
-    private function getRedirectRouteFromQuery()
-    {
-        $redirect = $this->params()->fromQuery('redirect', '');
-        if ($redirect && $this->isRouteExists($redirect)) {
-
-            return $redirect;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $route
-     * @return bool
-     */
-    private function isRouteExists($route)
-    {
-        try {
-            $this->router->assemble(array(), array('name' => $route));
-        } catch (\Zend\Router\Exception\RuntimeException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return false;
-        }
-
-        return true;
     }
 }

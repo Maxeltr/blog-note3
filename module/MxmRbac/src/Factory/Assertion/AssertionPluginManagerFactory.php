@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,29 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Controller;
+namespace MxmRbac\Factory\Assertion;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmRbac\Assertion\AssertionPluginManager;
+use MxmRbac\Assertion\MustBeAuthorAssertion;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
-class AuthController extends AbstractActionController
+class AssertionPluginManagerFactory implements FactoryInterface
 {
-    public function loginAction()
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ViewModel([
-            'message' => 'MxmUser'
-        ]);
+        $config = [                 //TODO move to module.config.php
+            'factories' => [
+                MustBeAuthorAssertion::class => InvokableFactory::class,
+            ],
+            'aliases' => [
+                'MustBeAuthorAssertion' => MustBeAuthorAssertion::class,
+            ]
+        ];
+
+        $pluginManager = new AssertionPluginManager($container, $config);
+
+        return $pluginManager;
     }
 }

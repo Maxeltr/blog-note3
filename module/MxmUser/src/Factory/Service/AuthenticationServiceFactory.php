@@ -1,9 +1,9 @@
 <?php
 
-/*
+/* 
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,38 +28,24 @@ namespace MxmUser\Factory\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Validator\Db\RecordExists;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
-use MxmUser\Mapper\MapperInterface;
-use MxmUser\Service\DateTimeInterface;
-use MxmUser\Service\UserService;
 use Zend\Authentication\AuthenticationService;
+use Zend\Session\SessionManager;
+use MxmUser\Service\Authentication\Adapter\AuthAdapter;
+use Zend\Authentication\Storage\Session as SessionStorage;
 
-class UserServiceFactory implements FactoryInterface
+class AuthenticationServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $mapper = $container->get(MapperInterface::class);
-
-        $dateTime = $container->get(DateTimeInterface::class);
-        $authService = $container->get(AuthenticationService::class);
-        $emailValidator = new EmailAddress();
-        $notEmptyValidator = new NotEmpty();
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
-        $recordExistsValidator = new RecordExists([
-            'table'   => 'users',
-            'field'   => 'email',
-            'adapter' => $dbAdapter,
-        ]);
-
-        return new UserService(
-            $mapper,
-            $dateTime,
-            $authService,
-            $emailValidator,
-            $notEmptyValidator,
-            $recordExistsValidator
-        );
+        $sessionManager =  $container->get(SessionManager::class);
+        $authStorage = new SessionStorage('Zend_Auth', 'session', $sessionManager);
+        
+        //$authStorage = new SessionStorage('someNamespace');
+        $authAdapter = $container->get(AuthAdapter::class);
+        $authService = new AuthenticationService();
+        $authService->setStorage($authStorage);
+        $authService->setAdapter($authAdapter);
+        
+        return $authService;
     }
 }
