@@ -37,7 +37,7 @@ class AuthorizationService
     /*
      * @var string Name of Role
      */
-    protected $currentUserRole;
+    protected $currentUser;
 
     /*
      * @var Zend\Permissions\Rbac\Rbac
@@ -53,10 +53,9 @@ class AuthorizationService
     public function __construct(Rbac $rbac, AssertionPluginManager $assertionPluginManager, $currentUser = null)
     {
         if ($currentUser instanceof UserInterface) {
-            $this->currentUserRole = $currentUser->getRole();
-        } else {
-            $this->currentUserRole = 'anonymous';   //TODO брать роль из настроек?
+            $this->currentUser = $currentUser;
         }
+
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
     }
@@ -69,14 +68,20 @@ class AuthorizationService
      *
      * @return bool
      */
-    public function isGranted($permission, $assertion, $context)
+    public function isGranted($permission, $assertion = null, $content = null)
     {
 
-        $assertion = $this->assertionPluginManager->get($assertion);
+        if (empty($this->currentUser)) {
+            return false;
+        }
 
-        $this->rbac->isGranted($this->currentUserRole, $permission, $assertion);
+        if ($assertion) {
+            $assertion = $this->assertionPluginManager->get($assertion);
+            $assertion->setCurrentUser($this->currentUser);
+            $assertion->setContent($content);
+        }
 
-        return true;
+        return $this->rbac->isGranted($this->currentUser->getRole(), $permission, $assertion);
     }
 
 

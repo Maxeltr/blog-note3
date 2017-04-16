@@ -31,8 +31,23 @@ use Zend\Permissions\Rbac\Rbac;
 
 class MustBeAuthorAssertion implements AssertionInterface
 {
+    protected $currentUser;
+
+    protected $content;
+
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    public function setCurrentUser($currentUser)
+    {
+        $this->currentUser = $currentUser;
+    }
+
     public function assert(Rbac $rbac)
     {
-       die('MustBeAuthorAssertion');
+        return $this->currentUser->getId() === $this->content->getAuthor()->getId();
+
     }
 }

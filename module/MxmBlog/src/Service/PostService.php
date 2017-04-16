@@ -113,12 +113,6 @@ class PostService implements PostServiceInterface
      */
     public function findPostById($id)
     {
-        $post = $this->mapper->findPostById($id);
-
-        if (!$this->authorizationService->isGranted('view', 'MustBeAuthorAssertion', $post)) {
-            throw new \Exception('access deny');
-        }
-
 	return $this->mapper->findPostById($id);
     }
 
@@ -127,6 +121,10 @@ class PostService implements PostServiceInterface
      */
     public function insertPost(PostInterface $post)
     {
+        if (!$this->authorizationService->isGranted('add.article')) {
+            throw new \Exception('access deny');
+        }
+
         $post->setCreated($this->datetime->modify('now'));
         if ($post->getIsPublished() === 1) {
             $post->setPublished($this->datetime->modify('now'));

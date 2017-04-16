@@ -50,7 +50,7 @@ return [
                 [
                     'name' => 'anonymous',
                     'parent' => '',
-                    'permissions' => ['view']
+                    'permissions' => []
                 ],
                 [
                     'name' => 'author',
