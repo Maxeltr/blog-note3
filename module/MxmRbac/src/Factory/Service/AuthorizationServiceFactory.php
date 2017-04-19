@@ -29,6 +29,7 @@ namespace MxmRbac\Factory\Service;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Config\Config;
+use Zend\Validator\InArray;
 use Zend\Permissions\Rbac\Rbac;
 use Zend\Permissions\Rbac\Role;
 use Zend\Authentication\AuthenticationService;
@@ -42,7 +43,8 @@ class AuthorizationServiceFactory implements FactoryInterface
     {
         $authenticationService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
-
+        $validator = new InArray();
+        
         $rbac = new Rbac();
         $roles = $config->rbac_module->rbac_config->roles;
         foreach ($roles as $value) {
@@ -62,7 +64,7 @@ class AuthorizationServiceFactory implements FactoryInterface
 
         $assertionPluginManager = $container->get(AssertionPluginManager::class);
 
-        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $currentUser);
+        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $config->rbac_module, $validator, $currentUser);
 
         return $authorizationService;
     }

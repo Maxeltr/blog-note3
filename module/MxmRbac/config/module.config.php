@@ -73,6 +73,16 @@ return [
                     ]
                 ],
             ],
+//            'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
+//                [
+//                    'name' => 'MustBeAuthorAssertion',
+//                    'permissions' => [
+//                        'edit.article',
+//                        'delete.article',
+//                    ]
+//                ],
+//		
+//            ],
         ],
 
     ],
