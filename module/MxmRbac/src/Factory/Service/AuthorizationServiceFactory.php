@@ -36,15 +36,23 @@ use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmRbac\Assertion\AssertionPluginManager;
+use MxmRbac\Exception\InvalidArgumentRbacException;
+use MxmRbac\Logger;
 
 class AuthorizationServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $authenticationService = $container->get(AuthenticationService::class);
-        $config = new Config($container->get('config'));
         $validator = new InArray();
-        
+        $logger = $container->get(Logger::class);
+
+        $config = new Config($container->get('config'));
+        if (!isset($config->rbac_module->rbac_config->assertions)) {
+            throw new InvalidArgumentRbacException("Invalid options. No assertions in config file.");
+        }
+        $assertions = $config->rbac_module->rbac_config->assertions;
+
         $rbac = new Rbac();
         $roles = $config->rbac_module->rbac_config->roles;
         foreach ($roles as $value) {
@@ -64,7 +72,7 @@ class AuthorizationServiceFactory implements FactoryInterface
 
         $assertionPluginManager = $container->get(AssertionPluginManager::class);
 
-        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $config->rbac_module, $validator, $currentUser);
+        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $assertions, $validator, $logger, $currentUser);
 
         return $authorizationService;
     }

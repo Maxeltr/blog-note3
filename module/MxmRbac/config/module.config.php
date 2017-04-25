@@ -38,7 +38,7 @@ return [
         'factories' => [
             Service\AuthorizationService::class => Factory\Service\AuthorizationServiceFactory::class,
             Assertion\AssertionPluginManager::class => Factory\Assertion\AssertionPluginManagerFactory::class,
-            //MustBeAuthorAssertion::class => InvokableFactory::class,
+            Logger::class => Factory\Logger\LoggerFactory::class,
         ],
         'invokables' => [
             //Assertion\MustBeAuthorAssertion::class => Assertion\MustBeAuthorAssertion::class,
@@ -48,13 +48,22 @@ return [
         'rbac_config' => [
             'roles' => [
                 [
-                    'name' => 'anonymous',
+                    'name' => 'admin',
                     'parent' => '',
-                    'permissions' => []
+                    'permissions' => [
+
+                    ]
+                ],
+                [
+                    'name' => 'moderator',
+                    'parent' => 'admin',
+                    'permissions' => [
+
+                    ]
                 ],
                 [
                     'name' => 'author',
-                    'parent' => 'anonymous',
+                    'parent' => 'moderator',
                     'permissions' => [
                         'add.article',
                         'edit.article',
@@ -66,25 +75,25 @@ return [
                     ],
                 ],
                 [
-                    'name' => 'admin',
+                    'name' => 'anonymous',
                     'parent' => 'author',
-                    'permissions' => [
-                        'admin.access'
-                    ]
+                    'permissions' => []
                 ],
             ],
-//            'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
-//                [
-//                    'name' => 'MustBeAuthorAssertion',
-//                    'permissions' => [
-//                        'edit.article',
-//                        'delete.article',
-//                    ]
-//                ],
-//		
-//            ],
-        ],
+            'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
+                [
+                    'name' => 'MustBeAuthorAssertion',
+                    'permissions' => [
+                        'edit.article',
+                        'delete.article',
+                    ]
+                ],
 
+            ],
+        ],
+        'logger' => [
+            'path' => __DIR__ . '/../../../data/logs/MxmRbac.log',
+        ],
     ],
 
 ];

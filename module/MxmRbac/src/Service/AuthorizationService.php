@@ -33,7 +33,7 @@ use Zend\Permissions\Rbac\Rbac;
 use MxmRbac\Assertion\AssertionPluginManager;
 use Zend\Config\Config;
 use Zend\Validator\InArray;
-use MxmRbac\Exception\InvalidArgumentRbacException;
+use Zend\Log\Logger;
 
 class AuthorizationService
 {
@@ -55,24 +55,36 @@ class AuthorizationService
     /**
      * @var Zend\Config\Config
      */
-    protected $config;
-    
+    protected $assertions;
+
     /*
      * var Zend\Validator\InArray
      */
     protected $inArrayValidator;
 
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
 
-    public function __construct(Rbac $rbac, AssertionPluginManager $assertionPluginManager, Config $config, InArray $inArrayValidator, $currentUser = null)
-    {
+    public function __construct
+    (
+        Rbac $rbac,
+        AssertionPluginManager $assertionPluginManager,
+        Config $assertions,
+        InArray $inArrayValidator,
+        Logger $logger,
+        $currentUser = null
+    ) {
         if ($currentUser instanceof UserInterface) {
             $this->currentUser = $currentUser;
         }
 
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
-        $this->config = $config;
+        $this->assertions = $assertions;
         $this->inArrayValidator = $inArrayValidator;
+        $this->logger = $logger;
     }
 
     /**
@@ -89,21 +101,30 @@ class AuthorizationService
         if (empty($this->currentUser)) {
             return false;
         }
-        
-        if (empty($this->currentUser->getRole())) {
+
+        $role = $this->currentUser->getRole();
+        if (empty($role)) {
             return false;
         }
 
-        $assertionName = $this->getAssertionName($permission);
-        if ($assertionName) {
-            $assertion = $this->assertionPluginManager->get($assertionName);
-            $assertion->setCurrentUser($this->currentUser);
-            $assertion->setContent($content);
-        } else {
-            $assertion = null;
+        $assertion = null;
+        if ($role !== 'admin' && $role !== 'moderator') {               //TODO перенести в module.config
+            $assertionName = $this->getAssertionName($permission);
+            if ($assertionName) {
+                $assertion = $this->assertionPluginManager->get($assertionName);
+                $assertion->setCurrentUser($this->currentUser);
+                $assertion->setContent($content);
+            }
         }
 
-        return $this->rbac->isGranted($this->currentUser->getRole(), $permission, $assertion);
+        try {
+            $isGranted = $this->rbac->isGranted($this->currentUser->getRole(), $permission, $assertion);
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+            $isGranted = false;
+        }
+
+        return $isGranted;
     }
 
     /**
@@ -115,22 +136,18 @@ class AuthorizationService
      */
     private function getAssertionName($permission)
     {
-        if (!isset($this->config->rbac_config->assertions)) {
-            throw new InvalidArgumentRbacException("Invalid options. No assertions in config file.");
-        }
-        
-        foreach ($this->config->rbac_config->assertions as $assertion) {
+        foreach ($this->assertions as $assertion) {
             if (!isset($assertion->permissions)) {
                 break;
             }
-            
+
             $this->inArrayValidator->setHaystack($assertion->permissions->toArray());
             if ($this->inArrayValidator->isValid($permission)) {
-                
+
                 return isset($assertion->name) ? $assertion->name : null;
-            }  
+            }
         }
-        
+
         return null;
     }
 }
