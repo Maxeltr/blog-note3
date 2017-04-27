@@ -51,28 +51,22 @@ class AuthorizationServiceFactory implements FactoryInterface
         if (!isset($config->rbac_module->rbac_config->assertions)) {
             throw new InvalidArgumentRbacException("Invalid options. No assertions in config file.");
         }
-        $assertions = $config->rbac_module->rbac_config->assertions;
 
         $rbac = new Rbac();
         $roles = $config->rbac_module->rbac_config->roles;
-        foreach ($roles as $value) {
-            $role = new Role($value->name);
+        foreach ($roles as $name => $value) {
+            $role = new Role($name);
             foreach ($value->permissions as $permission) {
                 $role->addPermission($permission);
             }
             $rbac->addRole($role, $value->parent);
         }
 
-//        if (!$authenticationService->hasIdentity()) {
-//            throw new NotAuthenticatedUserException('The user is not logged in');
-//        }
         $currentUser = $authenticationService->getIdentity();
-
-        //\Zend\Debug\Debug::dump($currentUser);
 
         $assertionPluginManager = $container->get(AssertionPluginManager::class);
 
-        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $assertions, $validator, $logger, $currentUser);
+        $authorizationService = new AuthorizationService($rbac, $assertionPluginManager, $config->rbac_module->rbac_config, $validator, $logger, $currentUser);
 
         return $authorizationService;
     }

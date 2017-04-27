@@ -57,6 +57,11 @@ class AuthorizationService
      */
     protected $assertions;
 
+    /**
+     * @var Zend\Config\Config
+     */
+    protected $config;
+
     /*
      * var Zend\Validator\InArray
      */
@@ -71,18 +76,16 @@ class AuthorizationService
     (
         Rbac $rbac,
         AssertionPluginManager $assertionPluginManager,
-        Config $assertions,
+        Config $config,
         InArray $inArrayValidator,
         Logger $logger,
-        $currentUser = null
+        UserInterface $currentUser = null
     ) {
-        if ($currentUser instanceof UserInterface) {
-            $this->currentUser = $currentUser;
-        }
-
+        $this->currentUser = $currentUser;
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
-        $this->assertions = $assertions;
+        $this->assertions = $config->assertions;
+        $this->config = $config;
         $this->inArrayValidator = $inArrayValidator;
         $this->logger = $logger;
     }
@@ -108,7 +111,7 @@ class AuthorizationService
         }
 
         $assertion = null;
-        if ($role !== 'admin' && $role !== 'moderator') {               //TODO перенести в module.config
+        if (!$this->config->roles->$role->get('no_assertion', false)) {
             $assertionName = $this->getAssertionName($permission);
             if ($assertionName) {
                 $assertion = $this->assertionPluginManager->get($assertionName);
@@ -118,7 +121,7 @@ class AuthorizationService
         }
 
         try {
-            $isGranted = $this->rbac->isGranted($this->currentUser->getRole(), $permission, $assertion);
+            $isGranted = $this->rbac->isGranted($role, $permission, $assertion);
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             $isGranted = false;
@@ -136,15 +139,15 @@ class AuthorizationService
      */
     private function getAssertionName($permission)
     {
-        foreach ($this->assertions as $assertion) {
-            if (!isset($assertion->permissions)) {
+        foreach ($this->assertions as $assertion => $value) {
+            if (!isset($value->permissions)) {
                 break;
             }
 
-            $this->inArrayValidator->setHaystack($assertion->permissions->toArray());
+            $this->inArrayValidator->setHaystack($value->permissions->toArray());
             if ($this->inArrayValidator->isValid($permission)) {
 
-                return isset($assertion->name) ? $assertion->name : null;
+                return $assertion;
             }
         }
 

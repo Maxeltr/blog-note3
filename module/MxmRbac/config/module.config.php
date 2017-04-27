@@ -47,22 +47,21 @@ return [
     'rbac_module' => [
         'rbac_config' => [
             'roles' => [
-                [
-                    'name' => 'admin',
+                'admin' => [
                     'parent' => '',
+                    'no_assertion' => true,
                     'permissions' => [
 
                     ]
                 ],
-                [
-                    'name' => 'moderator',
+                'moderator' => [
                     'parent' => 'admin',
+                    //'no_assertion' => true,
                     'permissions' => [
 
                     ]
                 ],
-                [
-                    'name' => 'author',
+                'author' => [
                     'parent' => 'moderator',
                     'permissions' => [
                         'add.article',
@@ -74,15 +73,13 @@ return [
 
                     ],
                 ],
-                [
-                    'name' => 'anonymous',
+                'anonymous' => [
                     'parent' => 'author',
                     'permissions' => []
                 ],
             ],
             'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
-                [
-                    'name' => 'MustBeAuthorAssertion',
+                'MustBeAuthorAssertion' => [
                     'permissions' => [
                         'edit.article',
                         'delete.article',
