@@ -14,8 +14,10 @@ return [
             'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
             'locale' => 'ru_RU',
             'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-        ]
-
+        ],
+        'logger' => [
+            'path' => __DIR__ . '/../../../data/logs/MxmBlog.log',
+        ],
     ],
     'controllers' => [
         'factories' => [
@@ -50,7 +52,7 @@ return [
             Date::class => Factory\Validator\DateValidatorFactory::class,
             \Zend\I18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
-            
+            Logger::class => Factory\Logger\LoggerFactory::class,
         ],
         'invokables' => [
             Hydrator\Tag\TagHydrator::class => Hydrator\Tag\TagHydrator::class,

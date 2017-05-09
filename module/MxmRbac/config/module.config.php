@@ -58,18 +58,21 @@ return [
                     'parent' => 'admin',
                     //'no_assertion' => true,
                     'permissions' => [
-
+                        'add.category',
+                        'edit.category',
+                        'delete.category',
+                        'add.tag',
+                        'edit.tag',
+                        'delete.tag',
+                        'find.users'
                     ]
                 ],
                 'author' => [
                     'parent' => 'moderator',
                     'permissions' => [
-                        'add.article',
-                        'edit.article',
-                        'delete.article',
-                        'upload.image',
-                        'delete.image',
-                        'add.category',
+                        'add.post',
+                        'edit.post',
+                        'delete.post',
 
                     ],
                 ],
@@ -81,8 +84,8 @@ return [
             'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
                 'MustBeAuthorAssertion' => [
                     'permissions' => [
-                        'edit.article',
-                        'delete.article',
+                        'edit.post',
+                        'delete.post',
                     ]
                 ],
 

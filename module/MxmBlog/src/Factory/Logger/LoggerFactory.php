@@ -24,44 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Service;
+namespace MxmBlog\Factory\Logger;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Validator\Db\RecordExists;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
-use MxmUser\Mapper\MapperInterface;
-use MxmUser\Service\DateTimeInterface;
-use MxmUser\Service\UserService;
-use Zend\Authentication\AuthenticationService;
-use MxmRbac\Service\AuthorizationService;
+use Zend\Log\Logger;
+use Zend\Config\Config;
+use Zend\Log\Writer\Stream;
 
-class UserServiceFactory implements FactoryInterface
+class LoggerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $mapper = $container->get(MapperInterface::class);
-        $authorizationService = $container->get(AuthorizationService::class);
-        $dateTime = $container->get(DateTimeInterface::class);
-        $authService = $container->get(AuthenticationService::class);
-        $emailValidator = new EmailAddress();
-        $notEmptyValidator = new NotEmpty();
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
-        $recordExistsValidator = new RecordExists([
-            'table'   => 'users',
-            'field'   => 'email',
-            'adapter' => $dbAdapter,
-        ]);
+        $config = new Config($container->get('config'));
+        $writer = new Stream($config->blog_module->logger->path);
+        $logger = new Logger();
+        $logger->addWriter($writer);
 
-        return new UserService(
-            $mapper,
-            $dateTime,
-            $authService,
-            $emailValidator,
-            $notEmptyValidator,
-            $recordExistsValidator,
-            $authorizationService
-        );
+        return $logger;
     }
 }

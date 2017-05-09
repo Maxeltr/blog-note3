@@ -1,9 +1,9 @@
 <?php
 
-/*
+/* 
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmUser\Exception;
 
-use MxmBlog\Controller\WriteController;
-use MxmBlog\Form\PostForm;
-use MxmBlog\Form\TagForm;
-use MxmBlog\Form\CategoryForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Interop\Container\ContainerInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Logger;
-
-class WriteControllerFactory implements FactoryInterface
+class NotAuthorizedUserException extends RuntimeUserException implements UserExceptionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $postService = $container->get(PostServiceInterface::class);
-        $logger = $container->get(Logger::class);
-
-        $formManager = $container->get('FormElementManager');
-        $postInsertForm = $formManager->get(PostForm::class);
-        $tagInsertForm = $formManager->get(TagForm::class);
-        $categoryInsertForm = $formManager->get(CategoryForm::class);
-
-        return new WriteController(
-            $postService,
-            $postInsertForm,
-            $tagInsertForm,
-            $categoryInsertForm,
-            $logger
-        );
-    }
 }

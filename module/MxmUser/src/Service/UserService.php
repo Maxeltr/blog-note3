@@ -46,7 +46,8 @@ use Zend\Mail\Message as MailMessage;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mail\Transport\Sendmail as SendMailTransport;
 use Zend\Mime\Part as MimePart;
-
+use MxmUser\Exception\NotAuthorizedUserException;
+use MxmRbac\Service\AuthorizationService;
 
 class UserService implements UserServiceInterface
 {
@@ -80,13 +81,19 @@ class UserService implements UserServiceInterface
      */
     protected $isUserExists;
 
+    /**
+     * @var MxmRbac\Service\AthorizationService
+     */
+    protected $authorizationService;
+
     public function __construct(
         MapperInterface $mapper,
         DateTimeInterface $datetime,
         AuthenticationService $authService,
         EmailAddress $emailValidator,
         NotEmpty $notEmptyValidator,
-        RecordExists $isUserExists
+        RecordExists $isUserExists,
+        AuthorizationService $authorizationService
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -94,6 +101,7 @@ class UserService implements UserServiceInterface
         $this->emailValidator = $emailValidator;
         $this->notEmptyValidator = $notEmptyValidator;
         $this->isUserExists = $isUserExists;
+        $this->authorizationService = $authorizationService;
     }
 
     /**
@@ -101,9 +109,13 @@ class UserService implements UserServiceInterface
      */
     public function findAllUsers()
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
+        if (!$this->authorizationService->isGranted('find.users')) {
+            throw new NotAuthorizedUserException('Access denied');
         }
+
+//        if (!$this->authService->hasIdentity()) {
+//            throw new NotAuthenticatedUserException('The user is not logged in');
+//        }
 
         return $this->mapper->findAllUsers();
     }
@@ -113,9 +125,13 @@ class UserService implements UserServiceInterface
      */
     public function findUserById($id)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
+        if (!$this->authorizationService->isGranted('find.users')) {
+            throw new NotAuthorizedUserException('Access denied');
         }
+
+//        if (!$this->authService->hasIdentity()) {
+//            throw new NotAuthenticatedUserException('The user is not logged in');
+//        }
 
 	return $this->mapper->findUserById($id);
     }
@@ -125,6 +141,10 @@ class UserService implements UserServiceInterface
      */
     public function insertUser(UserInterface $user)
     {
+        if (!$this->authorizationService->isGranted('add.users')) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
+
         if ($this->isUserExists->isValid($user->getEmail())) {
             throw new AlreadyExistsUserException("User with email address " . $user->getEmail() . " already exists");
         }
@@ -143,9 +163,13 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
+        if (!$this->authorizationService->isGranted('edit.users')) {
+            throw new NotAuthorizedUserException('Access denied');
         }
+
+//        if (!$this->authService->hasIdentity()) {
+//            throw new NotAuthenticatedUserException('The user is not logged in');
+//        }
         $currentUser = $this->authService->getIdentity();
         //$currentUser проверить полномочия
         return $this->mapper->updateUser($user);
@@ -156,9 +180,13 @@ class UserService implements UserServiceInterface
      */
     public function deleteUser(UserInterface $user)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
+        if (!$this->authorizationService->isGranted('delete.users')) {
+            throw new NotAuthorizedUserException('Access denied');
         }
+
+//        if (!$this->authService->hasIdentity()) {
+//            throw new NotAuthenticatedUserException('The user is not logged in');
+//        }
         $currentUser = $this->authService->getIdentity();
 
         return $this->mapper->deleteUser($user);
@@ -169,6 +197,10 @@ class UserService implements UserServiceInterface
      */
     public function editEmail($email, $password)
     {
+        if (!$this->authorizationService->isGranted('edit.email')) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
+
         if (!$this->notEmptyValidator->isValid($password)) {
             throw new InvalidArgumentUserException("No params given: password.");
         }
@@ -197,6 +229,10 @@ class UserService implements UserServiceInterface
      */
     public function editPassword($oldPassword, $newPassword)
     {
+        if (!$this->authorizationService->isGranted('edit.password')) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
+
         if (!$this->notEmptyValidator->isValid($oldPassword) or !$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: oldPassword or newPassword.");
         }
@@ -259,6 +295,10 @@ class UserService implements UserServiceInterface
 
     public function resetPassword($email)
     {
+        if (!$this->authorizationService->isGranted('reset.password')) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
+
 //        if (!$this->isUserExists->isValid($email)) {
 //            throw new RecordNotFoundUserException("User with email address " . $email . " doesn't exists");
 //        }
@@ -309,6 +349,10 @@ class UserService implements UserServiceInterface
 
     public function setPassword($newPassword, $token)
     {
+        if (!$this->authorizationService->isGranted('set.password')) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
+
         if (!$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: password.");
         }

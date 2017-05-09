@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -30,6 +30,7 @@ use MxmBlog\Service\PostServiceInterface;
 use Zend\Form\FormInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Log\Logger;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Exception\DataBaseErrorBlogException;
 
@@ -37,46 +38,54 @@ class WriteController extends AbstractActionController
 {
     /**
      *
-     * @var \Blog\Service\PostServiceInterface 
+     * @var \Blog\Service\PostServiceInterface
      */
     protected $postService;
-	
+
     /**
      *
-     * @var Zend\Form\FormInterface 
+     * @var Zend\Form\FormInterface
      */
     protected $postForm;
-    
+
     /**
      *
-     * @var Zend\Form\FormInterface 
+     * @var Zend\Form\FormInterface
      */
     protected $categoryForm;
-    
+
     /**
      *
-     * @var Zend\Form\FormInterface 
+     * @var Zend\Form\FormInterface
      */
     protected $tagForm;
-    
+
     /**
      *
-     * @var Zend\Model\PostInterface 
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
+    /**
+     *
+     * @var Zend\Model\PostInterface
      */
     //protected $post;
-    
+
     public function __construct(
         PostServiceInterface $postService,
         FormInterface $postForm,
         FormInterface $tagForm,
-        FormInterface $categoryForm
+        FormInterface $categoryForm,
+        Logger $logger
     ) {
         $this->postService = $postService;
         $this->postForm = $postForm;
         $this->tagForm = $tagForm;
         $this->categoryForm = $categoryForm;
+        $this->logger = $logger;
     }
-    
+
     public function addPostAction()
     {
         $request = $this->getRequest();
@@ -85,12 +94,12 @@ class WriteController extends AbstractActionController
             if ($this->postForm->isValid()) {
                 try {
                     $savedPost = $this->postService->insertPost($this->postForm->getData());
-                } catch (DataBaseErrorBlogException $e) {
-                    //TODO Записать в лог
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailPost', 
+
+                return $this->redirect()->toRoute('detailPost',
                     array('id' => $savedPost->getId()));
             }
         }
@@ -99,38 +108,38 @@ class WriteController extends AbstractActionController
             'form' => $this->postForm
         ));
     }
-	
+
     public function editPostAction()
     {
         $request = $this->getRequest();
         try {
             $post = $this->postService->findPostById($this->params('id'));
-        } catch (DataBaseErrorBlogException $e) {
-            //TODO Записать в лог
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
-        
+
         $this->postForm->bind($post);
         if ($request->isPost()) {
             $this->postForm->setData($request->getPost());
             if ($this->postForm->isValid()) {
                 try {
                     $this->postService->updatePost($post);
-                } catch (DataBaseErrorBlogException $e) {
-                    //TODO Записать в лог
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailPost', 
+
+                return $this->redirect()->toRoute('detailPost',
                     array('id' => $post->getId()));
             }
         }
- 
+
         return new ViewModel(array(
                 'form' => $this->postForm
         ));
     }
-    
+
     public function addTagAction()
     {
         $request = $this->getRequest();
@@ -139,12 +148,12 @@ class WriteController extends AbstractActionController
             if ($this->tagForm->isValid()) {
                 try {
                     $savedTag = $this->postService->insertTag($this->tagForm->getData());
-                } catch (DataBaseErrorBlogException $e) {
-                    //TODO Записать в лог
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailTag', 
+
+                return $this->redirect()->toRoute('detailTag',
                     array('id' => $savedTag->getId()));
             }
         }
@@ -153,38 +162,38 @@ class WriteController extends AbstractActionController
             'form' => $this->tagForm
         ));
     }
-    
+
     public function editTagAction()
     {
         $request = $this->getRequest();
         try {
             $tag = $this->postService->findTagById($this->params('id'));
-        } catch (DataBaseErrorBlogException $e) {
-            //TODO Записать в лог
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
-        
+
         $this->tagForm->bind($tag);
         if ($request->isPost()) {
             $this->tagForm->setData($request->getPost());
             if ($this->tagForm->isValid()) {
                 try {
                     $this->postService->updateTag($tag);
-                } catch (DataBaseErrorBlogException $e) {
-                    //TODO Записать в лог
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailTag', 
+
+                return $this->redirect()->toRoute('detailTag',
                     array('id' => $tag->getId()));
             }
         }
- 
+
         return new ViewModel(array(
                 'form' => $this->tagForm
         ));
     }
-    
+
     public function addCategoryAction()
     {
         $request = $this->getRequest();
@@ -193,12 +202,12 @@ class WriteController extends AbstractActionController
             if ($this->categoryForm->isValid()) {
                 try {
                     $savedCategory = $this->postService->insertCategory($this->categoryForm->getData());
-                } catch (DataBaseErrorBlogException $e) {
-                    //TODO Записать в лог
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailCategory', 
+
+                return $this->redirect()->toRoute('detailCategory',
                     array('id' => $savedCategory->getId()));
             }
         }
@@ -207,33 +216,33 @@ class WriteController extends AbstractActionController
             'form' => $this->categoryForm
         ));
     }
-    
+
     public function editCategoryAction()
     {
         $request = $this->getRequest();
         try {
             $category = $this->postService->findCategoryById($this->params('id'));
-        } catch (DataBaseErrorBlogException $e) {
-            //TODO Записать в лог
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
-        
+
         $this->categoryForm->bind($category);
         if ($request->isPost()) {
             $this->categoryForm->setData($request->getPost());
             if ($this->categoryForm->isValid()) {
                 try {
                     $this->postService->updateCategory($category);
-                } catch (DataBaseErrorBlogException $e) {
-                    //TODO Записать в лог
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
                 }
-                
-                return $this->redirect()->toRoute('detailCategory', 
+
+                return $this->redirect()->toRoute('detailCategory',
                     array('id' => $category->getId()));
             }
         }
- 
+
         return new ViewModel(array(
                 'form' => $this->categoryForm
         ));

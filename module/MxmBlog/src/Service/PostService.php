@@ -34,6 +34,7 @@ use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
+use MxmBlog\Exception\NotAuthorizedBlogException;
 
 class PostService implements PostServiceInterface
 {
@@ -121,8 +122,8 @@ class PostService implements PostServiceInterface
      */
     public function insertPost(PostInterface $post)
     {
-        if (!$this->authorizationService->isGranted('add.article')) {
-            throw new \Exception('access deny');
+        if (!$this->authorizationService->isGranted('add.post')) {
+            throw new NotAuthorizedBlogException('Access denied');
         }
 
         $post->setCreated($this->datetime->modify('now'));
@@ -140,6 +141,10 @@ class PostService implements PostServiceInterface
      */
     public function updatePost(PostInterface $post)
     {
+        if (!$this->authorizationService->isGranted('edit.post', $post)) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         $post->setUpdated($this->datetime->modify('now'));
 
         if ($post->getIsPublished() === true && $this->IsPublishedRecordExistsValidator->isPublished() !== true) {
@@ -156,6 +161,10 @@ class PostService implements PostServiceInterface
      */
     public function deletePost(PostInterface $post)
     {
+        if (!$this->authorizationService->isGranted('delete.post', $post)) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->deletePost($post);
     }
 
@@ -180,6 +189,10 @@ class PostService implements PostServiceInterface
      */
     public function insertCategory(CategoryInterface $category)
     {
+        if (!$this->authorizationService->isGranted('add.category')) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->insertCategory($category);
     }
 
@@ -188,6 +201,10 @@ class PostService implements PostServiceInterface
      */
     public function updateCategory(CategoryInterface $category)
     {
+        if (!$this->authorizationService->isGranted('edit.category')) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->updateCategory($category);
     }
 
@@ -196,6 +213,10 @@ class PostService implements PostServiceInterface
      */
     public function deleteCategory(CategoryInterface $category)
     {
+        if (!$this->authorizationService->isGranted('delete.category')) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->deleteCategory($category);
     }
 
@@ -220,6 +241,10 @@ class PostService implements PostServiceInterface
      */
     public function insertTag(TagInterface $tag)
     {
+        if (!$this->authorizationService->isGranted('add.tag')) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->insertTag($tag);
     }
 
@@ -228,6 +253,10 @@ class PostService implements PostServiceInterface
      */
     public function updateTag(TagInterface $tag)
     {
+        if (!$this->authorizationService->isGranted('edit.tag')) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->updateTag($tag);
     }
 
@@ -236,6 +265,10 @@ class PostService implements PostServiceInterface
      */
     public function deleteTag(TagInterface $tag)
     {
+        if (!$this->authorizationService->isGranted('delete.tag')) {
+            throw new NotAuthorizedBlogException('Access denied');
+        }
+
         return $this->mapper->deleteTag($tag);
     }
 
