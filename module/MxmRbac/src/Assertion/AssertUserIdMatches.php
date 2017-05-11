@@ -24,32 +24,30 @@
  * THE SOFTWARE.
  */
 
-namespace MxmRbac\Factory\Assertion;
+namespace MxmRbac\Assertion;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmRbac\Assertion\AssertionPluginManager;
-use MxmRbac\Assertion\MustBeAuthorAssertion;
-use MxmRbac\Assertion\AssertUserIdMatches;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Zend\Permissions\Rbac\AssertionInterface;
+use Zend\Permissions\Rbac\Rbac;
 
-class AssertionPluginManagerFactory implements FactoryInterface
+class AssertUserIdMatches implements AssertionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    protected $currentUser;
+
+    protected $user;
+
+    public function setContent($user)
     {
-        $config = [                 //TODO move to module.config.php
-            'factories' => [
-                MustBeAuthorAssertion::class => InvokableFactory::class,
-                AssertUserIdMatches::class => InvokableFactory::class,
-            ],
-            'aliases' => [
-                'MustBeAuthorAssertion' => MustBeAuthorAssertion::class,
-                'AssertUserIdMatches' => AssertUserIdMatches::class,
-            ]
-        ];
+        $this->user = $user;
+    }
 
-        $pluginManager = new AssertionPluginManager($container, $config);
+    public function setCurrentUser($currentUser)
+    {
+        $this->currentUser = $currentUser;
+    }
 
-        return $pluginManager;
+    public function assert(Rbac $rbac)
+    {
+        return $this->currentUser->getId() === $this->user->getId();
+
     }
 }

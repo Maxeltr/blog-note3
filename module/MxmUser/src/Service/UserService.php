@@ -125,15 +125,17 @@ class UserService implements UserServiceInterface
      */
     public function findUserById($id)
     {
-        if (!$this->authorizationService->isGranted('find.users')) {
-            throw new NotAuthorizedUserException('Access denied');
-        }
+
 
 //        if (!$this->authService->hasIdentity()) {
 //            throw new NotAuthenticatedUserException('The user is not logged in');
 //        }
+        $user = $this->mapper->findUserById($id);                                      //TODO проверку UserInterface
+        if (!$this->authorizationService->isGranted('find.user', $user)) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
 
-	return $this->mapper->findUserById($id);
+	return $user;
     }
 
     /**
@@ -141,10 +143,6 @@ class UserService implements UserServiceInterface
      */
     public function insertUser(UserInterface $user)
     {
-        if (!$this->authorizationService->isGranted('add.users')) {
-            throw new NotAuthorizedUserException('Access denied');
-        }
-
         if ($this->isUserExists->isValid($user->getEmail())) {
             throw new AlreadyExistsUserException("User with email address " . $user->getEmail() . " already exists");
         }
@@ -163,7 +161,7 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
-        if (!$this->authorizationService->isGranted('edit.users')) {
+        if (!$this->authorizationService->isGranted('edit.user')) { //TODO аналогично findUserById
             throw new NotAuthorizedUserException('Access denied');
         }
 
@@ -180,7 +178,7 @@ class UserService implements UserServiceInterface
      */
     public function deleteUser(UserInterface $user)
     {
-        if (!$this->authorizationService->isGranted('delete.users')) {
+        if (!$this->authorizationService->isGranted('delete.user')) {   //TODO аналогично findUserById
             throw new NotAuthorizedUserException('Access denied');
         }
 

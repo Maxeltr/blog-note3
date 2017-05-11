@@ -70,7 +70,7 @@ class ListController extends AbstractActionController
         try {
             $user = $this->userService->findUserById($id);
         } catch (\Exception $ex) {
-            return $this->notFoundAction();
+            return $this->notFoundAction(); //TODO log?
         }
 
         return new ViewModel(array(

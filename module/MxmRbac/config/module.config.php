@@ -76,9 +76,11 @@ return [
 
                     ],
                 ],
-                'anonymous' => [
+                'user' => [
                     'parent' => 'author',
-                    'permissions' => []
+                    'permissions' => [
+                        'find.user'
+                    ]
                 ],
             ],
             'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
@@ -88,7 +90,11 @@ return [
                         'delete.post',
                     ]
                 ],
-
+                'AssertUserIdMatches' => [
+                    'permissions' => [
+                        'find.user'
+                    ]
+                ],
             ],
         ],
         'logger' => [
