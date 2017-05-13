@@ -144,8 +144,8 @@ class AuthenticateController extends AbstractActionController
     {
         try {
             $this->router->assemble(array(), array('name' => $route));
-        } catch (\Zend\Router\Exception\RuntimeException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+        } catch (\Exception $e) {
+            $this->logger->err('isRouteExists ' . $e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());    //TODO Автоматически получать имя метода?
 
             return false;
         }

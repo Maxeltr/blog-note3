@@ -42,17 +42,21 @@ $form->get('submit')->setValue('Add User');
 
 echo $this->form()->openTag($form);
 
-$user = $form->get('user');
+$userFieldset = $form->get('userFieldset');
 
 //echo $this->formRow($user->get('id'));
-echo $this->formRow($user->get('username'));
+echo $this->formRow($userFieldset->get('username'));
 
-echo $this->formRow($user->get('email'));
-echo $this->formRow($user->get('password'));
-echo $this->formRow($user->get('confirmPassword'));
+echo $this->formRow($userFieldset->get('email'));
+echo $this->formRow($userFieldset->get('password'));
+echo $this->formRow($userFieldset->get('confirmPassword'));
 
-$timezone = $user->get('timebelt');
+$timezone = $userFieldset->get('timebelt');
 echo $this->formRow($timezone->get('timezoneId'));
+
+echo $this->formLabel($userFieldset->get('captcha'));
+echo $this->formElement($userFieldset->get('captcha'));
+echo $this->formElementErrors($userFieldset->get('captcha'));
 
 echo $this->formElement($form->get('submit'));
 

@@ -79,7 +79,9 @@ return [
                 'user' => [
                     'parent' => 'author',
                     'permissions' => [
-                        'find.user'
+                        'find.user',
+                        'edit.user',
+			'edit.email',
                     ]
                 ],
             ],
@@ -92,7 +94,8 @@ return [
                 ],
                 'AssertUserIdMatches' => [
                     'permissions' => [
-                        'find.user'
+                        'find.user',
+                        'edit.user'
                     ]
                 ],
             ],

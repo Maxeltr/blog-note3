@@ -87,6 +87,15 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'label' => 'Confirm Password'
             ]
         ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Captcha',
+            'name' => 'captcha',
+            'options' => [
+                'label' => 'Please verify you are human',
+                'captcha' => new \Zend\Captcha\Figlet(),
+            ],
+        ]);
     }
 
     public function init() {

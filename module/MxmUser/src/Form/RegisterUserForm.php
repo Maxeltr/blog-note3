@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,7 +25,7 @@
  */
 
 namespace MxmUser\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
@@ -44,17 +44,17 @@ class RegisterUserForm extends Form
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
     }
-    
+
     public function init() {
         //parent::init();
         $this->add([
-            'name' => 'user',
+            'name' => 'userFieldset',
             'type' => RegisterUserFieldset::class,
             'options' => [
                 'use_as_base_fieldset' => true
             ]
         ]);
-        
+
         $this->add([
             'type' => 'submit',
             'name' => 'submit',

@@ -113,10 +113,6 @@ class UserService implements UserServiceInterface
             throw new NotAuthorizedUserException('Access denied');
         }
 
-//        if (!$this->authService->hasIdentity()) {
-//            throw new NotAuthenticatedUserException('The user is not logged in');
-//        }
-
         return $this->mapper->findAllUsers();
     }
 
@@ -125,14 +121,11 @@ class UserService implements UserServiceInterface
      */
     public function findUserById($id)
     {
-
-
-//        if (!$this->authService->hasIdentity()) {
-//            throw new NotAuthenticatedUserException('The user is not logged in');
-//        }
-        $user = $this->mapper->findUserById($id);                                      //TODO проверку UserInterface
-        if (!$this->authorizationService->isGranted('find.user', $user)) {
-            throw new NotAuthorizedUserException('Access denied');
+        $user = $this->mapper->findUserById($id);
+        if ($user instanceof UserInterface) {
+            if (!$this->authorizationService->isGranted('find.user', $user)) {
+                throw new NotAuthorizedUserException('Access denied');
+            }
         }
 
 	return $user;
@@ -161,15 +154,10 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
-        if (!$this->authorizationService->isGranted('edit.user')) { //TODO аналогично findUserById
+        if (!$this->authorizationService->isGranted('edit.user', $user)) {
             throw new NotAuthorizedUserException('Access denied');
         }
 
-//        if (!$this->authService->hasIdentity()) {
-//            throw new NotAuthenticatedUserException('The user is not logged in');
-//        }
-        $currentUser = $this->authService->getIdentity();
-        //$currentUser проверить полномочия
         return $this->mapper->updateUser($user);
     }
 
@@ -178,14 +166,9 @@ class UserService implements UserServiceInterface
      */
     public function deleteUser(UserInterface $user)
     {
-        if (!$this->authorizationService->isGranted('delete.user')) {   //TODO аналогично findUserById
+        if (!$this->authorizationService->isGranted('delete.user', $user)) {
             throw new NotAuthorizedUserException('Access denied');
         }
-
-//        if (!$this->authService->hasIdentity()) {
-//            throw new NotAuthenticatedUserException('The user is not logged in');
-//        }
-        $currentUser = $this->authService->getIdentity();
 
         return $this->mapper->deleteUser($user);
     }
@@ -293,14 +276,6 @@ class UserService implements UserServiceInterface
 
     public function resetPassword($email)
     {
-        if (!$this->authorizationService->isGranted('reset.password')) {
-            throw new NotAuthorizedUserException('Access denied');
-        }
-
-//        if (!$this->isUserExists->isValid($email)) {
-//            throw new RecordNotFoundUserException("User with email address " . $email . " doesn't exists");
-//        }
-
         if (!$this->emailValidator->isValid($email)) {
             throw new InvalidArgumentUserException("No params given: email.");
         }
@@ -343,14 +318,11 @@ class UserService implements UserServiceInterface
         $transport = new SendMailTransport();
         $transport->send($message);
 
+        return $this;
     }
 
     public function setPassword($newPassword, $token)
     {
-        if (!$this->authorizationService->isGranted('set.password')) {
-            throw new NotAuthorizedUserException('Access denied');
-        }
-
         if (!$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: password.");
         }
