@@ -86,6 +86,11 @@ class UserService implements UserServiceInterface
      */
     protected $authorizationService;
 
+    /**
+     * @var Zend\Crypt\Password\Bcrypt
+     */
+    protected $bcrypt;
+
     public function __construct(
         MapperInterface $mapper,
         DateTimeInterface $datetime,
@@ -93,7 +98,8 @@ class UserService implements UserServiceInterface
         EmailAddress $emailValidator,
         NotEmpty $notEmptyValidator,
         RecordExists $isUserExists,
-        AuthorizationService $authorizationService
+        AuthorizationService $authorizationService,
+        Bcrypt $bcrypt
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -102,6 +108,7 @@ class UserService implements UserServiceInterface
         $this->notEmptyValidator = $notEmptyValidator;
         $this->isUserExists = $isUserExists;
         $this->authorizationService = $authorizationService;
+        $this->bcrypt = $bcrypt;
     }
 
     /**
@@ -140,8 +147,7 @@ class UserService implements UserServiceInterface
             throw new AlreadyExistsUserException("User with email address " . $user->getEmail() . " already exists");
         }
 
-        $bcrypt = new Bcrypt();
-        $passwordHash = $bcrypt->create($user->getPassword());
+        $passwordHash = $this->bcrypt->create($user->getPassword());
         $user->setPassword($passwordHash);
 
         $user->setCreated($this->datetime->modify('now'));
@@ -190,13 +196,9 @@ class UserService implements UserServiceInterface
             throw new InvalidArgumentUserException("No params given: email.");
         }
 
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
         $currentUser = $this->authService->getIdentity();
 
-        $bcrypt = new Bcrypt();
-        if (!$bcrypt->verify($password, $currentUser->getPassword())) {
+        if (!$this->bcrypt->verify($password, $currentUser->getPassword())) {
             throw new InvalidPasswordUserException('Incorrect password.');
         }
 
@@ -210,25 +212,21 @@ class UserService implements UserServiceInterface
      */
     public function editPassword($oldPassword, $newPassword)
     {
-        if (!$this->authorizationService->isGranted('edit.password')) {
-            throw new NotAuthorizedUserException('Access denied');
-        }
+//        if (!$this->authorizationService->isGranted('edit.password')) {
+//            throw new NotAuthorizedUserException('Access denied');
+//        }
 
         if (!$this->notEmptyValidator->isValid($oldPassword) or !$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: oldPassword or newPassword.");
         }
 
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
         $currentUser = $this->authService->getIdentity();
 
-        $bcrypt = new Bcrypt();
-        if (!$bcrypt->verify($oldPassword, $currentUser->getPassword())) {
+        if (!$this->bcrypt->verify($oldPassword, $currentUser->getPassword())) {
             throw new InvalidPasswordUserException('Incorrect old password.');
         }
 
-        $currentUser->setPassword($bcrypt->create($newPassword));
+        $currentUser->setPassword($this->bcrypt->create($newPassword));
 
         return $this->mapper->updateUser($currentUser);
     }
@@ -302,7 +300,7 @@ class UserService implements UserServiceInterface
         $body .= " $passwordResetUrl\n";
         $body .= " If you haven't asked to reset your password, please ignore this message.\n";
 
-        $mimePart = new MimePart($body);
+        $mimePart = new MimePart($body);    //TODO move to separate class?
         $mimePart->type = 'text/html';
 
         $mimeMess = new MimeMessage();
@@ -343,8 +341,7 @@ class UserService implements UserServiceInterface
             throw new ExpiredUserException("Token " . $token . " expired. User id " . $user->getId());
         }
 
-        $bcrypt = new Bcrypt();
-        $passwordHash = $bcrypt->create($newPassword);
+        $passwordHash = $this->bcrypt->create($newPassword);
         $user->setPassword($passwordHash);
 
         return $this->mapper->updateUser($user);

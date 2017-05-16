@@ -31,9 +31,10 @@ use MxmUser\Model\UserInterface;
 interface UserServiceInterface
 {
     /**
-     * Должен вернуть массив объектов, реализующих UserInterface или Paginator
+     * Должен вернуть Paginator
      *
-     * @return Array of Paginator
+     * @return Zend\Paginator\Paginator
+     * @throw NotAuthorizedUserException
      */
     public function findAllUsers();
 
@@ -43,6 +44,7 @@ interface UserServiceInterface
      * @param int $id
      * @return UserInterface
      * @throw RecordNotFoundUserException
+     * @throw NotAuthorizedUserException
      */
     public function findUserById($id);
 
@@ -60,6 +62,7 @@ interface UserServiceInterface
      *
      * @param  UserInterface $user
      * @return UserInterface
+     * @throw NotAuthorizedUserException
      */
     public function updateUser(UserInterface $user);
 
@@ -70,6 +73,7 @@ interface UserServiceInterface
      * @param  UserInterface $user
      *
      * @return bool
+     * @throw NotAuthorizedUserException
      */
     public function deleteUser(UserInterface $user);
 
@@ -81,8 +85,8 @@ interface UserServiceInterface
      *
      * @return UserInterface
      *
-     * @throws NotAuthenticatedUserException
      * @throws InvalidArgumentUserException
+     * @throw NotAuthorizedUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
     public function editPassword($oldPassword, $newPassword);
@@ -109,8 +113,8 @@ interface UserServiceInterface
      *
      * @return UserInterface
      *
-     * @throws NotAuthenticatedUserException
      * @throws InvalidArgumentUserException
+     * @throw NotAuthorizedUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
     public function editEmail($email, $password);

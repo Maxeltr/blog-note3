@@ -35,6 +35,7 @@ use MxmUser\Mapper\MapperInterface;
 use MxmUser\Service\DateTimeInterface;
 use MxmUser\Service\UserService;
 use Zend\Authentication\AuthenticationService;
+use Zend\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
 
 class UserServiceFactory implements FactoryInterface
@@ -53,6 +54,7 @@ class UserServiceFactory implements FactoryInterface
             'field'   => 'email',
             'adapter' => $dbAdapter,
         ]);
+        $bcrypt = new Bcrypt();
 
         return new UserService(
             $mapper,
@@ -61,7 +63,8 @@ class UserServiceFactory implements FactoryInterface
             $emailValidator,
             $notEmptyValidator,
             $recordExistsValidator,
-            $authorizationService
+            $authorizationService,
+            $bcrypt
         );
     }
 }

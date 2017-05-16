@@ -116,6 +116,9 @@ class AuthorizationService
             if ($assertionName) {
                 $assertion = $this->assertionPluginManager->get($assertionName);
                 $assertion->setCurrentUser($this->currentUser);
+                if ($content === null) {															//add
+                    return false;
+                }
                 $assertion->setContent($content);
             }
         }

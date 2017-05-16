@@ -101,7 +101,7 @@ class AuthenticateController extends AbstractActionController
 
                 $resultCode = $result->getCode();
                 if ($resultCode === Result::SUCCESS) {
-                    if (!$this->isRouteExists($data['redirect'])) {
+                    if (!$this->isRouteExists($data['redirect'])) {     //TODO не работает. Добавить доп параметры для разных роутов
 
                         return $this->redirect()->toRoute('home');
                     } else {
@@ -115,7 +115,7 @@ class AuthenticateController extends AbstractActionController
                 }
             }
         }
-        $this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());
+        $this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());    //TODO не работает. Добавить доп параметры для разных роутов
 
         return new ViewModel([
             'form' => $this->loginUserForm,
@@ -160,7 +160,7 @@ class AuthenticateController extends AbstractActionController
      */
     private function getRedirectRouteFromQuery()
     {
-        $redirect = $this->params()->fromQuery('redirect', '');
+        $redirect = $this->params()->fromQuery('redirect', '');     //TODO не работает. Добавить доп параметры для разных роутов
         if ($redirect && $this->isRouteExists($redirect)) {
 
             return $redirect;
