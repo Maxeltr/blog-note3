@@ -116,6 +116,10 @@ class UserService implements UserServiceInterface
      */
     public function findAllUsers()
     {
+        if (!$this->authService->hasIdentity()) {									
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
         if (!$this->authorizationService->isGranted('find.users')) {
             throw new NotAuthorizedUserException('Access denied');
         }
@@ -128,6 +132,10 @@ class UserService implements UserServiceInterface
      */
     public function findUserById($id)
     {
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
         $user = $this->mapper->findUserById($id);
         if ($user instanceof UserInterface) {
             if (!$this->authorizationService->isGranted('find.user', $user)) {
@@ -160,6 +168,10 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
         if (!$this->authorizationService->isGranted('edit.user', $user)) {
             throw new NotAuthorizedUserException('Access denied');
         }
@@ -184,6 +196,10 @@ class UserService implements UserServiceInterface
      */
     public function editEmail($email, $password)
     {
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
         if (!$this->authorizationService->isGranted('edit.email')) {
             throw new NotAuthorizedUserException('Access denied');
         }
@@ -212,9 +228,13 @@ class UserService implements UserServiceInterface
      */
     public function editPassword($oldPassword, $newPassword)
     {
-//        if (!$this->authorizationService->isGranted('edit.password')) {
-//            throw new NotAuthorizedUserException('Access denied');
-//        }
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('edit.password')) {
+            throw new NotAuthorizedUserException('Access denied');
+        }
 
         if (!$this->notEmptyValidator->isValid($oldPassword) or !$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: oldPassword or newPassword.");

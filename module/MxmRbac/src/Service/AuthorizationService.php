@@ -106,7 +106,10 @@ class AuthorizationService
         }
 
         $role = $this->currentUser->getRole();
-        if (empty($role)) {
+//        if (empty($role)) {
+//            return false;
+//        }
+        if (! $this->rbac->hasRole($role)) {
             return false;
         }
 
@@ -116,7 +119,7 @@ class AuthorizationService
             if ($assertionName) {
                 $assertion = $this->assertionPluginManager->get($assertionName);
                 $assertion->setCurrentUser($this->currentUser);
-                if ($content === null) {															//add
+                if ($content === null) {
                     return false;
                 }
                 $assertion->setContent($content);

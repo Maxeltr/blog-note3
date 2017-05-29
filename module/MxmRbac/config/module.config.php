@@ -81,6 +81,8 @@ return [
                     'permissions' => [
                         'find.user',
                         'edit.user',
+                        'delete.user',
+			'edit.password',
 			'edit.email',
                     ]
                 ],
@@ -95,7 +97,8 @@ return [
                 'AssertUserIdMatches' => [
                     'permissions' => [
                         'find.user',
-                        'edit.user'
+                        'edit.user',
+                        'delete.user',
                     ]
                 ],
             ],

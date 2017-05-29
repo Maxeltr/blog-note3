@@ -30,8 +30,11 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;
 use Zend\Config\Config;
+use Zend\Log\Logger;
 use \DateTimeInterface;
 use MxmUser\Service\UserServiceInterface;
+use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmUser\Exception\NotAuthorizedUserException;
 
 class ListController extends AbstractActionController
 {
@@ -45,17 +48,37 @@ class ListController extends AbstractActionController
      */
     protected $config;
 
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
     public function __construct(
         UserServiceInterface $userService,
-        Config $config
+        Config $config,
+        Logger $logger
     ) {
         $this->userService = $userService;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     public function listUsersAction()
     {
-        $paginator = $this->userService->findAllUsers();
+        try {
+            $paginator = $this->userService->findAllUsers();
+	} catch (NotAuthenticatedUserException $e) {
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'listUsers']]); //TODO использовать flashmessenger?
+        } catch (NotAuthorizedUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();	//TODO redirect ot access denied
+	} catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
         $this->configurePaginator($paginator);
 
         return new ViewModel([
@@ -69,8 +92,20 @@ class ListController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $user = $this->userService->findUserById($id);
+        } catch (RecordNotFoundUserException $e) {
+
+            return $this->notFoundAction();
+		} catch (NotAuthenticatedUserException $e) {
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'detailUser']]); //TODO использовать flashmessenger?
+        } catch (NotAuthorizedUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();	//TODO redirect ot access denied
         } catch (\Exception $ex) {
-            return $this->notFoundAction(); //TODO log?
+			$this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
         }
 
         return new ViewModel(array(

@@ -49,6 +49,8 @@ interface MapperInterface
     public function findUserByEmail($email);
 
     /**
+     * 
+     * throw InvalidArgumentUserException
      *
      * @return Paginator
      */
@@ -74,8 +76,8 @@ interface MapperInterface
 
     /**
      * @param UserInterface $user
-     * Должен удалить полученный объект, реализующий UserInterface, и его связи
-     * с тегами, и вернуть true (если удалено) или false (если неудача).
+     * Должен удалить полученный объект, реализующий UserInterface и вернуть true (если удалено) или false (если неудача).
+     *
      *
      * @return bool
      */

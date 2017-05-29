@@ -34,6 +34,7 @@ interface UserServiceInterface
      * Должен вернуть Paginator
      *
      * @return Zend\Paginator\Paginator
+     * @throws NotAuthenticatedUserException
      * @throw NotAuthorizedUserException
      */
     public function findAllUsers();
@@ -43,6 +44,7 @@ interface UserServiceInterface
      *
      * @param int $id
      * @return UserInterface
+     * @throws NotAuthenticatedUserException
      * @throw RecordNotFoundUserException
      * @throw NotAuthorizedUserException
      */
@@ -62,6 +64,8 @@ interface UserServiceInterface
      *
      * @param  UserInterface $user
      * @return UserInterface
+     *
+     * @throws NotAuthenticatedUserException
      * @throw NotAuthorizedUserException
      */
     public function updateUser(UserInterface $user);
@@ -85,6 +89,7 @@ interface UserServiceInterface
      *
      * @return UserInterface
      *
+     * @throws NotAuthenticatedUserException
      * @throws InvalidArgumentUserException
      * @throw NotAuthorizedUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
@@ -113,6 +118,7 @@ interface UserServiceInterface
      *
      * @return UserInterface
      *
+     * @throws NotAuthenticatedUserException
      * @throws InvalidArgumentUserException
      * @throw NotAuthorizedUserException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.

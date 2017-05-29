@@ -142,6 +142,10 @@ class AuthenticateController extends AbstractActionController
      */
     private function isRouteExists($route)
     {
+        if (empty($route)) {
+            return false;
+        }
+                
         try {
             $this->router->assemble(array(), array('name' => $route));
         } catch (\Exception $e) {

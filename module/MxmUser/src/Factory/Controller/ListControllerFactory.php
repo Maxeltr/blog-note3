@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,6 +28,7 @@ namespace MxmUser\Factory\Controller;
 
 use Interop\Container\ContainerInterface;
 use Zend\Config\Config;
+use MxmUser\Logger;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Controller\ListController;
 use MxmUser\Service\UserServiceInterface;
@@ -37,8 +38,9 @@ class ListControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
+        $logger = $container->get(Logger::class);
         $userService = $container->get(UserServiceInterface::class);
-        
-        return new ListController($userService, $config->user_module);
+
+        return new ListController($userService, $config->user_module, $logger);
     }
 }

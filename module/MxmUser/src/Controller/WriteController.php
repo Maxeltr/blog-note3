@@ -34,6 +34,7 @@ use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmUser\Exception\NotAuthorizedUserException;
 use Zend\Form\FormInterface;
 use Zend\Log\Logger;
 
@@ -48,11 +49,6 @@ class WriteController extends AbstractActionController
      * @var \MxmUser\Service\UserServiceInterface
      */
     protected $userService;
-
-    /**
-     * @var \DateTimeInterface
-     */
-    protected $datetime;
 
     /**
      *
@@ -134,6 +130,11 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthenticatedUserException $e) {
 
                     return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editEmail']]); //TODO использовать flashmessenger?
+
+                } catch (NotAuthorizedUserException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -155,6 +156,13 @@ class WriteController extends AbstractActionController
         $request = $this->getRequest();
         try {
             $user = $this->userService->findUserById($this->params('id'));
+        } catch (NotAuthenticatedUserException $e) {
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editUser']]);
+        } catch (NotAuthorizedUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();	//TODO redirect ot access denied
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -201,6 +209,11 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthenticatedUserException $e) {
 
                     return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editPassword']]); //TODO использовать flashmessenger?
+
+                } catch (NotAuthorizedUserException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
