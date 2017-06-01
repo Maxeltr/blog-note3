@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
@@ -29,28 +29,51 @@ namespace MxmBlog\Factory\Hydrator;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Hydrator\Aggregate\AggregateHydrator;
-use MxmBlog\Hydrator\Post\TagsHydrator;
-use MxmBlog\Hydrator\Post\CategoryHydrator;
-use MxmBlog\Hydrator\Post\PostHydrator;
-use MxmBlog\Hydrator\Post\DatesHydrator;
+use MxmBlog\Hydrator\PostMapperHydrator\TagsHydrator;
+use MxmBlog\Hydrator\PostMapperHydrator\CategoryHydrator;
+use MxmBlog\Hydrator\PostMapperHydrator\PostHydrator;
+use MxmBlog\Hydrator\PostMapperHydrator\DatesHydrator;
+use MxmBlog\Hydrator\PostMapperHydrator\UserHydrator;
+use MxmBlog\Model\CategoryInterface;
+use MxmUser\Model\UserInterface;
+use Zend\Config\Config;
+use MxmBlog\Service\DateTimeInterface;
+use MxmBlog\Model\TagInterface;
+use Zend\Tag\ItemList;
+use MxmBlog\Date;
+use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 
-class AggregateHydratorFactory implements FactoryInterface
+class PostMapperHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $tagsHydrator = $container->get(TagsHydrator::class);
-        $categoryHydrator = $container->get(CategoryHydrator::class);
-        $postHydrator = $container->get(PostHydrator::class);
-        $datesHydrator = $container->get(DatesHydrator::class);
-        
+        $config = new Config($container->get('config'));
+
+        $postHydrator = new PostHydrator();
+
+        $category = $container->get(CategoryInterface::class);
+        $categoryHydrator = new CategoryHydrator($category);
+
+        $item = $container->get(TagInterface::class);
+        $itemList = new ItemList();
+        $tagsHydrator = new TagsHydrator($item, $itemList);
+
+        $datetime = $container->get(DateTimeInterface::class);
+        $dateValidator = $container->get(Date::class);
+        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config->blog_module);
+
+        $user = $container->get(UserInterface::class);
+        $userMapper = $container->get(UserMapperInterface::class);
+        $userHydrator = new UserHydrator($userMapper, $user);
+
         $aggregatehydrator = new AggregateHydrator();
         $aggregatehydrator->setEventManager($container->get('EventManager'));
-                
         $aggregatehydrator->add($postHydrator);
         $aggregatehydrator->add($categoryHydrator);
         $aggregatehydrator->add($tagsHydrator);
         $aggregatehydrator->add($datesHydrator);
-        
+        $aggregatehydrator->add($userHydrator);
+
         return $aggregatehydrator;
     }
 }

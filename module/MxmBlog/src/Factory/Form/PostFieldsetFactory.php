@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -29,7 +29,7 @@ namespace MxmBlog\Factory\Form;
 use MxmBlog\Form\PostFieldset;
 use MxmBlog\Model\PostInterface;
 use Interop\Container\ContainerInterface;
-use MxmBlog\AggregateHydrator;
+use MxmBlog\Hydrator\PostFormHydrator\PostFormHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class PostFieldsetFactory implements FactoryInterface
@@ -38,7 +38,7 @@ class PostFieldsetFactory implements FactoryInterface
     {
         return new PostFieldset(
             $container->get(PostInterface::class),
-            $container->get(AggregateHydrator::class),
+            $container->get(PostFormHydrator::class),
             $requestedName,
             $options
         );

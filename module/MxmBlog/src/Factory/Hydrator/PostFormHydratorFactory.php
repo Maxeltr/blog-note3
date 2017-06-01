@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,35 @@
 
 namespace MxmBlog\Factory\Hydrator;
 
-use MxmBlog\Model\CategoryInterface;
-use MxmBlog\Hydrator\Post\CategoryHydrator;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
- 
-class CategoryHydratorFactory implements FactoryInterface
+use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmBlog\Hydrator\PostFormHydrator\TagsHydrator;
+use MxmBlog\Hydrator\PostFormHydrator\CategoryHydrator;
+use MxmBlog\Hydrator\PostFormHydrator\PostHydrator;
+use MxmBlog\Model\CategoryInterface;
+use MxmBlog\Model\TagInterface;
+use Zend\Tag\ItemList;
+
+class PostFormHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $category = $container->get(CategoryInterface::class);
-        
-        return new CategoryHydrator($category);
+        $categoryHydrator = new CategoryHydrator($category);
+
+        $item = $container->get(TagInterface::class);
+        $itemList = new ItemList();
+        $tagsHydrator = new TagsHydrator($item, $itemList);
+
+        $postHydrator = new PostHydrator();
+
+        $aggregatehydrator = new AggregateHydrator();
+        $aggregatehydrator->setEventManager($container->get('EventManager'));
+        $aggregatehydrator->add($postHydrator);
+        $aggregatehydrator->add($categoryHydrator);
+        $aggregatehydrator->add($tagsHydrator);
+
+        return $aggregatehydrator;
     }
 }

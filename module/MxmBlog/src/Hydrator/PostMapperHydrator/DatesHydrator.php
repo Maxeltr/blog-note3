@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\Post;
+namespace MxmBlog\Hydrator\PostMapperHydrator;
 
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Service\DateTimeInterface;
@@ -49,7 +49,6 @@ class DatesHydrator implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        //die('DatesHydrator');
         if (!$object instanceof PostInterface) {
             return $object;
         }

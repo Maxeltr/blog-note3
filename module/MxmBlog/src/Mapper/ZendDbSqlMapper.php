@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,7 +25,7 @@
  */
 
 namespace MxmBlog\Mapper;
- 
+
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -64,17 +64,17 @@ class ZendDbSqlMapper implements MapperInterface
      * @var \Zend\Hydrator\HydratorInterface
      */
     protected $postHydrator;
-    
+
     /**
      * @var Blog\Hydrator\Tag\TagHydrator
      */
     protected $tagHydrator;
-    
+
     /**
      * @var \Zend\Hydrator\HydratorInterface
      */
     protected $classMethodsHydrator;
-    
+
     /**
      * @var Blog\Hydrator\Tag\TagHydrator
      */
@@ -84,22 +84,22 @@ class ZendDbSqlMapper implements MapperInterface
      * @var \Blog\Model\PostInterface
      */
     protected $postPrototype;
-    
+
     /**
      * @var \Blog\Model\CategoryInterface
      */
     protected $categoryPrototype;
-    
+
     /**
      * @var \Blog\Model\TagInterface
      */
     protected $tagPrototype;
-    
+
     /**
      * @var Zend\Config\Config;
      */
     protected $config;
-    
+
     /**
      * @param AdapterInterface $dbAdapter
      * @param HydratorInterface $postHydrator
@@ -133,9 +133,9 @@ class ZendDbSqlMapper implements MapperInterface
      */
     public function findPostById($id, $hideUnpublished = true)
     {
-        
+
         $parameters['where']['id'] = $id;
-        
+
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
@@ -144,15 +144,15 @@ class ZendDbSqlMapper implements MapperInterface
 
         return $this->createObject($select, $this->postHydrator, $this->postPrototype);
     }
-    
+
     /**
-     * 
+     *
      * @param Select $select
      * @param HydratorInterface $hydrator
      * @param type $objectPrototype
-     * 
+     *
      * @return Object
-     * 
+     *
      * @throws InvalidArgumentBlogException
      * @throws RecordNotFoundBlogException
      */
@@ -161,7 +161,7 @@ class ZendDbSqlMapper implements MapperInterface
         if(!is_object($objectPrototype)) {
             throw new InvalidArgumentBlogException("ZendDbSqlMapper. createObject. No object param given.");
         }
-        
+
         $sql = new Sql($this->dbAdapter);
         $stmt = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
@@ -172,7 +172,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         throw new RecordNotFoundBlogException("ZendDbSqlMapper. createObject. Record with given ID not found.");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -189,17 +189,17 @@ class ZendDbSqlMapper implements MapperInterface
                 'id' => 'DESC'
             )
         );
-        
+
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
-        
+
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -217,7 +217,7 @@ class ZendDbSqlMapper implements MapperInterface
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
@@ -227,9 +227,9 @@ class ZendDbSqlMapper implements MapperInterface
     * @param Select $select
     * @param HydratorInterface $hydrator
     * @param object $objectPrototype
-    * 
+    *
     * @return Paginator
-    * 
+    *
     * @throws InvalidArgumentBlogException
     */
     private function createPaginator(Select $select, HydratorInterface $hydrator, $objectPrototype)
@@ -237,9 +237,9 @@ class ZendDbSqlMapper implements MapperInterface
         if(!is_object($objectPrototype)) {
             throw new InvalidArgumentBlogException("ZendDbSqlMapper. createPaginator. No object param given.");
         }
-        
+
         $resultSetPrototype = new HydratingResultSet($hydrator, $objectPrototype);
-        
+
         // Create a new pagination adapter object:
         $paginatorAdapter = new DbSelect(
             // our configured select object:
@@ -250,7 +250,7 @@ class ZendDbSqlMapper implements MapperInterface
             $resultSetPrototype
         );
         $paginator = new Paginator($paginatorAdapter);
-        
+
         return $paginator;
     }
 
@@ -261,18 +261,28 @@ class ZendDbSqlMapper implements MapperInterface
     {
         $data = $this->postHydrator->extract($postObject);
 
-        $data['categoryId'] = $data['category']['id'];
-        unset($data['category']);
-        unset($data['id']); // Neither Insert nor Update needs the ID in the array
-        unset($data['tags']);   // Теги сохраняются в двух других таблицах
-        
+        $data = $this->deleteUnnecessaryPostData($data);
+
         $action = new Insert('articles');
         $action->values($data);
 
         $this->saveInDb($postObject, $action);
         $this->saveTagsAndTagPostAssociations($postObject);
-        
+
         return $postObject;
+    }
+
+    private function deleteUnnecessaryPostData($data)   //TODO move to hydrator?
+    {
+        $data['categoryId'] = $data['category']['id'];
+        unset($data['category']);
+        unset($data['id']); // Neither Insert nor Update needs the ID in the array
+        unset($data['tags']);   // Теги сохраняются в двух других таблицах
+        $authorId = $data['author']['id'];
+        unset($data['author']);
+        $data['author'] = $authorId;
+
+        return $data;
     }
 
     /**
@@ -282,18 +292,15 @@ class ZendDbSqlMapper implements MapperInterface
     {
         $data = $this->postHydrator->extract($postObject);
 
-        $data['categoryId'] = $data['category']['id'];
-        unset($data['category']);
-        unset($data['id']);
-        unset($data['tags']);
+        $data = $this->deleteUnnecessaryPostData($data);
 
-        $action = new Update('articles');	
+        $action = new Update('articles');
         $action->set($data);
         $action->where(array('id = ?' => $postObject->getId()));
-        
+
         $this->saveInDb($postObject, $action);
         $this->saveTagsAndTagPostAssociations($postObject);
-        
+
         return $postObject;
     }
 
@@ -311,7 +318,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         return (bool)$result->getAffectedRows();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -328,43 +335,43 @@ class ZendDbSqlMapper implements MapperInterface
                 'id' => 'DESC'
             )
         );
-        
+
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function findPostsByTag(TagInterface $tag, $hideUnpublished = true)
     {
-        $select = new Select('articles'); 	
+        $select = new Select('articles');
         $select->where(array('articles_tags.article_id = articles.id'));
 
         $select->join(
             'category', 'articles.categoryId = category.id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
         $select->join(
-            'tags', 
+            'tags',
             new Expression('tags.title = ?' , $tag->getTitle()),
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
         $select->join(
             'articles_tags', 'tags.id = articles_tags.tag_id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
-        
+
         $subSelect = new Select('articles_tags');
         $subSelect->columns(array(
             'tag_id',
@@ -373,9 +380,9 @@ class ZendDbSqlMapper implements MapperInterface
         $subSelect->group('tag_id');
 
         $select->join(
-            array('tag_weights' => $subSelect), 
+            array('tag_weights' => $subSelect),
             'articles_tags.tag_id = tag_weights.tag_id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
@@ -400,7 +407,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -417,16 +424,16 @@ class ZendDbSqlMapper implements MapperInterface
                 'id' => 'DESC'
             )
         );
-        
+
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -440,28 +447,28 @@ class ZendDbSqlMapper implements MapperInterface
                 'id' => 'DESC'
             )
         );
-                
+
         if($since !== null) {
             $parameters['greaterThanOrEqualTo'] = array(
                 'created' => $since->format($this->config->dateTime->dateTimeFormat)
             );
         }
-        
+
         if($to !== null) {
             $parameters['lessThanOrEqualTo'] = array(
                 'created' => $to->format($this->config->dateTime->dateTimeFormat)
             );
         }
-        
+
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -475,28 +482,28 @@ class ZendDbSqlMapper implements MapperInterface
                 'id' => 'DESC'
             )
         );
-                
+
         if($since !== null) {
             $parameters['greaterThanOrEqualTo'] = array(
                 'updated' => $since->format($this->config->dateTime->dateTimeFormat)
             );
         }
-        
+
         if($to !== null) {
             $parameters['lessThanOrEqualTo'] = array(
                 'updated' => $to->format($this->config->dateTime->dateTimeFormat)
             );
         }
-        
+
         if($hideUnpublished === true) {
             $parameters['where']['isPublished'] = true;
         }
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -510,26 +517,26 @@ class ZendDbSqlMapper implements MapperInterface
                 'id' => 'DESC'
             )
         );
-                
+
         if($since !== null) {
             $parameters['greaterThanOrEqualTo'] = array(
                 'published' => $since->format($this->config->dateTime->dateTimeFormat)
             );
         }
-        
+
         if($to !== null) {
             $parameters['lessThanOrEqualTo'] = array(
                 'published' => $to->format($this->config->dateTime->dateTimeFormat)
             );
         }
-        
+
         $parameters['where']['isPublished'] = true;
-        
+
         $select = $this->createPostSelectQuery($parameters);
 
         return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -537,7 +544,7 @@ class ZendDbSqlMapper implements MapperInterface
     {
         $sql = new Sql($this->dbAdapter);
         $select = $sql->select('articles');
-        
+
         $group = (string) $group;
         switch ($group) {
             case "day":
@@ -551,7 +558,7 @@ class ZendDbSqlMapper implements MapperInterface
                 $select->group('month');
                 $select->group('year');
                 break;
-            
+
             case "month":
                 $select->columns(array(
                     'year' => new Expression('YEAR(published)'),
@@ -561,7 +568,7 @@ class ZendDbSqlMapper implements MapperInterface
                 $select->group('month');
                 $select->group('year');
                 break;
-            
+
             case "year":
                 $select->columns(array(
                     'year' => new Expression('YEAR(published)'),
@@ -569,19 +576,19 @@ class ZendDbSqlMapper implements MapperInterface
                 ));
                 $select->group('year');
                 break;
-            
+
             default:
                 throw new InvalidArgumentBlogException("ZendDbSqlMapper. findPublishDates. Invalid param: group.");
         }
-        
+
         $select->where(['articles.isPublished' => true]);
-        
+
         $select->order('published DESC');
-        
+
         if (StaticValidator::execute($limit, 'Digits')) {
             $select->limit($limit);
         }
-        
+
         if($paginated === true) {
             $paginatorAdapter = new DbSelect(
                 // our configured select object:
@@ -590,15 +597,15 @@ class ZendDbSqlMapper implements MapperInterface
                 $this->dbAdapter
             );
             return new Paginator($paginatorAdapter);
-        
+
         }
-        
+
         $statement = $sql->prepareStatementForSqlObject($select);
         $resultSet = $statement->execute();
-        
+
         return $resultSet;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -611,10 +618,10 @@ class ZendDbSqlMapper implements MapperInterface
             'title' => 'title',
             'description' => 'description',
         ));
-        
+
         return $this->createObject($select, $this->classMethodsHydrator, $this->categoryPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -628,55 +635,55 @@ class ZendDbSqlMapper implements MapperInterface
             'description' => 'description',
         ));
         $select->order('title');
-                
+
         return $this->createPaginator($select, $this->classMethodsHydrator, $this->categoryPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function findAllCategories()
     {
-        $select = new Select('category'); 	
+        $select = new Select('category');
         $select->columns(array(
             'id' => 'id',
             'title' => 'title',
             'description' => 'description',
-            
+
         ));
         $select->group('id');
         $select->order('title');
 
         return $this->createPaginator($select, $this->classMethodsHydrator, $this->categoryPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function insertCategory(CategoryInterface $category)
     {
         $data = $this->classMethodsHydrator->extract($category);
-        
-        $action = new Insert('category');	
+
+        $action = new Insert('category');
         $action->values($data);
-        
+
         return $this->saveInDb($category, $action);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function updateCategory(CategoryInterface $category)
     {
         $data = $this->classMethodsHydrator->extract($category);
-        
+
         $action = new Update('category');
         $action->set($data);
         $action->where(array('id = ?' => $category->getId()));
-        
+
         return $this->saveInDb($category, $action);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -688,10 +695,10 @@ class ZendDbSqlMapper implements MapperInterface
         $sql = new Sql($this->dbAdapter);
         $stmt = $sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
-        
+
         return (bool)$result->getAffectedRows();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -708,7 +715,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         return $this->createObject($select, $this->tagHydrator, $this->tagPrototype);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -716,64 +723,27 @@ class ZendDbSqlMapper implements MapperInterface
     {
         $select = new Select('tags');
         $select->where(array('tags.title = ?' => $title));
-        
+
         $subSelect = new Select('articles_tags');
         $subSelect->columns(array(
             'tag_id',
             'tag_weight' => new Expression('COUNT(*)')
         ));
         $subSelect->group('tag_id');
-        
+
         $select->join(
             'articles_tags', 'tags.id = articles_tags.tag_id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
-        
+
         $select->join(
-            array('tag_weights' => $subSelect), 
+            array('tag_weights' => $subSelect),
             'articles_tags.tag_id = tag_weights.tag_id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
-        
-        $select->columns(array(
-            'id' => 'id',
-            'title' => 'title',
-            'weight' => new Expression('tag_weights.tag_weight')
-        ));
-        $select->group('id');
-        
-        return $this->createPaginator($select, $this->tagHydrator, $this->tagPrototype);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function findAllTags()
-    {    
-        $select = new Select('tags');
-        
-        $subSelect = new Select('articles_tags');
-        $subSelect->columns(array(
-            'tag_id',
-            'tag_weight' => new Expression('COUNT(*)')
-        ));
-        $subSelect->group('tag_id');
-        
-        $select->join(
-            'articles_tags', 'tags.id = articles_tags.tag_id',
-            array(), 
-            $select::JOIN_LEFT
-        );
-        
-        $select->join(
-            array('tag_weights' => $subSelect), 
-            'articles_tags.tag_id = tag_weights.tag_id',
-            array(), 
-            $select::JOIN_LEFT
-        );
-        
+
         $select->columns(array(
             'id' => 'id',
             'title' => 'title',
@@ -783,7 +753,44 @@ class ZendDbSqlMapper implements MapperInterface
 
         return $this->createPaginator($select, $this->tagHydrator, $this->tagPrototype);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findAllTags()
+    {
+        $select = new Select('tags');
+
+        $subSelect = new Select('articles_tags');
+        $subSelect->columns(array(
+            'tag_id',
+            'tag_weight' => new Expression('COUNT(*)')
+        ));
+        $subSelect->group('tag_id');
+
+        $select->join(
+            'articles_tags', 'tags.id = articles_tags.tag_id',
+            array(),
+            $select::JOIN_LEFT
+        );
+
+        $select->join(
+            array('tag_weights' => $subSelect),
+            'articles_tags.tag_id = tag_weights.tag_id',
+            array(),
+            $select::JOIN_LEFT
+        );
+
+        $select->columns(array(
+            'id' => 'id',
+            'title' => 'title',
+            'weight' => new Expression('tag_weights.tag_weight')
+        ));
+        $select->group('id');
+
+        return $this->createPaginator($select, $this->tagHydrator, $this->tagPrototype);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -827,7 +834,7 @@ class ZendDbSqlMapper implements MapperInterface
         $sql = new Sql($this->dbAdapter);
         $stmt = $sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
-        
+
         $rows = (bool)$result->getAffectedRows();
 
         if (!$rows) {
@@ -911,7 +918,7 @@ class ZendDbSqlMapper implements MapperInterface
         $sql = new Sql($this->dbAdapter);
         $delete = $sql->delete('articles_tags');
         $delete->where(array(
-            'article_id' => $object->getId(), 
+            'article_id' => $object->getId(),
         ));
         $statement = $sql->prepareStatementForSqlObject($delete);
         $result = $statement->execute();
@@ -967,7 +974,7 @@ class ZendDbSqlMapper implements MapperInterface
     {
         $tagId = StaticFilter::execute($tagId, 'Digits');
         $postId = StaticFilter::execute($postId, 'Digits');
-        
+
         if(empty($tagId) or empty($postId)) {
             throw new InvalidArgumentBlogException("ZendDbSqlMapper. saveTagPostAssociation. Empty param given: tag ID:{$tagId} or post ID:{$postId}.");
         }
@@ -987,7 +994,7 @@ class ZendDbSqlMapper implements MapperInterface
                 return $lastInsertId;
             }
 
-            return false;    
+            return false;
         }
 
         throw new DataBaseErrorBlogException("Database error. ZendDbSqlMapper. saveTagPostAssociation. No result returned.");
@@ -997,7 +1004,7 @@ class ZendDbSqlMapper implements MapperInterface
      * Выполнить insert или update. Получить id и установить его в переданный объект.
      * @param object $object
      * @param PreparableSqlInterface $action
-     * 
+     *
      * @return object
      * @throws InvalidArgumentBlogException
      * @throws DataBaseErrorBlogException
@@ -1025,35 +1032,35 @@ class ZendDbSqlMapper implements MapperInterface
 
         throw new DataBaseErrorBlogException("Database error. ZendDbSqlMapper. saveInDb. No ResultInterface returned.");
     }
-    
+
     /**
      * Сформировать запрос select.
      * @param array $parameters
-     * 
+     *
      * @return Zend\Db\Sql\Select
      */
     private function createPostSelectQuery($parameters)
     {
-        $select = new Select('articles'); 	
+        $select = new Select('articles');
 
         if(array_key_exists('where', $parameters) && is_array($parameters['where'])) {
             foreach($parameters['where'] as $column => $value) {
                 $select->where(array('articles.' . $column . ' = ?' => $value));
             }
         }
-        
+
         if(array_key_exists('like', $parameters) && is_array($parameters['like'])) {
             foreach($parameters['like'] as $column => $value) {
                 $select->where->like('articles.' . $column, '%' . $value . '%');
             }
         }
-        
+
         if(array_key_exists('lessThanOrEqualTo', $parameters) && is_array($parameters['lessThanOrEqualTo'])) {
             foreach($parameters['lessThanOrEqualTo'] as $column => $value) {
                 $select->where->lessThanOrEqualTo('articles.' . $column, $value);
             }
         }
-        
+
         if(array_key_exists('greaterThanOrEqualTo', $parameters) && is_array($parameters['greaterThanOrEqualTo'])) {
             foreach($parameters['greaterThanOrEqualTo'] as $column => $value) {
                 $select->where->greaterThanOrEqualTo('articles.' . $column, $value);
@@ -1062,19 +1069,19 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select->join(
             'category', 'articles.categoryId = category.id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
         $select->join(
             'articles_tags', 'articles.id = articles_tags.article_id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
         $select->join(
             'tags', 'articles_tags.tag_id = tags.id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
@@ -1086,9 +1093,9 @@ class ZendDbSqlMapper implements MapperInterface
         $subSelect->group('tag_id');
 
         $select->join(
-            array('tag_weights' => $subSelect), 
+            array('tag_weights' => $subSelect),
             'articles_tags.tag_id = tag_weights.tag_id',
-            array(), 
+            array(),
             $select::JOIN_LEFT
         );
 
@@ -1109,7 +1116,7 @@ class ZendDbSqlMapper implements MapperInterface
             'tagTitles' => new Expression('GROUP_CONCAT(tags.title)'),
             'tagWeights' => new Expression('GROUP_CONCAT(tag_weights.tag_weight)')
         ));
-        
+
         if (array_key_exists('group', $parameters) && is_array($parameters['group'])) {
             foreach($parameters['group'] as $column) {
                 $select->group('articles.' . $column);
@@ -1117,16 +1124,15 @@ class ZendDbSqlMapper implements MapperInterface
         } else {
             $select->group('articles.id');
         }
-        
+
         if (array_key_exists('order', $parameters) && is_array($parameters['order'])) {
             foreach($parameters['order'] as $column => $value) {
                 $select->order('articles.' . $column . ' ' . $value);
             }
         }
-        
+
         return $select;
     }
 }
 
-    
-       
+
