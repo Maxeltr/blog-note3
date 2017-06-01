@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\Post;
+namespace MxmBlog\Hydrator\PostMapperHydrator;
 
 use MxmBlog\Model\PostInterface;
 use Zend\Hydrator\HydratorInterface;
@@ -42,17 +42,17 @@ class PostHydrator implements HydratorInterface
         'updated',
         'published',
         'tags',
+	'author',
         '__clone',
         '__construct'
     ];
-    
+
     public function __construct()
     {
     }
-    
+
     public function hydrate(array $data, $object)
     {
-        //die('PostHydrator');
         if (!$object instanceof PostInterface) {
             return array();
         }
@@ -76,24 +76,24 @@ class PostHydrator implements HydratorInterface
         if (!$object instanceof PostInterface) {
             return array();
         }
-        
+
         $methods = get_class_methods($object);
         $values = [];
-        
+
         foreach ($methods as $method) {
-            
+
             if (strpos($method, 'get') === 0) {
                 $attribute = substr($method, 3);
-                
+
                 if (in_array(strtolower($attribute), $this->skipProperties)) {
                     continue;
                 }
-            
+
                 if (!property_exists($object, $attribute)) {
                     $attribute = lcfirst($attribute);
                 }
                 $values[$attribute] = $object->$method();
-                
+
             }
         }
 

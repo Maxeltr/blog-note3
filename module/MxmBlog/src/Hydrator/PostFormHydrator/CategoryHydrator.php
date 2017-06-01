@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\Post;
+namespace MxmBlog\Hydrator\PostFormHydrator;
 
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
@@ -43,38 +43,15 @@ class CategoryHydrator extends ClassMethods implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        //die('CategoryHydrator');
         if (!$object instanceof PostInterface) {
             return $object;
-        }
-
-        $category = array();
-        
-        if (array_key_exists('category', $data) && is_array($data['category'])) {
-            \Zend\Debug\Debug::dump($data['category']);
-            die('CategoryHydrator.hydrate. ');
         }
         
         //В $data['category'] уже гидрированный объект CategoryInterface?? (гидрирован гидратором 
         //ClassMethods, переданным в форму фабрикой?).
         if (array_key_exists('category', $data) && $data['category'] instanceof CategoryInterface) {
             $object->setCategory($data['category']);
-            return $object;
         }
-        
-        if (array_key_exists('categoryId', $data)) {
-            $category['id'] = !empty($data['categoryId']) ? $data['categoryId'] : null;
-        }
-        if (array_key_exists('categoryTitle', $data)) {
-            $category['title'] = !empty($data['categoryTitle']) ? $data['categoryTitle'] : null;
-        }
-        if (array_key_exists('categoryDescription', $data)) {
-            $category['description'] = !empty($data['categoryDescription']) ? $data['categoryDescription'] : null;
-        }
-        
-        $categoryClone = clone $this->category;
-        parent::hydrate($category, $categoryClone);
-        $object->setCategory($categoryClone);
 
         return $object;
     }

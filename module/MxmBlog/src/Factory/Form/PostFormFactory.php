@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,7 +28,7 @@ namespace MxmBlog\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\AggregateHydrator;
+use MxmBlog\Hydrator\PostFormHydrator\PostFormHydrator;
 use MxmBlog\Form\PostForm;
 use Zend\InputFilter\InputFilter;
 
@@ -36,7 +36,7 @@ class PostFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
+        $aggregatehydrator = $container->get(PostFormHydrator::class);
 
         return new PostForm(
             $aggregatehydrator,

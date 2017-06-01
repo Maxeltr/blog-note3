@@ -133,6 +133,9 @@ class PostService implements PostServiceInterface
 
         $post->setVersion(1);
 
+        $user = $this->authenticationService->getIdentity();
+        $post->setAuthor($user);
+
         return $this->mapper->insertPost($post);
     }
 

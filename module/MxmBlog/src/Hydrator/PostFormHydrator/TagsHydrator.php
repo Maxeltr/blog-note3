@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\Post;
+namespace MxmBlog\Hydrator\PostFormHydrator;
 
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\TagInterface;
@@ -48,7 +48,6 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
     
     public function hydrate(array $data, $object)
     {
-        //die('TagsHydrator');
         if (!$object instanceof PostInterface) {
             return $object;
         }
@@ -61,22 +60,7 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
                     $this->itemList->offsetSet($i, $data['tags'][$i]);
                 }
             }
-
-        } elseif (array_key_exists('tagIds', $data) && array_key_exists('tagTitles', $data) && array_key_exists('tagWeights', $data)) {
-
-            $tagIds = explode(",", $data['tagIds']);
-            $tagTitles = explode(",", $data['tagTitles']);
-            $tagWeights = explode(",", $data['tagWeights']);
-        
-            for($i=0, $countTagIds = count($tagIds); $i < $countTagIds; $i++) {
-                $tagClone = clone $this->item;
-                $tagClone->setId(!empty($tagIds[$i]) ? $tagIds[$i] : null);
-                $tagClone->setTitle(!empty($tagTitles[$i]) ? $tagTitles[$i] : '');
-                $tagClone->setWeight(!empty($tagWeights[$i]) ? $tagWeights[$i] : 0);
-
-                $this->itemList->offsetSet($i, $tagClone);
-            }
-            
+			
         } else {
             throw new InvalidArgumentBlogException("TagsHydrator. hydrate. Invalid params given.");
         }

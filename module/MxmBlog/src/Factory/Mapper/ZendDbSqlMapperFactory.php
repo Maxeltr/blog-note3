@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
@@ -31,7 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Hydrator\ClassMethods;
 use Zend\Config\Config;
 use Zend\Db\Adapter\Adapter;
-use MxmBlog\AggregateHydrator;
+use MxmBlog\Hydrator\PostMapperHydrator\PostMapperHydrator;
 use MxmBlog\Mapper\ZendDbSqlMapper;
 use MxmBlog\Hydrator\Tag\TagHydrator;
 use MxmBlog\Model\CategoryInterface;
@@ -42,19 +42,19 @@ class ZendDbSqlMapperFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
-                
+        $aggregatehydrator = $container->get(PostMapperHydrator::class);
+
         $classMethodsHydrator = new ClassMethods(false);
         $tagHydrator = $container->get(TagHydrator::class);
-        
+
         $category = $container->get(CategoryInterface::class);
         $tag = $container->get(TagInterface::class);
         $post = $container->get(PostInterface::class);
-        
+
         $config = new Config($container->get('config'));
-        
+
         $adapter = $container->get(Adapter::class);
-        
+
         return new ZendDbSqlMapper(
             $adapter,
             $aggregatehydrator,
