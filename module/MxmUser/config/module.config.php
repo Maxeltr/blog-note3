@@ -110,6 +110,19 @@ return [
                     ],
                 ],
             ],
+            'deleteUser' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/delete/user/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\DeleteController::class,
+                        'action' => 'deleteUser'
+                    ],
+                ],
+            ],
             'editUser' => [
                 'type'    => 'Segment',
                 'options' => [
