@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
@@ -29,25 +29,33 @@ namespace MxmUser\Factory\Hydrator;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Hydrator\Aggregate\AggregateHydrator;
-use MxmUser\Hydrator\User\UserHydrator;
-use MxmUser\Hydrator\User\DatesHydrator;
-use MxmUser\Hydrator\User\TimebeltHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\UserHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator;
+use Zend\Config\Config;
+use MxmUser\Date;
+use MxmUser\Service\DateTimeInterface;
 
-class AggregateHydratorFactory implements FactoryInterface
+class UserFormHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $userHydrator = $container->get(UserHydrator::class);
-        $datesHydrator = $container->get(DatesHydrator::class);
-        $timebeltHydrator = $container->get(TimebeltHydrator::class);
-        
+        $config = new Config($container->get('config'));
+
+        $userHydrator = new UserHydrator();
+
+        $datetime = $container->get(DateTimeInterface::class);
+        $dateValidator = $container->get(Date::class);
+        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config->user_module);
+
+        $timebeltHydrator = new TimebeltHydrator();
+
         $aggregatehydrator = new AggregateHydrator();
         $aggregatehydrator->setEventManager($container->get('EventManager'));
-                
         $aggregatehydrator->add($userHydrator);
         $aggregatehydrator->add($datesHydrator);
         $aggregatehydrator->add($timebeltHydrator);
-        
+
         return $aggregatehydrator;
     }
 }

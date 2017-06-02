@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -31,7 +31,7 @@ use MxmUser\Form\TimebeltFieldset;
 use \DateTimeZone;
 use Zend\Config\Config;
 use Interop\Container\ContainerInterface;
-use MxmUser\Hydrator\Timezone\TimezoneHydrator;
+use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
 
 class TimebeltFieldsetFactory implements FactoryInterface
 {
@@ -39,10 +39,10 @@ class TimebeltFieldsetFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
         $timezone = $config->user_module->dateTime->timezone;   //default timezone
-        
+
         return new TimebeltFieldset(
             new DateTimeZone($timezone),
-            $container->get(TimezoneHydrator::class),
+            $container->get(TimezoneFormHydrator::class),
             $requestedName,
             $options
         );

@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,7 +28,7 @@ namespace MxmUser\Factory\Mapper;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\AggregateHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\UserMapperHydrator;
 use Zend\Config\Config;
 use Zend\Db\Adapter\Adapter;
 use MxmUser\Mapper\ZendDbSqlMapper;
@@ -39,14 +39,14 @@ class ZendDbSqlMapperFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         //$classMethodsHydrator = new ClassMethods(false);
-        $aggregateHydrator = $container->get(AggregateHydrator::class);
-        
+        $aggregateHydrator = $container->get(UserMapperHydrator::class);
+
         $user = $container->get(UserInterface::class);
-        
+
         $config = new Config($container->get('config'));
-        
+
         $adapter = $container->get(Adapter::class);
-        
+
         return new ZendDbSqlMapper(
             $adapter,
             $aggregateHydrator,

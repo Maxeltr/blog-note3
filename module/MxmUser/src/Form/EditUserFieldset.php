@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -36,7 +36,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
     public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "edit_user", $options = array())
     {
         parent::__construct($name, $options);
-        
+
         $this->setHydrator($hydrator);
         $this->setObject($user);
 
@@ -44,7 +44,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => 'hidden',
             'name' => 'id'
         ]);
-        
+
         $this->add([
             'type' => 'text',
             'name' => 'username',
@@ -57,7 +57,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
             ]
         ]);
     }
-    
+
     public function init() {
         //parent::init();
         $this->add([
@@ -68,7 +68,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
             ]
         ]);
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.
@@ -101,7 +101,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
                     ]
                 ]
             ],
-            
+
         ];
     }
 }

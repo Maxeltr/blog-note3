@@ -33,7 +33,7 @@ use Zend\Config\Config;
 use Zend\Db\Adapter\Adapter;
 use MxmBlog\Hydrator\PostMapperHydrator\PostMapperHydrator;
 use MxmBlog\Mapper\ZendDbSqlMapper;
-use MxmBlog\Hydrator\Tag\TagHydrator;
+use MxmBlog\Hydrator\TagMapperHydrator\TagMapperHydrator;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
 use MxmBlog\Model\PostInterface;
@@ -45,7 +45,7 @@ class ZendDbSqlMapperFactory implements FactoryInterface
         $aggregatehydrator = $container->get(PostMapperHydrator::class);
 
         $classMethodsHydrator = new ClassMethods(false);
-        $tagHydrator = $container->get(TagHydrator::class);
+        $tagHydrator = $container->get(TagMapperHydrator::class);
 
         $category = $container->get(CategoryInterface::class);
         $tag = $container->get(TagInterface::class);

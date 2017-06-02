@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,30 +24,43 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\User;
+namespace MxmUser\Hydrator\UserMapperHydrator;
 
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
 
-class TimebeltHydrator implements HydratorInterface
+class UserHydrator implements HydratorInterface
 {
-    
+    /**
+     * Properties to skip. Should be lowercase.
+     *
+     * @var array
+     */
+    protected $skipProperties = [
+        'datetoken',
+        'created',
+        'timebelt',
+        '__construct'
+    ];
+
     public function __construct()
     {
     }
-    
+
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof UserInterface) {
-            return $object;
+            return array();
         }
-        
-        if (array_key_exists('timebelt', $data)) {
-            if ($data['timebelt'] instanceof DateTimeZone) {
-                $object->setTimebelt($data['timebelt']);
-            } else {
-                $object->setTimebelt(new DateTimeZone($data['timebelt']));
+
+        foreach ($data as $key => $value) {
+            if (in_array(strtolower($key), $this->skipProperties)) {
+                continue;
+            }
+
+            $method = 'set' . $key;
+            if(is_callable([$object, $method])) {
+                $object->$method($value);
             }
         }
 
@@ -59,14 +72,27 @@ class TimebeltHydrator implements HydratorInterface
         if (!$object instanceof UserInterface) {
             return array();
         }
-        
-        $values = array();
-        
-        $timezone = $object->getTimebelt();
-        if ($timezone instanceof DateTimeZone) {
-            $values ['timebelt'] = $timezone->getName();
+
+        $methods = get_class_methods($object);
+        $values = [];
+
+        foreach ($methods as $method) {
+
+            if (strpos($method, 'get') === 0) {
+                $attribute = substr($method, 3);
+
+                if (in_array(strtolower($attribute), $this->skipProperties)) {
+                    continue;
+                }
+
+                if (!property_exists($object, $attribute)) {
+                    $attribute = lcfirst($attribute);
+                }
+                $values[$attribute] = $object->$method();
+
+            }
         }
-        
+
         return $values;
     }
 }

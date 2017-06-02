@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -29,7 +29,7 @@ namespace MxmUser\Factory\Form;
 use MxmUser\Form\EditUserFieldset;
 use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
-use MxmUser\AggregateHydrator;
+use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 class EditUserFieldsetFactory implements FactoryInterface
@@ -38,7 +38,7 @@ class EditUserFieldsetFactory implements FactoryInterface
     {
         return new EditUserFieldset(
             $container->get(UserInterface::class),
-            $container->get(AggregateHydrator::class),
+            $container->get(UserFormHydrator::class),
             $requestedName,
             $options
         );

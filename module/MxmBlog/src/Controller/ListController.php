@@ -35,6 +35,7 @@ use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Validator\Date;
 use Zend\Validator\NotEmpty;
+use Zend\Log\Logger;
 
 class ListController extends AbstractActionController
 {
@@ -58,12 +59,19 @@ class ListController extends AbstractActionController
      */
     protected $config;
 
+    /**
+     *
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
     public function __construct(
         PostServiceInterface $postService,
         Date $dateValidator,
         DateTimeInterface $datetime,
         Config $config,
-        NotEmpty $notEmptyValidator
+        NotEmpty $notEmptyValidator,
+        Logger $logger
     ) {
         $this->postService = $postService;
         $this->dateValidator = $dateValidator;
@@ -71,6 +79,7 @@ class ListController extends AbstractActionController
         $this->config = $config;
         $this->notEmptyValidator = $notEmptyValidator;
         $this->dateTimeFormat = $this->config->dateTime->dateTimeFormat;
+        $this->logger = $logger;
     }
 
     public function indexAction()
@@ -101,7 +110,8 @@ class ListController extends AbstractActionController
 
         try {
             $category = $this->postService->findCategoryById($categoryId);
-        } catch (\InvalidArgumentException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
 
@@ -123,7 +133,8 @@ class ListController extends AbstractActionController
 
         try {
             $tag = $this->postService->findTagById($tagId);
-        } catch (\InvalidArgumentException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
 
@@ -249,7 +260,8 @@ class ListController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $post = $this->postService->findPostById($id);
-        } catch (RecordNotFoundBlogException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
 
@@ -271,7 +283,8 @@ class ListController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $category = $this->postService->findCategoryById($id);
-        } catch (\InvalidArgumentException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
 
@@ -293,7 +306,8 @@ class ListController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $tag = $this->postService->findTagById($id);
-        } catch (\InvalidArgumentException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             return $this->notFoundAction();
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -42,7 +42,7 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
         $options = array()
     ) {
         parent::__construct($name, $options);
-        
+
         $categories = array();
         $paginator=$mapper->findAllCategories();
         $paginator->setItemCountPerPage(-1);    //получить все категории не разделенные на страницы
@@ -52,7 +52,7 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
 
         $this->setHydrator($hydrator);
         $this->setObject($category);
-        
+
         $this->add(array(
             'name'=>'id',
             'type' => 'Zend\Form\Element\Select',
@@ -67,9 +67,9 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
                 'value_options' => $categories,
             ),
         ));
-        
+
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.

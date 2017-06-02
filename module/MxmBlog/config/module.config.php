@@ -52,7 +52,7 @@ return [
             Logger::class => Factory\Logger\LoggerFactory::class,
         ],
         'invokables' => [
-            Hydrator\Tag\TagHydrator::class => Hydrator\Tag\TagHydrator::class,
+            Hydrator\TagMapperHydrator\TagMapperHydrator::class => Hydrator\TagMapperHydrator\TagMapperHydrator::class,
         ],
     ],
     'view_helpers' => [

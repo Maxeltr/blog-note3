@@ -24,31 +24,38 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Controller;
+namespace MxmUser\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmBlog\Date;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Controller\ListController;
-use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Service\DateTimeInterface;
-use Zend\Validator\NotEmpty;
-use MxmBlog\Logger;
+use Zend\Hydrator\Aggregate\AggregateHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\UserHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator;
+use Zend\Config\Config;
+use MxmUser\Date;
+use MxmUser\Service\DateTimeInterface;
 
-class ListControllerFactory implements FactoryInterface
+class UserMapperHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $logger = $container->get(Logger::class);
         $config = new Config($container->get('config'));
-        $postService = $container->get(PostServiceInterface::class);
-        $dateValidator = $container->get(Date::class);
-        $dateValidator->setFormat($config->blog_module->dateTime->dateTimeFormat);
-        $datetime = $container->get(DateTimeInterface::class);
-        $notEmptyValidator = new NotEmpty();
-        $notEmptyValidator->setType(NotEmpty::ALL);
 
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $notEmptyValidator, $logger);
+        $userHydrator = new UserHydrator();
+
+        $datetime = $container->get(DateTimeInterface::class);
+        $dateValidator = $container->get(Date::class);
+        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config->user_module);
+
+        $timebeltHydrator = new TimebeltHydrator();
+
+        $aggregatehydrator = new AggregateHydrator();
+        $aggregatehydrator->setEventManager($container->get('EventManager'));
+        $aggregatehydrator->add($userHydrator);
+        $aggregatehydrator->add($datesHydrator);
+        $aggregatehydrator->add($timebeltHydrator);
+
+        return $aggregatehydrator;
     }
 }

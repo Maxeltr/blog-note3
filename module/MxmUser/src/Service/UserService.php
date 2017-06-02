@@ -116,7 +116,7 @@ class UserService implements UserServiceInterface
      */
     public function findAllUsers()
     {
-        if (!$this->authService->hasIdentity()) {									
+        if (!$this->authService->hasIdentity()) {
             throw new NotAuthenticatedUserException('The user is not logged in');
         }
 

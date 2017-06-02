@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -36,15 +36,15 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
     public function __construct(CategoryInterface $category, HydratorInterface $hydrator, $name = "category", $options = array())
     {
         parent::__construct($name, $options);
-        
+
         $this->setHydrator($hydrator);
         $this->setObject($category);
-        
+
         $this->add(array(
             'type' => 'hidden',
             'name' => 'id'
         ));
-        
+
         $this->add(array(
             'type' => 'text',
             'name' => 'title',
@@ -57,7 +57,7 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
             )
         ));
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.

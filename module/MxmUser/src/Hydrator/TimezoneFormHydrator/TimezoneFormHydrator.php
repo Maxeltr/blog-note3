@@ -24,24 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\User;
+namespace MxmUser\Hydrator\TimezoneFormHydrator;
 
-use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
+use \DateTimeZone;
 
-class UserHydrator implements HydratorInterface
+class TimezoneFormHydrator implements HydratorInterface
 {
-    /**
-     * Properties to skip. Should be lowercase.
-     *
-     * @var array
-     */
-    protected $skipProperties = [
-        'datetoken',
-        'created',
-        'timebelt',
-        '__construct'
-    ];
 
     public function __construct()
     {
@@ -49,49 +38,26 @@ class UserHydrator implements HydratorInterface
 
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof UserInterface) {
-            return array();
+        if (!$object instanceof DateTimeZone) {
+            return $object;
         }
 
-        foreach ($data as $key => $value) {
-            if (in_array(strtolower($key), $this->skipProperties)) {
-                continue;
-            }
+        $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
 
-            $method = 'set' . $key;
-            if(is_callable([$object, $method])) {
-                $object->$method($value);
-            }
-        }
+        $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
 
-        return $object;
+        return $timezone;
     }
 
     public function extract($object)
     {
-        if (!$object instanceof UserInterface) {
+        if (!$object instanceof DateTimeZone) {
             return array();
         }
 
-        $methods = get_class_methods($object);
-        $values = [];
+        $values = array();
 
-        foreach ($methods as $method) {
-
-            if (strpos($method, 'get') === 0) {
-                $attribute = substr($method, 3);
-
-                if (in_array(strtolower($attribute), $this->skipProperties)) {
-                    continue;
-                }
-
-                if (!property_exists($object, $attribute)) {
-                    $attribute = lcfirst($attribute);
-                }
-                $values[$attribute] = $object->$method();
-
-            }
-        }
+        $values ['timebelt'] = $object->getName();
 
         return $values;
     }

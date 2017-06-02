@@ -24,27 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\User;
+namespace MxmUser\Hydrator\UserMapperHydrator;
 
 use MxmUser\Model\UserInterface;
-use MxmUser\Service\DateTimeInterface;
 use Zend\Hydrator\HydratorInterface;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use \DateTimeZone;
 
-class DatesHydrator implements HydratorInterface
+class TimebeltHydrator implements HydratorInterface
 {
-    private $datetime;
 
-    private $dateValidator;
-
-    private $config;
-
-    public function __construct(DateTimeInterface $datetime, Date $dateValidator, Config $config)
+    public function __construct()
     {
-        $this->dateValidator = $dateValidator;
-        $this->datetime = $datetime;
-        $this->config = $config;
     }
 
     public function hydrate(array $data, $object)
@@ -53,11 +43,12 @@ class DatesHydrator implements HydratorInterface
             return $object;
         }
 
-        if (array_key_exists('created', $data) && $this->dateValidator->isValid($data['created'])) {
-            $object->setCreated($this->datetime->modify($data['created']));
-        }
-        if (array_key_exists('dateToken', $data) && $this->dateValidator->isValid($data['dateToken'])) {
-            $object->setDateToken($this->datetime->modify($data['dateToken']));
+        if (array_key_exists('timebelt', $data)) {
+            if ($data['timebelt'] instanceof DateTimeZone) {
+                $object->setTimebelt($data['timebelt']);
+            } else {
+                $object->setTimebelt(new DateTimeZone($data['timebelt']));
+            }
         }
 
         return $object;
@@ -71,13 +62,9 @@ class DatesHydrator implements HydratorInterface
 
         $values = array();
 
-        $datetimeCreated = $object->getCreated();
-        if ($datetimeCreated instanceof DateTimeInterface) {
-            $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
-        }
-        $datetimeDateToken = $object->getDateToken();
-        if ($datetimeDateToken instanceof DateTimeInterface) {
-            $values ['dateToken'] = $datetimeDateToken->format($this->config->dateTime->dateTimeFormat);
+        $timezone = $object->getTimebelt();
+        if ($timezone instanceof DateTimeZone) {
+            $values ['timebelt'] = $timezone->getName();
         }
 
         return $values;

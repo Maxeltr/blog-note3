@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 //Filename: /module/Blog/src/Blog/Form/PostFieldset.php
 namespace MxmBlog\Form;
 
@@ -37,7 +37,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
     public function __construct(PostInterface $post, HydratorInterface $hydrator, $name = "post", $options = array())
     {
         parent::__construct($name, $options);
-        
+
         $this->setHydrator($hydrator);
         $this->setObject($post);
 
@@ -45,7 +45,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => 'hidden',
             'name' => 'id'
         ));
-        
+
         $this->add(array(
             'type' => 'text',
             'name' => 'title',
@@ -57,7 +57,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => 'Blog Title'
             )
         ));
-        
+
         $this->add(array(
             'type' => 'textarea',
             'name' => 'text',
@@ -82,7 +82,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => 'Blog Summary'
             )
         ));
-        
+
         $this->add(array(
             'type' => 'checkbox',
             'name'=>'isPublished',
@@ -96,7 +96,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
             ),
         ));
     }
-    
+
     public function init() {
         //parent::init();
         $this->add(array(
@@ -106,7 +106,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 'use_as_base_fieldset' => true
             )
         ));
-        
+
         $this->add(array(
             'type' => 'Zend\Form\Element\Collection',
             'name' => 'tags',
@@ -120,9 +120,9 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 ),
             ),
         ));
-        
+
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.

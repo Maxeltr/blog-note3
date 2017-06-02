@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,41 +24,52 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\Timezone;
+namespace MxmBlog\Hydrator\TagMapperHydrator;
 
+use MxmBlog\Model\TagInterface;
+use Zend\Hydrator\ClassMethods;
 use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
 
-class TimezoneHydrator implements HydratorInterface
+class TagMapperHydrator extends ClassMethods implements HydratorInterface
 {
-    
     public function __construct()
     {
+        parent::__construct(false);
     }
-    
+
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof DateTimeZone) {
+        if (!$object instanceof TagInterface) {
             return $object;
         }
-        
-        $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-        
-        $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
-        
-        return $timezone;
+
+        if (array_key_exists('id', $data) && !empty($data['id'])) {
+            $object->setId($data['id']);
+        } else {
+            $object->setId(null);
+        }
+
+        if (array_key_exists('title', $data) && !empty($data['title'])) {
+            $object->setTitle($data['title']);
+        } else {
+            $object->setTitle('');
+        }
+
+        if (array_key_exists('weight', $data) && !empty($data['weight'])) {
+            $object->setWeight($data['weight']);
+        } else {
+            $object->setWeight(0);
+        }
+
+        return $object;
     }
 
     public function extract($object)
     {
-        if (!$object instanceof DateTimeZone) {
+        if (!$object instanceof TagInterface) {
             return array();
         }
-        
-        $values = array();
-        
-        $values ['timebelt'] = $object->getName();
-        
-        return $values;
+
+        return parent::extract($object);
     }
 }

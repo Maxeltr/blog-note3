@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -40,12 +40,12 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
         $options = array()
     ) {
         parent::__construct($name, $options);
-        
+
         $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-        
+
         $this->setHydrator($hydrator);
         $this->setObject($timezone);
-        
+
         $this->add([
             'name' => 'timezoneId',
             'type' => 'Zend\Form\Element\Select',
@@ -59,9 +59,9 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
                 'value_options' => $timezones,
             ],
         ]);
-        
+
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.

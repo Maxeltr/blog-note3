@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,7 +28,7 @@ namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\AggregateHydrator;
+use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
 use MxmUser\Form\EditUserForm;
 use Zend\InputFilter\InputFilter;
 
@@ -36,7 +36,7 @@ class EditUserFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $aggregatehydrator = $container->get(AggregateHydrator::class);
+        $aggregatehydrator = $container->get(UserFormHydrator::class);
 
         return new EditUserForm(
             $aggregatehydrator,
