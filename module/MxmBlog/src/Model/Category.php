@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -34,17 +34,17 @@ class Category extends AbstractModel implements CategoryInterface
      * @var int ID
      */
     protected $id;
-    
+
     /**
      * @var string Title
      */
     protected $title;
-    
+
     /**
      * @var string Description
      */
     protected $description;
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -52,17 +52,17 @@ class Category extends AbstractModel implements CategoryInterface
     {
         return $this->id;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setId($id)
     {
-        $this->id = $id;
-        
+        $this->id = (int) $id;
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -70,17 +70,17 @@ class Category extends AbstractModel implements CategoryInterface
     {
         return $this->title;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setTitle($title)
     {
         $this->title = $title;
-        
+
         return $this;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -88,14 +88,14 @@ class Category extends AbstractModel implements CategoryInterface
     {
         return $this->description;
     }
-    
+
     /**
      *  {@inheritDoc}
      */
     public function setDescription($description)
     {
         $this->description = $description;
-        
+
         return $this;
     }
 }

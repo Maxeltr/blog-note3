@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -34,7 +34,7 @@ class Tag extends Item implements TagInterface
      * @var int ID
      */
     protected $id;
-    
+
     /**
      * Create a new tag according to the options
      *
@@ -50,10 +50,10 @@ class Tag extends Item implements TagInterface
         if (!is_array($options)) {
             throw new Exception\InvalidArgumentException('Invalid options provided to constructor');
         }
-        
+
         $this->setOptions($options);
     }
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -61,14 +61,14 @@ class Tag extends Item implements TagInterface
     {
         return $this->id;
     }
-    
+
     /**
      * @param int $id ID
      */
     public function setId($id)
     {
-        $this->id = $id;
-        
+        $this->id = (int) $id;
+
         return $this;
     }
 }

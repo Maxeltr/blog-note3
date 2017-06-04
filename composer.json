@@ -31,8 +31,7 @@
         "zendframework/zend-mime": "^2.6",
         "zendframework/zend-captcha": "^2.7",
         "zendframework/zend-text": "^2.6",
-        "zendframework/zend-permissions-rbac": "^2.5",
-        "zendframework/zend-test": "^3.1"
+        "zendframework/zend-permissions-rbac": "^2.5"
     },
     "autoload": {
         "psr-4": {
@@ -44,7 +43,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ApplicationTest\\": "module/Application/test/"
+            "ApplicationTest\\": "module/Application/test/",
+            "MxmBlogTest\\": "module/MxmBlog/test/",
+            "MxmUserTest\\": "module/MxmUser/test/"
         }
     },
     "extra": [],
@@ -61,6 +62,8 @@
         "test": "phpunit"
     },
     "require-dev": {
-        "zendframework/zend-developer-tools": "^1.1"
+		"phpunit/phpunit-skeleton-generator": "*",
+        "zendframework/zend-developer-tools": "^1.1",
+        "zendframework/zend-test": "^3.1"
     }
 }
