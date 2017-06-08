@@ -95,15 +95,15 @@ class ListController extends AbstractActionController
         } catch (RecordNotFoundUserException $e) {
 
             return $this->notFoundAction();
-		} catch (NotAuthenticatedUserException $e) {
+	} catch (NotAuthenticatedUserException $e) {
 
             return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'detailUser']]); //TODO использовать flashmessenger?
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->notFoundAction();	//TODO redirect ot access denied
-        } catch (\Exception $ex) {
-			$this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->notFoundAction();
         }

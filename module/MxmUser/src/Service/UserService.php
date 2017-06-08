@@ -93,7 +93,7 @@ class UserService implements UserServiceInterface
 
     public function __construct(
         MapperInterface $mapper,
-        DateTimeInterface $datetime,
+        \DateTimeInterface $datetime,
         AuthenticationService $authService,
         EmailAddress $emailValidator,
         NotEmpty $notEmptyValidator,
