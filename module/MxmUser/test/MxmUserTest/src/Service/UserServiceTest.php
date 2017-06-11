@@ -71,6 +71,9 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
     protected $isUserExists;
     protected $bcrypt;
     protected $mapper;
+    protected $user;
+    protected $password;
+    protected $email;
 
     protected $traceError = true;
 
@@ -79,13 +82,18 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        // The module configuration should still be applicable for tests.
-        // You can override configuration here with test case specific values,
-        // such as sample view templates, path stacks, module_listener_options,
-        // etc.
-        $configOverrides = [];
-
-        parent::setUp();
+        $array = array();
+        $this->paginator = new \Zend\Paginator\Paginator(
+            new \Zend\Paginator\Adapter\ArrayAdapter($array)
+        );
+        $this->user = new User();
+        $this->user->setId('1');
+        $this->email = 'testEditEmailMethod@test.ru';
+        $this->user->setEmail('test@test.ru');
+        $bcrypt = new Bcrypt();
+        $this->password = 'testPassword';
+        $passwordHash = $bcrypt->create($this->password);
+        $this->user->setPassword($passwordHash);
 
         $this->mapper = $this->prophesize(MapperInterface::class);
         $this->datetime = $this->prophesize(\DateTime::class);
@@ -106,6 +114,8 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
             $this->authorizationService->reveal(),
             $this->bcrypt->reveal()
         );
+
+        parent::setUp();
     }
 
     /**
@@ -120,31 +130,25 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
      * @covers MxmUser\Service\UserService::findAllUsers
      *
      */
-    public function testfindAllUsers()
+    public function testFindAllUsers()
     {
         $this->authService->hasIdentity()->willReturn(true);
         $this->authorizationService->isGranted('find.users')->willReturn(true);
-        $array = array();
-        $paginator = new \Zend\Paginator\Paginator(
-            new \Zend\Paginator\Adapter\ArrayAdapter($array)
-        );
-        $this->mapper->findAllUsers()->willReturn($paginator);
-        $this->assertSame($paginator, $this->userService->findAllUsers());
+
+        $this->mapper->findAllUsers()->willReturn($this->paginator);
+        $this->assertSame($this->paginator, $this->userService->findAllUsers());
     }
 
     /**
      * @covers MxmUser\Service\UserService::findAllUsers
      *
      */
-    public function testfindAllUsersByNotAuthenticatedUser()
+    public function testFindAllUsersByNotAuthenticatedUser()
     {
         $this->authService->hasIdentity()->willReturn(false);
         $this->authorizationService->isGranted('find.users')->willReturn(true);
-        $array = array();
-        $paginator = new \Zend\Paginator\Paginator(
-            new \Zend\Paginator\Adapter\ArrayAdapter($array)
-        );
-        $this->mapper->findAllUsers()->willReturn($paginator);
+
+        $this->mapper->findAllUsers()->willReturn($this->paginator);
         $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
         $this->userService->findAllUsers();
     }
@@ -153,19 +157,290 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
      * @covers MxmUser\Service\UserService::findAllUsers
      *
      */
-    public function testfindAllUsersByNotAuthorizationUser()
+    public function testFindAllUsersByNotAuthorizationUser()
     {
         $this->authService->hasIdentity()->willReturn(true);
         $this->authorizationService->isGranted('find.users')->willReturn(false);
-        $array = array();
-        $paginator = new \Zend\Paginator\Paginator(
-            new \Zend\Paginator\Adapter\ArrayAdapter($array)
-        );
-        $this->mapper->findAllUsers()->willReturn($paginator);
+
+        $this->mapper->findAllUsers()->willReturn($this->paginator);
         $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
         $this->userService->findAllUsers();
     }
 
+    /**
+     * @covers MxmUser\Service\UserService::findUserById
+     *
+     */
+    public function testFindUserById()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->mapper->findUserById('1')->willReturn($this->user);
+        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(true);
+        $this->assertSame($this->user, $this->userService->findUserById('1'));
+    }
 
+    /**
+     * @covers MxmUser\Service\UserService::findUserById
+     *
+     */
+    public function testFindUserByIdByNotAuthenticatedUser()
+    {
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->mapper->findUserById('1')->willReturn($this->user);
+        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(true);
+        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->userService->findUserById('1');
+    }
 
+    /**
+     * @covers MxmUser\Service\UserService::findUserById
+     *
+     */
+    public function testFindUserByIdThrowsRecordNotFoundUserException()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->mapper->findUserById('1')->willThrow(RecordNotFoundUserException::class);
+        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(true);
+        $this->setExpectedException(RecordNotFoundUserException::class);
+        $this->userService->findUserById('1');
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::findUserById
+     *
+     */
+    public function testFindUserByIdByNotAuthorizationUser()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->mapper->findUserById('1')->willReturn($this->user);
+        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(false);
+        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->userService->findUserById('1');
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::insertUser
+     *
+     */
+    public function testInsertUser()
+    {
+        $this->isUserExists->isValid($this->user->getEmail())->willReturn(false);
+        $this->mapper->insertUser($this->user)->willReturn($this->user);
+        $this->datetime->modify('now')->willReturn($this->datetime);
+        $this->assertSame($this->user, $this->userService->insertUser($this->user));
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::insertUser
+     *
+     */
+    public function testInsertUserAlreadyExsist()
+    {
+        $this->isUserExists->isValid($this->user->getEmail())->willReturn(true);
+        $this->setExpectedException(AlreadyExistsUserException::class, 'User with email address ' . $this->user->getEmail() . ' already exists');
+        $this->userService->insertUser($this->user);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::updateUser
+     *
+     */
+    public function testUpdateUser()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.user', $this->user)->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->assertSame($this->user, $this->userService->updateUser($this->user));
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::updateUser
+     *
+     */
+    public function testUpdateUserByIdByNotAuthenticatedUser()
+    {
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->authorizationService->isGranted('edit.user', $this->user)->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->userService->updateUser($this->user);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::updateUser
+     *
+     */
+    public function testUpdateUserByIdByNotAuthorizationUser()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.user', $this->user)->willReturn(false);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->userService->updateUser($this->user);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::deleteUser
+     *
+     */
+    public function testDeleteUser()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('delete.user', $this->user)->willReturn(true);
+        $this->mapper->deleteUser($this->user)->willReturn(true);
+        $this->assertSame(true, $this->userService->deleteUser($this->user));
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::deleteUser
+     *
+     */
+    public function testDeleteUserByNotAuthenticatedUser()
+    {
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->authorizationService->isGranted('delete.user', $this->user)->willReturn(true);
+        $this->mapper->deleteUser($this->user)->willReturn(true);
+        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->userService->deleteUser($this->user);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::deleteUser
+     *
+     */
+    public function testDeleteUserByNotAuthorizationUser()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('delete.user', $this->user)->willReturn(false);
+        $this->mapper->deleteUser($this->user)->willReturn(true);
+        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->userService->deleteUser($this->user);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editEmail
+     *
+     */
+    public function testEditEmail()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->userService->editEmail($this->email, $this->password);
+        $this->assertSame($this->email, $this->user->getEmail());
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editEmail
+     *
+     */
+    public function testEditEmailByNotAuthenticatedUser()
+    {
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->userService->editEmail($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editEmail
+     *
+     */
+    public function testEditEmailByNotAuthorizationUser()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.email')->willReturn(false);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->userService->editEmail($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editEmail
+     *
+     */
+    public function testEditEmailEmptyPassword()  //add
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(false);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: password.');
+        $this->userService->editEmail($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editEmail
+     *
+     */
+    public function testEditEmailInvalidEmail()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(false);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: email.');
+        $this->userService->editEmail($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editEmail
+     *
+     */
+    public function testEditEmailInvalidPassword()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(false);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $this->setExpectedException(InvalidPasswordUserException::class, 'Incorrect password.');
+        $this->userService->editEmail($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::editPassword
+     *
+     */
+    public function testEditPassword()
+    {
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->authorizationService->isGranted('edit.password')->willReturn(true);
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
+        $this->authService->getIdentity()->willReturn($this->user);
+        $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+
+        $bcrypt = new Bcrypt();
+        $this->passwordHash = $bcrypt->create('newPassword');
+        $this->bcrypt->create('newPassword')->willReturn($this->passwordHash);
+
+        //$this->assertSame($this->user, $this->userService->editPassword($this->password, 'newPassword'));
+
+        $this->userService->editPassword($this->password, 'newPassword');
+        $this->password = 'newPassword';
+        $this->assertSame($this->passwordHash, $this->user->getPassword());
+    }
 }

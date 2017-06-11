@@ -141,6 +141,8 @@ class UserService implements UserServiceInterface
             if (!$this->authorizationService->isGranted('find.user', $user)) {
                 throw new NotAuthorizedUserException('Access denied');
             }
+        } else {
+            throw new Exception\RuntimeException('mapper->findUserById returns value which does not implement UserInterface');
         }
 
 	return $user;
@@ -184,6 +186,10 @@ class UserService implements UserServiceInterface
      */
     public function deleteUser(UserInterface $user)
     {
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
         if (!$this->authorizationService->isGranted('delete.user', $user)) {
             throw new NotAuthorizedUserException('Access denied');
         }

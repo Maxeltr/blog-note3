@@ -77,6 +77,7 @@ interface UserServiceInterface
      * @param  UserInterface $user
      *
      * @return bool
+     * @throw NotAuthenticatedUserException
      * @throw NotAuthorizedUserException
      */
     public function deleteUser(UserInterface $user);
