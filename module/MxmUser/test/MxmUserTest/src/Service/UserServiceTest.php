@@ -55,6 +55,9 @@ use Zend\ServiceManager\ServiceManager;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Service\UserService;
 use MxmUser\Model\User;
+use Zend\Authentication\Storage\StorageInterface;
+use MxmUser\Service\Authentication\Adapter\AuthAdapter;
+use Zend\Authentication\Result;
 
 /**
  *
@@ -74,6 +77,8 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
     protected $user;
     protected $password;
     protected $email;
+    protected $resultMock;
+    protected $storageMock;
 
     protected $traceError = true;
 
@@ -103,6 +108,8 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $this->isUserExists = $this->prophesize(RecordExists::class);
         $this->authorizationService = $this->prophesize(AuthorizationService::class);
         $this->bcrypt = $this->prophesize(Bcrypt::class);
+        $this->resultMock = $this->prophesize(Result::class);
+        $this->storageMock = $this->prophesize(StorageInterface::class);
 
         $this->userService = new UserService(
             $this->mapper->reveal(),
@@ -442,5 +449,100 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $this->userService->editPassword($this->password, 'newPassword');
         $this->password = 'newPassword';
         $this->assertSame($this->passwordHash, $this->user->getPassword());
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::loginUser
+     *
+     */
+    public function testLoginUser()
+    {
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->resultMock->isValid()->willReturn(true);
+        $this->authService->getAdapter()->willReturn(new AuthAdapter($this->mapper->reveal()));
+        $result = $this->resultMock->reveal();
+        $this->authService->authenticate()->willReturn($result);
+        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
+        $this->authService->getStorage()->willReturn($this->storageMock->reveal());
+        $this->storageMock->write($this->user)->shouldBeCalled();
+        $this->assertSame($result, $this->userService->loginUser($this->email, $this->password));
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::loginUser
+     *
+     */
+    public function testLoginUserEmptyPassword()
+    {
+        $this->notEmptyValidator->isValid($this->password)->willReturn(false);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->resultMock->isValid()->willReturn(true);
+        $this->authService->getAdapter()->willReturn(new AuthAdapter($this->mapper->reveal()));
+        $result = $this->resultMock->reveal();
+        $this->authService->authenticate()->willReturn($result);
+        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
+        $this->authService->getStorage()->willReturn($this->storageMock->reveal());
+        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: password.');
+        $this->userService->loginUser($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::loginUser
+     *
+     */
+    public function testLoginUserInvalidEmail()
+    {
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(false);
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->resultMock->isValid()->willReturn(true);
+        $this->authService->getAdapter()->willReturn(new AuthAdapter($this->mapper->reveal()));
+        $result = $this->resultMock->reveal();
+        $this->authService->authenticate()->willReturn($result);
+        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
+        $this->authService->getStorage()->willReturn($this->storageMock->reveal());
+        $this->setExpectedException(InvalidArgumentUserException::class, "No params given: email.");
+        $this->userService->loginUser($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::loginUser
+     *
+     */
+    public function testLoginUserByIdByAuthenticatedUser()
+    {
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->hasIdentity()->willReturn(true);
+        $this->resultMock->isValid()->willReturn(true);
+        $this->authService->getAdapter()->willReturn(new AuthAdapter($this->mapper->reveal()));
+        $result = $this->resultMock->reveal();
+        $this->authService->authenticate()->willReturn($result);
+        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
+        $this->authService->getStorage()->willReturn($this->storageMock->reveal());
+        $this->setExpectedException(RuntimeUserException::class, 'The user already logged in');
+        $this->userService->loginUser($this->email, $this->password);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::loginUser
+     *
+     */
+    public function testLoginUserIdentityNotFound()
+    {
+        $this->notEmptyValidator->isValid($this->password)->willReturn(true);
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->authService->hasIdentity()->willReturn(false);
+        $this->resultMock->isValid()->willReturn(false);
+        $this->authService->getAdapter()->willReturn(new AuthAdapter($this->mapper->reveal()));
+        $result = $this->resultMock->reveal();
+        $this->authService->authenticate()->willReturn($result);
+        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
+        $this->authService->getStorage()->willReturn($this->storageMock->reveal());
+        $this->storageMock->write($this->user)->shouldNotBeCalled();
+        $this->assertSame($result, $this->userService->loginUser($this->email, $this->password));
     }
 }
