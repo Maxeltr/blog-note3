@@ -28,4 +28,5 @@ return [
     'Soflomo\Purifier',
     'MxmUser',
     'MxmRbac',
+    'MxmMail'
 ];

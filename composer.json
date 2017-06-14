@@ -38,7 +38,8 @@
             "Application\\": "module/Application/src/",
             "MxmBlog\\": "module/MxmBlog/src/",
             "MxmUser\\": "module/MxmUser/src/",
-            "MxmRbac\\": "module/MxmRbac/src/"
+            "MxmRbac\\": "module/MxmRbac/src/",
+            "MxmMail\\": "module/MxmMail/src/"
         }
     },
     "autoload-dev": {

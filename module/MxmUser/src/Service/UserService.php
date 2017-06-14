@@ -41,13 +41,10 @@ use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
-use Zend\Math\Rand;
-use Zend\Mail\Message as MailMessage;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mail\Transport\Sendmail as SendMailTransport;
-use Zend\Mime\Part as MimePart;
 use MxmUser\Exception\NotAuthorizedUserException;
 use MxmRbac\Service\AuthorizationService;
+use MxmMail\Service\MailService;
+use Zend\Math\Rand;
 
 class UserService implements UserServiceInterface
 {
@@ -91,6 +88,11 @@ class UserService implements UserServiceInterface
      */
     protected $bcrypt;
 
+    /**
+     * @var MxmMail\Service\MailService
+     */
+    protected $mail;
+
     public function __construct(
         MapperInterface $mapper,
         \DateTimeInterface $datetime,
@@ -99,7 +101,8 @@ class UserService implements UserServiceInterface
         NotEmpty $notEmptyValidator,
         RecordExists $isUserExists,
         AuthorizationService $authorizationService,
-        Bcrypt $bcrypt
+        Bcrypt $bcrypt,
+        MailService $mail
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -109,6 +112,7 @@ class UserService implements UserServiceInterface
         $this->isUserExists = $isUserExists;
         $this->authorizationService = $authorizationService;
         $this->bcrypt = $bcrypt;
+        $this->mail = $mail;
     }
 
     /**
@@ -326,21 +330,7 @@ class UserService implements UserServiceInterface
         $body .= " $passwordResetUrl\n";
         $body .= " If you haven't asked to reset your password, please ignore this message.\n";
 
-        $mimePart = new MimePart($body);    //TODO move to separate class?
-        $mimePart->type = 'text/html';
-
-        $mimeMess = new MimeMessage();
-        $mimeMess->setParts(array($mimePart));
-
-        $message = new MailMessage();
-        $message->setEncoding('UTF-8');
-        $message->setBody($mimeMess);
-        $message->setSubject($subject);
-        $message->addFrom('qwer_qwerty_2018@inbox.ru', 'blog-note3');
-        $message->setTo($user->getEmail(), $user->getUsername());
-
-        $transport = new SendMailTransport();
-        $transport->send($message);
+        $this->mail->sendEmail($subject, $body, 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $user->getEmail(), $user->getUsername());
 
         return $this;
     }

@@ -37,6 +37,7 @@ use MxmUser\Service\UserService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
+use MxmMail\Service\MailService;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -55,6 +56,7 @@ class UserServiceFactory implements FactoryInterface
             'adapter' => $dbAdapter,
         ]);
         $bcrypt = new Bcrypt();
+        $mail = $container->get(MailService::class);
 
         return new UserService(
             $mapper,
@@ -64,7 +66,8 @@ class UserServiceFactory implements FactoryInterface
             $notEmptyValidator,
             $recordExistsValidator,
             $authorizationService,
-            $bcrypt
+            $bcrypt,
+            $mail
         );
     }
 }
