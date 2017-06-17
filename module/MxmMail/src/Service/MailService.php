@@ -54,7 +54,7 @@ class MailService
         $message->setBody($mimeMess);
         $message->setSubject($subject);
         $message->addFrom($from, $senderName);
-        $message->setTo($to, $recipientName());
+        $message->setTo($to, $recipientName);
 
         $transport = new SendMailTransport();
         $transport->send($message);

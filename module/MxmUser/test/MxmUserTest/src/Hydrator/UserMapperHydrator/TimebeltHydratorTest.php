@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,28 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Hydrator;
+namespace MxmUserTest\Hydrator\UserMapperHydrator;
 
-use MxmUser\Hydrator\User\DatesHydrator;
-use MxmUser\Service\DateTimeInterface;
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Model\User;
+use MxmUser\Model\UserInterface;
+use \DateTimeInterface;
+use Zend\Hydrator\HydratorInterface;
+use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
+use Zend\Validator\Date;
 use Zend\Config\Config;
-use MxmUser\Date;
 
-class DatesHydratorFactory implements FactoryInterface
+class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    protected $traceError = true;
+
+
+    protected function setUp()
     {
-        $config = new Config($container->get('config'));
-                
-        $datetime = $container->get(DateTimeInterface::class);
-        $dateValidator = $container->get(Date::class);
-        
-        return new DatesHydrator($datetime, $dateValidator, $config->user_module);
+
+
+        parent::setUp();
     }
+
+
+
 }

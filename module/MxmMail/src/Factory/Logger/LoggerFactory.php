@@ -37,7 +37,7 @@ class LoggerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $writer = new Stream($config->blog_module->logger->path);
+        $writer = new Stream($config->mail_module->logger->path);
         $logger = new Logger();
         $logger->addWriter($writer);
 

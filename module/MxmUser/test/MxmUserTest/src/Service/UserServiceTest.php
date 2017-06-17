@@ -48,7 +48,7 @@ use Zend\Mail\Transport\Sendmail as SendMailTransport;
 use Zend\Mime\Part as MimePart;
 use MxmUser\Exception\NotAuthorizedUserException;
 use MxmRbac\Service\AuthorizationService;
-
+use Prophecy\Argument;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Zend\ServiceManager\ServiceManager;
@@ -382,7 +382,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
      * @covers MxmUser\Service\UserService::editEmail
      *
      */
-    public function testEditEmailEmptyPassword()  //add
+    public function testEditEmailEmptyPassword()
     {
         $this->authService->hasIdentity()->willReturn(true);
         $this->authorizationService->isGranted('edit.email')->willReturn(true);
@@ -575,24 +575,19 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
      * @covers MxmUser\Service\UserService::resetPassword
      *
      */
-//    public function testResetPassword()
-//    {
-//        $this->emailValidator->isValid($this->email)->willReturn(true);
-//        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
-//        $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
-//        $this->mapper->updateUser($this->user)->shouldBeCalled();
-//
-//        $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-//
-//        $passwordResetUrl = '<a href="' . 'http://' . $httpHost . '/set/password/' . $this->token . '">Reset password</a>';
-//
-//        $body = "Please follow the link below to reset your password:\n";
-//        $body .= " $passwordResetUrl\n";
-//        $body .= " If you haven't asked to reset your password, please ignore this message.\n";
-//
-//        $this->mail->sendEmail('Password Reset', $body, 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $this->user->getEmail(), $this->user->getUsername())->shouldBeCalled();
-//        $this->userService->resetPassword($this->email);
-//    }
+    public function testResetPassword()
+    {
+        $this->emailValidator->isValid($this->email)->willReturn(true);
+        $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
+        $datetime = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+        $this->datetime->modify('now')->willReturn($datetime);
+        $this->mapper->updateUser($this->user)->shouldBeCalled();
+        $this->mail->sendEmail('Password Reset', Argument::any(), 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $this->user->getEmail(), $this->user->getUsername())->shouldBeCalled();
+        $token = $this->user->getPasswordToken();
+        $this->userService->resetPassword($this->email);
+        $this->assertNotSame($token, $this->user->getPasswordToken());
+        $this->assertSame($datetime->format('Y-m-d H:i:s'), $this->user->getDateToken()->format('Y-m-d H:i:s'));
+    }
 
     /**
      * @covers MxmUser\Service\UserService::resetPassword
@@ -633,8 +628,64 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
         $this->bcrypt->create('newPassword')->willReturn('newPassword');
         $this->mapper->updateUser($this->user)->shouldBeCalled();
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+        $user = $this->userService->setPassword('newPassword', $token);
+        $this->assertSame('newPassword', $user->getPassword());
+    }
 
+    /**
+     * @covers MxmUser\Service\UserService::setPassword
+     *
+     */
+    public function testSetPasswordEmptyNewPassword()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid('newPassword')->willReturn(false);
+        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: password.');
         $this->userService->setPassword('newPassword', $token);
     }
 
+    /**
+     * @covers MxmUser\Service\UserService::setPassword
+     *
+     */
+    public function testSetPasswordEmptyToken()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
+        $this->notEmptyValidator->isValid($token)->willReturn(false);
+        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: token.');
+        $this->userService->setPassword('newPassword', $token);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::setPassword
+     *
+     */
+    public function testSetPasswordTokenNotFound()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
+        $this->notEmptyValidator->isValid($token)->willReturn(true);
+        $this->mapper->findUserByResetPasswordToken($token)->willThrow(\Exception::class);
+        $this->setExpectedException(RecordNotFoundUserException::class, "Token doesn't exists");
+        $this->userService->setPassword('newPassword', $token);
+    }
+
+    /**
+     * @covers MxmUser\Service\UserService::setPassword
+     *
+     */
+    public function testSetPasswordExpiredToken()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
+        $this->notEmptyValidator->isValid($token)->willReturn(true);
+        $this->mapper->findUserByResetPasswordToken($token)->willReturn($this->user);
+        $tokenCreationDate = new \DateTime('2017-01-01', new \DateTimeZone('Europe/Moscow'));
+        $this->user->setDateToken($tokenCreationDate);
+        $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
+        $this->setExpectedException(ExpiredUserException::class, "Token " . $token . " expired. User id " . $this->user->getId());
+        $this->userService->setPassword('newPassword', $token);
+    }
 }

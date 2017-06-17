@@ -40,7 +40,7 @@ class DatesHydrator implements HydratorInterface
 
     private $config;
 
-    public function __construct(DateTimeInterface $datetime, Date $dateValidator, Config $config)
+    public function __construct(\DateTimeInterface $datetime, Date $dateValidator, Config $config)
     {
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
