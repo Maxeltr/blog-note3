@@ -27,7 +27,7 @@
 namespace MxmUser\Hydrator\UserMapperHydrator;
 
 use MxmUser\Model\UserInterface;
-use MxmUser\Service\DateTimeInterface;
+use \DateTimeInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Validator\Date;
 use Zend\Config\Config;
@@ -55,9 +55,13 @@ class DatesHydrator implements HydratorInterface
 
         if (array_key_exists('created', $data) && $this->dateValidator->isValid($data['created'])) {
             $object->setCreated($this->datetime->modify($data['created']));
+        } else {
+            $object->setCreated($this->datetime->modify('1900-01-01 00:00:00'));    //TODO в настройки?
         }
         if (array_key_exists('dateToken', $data) && $this->dateValidator->isValid($data['dateToken'])) {
             $object->setDateToken($this->datetime->modify($data['dateToken']));
+        } else {
+            $object->setDateToken($this->datetime->modify('1900-01-01 00:00:00'));      //TODO в настройки?
         }
 
         return $object;
@@ -69,16 +73,13 @@ class DatesHydrator implements HydratorInterface
             return array();
         }
 
-        $values = array();
+        $values = [];
 
         $datetimeCreated = $object->getCreated();
-        if ($datetimeCreated instanceof DateTimeInterface) {
-            $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
-        }
+        $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
+
         $datetimeDateToken = $object->getDateToken();
-        if ($datetimeDateToken instanceof DateTimeInterface) {
-            $values ['dateToken'] = $datetimeDateToken->format($this->config->dateTime->dateTimeFormat);
-        }
+        $values ['dateToken'] = $datetimeDateToken->format($this->config->dateTime->dateTimeFormat);
 
         return $values;
     }

@@ -43,12 +43,10 @@ class TimebeltHydrator implements HydratorInterface
             return $object;
         }
 
-        if (array_key_exists('timebelt', $data)) {
-            if ($data['timebelt'] instanceof DateTimeZone) {
-                $object->setTimebelt($data['timebelt']);
-            } else {
-                $object->setTimebelt(new DateTimeZone($data['timebelt']));
-            }
+        if (array_key_exists('timebelt', $data) && !empty($data['timebelt'])) {
+            $object->setTimebelt(new DateTimeZone($data['timebelt']));
+        } else {
+            $object->setTimebelt(new DateTimeZone('Europe/Moscow'));    //TODO брать из настроек. Записать в лог.
         }
 
         return $object;
@@ -63,9 +61,7 @@ class TimebeltHydrator implements HydratorInterface
         $values = array();
 
         $timezone = $object->getTimebelt();
-        if ($timezone instanceof DateTimeZone) {
-            $values ['timebelt'] = $timezone->getName();
-        }
+        $values ['timebelt'] = $timezone->getName();
 
         return $values;
     }

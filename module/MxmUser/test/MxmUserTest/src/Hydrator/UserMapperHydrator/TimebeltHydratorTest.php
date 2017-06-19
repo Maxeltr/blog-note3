@@ -30,7 +30,8 @@ use MxmUser\Model\User;
 use MxmUser\Model\UserInterface;
 use \DateTimeInterface;
 use Zend\Hydrator\HydratorInterface;
-use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
+use MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator;
+use \DateTimeZone;
 use Zend\Validator\Date;
 use Zend\Config\Config;
 
@@ -41,11 +42,24 @@ class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->hydrator = new TimebeltHydrator();
 
+        $this->data = ['timebelt' => '1'];
+        $this->timezonesList = DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'RU');
+        $this->timezone = new DateTimeZone($this->timezonesList[$this->data['timebelt']]);
+        $this->timezoneName = $this->timezone->getName();
 
         parent::setUp();
     }
 
-
+    /**
+     * @covers MxmUser\Hydrator\\UserMapperHydrator\TimebeltHydrator::hydrate
+     *
+     */
+    public function testHydrate()
+    {
+        $result = $this->hydrator->hydrate($this->data, $this->timezone);
+        $this->assertSame($this->timezoneName, $result->getName());
+    }
 
 }

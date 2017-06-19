@@ -33,6 +33,7 @@ use Zend\Hydrator\HydratorInterface;
 use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
 use Zend\Validator\Date;
 use Zend\Config\Config;
+use MxmUser\Exception\InvalidArgumentUserException;
 
 class DatesHydratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,19 +54,24 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->data = [
-            'created' => '2017-03-30',
-            'dateToken' => '2017-04-30'
+            'created' => '2017-03-30 14:08:02',
+            'dateToken' => '2017-04-30 14:08:00'
         ];
-
+        $configArray = [
+            'dateTime' => [
+                'dateTimeFormat' => 'Y-m-d H:i:s'
+            ]
+        ];
+        $config = new Config($configArray);
 
         $this->datetime = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
         //$this->datetime = $this->prophesize(DateTimeInterface::class);
         $this->dateValidator = $this->prophesize(Date::class);
-        $this->config = $this->prophesize(Config::class);
+        //$this->config = $this->prophesize(Config::class);
         //$this->user = $this->prophesize(UserInterface::class);
         $this->user = new User();
 
-        $this->hydrator = new DatesHydrator($this->datetime, $this->dateValidator->reveal(), $this->config->reveal());
+        $this->hydrator = new DatesHydrator($this->datetime, $this->dateValidator->reveal(), $config);
 
         parent::setUp();
     }
@@ -78,8 +84,90 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
         $this->dateValidator->isValid($this->data['created'])->willReturn(true);
         $this->dateValidator->isValid($this->data['dateToken'])->willReturn(true);
         $result = $this->hydrator->hydrate($this->data, $this->user);
-        $this->assertSame($this->data['created'], $this->user->getCreated()->format('Y-m-d'));
+        $this->assertSame($this->data['created'], $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame($this->data['dateToken'], $result->getDateToken()->format('Y-m-d H:i:s'));
     }
 
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::hydrate
+     */
+    public function testHydrateInvalidCreated()
+    {
+        $this->dateValidator->isValid($this->data['created'])->willReturn(false);
+        $this->dateValidator->isValid($this->data['dateToken'])->willReturn(true);
+        $result = $this->hydrator->hydrate($this->data, $this->user);
+        $this->assertSame('1900-01-01 00:00:00', $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame($this->data['dateToken'], $result->getDateToken()->format('Y-m-d H:i:s'));
+    }
 
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::hydrate
+     */
+    public function testHydrateInvalidDateToken()
+    {
+        $this->dateValidator->isValid($this->data['created'])->willReturn(true);
+        $this->dateValidator->isValid($this->data['dateToken'])->willReturn(false);
+        $result = $this->hydrator->hydrate($this->data, $this->user);
+        $this->assertSame($this->data['created'], $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame('1900-01-01 00:00:00', $result->getDateToken()->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::hydrate
+     */
+    public function testHydrateNoCreated()
+    {
+        $this->dateValidator->isValid($this->data['created'])->willReturn(true);
+        $this->dateValidator->isValid($this->data['dateToken'])->willReturn(true);
+        $data = $this->data;
+        unset($data['created']);
+        $result = $this->hydrator->hydrate($data, $this->user);
+        $this->assertSame('1900-01-01 00:00:00', $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame($this->data['dateToken'], $result->getDateToken()->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::hydrate
+     */
+    public function testHydrateNoDateToken()
+    {
+        $this->dateValidator->isValid($this->data['created'])->willReturn(true);
+        $this->dateValidator->isValid($this->data['dateToken'])->willReturn(true);
+        $data = $this->data;
+        unset($data['dateToken']);
+        $result = $this->hydrator->hydrate($data, $this->user);
+        $this->assertSame($this->data['created'], $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame('1900-01-01 00:00:00', $result->getDateToken()->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::hydrate
+     */
+    public function testHydrateNotInstanceOfUserInterface()
+    {
+        $user = 'user';
+        $result = $this->hydrator->hydrate($this->data, $user);
+        $this->assertSame($user, $result);
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::extract
+     */
+    public function testExtract()
+    {
+        $this->user->setCreated(new \DateTimeImmutable($this->data['created'], new \DateTimeZone('Europe/Moscow')));
+        $this->user->setDateToken(new \DateTimeImmutable($this->data['dateToken'], new \DateTimeZone('Europe/Moscow')));
+        $result = $this->hydrator->extract($this->user);
+        $this->assertSame($this->data, $result);
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\DatesHydrator::extract
+     */
+    public function testExtractNotInstanceOfUserInterface()
+    {
+        $user = 'user';
+        $result = $this->hydrator->extract($user);
+        $this->assertSame(array(), $result);
+    }
 }
