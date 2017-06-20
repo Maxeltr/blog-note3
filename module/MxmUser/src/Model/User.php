@@ -41,18 +41,39 @@ class User implements UserInterface
      */
     protected $username;
 
+    /**
+     * @var string
+     */
     protected $email;
 
+    /**
+     * @var string
+     */
     protected $password;
 
+    /**
+     * @var string
+     */
     protected $role;
 
+    /**
+     * @var string
+     */
     protected $timebelt;
 
+    /**
+     * @var \DateTime
+     */
     protected $created;
 
+    /**
+     * @var string
+     */
     protected $passwordToken;
 
+    /**
+     * @var \DateTime
+     */
     protected $dateToken;
 
     /**

@@ -29,6 +29,7 @@ namespace MxmUserTest\Hydrator\TimezoneFormHydrator;
 use Zend\Hydrator\HydratorInterface;
 use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
 use \DateTimeZone;
+use Zend\Config\Config;
 
 class TimezoneFormHydratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,7 +44,15 @@ class TimezoneFormHydratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
 
-        $this->hydrator = new TimezoneFormHydrator();
+        $configArray = [
+            'dateTime' => [
+                'dateTimeFormat' => 'Y-m-d H:i:s',
+                'timezone' => 'Europe/Moscow',
+                'defaultDate' => '1900-01-01 00:00:00'
+            ]
+        ];
+        $config = new Config($configArray);
+        $this->hydrator = new TimezoneFormHydrator($config);
 
         $this->data = ['timezoneId' => '1'];
         $this->timezonesList = DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'RU');

@@ -59,7 +59,8 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
         ];
         $configArray = [
             'dateTime' => [
-                'dateTimeFormat' => 'Y-m-d H:i:s'
+                'dateTimeFormat' => 'Y-m-d H:i:s',
+                'defaultDate' => '1900-01-01 00:00:00'
             ]
         ];
         $config = new Config($configArray);

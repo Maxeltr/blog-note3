@@ -56,12 +56,12 @@ class DatesHydrator implements HydratorInterface
         if (array_key_exists('created', $data) && $this->dateValidator->isValid($data['created'])) {
             $object->setCreated($this->datetime->modify($data['created']));
         } else {
-            $object->setCreated($this->datetime->modify('1900-01-01 00:00:00'));    //TODO в настройки?
+            $object->setCreated($this->datetime->modify($this->config->dateTime->defaultDate));
         }
         if (array_key_exists('dateToken', $data) && $this->dateValidator->isValid($data['dateToken'])) {
             $object->setDateToken($this->datetime->modify($data['dateToken']));
         } else {
-            $object->setDateToken($this->datetime->modify('1900-01-01 00:00:00'));      //TODO в настройки?
+            $object->setDateToken($this->datetime->modify($this->config->dateTime->defaultDate));
         }
 
         return $object;

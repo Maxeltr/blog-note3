@@ -50,7 +50,7 @@ class UserHydrator implements HydratorInterface
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof UserInterface) {
-            return array();
+            return $object;
         }
 
         foreach ($data as $key => $value) {

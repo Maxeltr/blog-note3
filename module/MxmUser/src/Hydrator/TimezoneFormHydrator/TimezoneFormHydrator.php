@@ -28,12 +28,15 @@ namespace MxmUser\Hydrator\TimezoneFormHydrator;
 
 use Zend\Hydrator\HydratorInterface;
 use \DateTimeZone;
+use Zend\Config\Config;
 
 class TimezoneFormHydrator implements HydratorInterface
 {
+    protected $config;
 
-    public function __construct()
+    public function __construct(Config $config)
     {
+        $this->config = $config;
     }
 
     public function hydrate(array $data, $object)
@@ -44,7 +47,13 @@ class TimezoneFormHydrator implements HydratorInterface
         $object = null;
         $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
 
-        $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
+        if (array_key_exists('timezoneId', $data) && !empty($data['timezoneId']))
+        {
+            $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
+        } else {
+            $timezone = new DateTimeZone($this->config->dateTime->timezone);
+        }
+
 
         return $timezone;
     }

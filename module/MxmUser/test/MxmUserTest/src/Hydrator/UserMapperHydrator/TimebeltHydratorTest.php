@@ -39,15 +39,28 @@ class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $traceError = true;
 
+    protected $config;
+
+    protected $user;
+
+    protected $data;
+
+    protected $configArray;
 
     protected function setUp()
     {
-        $this->hydrator = new TimebeltHydrator();
-
-        $this->data = ['timebelt' => '1'];
-        $this->timezonesList = DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'RU');
-        $this->timezone = new DateTimeZone($this->timezonesList[$this->data['timebelt']]);
-        $this->timezoneName = $this->timezone->getName();
+        $this->configArray = [
+            'dateTime' => [
+                'dateTimeFormat' => 'Y-m-d H:i:s',
+                'timezone' => 'Europe/Moscow',
+                'defaultDate' => '1900-01-01 00:00:00'
+            ]
+        ];
+        $config = new Config($this->configArray);
+        $this->hydrator = new TimebeltHydrator($config);
+        $this->user = new User();
+        $this->data = ['timebelt' => 'Asia/Barnaul'];
+        $this->timezone = new DateTimeZone($this->data['timebelt']);
 
         parent::setUp();
     }
@@ -58,8 +71,57 @@ class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testHydrate()
     {
-        $result = $this->hydrator->hydrate($this->data, $this->timezone);
-        $this->assertSame($this->timezoneName, $result->getName());
+        $result = $this->hydrator->hydrate($this->data, $this->user);
+        $this->assertSame($this->data['timebelt'], $result->getTimebelt()->getName());
     }
 
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator::hydrate
+     */
+    public function testHydrateNoTimebelt()
+    {
+        $data = [];
+        $result = $this->hydrator->hydrate($data, $this->user);
+        $this->assertSame($this->configArray['dateTime']['timezone'], $result->getTimebelt()->getName());
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator::hydrate
+     */
+    public function testHydrateEmptyTimebelt()
+    {
+        $data = ['timebelt' => ''];
+        $result = $this->hydrator->hydrate($data, $this->user);
+        $this->assertSame($this->configArray['dateTime']['timezone'], $result->getTimebelt()->getName());
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator::hydrate
+     */
+    public function testHydrateNotInstanceOfUserInterface()
+    {
+        $user = 'user';
+        $result = $this->hydrator->hydrate($this->data, $user);
+        $this->assertSame($user, $result);
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator::extract
+     */
+    public function testExtract()
+    {
+        $this->user->setTimebelt($this->timezone);
+        $result = $this->hydrator->extract($this->user);
+        $this->assertSame($this->data, $result);
+    }
+
+    /**
+     * @covers MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator::extract
+     */
+    public function testExtractNotInstanceOfUserInterface()
+    {
+        $user = 'user';
+        $result = $this->hydrator->extract($user);
+        $this->assertSame(array(), $result);
+    }
 }

@@ -29,12 +29,15 @@ namespace MxmUser\Hydrator\UserMapperHydrator;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 use \DateTimeZone;
+use Zend\Config\Config;
 
 class TimebeltHydrator implements HydratorInterface
 {
+    protected $config;
 
-    public function __construct()
+    public function __construct(Config $config)
     {
+        $this->config = $config;
     }
 
     public function hydrate(array $data, $object)
@@ -46,7 +49,7 @@ class TimebeltHydrator implements HydratorInterface
         if (array_key_exists('timebelt', $data) && !empty($data['timebelt'])) {
             $object->setTimebelt(new DateTimeZone($data['timebelt']));
         } else {
-            $object->setTimebelt(new DateTimeZone('Europe/Moscow'));    //TODO брать из настроек. Записать в лог.
+            $object->setTimebelt(new DateTimeZone($this->config->dateTime->timezone));
         }
 
         return $object;
