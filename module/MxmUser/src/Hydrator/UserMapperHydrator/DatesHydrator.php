@@ -76,10 +76,13 @@ class DatesHydrator implements HydratorInterface
         $values = [];
 
         $datetimeCreated = $object->getCreated();
-        $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
-
+        if ($datetimeCreated instanceof DateTimeInterface) {
+            $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
+        }
         $datetimeDateToken = $object->getDateToken();
-        $values ['dateToken'] = $datetimeDateToken->format($this->config->dateTime->dateTimeFormat);
+        if ($datetimeDateToken instanceof DateTimeInterface) {
+            $values ['dateToken'] = $datetimeDateToken->format($this->config->dateTime->dateTimeFormat);
+        }
 
         return $values;
     }

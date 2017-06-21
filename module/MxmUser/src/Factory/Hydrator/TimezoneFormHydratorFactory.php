@@ -1,6 +1,6 @@
 <?php
 
-/*
+/* 
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,50 +24,20 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\UserMapperHydrator;
+namespace MxmUser\Factory\Hydrator;
 
-use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
 use Zend\Config\Config;
 
-class TimebeltHydrator implements HydratorInterface
+class TimezoneFormHydratorFactory implements FactoryInterface
 {
-    protected $config;
-
-    public function __construct(Config $config)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $this->config = $config;
-    }
+        $config = new Config($container->get('config'));
+        $hydrator = new TimezoneFormHydrator($config->user_module);
 
-    public function hydrate(array $data, $object)
-    {
-        if (!$object instanceof UserInterface) {
-            return $object;
-        }
-
-        if (array_key_exists('timebelt', $data) && !empty($data['timebelt'])) {
-            $object->setTimebelt(new DateTimeZone($data['timebelt']));
-        } else {
-            $object->setTimebelt(new DateTimeZone($this->config->dateTime->timezone));
-        }
-
-        return $object;
-    }
-
-    public function extract($object)
-    {
-        if (!$object instanceof UserInterface) {
-            return array();
-        }
-
-        $values = array();
-
-        $timezone = $object->getTimebelt();
-        if ($timezone instanceof DateTimeZone) {
-            $values ['timebelt'] = $timezone->getName();
-        }
-        
-        return $values;
+        return $hydrator;
     }
 }

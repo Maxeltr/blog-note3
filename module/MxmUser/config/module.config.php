@@ -44,7 +44,7 @@ return [
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
-            Hydrator\TimezoneFormHydrator\TimezoneFormHydrator::class => InvokableFactory::class,
+            Hydrator\TimezoneFormHydrator\TimezoneFormHydrator::class => Factory\Hydrator\TimezoneFormHydratorFactory::class,
             AuthenticationService::class => Factory\Service\AuthenticationServiceFactory::class,
             Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
             Hydrator\UserMapperHydrator\UserMapperHydrator::class => Factory\Hydrator\UserMapperHydratorFactory::class,

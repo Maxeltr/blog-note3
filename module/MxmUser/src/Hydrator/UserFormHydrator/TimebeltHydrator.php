@@ -24,56 +24,47 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\PostMapperHydrator;
+namespace MxmUser\Hydrator\UserFormHydrator;
 
-use MxmBlog\Model\PostInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\ClassMethods;
 use Zend\Hydrator\HydratorInterface;
-use MxmUser\Mapper\MapperInterface as UserMapperInterface;
-use MxmUser\Exception\RecordNotFoundUserException;
+use \DateTimeZone;
+use Zend\Config\Config;
 
-class UserHydrator extends ClassMethods implements HydratorInterface
+class TimebeltHydrator implements HydratorInterface
 {
-    private $userMapper;
+    protected $config;
 
-    private $userPrototype;
-
-    public function __construct(UserMapperInterface $userMapper,  $userPrototype)
+    public function __construct(Config $config)
     {
-        $this->userMapper = $userMapper;
-        $this->userPrototype = $userPrototype;
-        parent::__construct(false);
+        $this->config = $config;
     }
 
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof PostInterface) {
+        if (!$object instanceof UserInterface) {
             return $object;
         }
 
-        try {
-            $author = $this->userMapper->findUserById($data['author']);
-        } catch (RecordNotFoundUserException $ex) {
-            $author = clone $this->userPrototype;
+        if (array_key_exists('timebelt', $data) && $data['timebelt'] instanceof DateTimeZone) {
+            $object->setTimebelt($data['timebelt']);
         }
-
-        $object->setAuthor($author);
 
         return $object;
     }
 
     public function extract($object)
     {
-        if (!$object instanceof PostInterface) {
+        if (!$object instanceof UserInterface) {
             return array();
         }
 
-        $user = $object->getAuthor();
-        if ($user instanceof UserInterface) {
-            return array('author' => parent::extract($user));
-        }
+        $values = array();
 
-        return array();
+        $timezone = $object->getTimebelt();
+        if ($timezone instanceof DateTimeZone) {
+            $values ['timebelt'] = $timezone->getName();
+        }
+        return $values;
     }
 }

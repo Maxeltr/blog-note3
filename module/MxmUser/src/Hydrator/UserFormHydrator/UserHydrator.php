@@ -1,6 +1,6 @@
 <?php
 
-/*
+/* 
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,56 +24,75 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\PostMapperHydrator;
+namespace MxmUser\Hydrator\UserFormHydrator;
 
-use MxmBlog\Model\PostInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\ClassMethods;
 use Zend\Hydrator\HydratorInterface;
-use MxmUser\Mapper\MapperInterface as UserMapperInterface;
-use MxmUser\Exception\RecordNotFoundUserException;
 
-class UserHydrator extends ClassMethods implements HydratorInterface
+class UserHydrator implements HydratorInterface
 {
-    private $userMapper;
+    /**
+     * Properties to skip. Should be lowercase.
+     *
+     * @var array
+     */
+    protected $skipProperties = [
+        'datetoken',
+        'created',
+        'timebelt',
+        '__construct'
+    ];
 
-    private $userPrototype;
-
-    public function __construct(UserMapperInterface $userMapper,  $userPrototype)
+    public function __construct()
     {
-        $this->userMapper = $userMapper;
-        $this->userPrototype = $userPrototype;
-        parent::__construct(false);
     }
 
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof PostInterface) {
+        if (!$object instanceof UserInterface) {
             return $object;
         }
 
-        try {
-            $author = $this->userMapper->findUserById($data['author']);
-        } catch (RecordNotFoundUserException $ex) {
-            $author = clone $this->userPrototype;
-        }
+        foreach ($data as $key => $value) {
+            if (in_array(strtolower($key), $this->skipProperties)) {
+                continue;
+            }
 
-        $object->setAuthor($author);
+            $method = 'set' . $key;
+            if(is_callable([$object, $method])) {
+                $object->$method($value);
+            }
+        }
 
         return $object;
     }
 
     public function extract($object)
     {
-        if (!$object instanceof PostInterface) {
+        if (!$object instanceof UserInterface) {
             return array();
         }
 
-        $user = $object->getAuthor();
-        if ($user instanceof UserInterface) {
-            return array('author' => parent::extract($user));
+        $methods = get_class_methods($object);
+        $values = [];
+
+        foreach ($methods as $method) {
+
+            if (strpos($method, 'get') === 0) {
+                $attribute = substr($method, 3);
+
+                if (in_array(strtolower($attribute), $this->skipProperties)) {
+                    continue;
+                }
+
+                if (!property_exists($object, $attribute)) {
+                    $attribute = lcfirst($attribute);
+                }
+                $values[$attribute] = $object->$method();
+
+            }
         }
 
-        return array();
+        return $values;
     }
 }

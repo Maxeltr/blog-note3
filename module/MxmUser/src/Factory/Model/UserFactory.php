@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -29,11 +29,20 @@ namespace MxmUser\Factory\Model;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Model\User;
+use Zend\Config\Config;
 
 class UserFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new User();
+        $config = new Config($container->get('config'));
+        $timezone = new \DateTimeZone($config->user_module->dateTime->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
+        $datetime = new DateTimeImmutable($config->user_module->dateTime->defaultDate, $timezone);
+        $user = new User();
+        $user->setCreated($datetime);
+        $user->setDateToken($datetime);
+        $user->setTimebelt($timezone);
+
+        return $user;
     }
 }
