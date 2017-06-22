@@ -51,7 +51,7 @@ class TimezoneFormHydrator implements HydratorInterface
         {
             $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
         } else {
-            $timezone = new DateTimeZone($this->config->dateTime->timezone);
+            return $object;
         }
 
 

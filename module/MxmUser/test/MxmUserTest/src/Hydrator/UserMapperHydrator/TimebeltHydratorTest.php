@@ -82,7 +82,7 @@ class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
     {
         $data = [];
         $result = $this->hydrator->hydrate($data, $this->user);
-        $this->assertSame($this->configArray['dateTime']['timezone'], $result->getTimebelt()->getName());
+        $this->assertSame(null, $result->getTimebelt());
     }
 
     /**
@@ -92,7 +92,7 @@ class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
     {
         $data = ['timebelt' => ''];
         $result = $this->hydrator->hydrate($data, $this->user);
-        $this->assertSame($this->configArray['dateTime']['timezone'], $result->getTimebelt()->getName());
+        $this->assertSame(null, $result->getTimebelt());
     }
 
     /**

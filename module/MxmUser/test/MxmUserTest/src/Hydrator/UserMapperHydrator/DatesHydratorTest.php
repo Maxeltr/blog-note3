@@ -97,7 +97,7 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
         $this->dateValidator->isValid($this->data['created'])->willReturn(false);
         $this->dateValidator->isValid($this->data['dateToken'])->willReturn(true);
         $result = $this->hydrator->hydrate($this->data, $this->user);
-        $this->assertSame('1900-01-01 00:00:00', $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame(null, $result->getCreated());
         $this->assertSame($this->data['dateToken'], $result->getDateToken()->format('Y-m-d H:i:s'));
     }
 
@@ -110,7 +110,7 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
         $this->dateValidator->isValid($this->data['dateToken'])->willReturn(false);
         $result = $this->hydrator->hydrate($this->data, $this->user);
         $this->assertSame($this->data['created'], $result->getCreated()->format('Y-m-d H:i:s'));
-        $this->assertSame('1900-01-01 00:00:00', $result->getDateToken()->format('Y-m-d H:i:s'));
+        $this->assertSame(null, $result->getDateToken());
     }
 
     /**
@@ -123,7 +123,7 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
         $data = $this->data;
         unset($data['created']);
         $result = $this->hydrator->hydrate($data, $this->user);
-        $this->assertSame('1900-01-01 00:00:00', $result->getCreated()->format('Y-m-d H:i:s'));
+        $this->assertSame(null, $result->getCreated());
         $this->assertSame($this->data['dateToken'], $result->getDateToken()->format('Y-m-d H:i:s'));
     }
 
@@ -138,7 +138,7 @@ class DatesHydratorTest extends \PHPUnit_Framework_TestCase
         unset($data['dateToken']);
         $result = $this->hydrator->hydrate($data, $this->user);
         $this->assertSame($this->data['created'], $result->getCreated()->format('Y-m-d H:i:s'));
-        $this->assertSame('1900-01-01 00:00:00', $result->getDateToken()->format('Y-m-d H:i:s'));
+        $this->assertSame(null, $result->getDateToken());
     }
 
     /**

@@ -24,11 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUserTest\Controller;
+namespace MxmUserTest\Service;
 
 use MxmUser\Mapper\MapperInterface;
-use MxmUser\Model\UserInterface;
-use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Validator\Db\RecordExists;
 use Zend\Validator\EmailAddress;
@@ -41,18 +39,9 @@ use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
-use Zend\Math\Rand;
-use Zend\Mail\Message as MailMessage;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mail\Transport\Sendmail as SendMailTransport;
-use Zend\Mime\Part as MimePart;
 use MxmUser\Exception\NotAuthorizedUserException;
 use MxmRbac\Service\AuthorizationService;
 use Prophecy\Argument;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use Zend\ServiceManager\ServiceManager;
-use MxmUser\Service\UserServiceInterface;
 use MxmUser\Service\UserService;
 use MxmUser\Model\User;
 use Zend\Authentication\Storage\StorageInterface;

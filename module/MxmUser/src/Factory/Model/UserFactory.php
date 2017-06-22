@@ -29,19 +29,12 @@ namespace MxmUser\Factory\Model;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Model\User;
-use Zend\Config\Config;
 
 class UserFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
-        $timezone = new \DateTimeZone($config->user_module->dateTime->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
-        $datetime = new DateTimeImmutable($config->user_module->dateTime->defaultDate, $timezone);
         $user = new User();
-        $user->setCreated($datetime);
-        $user->setDateToken($datetime);
-        $user->setTimebelt($timezone);
 
         return $user;
     }

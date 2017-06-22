@@ -48,8 +48,6 @@ class TimebeltHydrator implements HydratorInterface
 
         if (array_key_exists('timebelt', $data) && !empty($data['timebelt'])) {
             $object->setTimebelt(new DateTimeZone($data['timebelt']));
-        } else {
-            $object->setTimebelt(new DateTimeZone($this->config->dateTime->timezone));
         }
 
         return $object;
@@ -67,7 +65,7 @@ class TimebeltHydrator implements HydratorInterface
         if ($timezone instanceof DateTimeZone) {
             $values ['timebelt'] = $timezone->getName();
         }
-        
+
         return $values;
     }
 }
