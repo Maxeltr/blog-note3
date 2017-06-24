@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,7 +25,7 @@
  */
 
 namespace MxmUser\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
@@ -41,7 +41,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
-        
+
         $this->add([
             'type' => 'text',
             'name' => 'email',
@@ -53,7 +53,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'label' => 'Email'
             ]
         ]);
-        
+
         $this->add([
             'type' => 'password',
             'name' => 'password',
@@ -65,22 +65,22 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'label' => 'Password'
             ]
         ]);
-        
+
         $this->add([
             'type' => 'csrf',
-            'name' => 'csrf',
+            'name' => 'login_csrf',
             'options' => [
                 'csrf_options' => [
                 'timeout' => 600
                 ]
             ],
         ]);
-        
+
         $this->add([
             'type'  => 'hidden',
             'name' => 'redirect'
         ]);
-        
+
         $this->add([
             'type' => 'submit',
             'name' => 'submit',
@@ -103,7 +103,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                         'name' => 'EmailAddress',
                         'options' => [
                             'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
-                            'useMxCheck' => false,                            
+                            'useMxCheck' => false,
                         ],
                     ],
                 ]
@@ -119,7 +119,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 35,
                         ]
                     ]
                 ]

@@ -70,17 +70,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'csrf',
-            'name' => 'csrf',
-            'options' => [
-                'csrf_options' => [
-                'timeout' => 600
-                ]
-            ],
-        ]);
-
-        $this->add([
-            'type' => 'csrf',
-            'name' => 'csrf',
+            'name' => 'setPassword_csrf',
             'options' => [
                 'csrf_options' => [
                 'timeout' => 600
@@ -111,7 +101,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 35,
                         ]
                     ]
                 ]

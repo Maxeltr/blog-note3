@@ -43,7 +43,7 @@ class EditEmailFormTest extends \PHPUnit_Framework_TestCase
             'password' => ''
         );
 
-        $this->form = new EditEmailForm(new InputFilter);
+        $this->form = new EditEmailForm(new InputFilter());
 
         parent::setUp();
     }
