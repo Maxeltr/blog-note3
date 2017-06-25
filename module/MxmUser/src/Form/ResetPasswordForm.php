@@ -56,7 +56,7 @@ class ResetPasswordForm extends Form implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'Zend\Form\Element\Captcha',
-            'name' => 'captcha',
+            'name' => 'resetPassword_captcha',
             'options' => [
                 'label' => 'Please verify you are human',
                 'captcha' => new \Zend\Captcha\Figlet(),

@@ -61,7 +61,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'Zend\Form\Element\Captcha',
-            'name' => 'captcha',
+            'name' => 'setPassword_captcha',
             'options' => [
                 'label' => 'Please verify you are human',
                 'captcha' => new \Zend\Captcha\Figlet(),
