@@ -65,7 +65,7 @@ class ResetPasswordForm extends Form implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'csrf',
-            'name' => 'resetPasword_csrf',
+            'name' => 'resetPassword_csrf',
             'options' => [
                 'csrf_options' => [
                 'timeout' => 600

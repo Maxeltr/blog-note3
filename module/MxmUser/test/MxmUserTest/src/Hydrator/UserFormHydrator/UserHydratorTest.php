@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUserTest\Hydrator\UserMapperHydrator;
+namespace MxmUserTest\Hydrator\UserFormHydrator;
 
 use MxmUser\Model\User;
-use MxmUser\Hydrator\UserMapperHydrator\UserHydrator;
+use MxmUser\Hydrator\UserFormHydrator\UserHydrator;
 use \DateTimeZone;
 
 class UserHydratorTest extends \PHPUnit_Framework_TestCase
@@ -59,7 +59,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers MxmUser\Hydrator\\UserMapperHydrator\UserHydrator::hydrate
+     * @covers MxmUser\Hydrator\\UserFormHydrator\UserHydrator::hydrate
      *
      */
     public function testHydrate()
@@ -77,7 +77,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers MxmUser\Hydrator\UserMapperHydrator\UserHydrator::hydrate
+     * @covers MxmUser\Hydrator\UserFormHydrator\UserHydrator::hydrate
      */
     public function testHydrateNotInstanceOfUserInterface()
     {
@@ -87,7 +87,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers MxmUser\Hydrator\UserMapperHydrator\UserHydrator::extract
+     * @covers MxmUser\Hydrator\UserFormHydrator\UserHydrator::extract
      */
     public function testExtract()
     {
@@ -121,7 +121,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers MxmUser\Hydrator\UserMapperHydrator\UserHydrator::extract
+     * @covers MxmUser\Hydrator\UserFormHydrator\UserHydrator::extract
      */
     public function testExtractNotInstanceOfUserInterface()
     {

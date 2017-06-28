@@ -26,7 +26,6 @@
 
 namespace MxmUser\Mapper;
 
-use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Delete;
@@ -34,26 +33,22 @@ use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Update;
-use Zend\Filter\StaticFilter;
 use Zend\Config\Config;
-use Zend\Db\Sql\Predicate\Expression;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
-use Zend\Validator\StaticValidator;
 use Zend\Db\Sql\PreparableSqlInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\InvalidArgumentUserException;
 use MxmUser\Exception\DataBaseErrorUserException;
-use MxmUser\Service\DateTimeInterface;
 use MxmUser\Model\UserInterface;
 
 class ZendDbSqlMapper implements MapperInterface
 {
     /**
-     * @var \Zend\Db\Adapter\AdapterInterface
+     * @var Zend\Db\Sql\Sql
      */
-    protected $dbAdapter;
+    protected $sql;
 
     /**
      * @var \Zend\Hydrator\HydratorInterface
@@ -71,17 +66,17 @@ class ZendDbSqlMapper implements MapperInterface
     protected $config;
 
     /**
-     * @param AdapterInterface $dbAdapter
+     * @param Sql $sql
      * @param UserInterface $userPrototype
      * @param Config $config
      */
     public function __construct(
-        AdapterInterface $dbAdapter,
+        Sql $sql,
         HydratorInterface $aggregateHydrator,
         UserInterface $userPrototype,
         Config $config
     ) {
-        $this->dbAdapter = $dbAdapter;
+        $this->sql = $sql;
         $this->aggregateHydrator = $aggregateHydrator;
         $this->userPrototype = $userPrototype;
         $this->config = $config;
@@ -143,8 +138,7 @@ class ZendDbSqlMapper implements MapperInterface
             throw new InvalidArgumentBlogException("ZendDbSqlMapper. createObject. No object param given.");
         }
 
-        $sql = new Sql($this->dbAdapter);
-        $stmt = $sql->prepareStatementForSqlObject($select);
+        $stmt = $this->sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
 
         if($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
@@ -195,7 +189,7 @@ class ZendDbSqlMapper implements MapperInterface
             // our configured select object:
             $select,
             // the adapter to run it against:
-            $this->dbAdapter,
+            $this->sql,
             // the result set to hydrate:
             $resultSetPrototype
         );
@@ -244,8 +238,7 @@ class ZendDbSqlMapper implements MapperInterface
         $action = new Delete('users');
         $action->where(array('id = ?' => $userObject->getId()));
 
-        $sql = new Sql($this->dbAdapter);
-        $stmt = $sql->prepareStatementForSqlObject($action);
+        $stmt = $this->sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
 
         return (bool)$result->getAffectedRows();
@@ -266,8 +259,7 @@ class ZendDbSqlMapper implements MapperInterface
             throw new InvalidArgumentUserException("ZendDbSqlMapper. saveInDb. No object param given.");
         }
 
-        $sql = new Sql($this->dbAdapter);
-        $stmt = $sql->prepareStatementForSqlObject($action);
+        $stmt = $this->sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
 
         if ($result instanceof ResultInterface) {

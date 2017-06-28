@@ -33,6 +33,7 @@ use Zend\Config\Config;
 use Zend\Db\Adapter\Adapter;
 use MxmUser\Mapper\ZendDbSqlMapper;
 use MxmUser\Model\UserInterface;
+use Zend\Db\Sql\Sql;
 
 class ZendDbSqlMapperFactory implements FactoryInterface
 {
@@ -47,8 +48,10 @@ class ZendDbSqlMapperFactory implements FactoryInterface
 
         $adapter = $container->get(Adapter::class);
 
+        $sql = new Sql($adapter);
+
         return new ZendDbSqlMapper(
-            $adapter,
+            $sql,
             $aggregateHydrator,
             $user,
             $config->user_module
