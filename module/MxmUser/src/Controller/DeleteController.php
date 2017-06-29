@@ -30,6 +30,7 @@ use MxmUser\Service\UserServiceInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmUser\Exception\RecordNotFoundUserException;
+use MxmUser\Exception\NotAuthenticatedUserException;
 use Zend\Log\Logger;
 
 class DeleteController extends AbstractActionController
@@ -56,7 +57,15 @@ class DeleteController extends AbstractActionController
         try {
             $user = $this->userService->findUserById($id);
         } catch (RecordNotFoundUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());	
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        } catch (NotAuthenticatedUserException $e) {
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'detailUser']]); //TODO использовать flashmessenger?
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return $this->notFoundAction();
         }
 
@@ -67,7 +76,7 @@ class DeleteController extends AbstractActionController
             if ($del === 'yes') {
                 $result = $this->userService->deleteUser($user);
                 if ($result === false) {
-                        $this->logger->err('DeleteController. User ' . $user->getID() . ' not deleted');
+                    $this->logger->err('DeleteController. User ' . $user->getID() . ' not deleted');
                 }
             }
 
@@ -75,7 +84,7 @@ class DeleteController extends AbstractActionController
         }
 
         return new ViewModel(array(
-                'user' => $user
+            'user' => $user
         ));
     }
 }
