@@ -168,6 +168,19 @@ return [
                     ],
                 ],
             ],
+            'confirmEmail' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/confirm/email/:token',
+                    'constraints' => [
+                        'token' => '[a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'confirmEmail',
+                    ],
+                ],
+            ],
             'loginUser' => [
                 'type' => 'Literal',
                 'options' => [

@@ -68,8 +68,9 @@ class ListController extends AbstractActionController
         try {
             $paginator = $this->userService->findAllUsers();
 	} catch (NotAuthenticatedUserException $e) {
+            $redirectUrl = $this->url()->fromRoute('listUsers', ['page' => (int) $this->params()->fromRoute('page', '1')]);
 
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'listUsers']]); //TODO использовать flashmessenger?
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]); //TODO использовать flashmessenger?
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -96,8 +97,9 @@ class ListController extends AbstractActionController
 
             return $this->notFoundAction();
 	} catch (NotAuthenticatedUserException $e) {
+            $redirectUrl = $this->url()->fromRoute('detailUser', ['id' => $id]);
 
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'detailUser']]); //TODO использовать flashmessenger?
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]); //TODO использовать flashmessenger?
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 

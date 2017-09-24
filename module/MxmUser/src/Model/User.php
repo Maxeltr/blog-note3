@@ -49,6 +49,21 @@ class User implements UserInterface
     /**
      * @var string
      */
+    protected $emailVerification;
+
+	/**
+     * @var string
+     */
+    protected $emailToken;
+
+	/**
+     * @var \DateTime
+     */
+    protected $dateEmailToken;
+
+    /**
+     * @var string
+     */
     protected $password;
 
     /**
@@ -234,6 +249,60 @@ class User implements UserInterface
     public function setDateToken(DateTimeInterface  $dateToken)
     {
         $this->dateToken = $dateToken;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getEmailVerification()
+    {
+        return $this->emailVerification;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setEmailVerification($emailVerification)
+    {
+        $this->emailVerification = (bool) $emailVerification;
+
+        return $this;
+    }
+
+	/**
+     *  {@inheritDoc}
+     */
+    public function getEmailToken()
+    {
+        return $this->emailToken;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setEmailToken($emailToken)
+    {
+        $this->emailToken = $emailToken;
+
+        return $this;
+    }
+
+	/**
+     *  {@inheritDoc}
+     */
+    public function getDateEmailToken()
+    {
+        return $this->dateEmailToken;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setDateEmailToken(DateTimeInterface $dateEmailToken)
+    {
+        $this->dateEmailToken = $dateEmailToken;
 
         return $this;
     }

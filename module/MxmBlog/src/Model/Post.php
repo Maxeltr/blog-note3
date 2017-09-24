@@ -30,6 +30,7 @@ use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\AbstractModel;
 use Zend\Tag\ItemList;
 use MxmBlog\Service\DateTimeInterface;
+use MxmUser\Model\UserInterface;
 
 class Post extends AbstractModel implements PostInterface
 {
@@ -221,10 +222,10 @@ class Post extends AbstractModel implements PostInterface
      * {@inheritDoc}
      *
      */
-    public function setAuthor($author)
+    public function setAuthor(UserInterface $author)
     {
         $this->author = $author;
-
+        
         return $this;
     }
 

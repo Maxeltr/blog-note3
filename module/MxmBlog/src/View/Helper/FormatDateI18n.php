@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -33,9 +33,9 @@ use MxmBlog\Service\DateTimeInterface;
 class FormatDateI18n extends DateFormat
 {
     protected $datetime;
-    
+
     protected $config;
-    
+
     public function __construct(Config $config, \DateTimeInterface $datetime)
     {
         $this->config = $config;
@@ -44,7 +44,8 @@ class FormatDateI18n extends DateFormat
     }
 
     public function __invoke(
-        DateTimeInterface $datetime,
+        //DateTimeInterface $datetime,
+        $datetime,
         $dateType = \IntlDateFormatter::LONG,
         $timeType = \IntlDateFormatter::MEDIUM,
         $locale = null,
@@ -52,7 +53,7 @@ class FormatDateI18n extends DateFormat
     ) {
         parent::setTimezone($this->config->dateTime->timezone); //TODO устанавливать зону юзера
         parent::setLocale($this->config->dateTime->locale); //TODO устанавливать локаль юзера
-        
+
         $date = $this->datetime->modify($datetime->format($this->config->dateTime->dateTimeFormat));
 
         return parent::__invoke(

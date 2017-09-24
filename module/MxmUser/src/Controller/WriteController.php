@@ -93,7 +93,7 @@ class WriteController extends AbstractActionController
 
                     return new ViewModel([
                         'form' => $this->registerUserForm,
-                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                        'error' => 'User has registered alredy.'
                     ]);
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
@@ -125,11 +125,12 @@ class WriteController extends AbstractActionController
 
                     return new ViewModel([
                         'form' => $this->editEmailForm,
-                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                        'error' => 'Invalid password.'
                     ]);
                 } catch (NotAuthenticatedUserException $e) {
+                    $redirectUrl = $this->url()->fromRoute('editEmail');
 
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editEmail']]); //TODO использовать flashmessenger?
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
 
                 } catch (NotAuthorizedUserException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
@@ -157,8 +158,9 @@ class WriteController extends AbstractActionController
         try {
             $user = $this->userService->findUserById($this->params('id'));
         } catch (NotAuthenticatedUserException $e) {
+            $redirectUrl = $this->url()->fromRoute('editUser', ['id' => $this->params('id')]);
 
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editUser']]);
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -204,11 +206,12 @@ class WriteController extends AbstractActionController
 
                     return new ViewModel([
                         'form' => $this->editPasswordForm,
-                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                        'error' => 'Invalid password'
                     ]);
                 } catch (NotAuthenticatedUserException $e) {
+                    $redirectUrl = $this->url()->fromRoute('editPassword');
 
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => 'editPassword']]); //TODO использовать flashmessenger?
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
 
                 } catch (NotAuthorizedUserException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
@@ -300,5 +303,33 @@ class WriteController extends AbstractActionController
         return new ViewModel([
             'form' => $this->setPasswordForm
         ]);
+    }
+
+    public function confirmEmailAction()
+    {
+        $token = $this->params()->fromRoute('token', null);
+        try {
+            $this->userService->confirmEmail($token);
+        } catch (RecordNotFoundUserException $e) {
+            $model = new ViewModel([
+                'error' => $e->getMessage()     //TODO использовать flashmessenger?
+            ]);
+            $model->setTemplate('mxm-user/write/error');
+
+            return $model;
+        } catch (ExpiredUserException $e) {
+            $model = new ViewModel([
+                'error' => $e->getMessage()     //TODO использовать flashmessenger?
+            ]);
+            $model->setTemplate('mxm-user/write/error');
+
+            return $model;
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        return $this->redirect()->toRoute('loginUser');
     }
 }

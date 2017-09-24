@@ -49,7 +49,7 @@ interface UserInterface
     /**
      * Возвращает имя юзера
      *
-     * @return $this
+     * @return string
      */
     public function getUsername();
 
@@ -64,7 +64,7 @@ interface UserInterface
     /**
      * Возвращает почту юзера
      *
-     * @return $this
+     * @return string
      */
     public function getEmail();
 
@@ -79,7 +79,7 @@ interface UserInterface
     /**
      * Возвращает пароль юзера
      *
-     * @return $this
+     * @return string
      */
     public function getPassword();
 
@@ -94,7 +94,7 @@ interface UserInterface
     /**
      * Возвращает роль юзера
      *
-     * @return $this
+     * @return string
      */
     public function getRole();
 
@@ -109,7 +109,7 @@ interface UserInterface
     /**
      * Возвращает часовой пояс юзера
      *
-     * @return $this
+     * @return DateTimeZone
      */
     public function getTimebelt();
 
@@ -124,7 +124,7 @@ interface UserInterface
     /**
      * Возвращает время создания юзера
      *
-     * @return $this
+     * @return DateTimeInterface
      */
     public function getCreated();
 
@@ -139,7 +139,7 @@ interface UserInterface
     /**
      * Возвращает токен для сброса пароля
      *
-     * @return $this
+     * @return string
      */
     public function getPasswordToken();
 
@@ -154,7 +154,7 @@ interface UserInterface
     /**
      * Возвращает дату создания токена для сброса пароля
      *
-     * @return $this
+     * @return DateTimeInterface
      */
     public function getDateToken();
 
@@ -165,4 +165,51 @@ interface UserInterface
      * @return $this
      */
     public function setDateToken(DateTimeInterface $dateToken);
+
+    /**
+     * Подверждение почты пользователем	(статус)
+     *
+     * @return bool
+     */
+    public function getEmailVerification();
+
+    /**
+     * Подверждение почты пользователем (статус)
+     * @param boolean $emailVerification
+     *
+     * @return $this
+     */
+    public function setEmailVerification($emailVerification);
+
+    /**
+     * Токен используется для потверждения адреса почты
+     *
+     * @return string
+     */
+    public function getEmailToken();
+
+
+    /**
+     * Токен используется для потверждения адреса почты
+     * @param string $emailToken
+     *
+     * @return $this
+     */
+    public function setEmailToken($emailToken);
+
+    /**
+     * Дата создания токена для потверждения адреса почты
+     *
+     * @return DateTimeInterface
+     */
+    public function getDateEmailToken();
+
+
+    /**
+     * Дата создания токена для потверждения адреса почты
+     * @param DateTimeInterface $dateEmailToken
+     *
+     * @return $this
+     */
+    public function setDateEmailToken(DateTimeInterface $dateEmailToken);
 }

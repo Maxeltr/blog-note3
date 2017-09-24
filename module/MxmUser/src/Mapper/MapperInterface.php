@@ -49,7 +49,7 @@ interface MapperInterface
     public function findUserByEmail($email);
 
     /**
-     * 
+     *
      * throw InvalidArgumentUserException
      *
      * @return Paginator
@@ -87,6 +87,17 @@ interface MapperInterface
      * @param string $token
      *
      * @return UserInterface
+	 * @throw RecordNotFoundUserException
+     * @throw InvalidArgumentUserException
      */
     public function findUserByResetPasswordToken($token);
+
+    /**
+     * @param string $token
+     *
+     * @return UserInterface
+	 * @throw RecordNotFoundUserException
+     * @throw InvalidArgumentUserException
+     */
+	public function findUserByEmailToken($token);
 }

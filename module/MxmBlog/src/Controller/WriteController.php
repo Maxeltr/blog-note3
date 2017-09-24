@@ -33,6 +33,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Log\Logger;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Exception\DataBaseErrorBlogException;
+use MxmBlog\Exception\NotAuthorizedBlogException;
 
 class WriteController extends AbstractActionController
 {
@@ -94,6 +95,10 @@ class WriteController extends AbstractActionController
             if ($this->postForm->isValid()) {
                 try {
                     $savedPost = $this->postService->insertPost($this->postForm->getData());
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -125,6 +130,10 @@ class WriteController extends AbstractActionController
             if ($this->postForm->isValid()) {
                 try {
                     $this->postService->updatePost($post);
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -148,6 +157,10 @@ class WriteController extends AbstractActionController
             if ($this->tagForm->isValid()) {
                 try {
                     $savedTag = $this->postService->insertTag($this->tagForm->getData());
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -179,6 +192,10 @@ class WriteController extends AbstractActionController
             if ($this->tagForm->isValid()) {
                 try {
                     $this->postService->updateTag($tag);
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -202,6 +219,10 @@ class WriteController extends AbstractActionController
             if ($this->categoryForm->isValid()) {
                 try {
                     $savedCategory = $this->postService->insertCategory($this->categoryForm->getData());
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -233,6 +254,10 @@ class WriteController extends AbstractActionController
             if ($this->categoryForm->isValid()) {
                 try {
                     $this->postService->updateCategory($category);
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();

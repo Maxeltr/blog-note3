@@ -34,6 +34,8 @@ use Zend\Router\RouteInterface;
 use Zend\Log\Logger;
 use Zend\Config\Config;
 use MxmUser\Service\UserServiceInterface;
+use Zend\Http\Request;
+use MxmUser\Exception\ExpiredUserException;
 
 class AuthenticateController extends AbstractActionController
 {
@@ -85,7 +87,7 @@ class AuthenticateController extends AbstractActionController
     public function loginUserAction()
     {
         $request = $this->getRequest();
-        $loginError = false;
+        $loginError = '';
 
         if ($request->isPost()) {
             $this->loginUserForm->setData($request->getPost());
@@ -93,6 +95,10 @@ class AuthenticateController extends AbstractActionController
                 $data = $this->loginUserForm->getData();
                 try {
                     $result = $this->userService->loginUser($data['email'], $data['password']);
+                } catch (ExpiredUserException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();		//TODO redirect to page with error
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -101,12 +107,19 @@ class AuthenticateController extends AbstractActionController
 
                 $resultCode = $result->getCode();
                 if ($resultCode === Result::SUCCESS) {
-                    if (!$this->isRouteExists($data['redirect'])) {     //TODO не работает. Добавить доп параметры для разных роутов
+                    $url = new Request();
+                    $url->setMethod(Request::METHOD_GET);
+                    $url->setUri($data['redirect']);
+                    $routeMatch = $this->router->match($url);
+                    if ($routeMatch == null) {
+                    //if (!$this->isRouteExists($data['redirect'])) {     //TODO не работает. Добавить доп параметры для разных роутов
 
                         return $this->redirect()->toRoute('home');
                     } else {
-                        $redirectUrl = $this->router->assemble([], ['name' => $data['redirect']]);
-                        $this->redirect()->toUrl($redirectUrl);
+                        //$redirectUrl = $this->router->assemble([], ['name' => $data['redirect']]);
+                        //$this->redirect()->toUrl($redirectUrl);
+                        //$this->logger->info($routeMatch->getMatchedRouteName() . '  ' . $routeMatch->getParams());
+                        return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
                     $loginError = 'Incorrect login.';
@@ -115,7 +128,16 @@ class AuthenticateController extends AbstractActionController
                 }
             }
         }
-        $this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());    //TODO не работает. Добавить доп параметры для разных роутов
+        //$this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());    //TODO не работает. Добавить доп параметры для разных роутов
+        //$redirect = $this->params()->fromQuery('redirect', '');
+
+        $redirect = new Request();
+        $redirect->setMethod(Request::METHOD_GET);
+        $redirect->setUri($this->params()->fromQuery('redirect', ''));
+
+	If ($this->router->match($redirect) !== null) {
+            $this->loginUserForm->get('redirect')->setValue($this->params()->fromQuery('redirect', ''));
+	}
 
         return new ViewModel([
             'form' => $this->loginUserForm,
@@ -145,7 +167,7 @@ class AuthenticateController extends AbstractActionController
         if (empty($route)) {
             return false;
         }
-                
+
         try {
             $this->router->assemble(array(), array('name' => $route));
         } catch (\Exception $e) {

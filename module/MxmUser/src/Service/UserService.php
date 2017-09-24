@@ -166,6 +166,25 @@ class UserService implements UserServiceInterface
 
         $user->setCreated($this->datetime->modify('now'));
 
+        $token = Rand::getString(32, '0123456789abcdefghijklmnopqrstuvwxyz', true);
+        $user->setEmailToken($token);
+        $user->setDateEmailToken($this->datetime->modify('now'));
+	$user->setEmailVerification(false);
+
+	$httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+
+        $confirmEmailUrl = '<a href="' . 'http://' . $httpHost . '/confirm/email/' . $token . '">Confirm Email</a>';
+
+        $body = "Please follow the link below to confirm your email:\n";
+        $body .= " $confirmEmailUrl\n";
+        $body .= " If you haven't registered, please ignore this message.\n";
+
+//        $this->mail->setSubject('Confirm Email')->setBody($body)
+//            ->setFrom('qwer_qwerty_2018@inbox.ru')->setSenderName('blog-note3')
+//            ->setTo($user->getEmail())->setRecipientName($user->getUsername());
+//
+//	$this->mail->send();
+
         return $this->mapper->insertUser($user);
     }
 
@@ -284,7 +303,17 @@ class UserService implements UserServiceInterface
         $result = $this->authService->authenticate();
 
         if ($result->isValid()) {
-            $user = $this->mapper->findUserByEmail($email);
+            try {
+                $user = $this->mapper->findUserByEmail($email);
+            } catch (\Exception $e) {
+                throw new RecordNotFoundUserException("User with email address " . $email . " doesn't exists");
+            }
+
+            if ($user->getEmailVerification() === false && $this->isEmailTokenExpired($user) === true) {
+                $this->mapper->deleteUser($user);
+                throw new ExpiredUserException("Email token " . $token . " expired. User id " . $user->getId() . ' was deleted.');
+            }
+
             $storage = $this->authService->getStorage();
             $storage->write($user);
         }
@@ -292,6 +321,9 @@ class UserService implements UserServiceInterface
         return $result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function logoutUser()
     {
         if (!$this->authService->hasIdentity()) {
@@ -302,6 +334,9 @@ class UserService implements UserServiceInterface
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function resetPassword($email)
     {
         if (!$this->emailValidator->isValid($email)) {
@@ -335,6 +370,9 @@ class UserService implements UserServiceInterface
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setPassword($newPassword, $token)
     {
         if (!$this->notEmptyValidator->isValid($newPassword)) {
@@ -347,19 +385,64 @@ class UserService implements UserServiceInterface
         try {
             $user = $this->mapper->findUserByResetPasswordToken($token);
         } catch (\Exception $e) {
-            throw new RecordNotFoundUserException("Token doesn't exists");
+            throw new RecordNotFoundUserException('Token ' . $token . ' does not exists');
         }
 
-        $tokenCreationDate = $user->getDateToken();
-        $currentDate = $this->datetime->modify('now');
-        $interval = $tokenCreationDate->diff($currentDate);
-        if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
-            throw new ExpiredUserException("Token " . $token . " expired. User id " . $user->getId());
-        }
+        if ($this->isPasswordTokenExpired($user) === true) {
+            throw new ExpiredUserException("Password token " . $token . " expired. User id " . $user->getId());
+	}
 
         $passwordHash = $this->bcrypt->create($newPassword);
         $user->setPassword($passwordHash);
 
         return $this->mapper->updateUser($user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	public function confirmEmail($token)
+    {
+        if (!$this->notEmptyValidator->isValid($token)) {
+            throw new InvalidArgumentUserException("No params given: token.");
+        }
+
+        try {
+            $user = $this->mapper->findUserByEmailToken($token);
+        } catch (\Exception $e) {
+            throw new RecordNotFoundUserException("Token doesn't exists");
+        }
+
+	if ($this->isEmailTokenExpired($user)) {
+            throw new ExpiredUserException("Email token " . $token . " expired. User id " . $user->getId());
+	}
+
+        $user->setEmailVerification(true);
+
+        return $this->mapper->updateUser($user);
+    }
+
+    private function isEmailTokenExpired($user)
+    {
+	$tokenCreationDate = $user->getDateEmailToken();
+        $currentDate = $this->datetime->modify('now');
+        $interval = $tokenCreationDate->diff($currentDate);
+        if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
+            return true;
+        }
+
+	return false;
+    }
+
+    private function isPasswordTokenExpired($user)
+    {
+        $tokenCreationDate = $user->getDateToken();
+        $currentDate = $this->datetime->modify('now');
+        $interval = $tokenCreationDate->diff($currentDate);
+        if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
+            return true;
+        }
+
+        return false;
     }
 }

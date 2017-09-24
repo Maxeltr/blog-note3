@@ -134,6 +134,8 @@ interface UserServiceInterface
      * @return Zend\Authentication\Result
      * @throws InvalidArgumentUserException
      * @throws RuntimeUserException
+     * @throws RecordNotFoundUserException
+     * @throws ExpiredUserException
      */
     public function loginUser($email, $password);
 
@@ -154,4 +156,19 @@ interface UserServiceInterface
      * @throws InvalidArgumentUserException
      */
     public function resetPassword($email);
+
+    /**
+     * Подтверждение email пользователем по ссылке, отправленной
+     * ему на email. Если у токена не истек срок действия, то
+     * устанавливаем email как верифицированный.
+     *
+     * @param string $token
+     *
+     * @return UserInterface
+     *
+     * @throws RecordNotFoundUserException
+     * @throws InvalidArgumentUserException
+     * @throws ExpiredUserException
+     */
+	public function confirmEmail($token);
 }

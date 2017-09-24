@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -28,112 +28,113 @@ namespace MxmBlog\Model;
 
 use Zend\Tag\ItemList;
 use MxmBlog\Service\DateTimeInterface;
+use MxmUser\Model\UserInterface;
 
 interface PostInterface
 {
     /**
      * Возвращает клон PostInterface для правильной гидрации.
-     * 
+     *
      * @return PostInterface
      */
     public function __clone();
-    
+
     /**
      * Возвращает ID записи
-     * 
+     *
      * @return int ID
      */
     public function getId();
-    
+
     /**
      * Возвращает заголовок записи
-     * 
+     *
      * @return string Заголовок
      */
     public function getTitle();
 
     /**
      * Возвращает текст записи
-     * 
+     *
      * @return string Текст записи
      */
     public function getText();
-    
+
     /**
      * Возвращает текст краткого описания
-     * 
+     *
      * @return string
      */
     public function getSummary();
-    
+
     /**
      * Возвращает объект категории
-     * 
+     *
      * @return CategoryInterface
      */
     public function getCategory();
-    
+
     /**
      * Возвращает автора записи
-     * 
+     *
      * @return UserInterface
      */
     public function getAuthor();
-    
+
     /**
      * Возвращает дату и время создания записи
-     * 
+     *
      * @return Blog\Service\DateTimeInterface
      */
     public function getCreated();
-    
+
     /**
      * Возвращает дату и время изменения записи
-     * 
+     *
      * @return Blog\Service\DateTimeInterface
      */
     public function getUpdated();
-    
+
     /**
      * Возвращает дату и время публикации записи
-     * 
+     *
      * @return Blog\Service\DateTimeInterface
      */
     public function getPublished();
-    
+
     /**
      * Возвращает флаг публикации (true - опубликовано, false - не опубликовано)
-     * 
+     *
      * @return bool
      */
     public function getIsPublished();
-    
+
     /**
      * Возвращает кол-во изменений
-     * 
+     *
      * @return int
      */
     public function getVersion();
-    
+
     /**
      * Возвращает теги
-     * 
+     *
      * @return Zend\Tag\ItemList
      */
     public function getTags();
-    
+
     /**
      * Устанавливает ID записи
      * @param string $id ID записи.
-     * 
+     *
      * @return $this
      */
     public function setId($id);
-    
+
     /**
      * Устанавливает заголовок записи
      * @param string $title Заголовок записи.
-     * 
+     *
      * @return $this
      */
     public function setTitle($title);
@@ -141,79 +142,79 @@ interface PostInterface
     /**
      * Устанавливает текст записи
      * @param string $text Текст записи.
-     * 
+     *
      * @return $this
      */
     public function setText($text);
-    
+
     /**
      * Устанавливает текст краткого описания
      * @param string $summary Текст краткого описания.
-     * 
+     *
      * @return $this
      */
     public function setSummary($summary);
-    
+
     /**
      * Устанавливает объект категории
      * @param CategoryInterface $category Объект категория.
-     * 
+     *
      * @return $this
      */
     public function setCategory(CategoryInterface $category);
-    
+
     /**
      * Устанавливает автора записи
      * @param UserInterface $author Автор записи.
-     * 
+     *
      * @return $this
      */
-    public function setAuthor($author);
-    
+    public function setAuthor(UserInterface $author);
+
     /**
      * Устанавливает дату и время создания записи.
      * @param Blog\Service\DateTimeInterface $created Дата и время создания записи.
-     * 
+     *
      * @return $this
      */
     public function setCreated(DateTimeInterface $created);
-    
+
     /**
      * Устанавливает дату и время изменения записи
      * @param Blog\Service\DateTimeInterface $updated Дата и время изменения записи.
-     * 
+     *
      * @return $this
      */
     public function setUpdated(DateTimeInterface $updated);
-    
+
     /**
      * Устанавливает дату и время публикации записи
      * @param Blog\Service\DateTimeInterface $published Дата и время публикации записи.
-     * 
+     *
      * @return $this
      */
     public function setPublished(DateTimeInterface $published);
-    
+
     /**
      * Устанавливает флаг публикации (true - опубликовано, false - не опубликовано)
      * @param bool $isPublished Флаг публикации.
-     * 
+     *
      * @return $this
      */
     public function setIsPublished($isPublished);
-    
+
     /**
      * Устанавливает кол-во изменений
      * @param int $version Кол-во изменений.
-     * 
+     *
      * @return $this
      */
     public function setVersion($version);
-    
+
     /**
      * Устанавливает теги.
      * @param array|Zend\Tag\ItemList $tags объект ItemList
-     * 
+     *
      * @return $this
      * @throw \InvalidArgumentException
      */

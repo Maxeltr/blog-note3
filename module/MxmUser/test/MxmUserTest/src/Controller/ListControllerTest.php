@@ -78,7 +78,7 @@ class ListControllerTest extends AbstractHttpControllerTestCase //\PHPUnit_Frame
 //        $serviceManager->setService('MxmUser\Service\UserServiceInterface', $userServiceMock);
 
         $this->dispatch('/list/users');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode('200');
         $this->assertModuleName('MxmUser');
         $this->assertControllerName(ListController::class);
         $this->assertControllerClass('ListController');
@@ -100,7 +100,7 @@ class ListControllerTest extends AbstractHttpControllerTestCase //\PHPUnit_Frame
 //        $serviceManager->setService('MxmUser\Service\UserServiceInterface', $userServiceMock);
 
         $this->dispatch('/detail/user/1');
-        //$this->assertResponseStatusCode(200);
+        //$this->assertResponseStatusCode('200');
         $this->assertModuleName('MxmUser');
         $this->assertControllerName(ListController::class);
         $this->assertControllerClass('ListController');
@@ -129,8 +129,8 @@ class ListControllerTest extends AbstractHttpControllerTestCase //\PHPUnit_Frame
 
         $array = array();
         $paginator = new \Zend\Paginator\Paginator(
-                new \Zend\Paginator\Adapter\ArrayAdapter($array)
-            );
+            new \Zend\Paginator\Adapter\ArrayAdapter($array)
+        );
 	$this->userService->findAllUsers()->willReturn($paginator);
 
         $user = new User();

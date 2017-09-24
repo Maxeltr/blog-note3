@@ -657,7 +657,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
         $this->notEmptyValidator->isValid($token)->willReturn(true);
         $this->mapper->findUserByResetPasswordToken($token)->willThrow(\Exception::class);
-        $this->setExpectedException(RecordNotFoundUserException::class, "Token doesn't exists");
+        $this->setExpectedException(RecordNotFoundUserException::class, 'Token ' . $token . ' does not exists');
         $this->userService->setPassword('newPassword', $token);
     }
 
@@ -674,7 +674,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $tokenCreationDate = new \DateTime('2017-01-01', new \DateTimeZone('Europe/Moscow'));
         $this->user->setDateToken($tokenCreationDate);
         $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
-        $this->setExpectedException(ExpiredUserException::class, "Token " . $token . " expired. User id " . $this->user->getId());
+        $this->setExpectedException(ExpiredUserException::class, "Password token " . $token . " expired. User id " . $this->user->getId());
         $this->userService->setPassword('newPassword', $token);
     }
 }

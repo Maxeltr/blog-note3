@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -30,13 +30,15 @@ use MxmBlog\Controller\DeleteController;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Service\PostServiceInterface;
+use MxmBlog\Logger;
 
 class DeleteControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $logger = $container->get(Logger::class);
         $postService = $container->get(PostServiceInterface::class);
 
-        return new DeleteController($postService);
+        return new DeleteController($postService, $logger);
     }
 }

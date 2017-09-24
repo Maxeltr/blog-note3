@@ -40,6 +40,7 @@ class UserHydrator implements HydratorInterface
         'datetoken',
         'created',
         'timebelt',
+        'dateemailtoken',
         '__construct'
     ];
 

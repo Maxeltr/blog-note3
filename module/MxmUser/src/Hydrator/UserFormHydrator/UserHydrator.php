@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -40,6 +40,7 @@ class UserHydrator implements HydratorInterface
         'datetoken',
         'created',
         'timebelt',
+        'dateemailtoken',
         '__construct'
     ];
 

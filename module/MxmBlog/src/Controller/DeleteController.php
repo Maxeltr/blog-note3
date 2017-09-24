@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -30,6 +30,8 @@ use MxmBlog\Service\PostServiceInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use MxmBlog\Exception\RecordNotFoundBlogException;
+use MxmBlog\Exception\NotAuthorizedBlogException;
+use Zend\Log\Logger;
 
 class DeleteController extends AbstractActionController
 {
@@ -38,9 +40,16 @@ class DeleteController extends AbstractActionController
      */
     protected $postService;
 
-    public function __construct(PostServiceInterface $postService)
+    /**
+     *
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
+    public function __construct(PostServiceInterface $postService, Logger $logger)
     {
         $this->postService = $postService;
+        $this->logger = $logger;
     }
 
     public function deletePostAction()
@@ -49,15 +58,21 @@ class DeleteController extends AbstractActionController
         try {
             $post = $this->postService->findPostById($id);
         } catch (RecordNotFoundBlogException $ex) {
-            return $this->redirect()->toRoute('blog');
+            return $this->notFoundAction();
         }
-        
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $del = $request->getPost('delete_confirmation', 'no');
 
             if ($del === 'yes') {
-                $this->postService->deletePost($post);
+                try {
+                    $this->postService->deletePost($post);
+                } catch (NotAuthorizedBlogException $e) {												//add
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
+                }
             }
 
             return $this->redirect()->toRoute('listPosts');
@@ -67,22 +82,28 @@ class DeleteController extends AbstractActionController
                 'post' => $post
         ));
     }
-    
+
     public function deleteCategoryAction()
     {
         $id = $this->params()->fromRoute('id');
         try {
             $category = $this->postService->findCategoryById($id);
         } catch (RecordNotFoundBlogException $ex) {
-            return $this->redirect()->toRoute('listCategories');
+            return $this->notFoundAction();
         }
-        
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $del = $request->getPost('delete_confirmation', 'no');
 
             if ($del === 'yes') {
-                $this->postService->deleteCategory($category);
+                try {
+                    $this->postService->deleteCategory($category);
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
+                }
             }
 
             return $this->redirect()->toRoute('listCategories');
@@ -92,22 +113,28 @@ class DeleteController extends AbstractActionController
                 'category' => $category
         ));
     }
-    
+
      public function deleteTagAction()
     {
         $id = $this->params()->fromRoute('id');
         try {
             $tag = $this->postService->findTagById($id);
         } catch (RecordNotFoundBlogException $ex) {
-            return $this->redirect()->toRoute('listTags');
+            return $this->notFoundAction();
         }
-        
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $del = $request->getPost('delete_confirmation', 'no');
 
             if ($del === 'yes') {
-                $this->postService->deleteTag($tag);
+                try {
+                    $this->postService->deleteTag($tag);
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();	//TODO redirect ot access denied
+                }
             }
 
             return $this->redirect()->toRoute('listTags');
@@ -116,27 +143,5 @@ class DeleteController extends AbstractActionController
         return new ViewModel(array(
                 'tag' => $tag
         ));
-//        
-//        $request = $this->getRequest();
-//        if ($request->isPost()) {
-//            $del = $request->getPost('delete_confirmation', 'no');
-//
-//            if ($del === 'yes') {
-//                $id = $this->params()->fromRoute('id');
-//                try {
-//                    $tag = $this->postService->findTagById($id);
-//                } catch (RecordNotFoundBlogException $ex) {
-//                    return $this->redirect()->toRoute('listTags');
-//                }
-//        
-//                $this->postService->deleteTag($tag);
-//            }
-//
-//            return $this->redirect()->toRoute('listTags');
-//        }
-//
-//        return new ViewModel(array(
-//            'tag' => $tag
-//        ));
     }
 }
