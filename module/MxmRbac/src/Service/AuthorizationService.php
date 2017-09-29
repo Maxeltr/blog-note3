@@ -55,11 +55,6 @@ class AuthorizationService
     /**
      * @var Zend\Config\Config
      */
-    protected $assertions;
-
-    /**
-     * @var Zend\Config\Config
-     */
     protected $config;
 
     /*
@@ -71,6 +66,11 @@ class AuthorizationService
      * @var Zend\Log\Logger
      */
     protected $logger;
+
+    protected $assertions = [
+	'MustBeAuthorAssertion',
+	'AssertUserIdMatches',
+    ];
 
     public function __construct
     (
@@ -84,7 +84,7 @@ class AuthorizationService
         $this->currentUser = $currentUser;
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
-        $this->assertions = $config->assertions;
+        //$this->assertions = $config->assertions;
         $this->config = $config;
         $this->inArrayValidator = $inArrayValidator;
         $this->logger = $logger;
@@ -106,34 +106,40 @@ class AuthorizationService
         }
 
         $role = $this->currentUser->getRole();
-//        if (empty($role)) {
-//            return false;
-//        }
         if (! $this->rbac->hasRole($role)) {
             return false;
         }
 
         $assertion = null;
         if (!$this->config->roles->$role->get('no_assertion', false)) {
-            $assertionName = $this->getAssertionName($permission);
-            if ($assertionName) {
+            if ($content === null) {
+                return false;
+            }
+            $assertionNames = $this->getAssertionNames($permission);
+            $isGranted = !(count($assertionNames) < 1);
+            foreach ($assertionNames as $assertionName) {
                 $assertion = $this->assertionPluginManager->get($assertionName);
                 $assertion->setCurrentUser($this->currentUser);
-                if ($content === null) {
-                    return false;
-                }
                 $assertion->setContent($content);
+                $isGranted = $isGranted && $this->checkIsGranted($role, $permission, $assertion);
             }
-        }
+        } else {
+            $isGranted = $this->checkIsGranted($role, $permission);
+	}
 
-        try {
+        return $isGranted;
+    }
+
+    private function checkIsGranted($role, $permission, $assertion)
+    {
+	try {
             $isGranted = $this->rbac->isGranted($role, $permission, $assertion);
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             $isGranted = false;
         }
 
-        return $isGranted;
+	return $isGranted;
     }
 
     /**
@@ -141,22 +147,20 @@ class AuthorizationService
      *
      * @param string $permission
      *
-     * @return mixed string $assertion|null
+     * @return array $assertions
      */
-    private function getAssertionName($permission)
+    private function getAssertionNames($permission)
     {
-        foreach ($this->assertions as $assertion => $value) {
-            if (!isset($value->permissions)) {
-                break;
+        $assertions = [];
+	foreach ($this->assertions as $assertion) {
+            if (isset($this->config->assertions->$assertion) && $this->config->assertions->$assertion->permissions) {		//TODO проверить очередность
+		$this->inArrayValidator->setHaystack($this->config->assertions->$assertion->permissions->toArray());
+                if ($this->inArrayValidator->isValid($permission)) {
+                    $assertions[] = $assertion;
+		}
             }
+	}
 
-            $this->inArrayValidator->setHaystack($value->permissions->toArray());
-            if ($this->inArrayValidator->isValid($permission)) {
-
-                return $assertion;
-            }
-        }
-
-        return null;
+	return $assertions;
     }
 }

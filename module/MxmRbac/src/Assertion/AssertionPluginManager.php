@@ -30,20 +30,4 @@ use Zend\ServiceManager\AbstractPluginManager;
 
 class AssertionPluginManager extends AbstractPluginManager
 {
-//    public function validatePlugin($plugin)
-//    {
-//        if ($plugin instanceof AssertionInterface) {
-//            return;
-//        }
-//
-//        throw new Exception\RuntimeException(sprintf(
-//            'Assertions must implement "AssertionInterface", but "%s" was given',
-//            is_object($plugin) ? get_class($plugin) : gettype($plugin)
-//        ));
-//    }
-//
-//    protected function canonicalizeName($name)
-//    {
-//        return $name;
-//    }
 }

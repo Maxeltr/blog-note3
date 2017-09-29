@@ -46,7 +46,8 @@
         "psr-4": {
             "ApplicationTest\\": "module/Application/test/",
             "MxmBlogTest\\": "module/MxmBlog/test/",
-            "MxmUserTest\\": "module/MxmUser/test/"
+            "MxmUserTest\\": "module/MxmUser/test/",
+            "MxmRbacTest\\": "module/MxmRbac/test/"
         }
     },
     "extra": [],
@@ -63,7 +64,7 @@
         "test": "phpunit"
     },
     "require-dev": {
-		"phpunit/phpunit-skeleton-generator": "*",
+	"phpunit/phpunit-skeleton-generator": "*",
         "zendframework/zend-developer-tools": "^1.1",
         "zendframework/zend-test": "^3.1"
     }

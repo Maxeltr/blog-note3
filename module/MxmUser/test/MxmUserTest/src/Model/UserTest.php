@@ -45,7 +45,10 @@ class UserTest extends \PHPUnit_Framework_TestCase
             'passwordToken' => 'TestToken',
             'created' => new \DateTimeImmutable('1900-01-01 00:00:00', new \DateTimeZone('Europe/Moscow')),
             'dateToken' => new \DateTimeImmutable('1900-01-01 00:00:00', new \DateTimeZone('Asia/Barnaul')),
-            'timebelt' => new \DateTimeZone('Europe/Moscow')
+            'timebelt' => new \DateTimeZone('Europe/Moscow'),
+            'emailVerification' => true,		//add
+            'emailToken' => 'emailTestToken',
+            'dateEmailToken' => new \DateTimeImmutable('1900-01-01 02:02:02', new \DateTimeZone('Asia/Barnaul')),
         ];
 
         $this->user = new User();
@@ -68,6 +71,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->user->getCreated());
         $this->assertNull($this->user->getDateToken());
         $this->assertNull($this->user->getTimebelt());
+        $this->assertNull($this->user->getEmailVerification());
+        $this->assertNull($this->user->getEmailToken());
+        $this->assertNull($this->user->getDateEmailToken());
     }
 
     /**
@@ -85,6 +91,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->user->setCreated($this->data['created']);
         $this->user->setDateToken($this->data['dateToken']);
         $this->user->setTimebelt($this->data['timebelt']);
+        $this->user->setEmailVerification($this->data['emailVerification']);
+	$this->user->setEmailToken($this->data['emailToken']);
+	$this->user->setDateEmailToken($this->data['dateEmailToken']);
 
         $this->assertSame($this->data['id'], $this->user->getId());
         $this->assertSame($this->data['username'], $this->user->getUsername());
@@ -95,5 +104,8 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->data['created'], $this->user->getCreated());
         $this->assertSame($this->data['dateToken'], $this->user->getDateToken());
         $this->assertSame($this->data['timebelt'], $this->user->getTimebelt());
+        $this->assertSame($this->data['emailVerification'], $this->user->getEmailVerification());
+	$this->assertSame($this->data['emailToken'], $this->user->getEmailToken());
+	$this->assertSame($this->data['dateEmailToken'], $this->user->getDateEmailToken());
     }
 }

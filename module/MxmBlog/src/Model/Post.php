@@ -60,7 +60,7 @@ class Post extends AbstractModel implements PostInterface
     protected $category;
 
     /**
-     * @var int authorID
+     * @var UserInterface author
      */
     protected $author;
 
@@ -225,7 +225,7 @@ class Post extends AbstractModel implements PostInterface
     public function setAuthor(UserInterface $author)
     {
         $this->author = $author;
-        
+
         return $this;
     }
 
