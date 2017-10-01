@@ -84,8 +84,7 @@ class AuthorizationService
         $this->currentUser = $currentUser;
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
-        //$this->assertions = $config->assertions;
-        $this->config = $config;
+         $this->config = $config;
         $this->inArrayValidator = $inArrayValidator;
         $this->logger = $logger;
     }
@@ -106,31 +105,34 @@ class AuthorizationService
         }
 
         $role = $this->currentUser->getRole();
-        if (! $this->rbac->hasRole($role)) {
+        if (!$this->rbac->hasRole($role)) {
             return false;
         }
 
-        $assertion = null;
-        if (!$this->config->roles->$role->get('no_assertion', false)) {
-            if ($content === null) {
-                return false;
-            }
-            $assertionNames = $this->getAssertionNames($permission);
-            $isGranted = !(count($assertionNames) < 1);
+        if ($this->config->roles->$role->get('no_assertion', false)) {             //option 'no_assertion' is present?
+            return $this->checkIsGranted($role, $permission);
+        }
+
+        $isGranted = true;
+        $assertionNames = $this->getAssertionNames($permission);                    //get assertions for given permission
+        if (count($assertionNames) < 1) {                                           //assertions for given permission is absent?
+            $isGranted = $this->checkIsGranted($role, $permission);
+        } else {
             foreach ($assertionNames as $assertionName) {
+                if ($content === null) {
+                    return false;
+                }
                 $assertion = $this->assertionPluginManager->get($assertionName);
                 $assertion->setCurrentUser($this->currentUser);
                 $assertion->setContent($content);
                 $isGranted = $isGranted && $this->checkIsGranted($role, $permission, $assertion);
             }
-        } else {
-            $isGranted = $this->checkIsGranted($role, $permission);
-	}
+        }
 
         return $isGranted;
     }
 
-    private function checkIsGranted($role, $permission, $assertion)
+    private function checkIsGranted($role, $permission, $assertion = null)
     {
 	try {
             $isGranted = $this->rbac->isGranted($role, $permission, $assertion);

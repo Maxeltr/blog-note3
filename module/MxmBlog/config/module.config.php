@@ -192,6 +192,20 @@ return [
                     ],
                 ],
             ],
+            'listPostsByUser' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/posts/user/:id[/:page]',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'listPostsByUser'
+                    ],
+                ],
+            ],
             'listArchives' => [
                 'type'    => 'Segment',
                 'options' => [

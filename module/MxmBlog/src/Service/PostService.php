@@ -35,6 +35,8 @@ use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmBlog\Exception\NotAuthorizedBlogException;
+use MxmBlog\Exception\RecordNotFoundBlogException;
+use MxmUser\Model\UserInterface;
 
 class PostService implements PostServiceInterface
 {
@@ -114,7 +116,30 @@ class PostService implements PostServiceInterface
      */
     public function findPostById($id)
     {
-	return $this->mapper->findPostById($id);
+        $post = $this->mapper->findPostById($id, false);
+        if ($post->getIsPublished()) {
+            return $post;
+        }
+
+        if (!$this->authorizationService->isGranted('find.unpublished.post', $post)) {      //TODO сделать остальные методы аналогично
+            throw new RecordNotFoundBlogException("Post with id " . $id . " not found");
+        }
+
+	return $post;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findPostsByUser(UserInterface $user)
+    {
+        if ($this->authorizationService->isGranted('find.unpublished.posts', $user)) {      //если пользователь ищет свои статьи, то показывать неопубликованные
+            $posts = $this->mapper->findPostsByUser($user, false);
+        } else {
+            $posts = $this->mapper->findPostsByUser($user);
+        }
+
+	return $posts;
     }
 
     /**

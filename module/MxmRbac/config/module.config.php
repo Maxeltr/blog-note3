@@ -73,6 +73,8 @@ return [
                         'add.post',
                         'edit.post',
                         'delete.post',
+                        'find.unpublished.post',
+                        'find.unpublished.posts',
 
                     ],
                 ],
@@ -92,13 +94,14 @@ return [
                     'permissions' => [
                         'edit.post',
                         'delete.post',
+                        'find.unpublished.post',
                     ]
                 ],
                 'AssertUserIdMatches' => [
                     'permissions' => [
-                        'find.user',
                         'edit.user',
                         'delete.user',
+                        'find.unpublished.posts',
                     ]
                 ],
             ],

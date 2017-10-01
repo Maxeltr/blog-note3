@@ -29,6 +29,7 @@ namespace MxmBlog\Controller;
 use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmBlog\Exception\RecordNotFoundBlogException;
+use MxmUser\Exception\NotAuthenticatedUserException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;
@@ -36,6 +37,7 @@ use Zend\Config\Config;
 use Zend\Validator\Date;
 use Zend\Validator\NotEmpty;
 use Zend\Log\Logger;
+use MxmUser\Service\UserServiceInterface;
 
 class ListController extends AbstractActionController
 {
@@ -65,13 +67,19 @@ class ListController extends AbstractActionController
      */
     protected $logger;
 
+    /**
+     * @var \User\Service\UserServiceInterface
+     */
+    protected $userService;
+
     public function __construct(
         PostServiceInterface $postService,
         Date $dateValidator,
         DateTimeInterface $datetime,
         Config $config,
         NotEmpty $notEmptyValidator,
-        Logger $logger
+        Logger $logger,
+        UserServiceInterface $userService
     ) {
         $this->postService = $postService;
         $this->dateValidator = $dateValidator;
@@ -80,6 +88,7 @@ class ListController extends AbstractActionController
         $this->notEmptyValidator = $notEmptyValidator;
         $this->dateTimeFormat = $this->config->dateTime->dateTimeFormat;
         $this->logger = $logger;
+        $this->userService = $userService;
     }
 
     public function indexAction()
@@ -144,6 +153,34 @@ class ListController extends AbstractActionController
         $model = new ViewModel(array(
             'posts' => $paginator,
             'route' => 'listPostsByTag'
+        ));
+        $model->setTemplate('mxm-blog/list/list-posts');
+
+        return $model;
+    }
+
+    public function listPostsByUserAction()
+    {
+        $userId = $this->params()->fromRoute('id');
+
+        try {
+            $user = $this->userService->findUserById($userId);
+        } catch (NotAuthenticatedUserException $e) {
+            $redirectUrl = $this->url()->fromRoute('listPostsByUser', ['id' => $userId, 'page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+            
+            return $this->notFoundAction();
+        }
+
+        $paginator = $this->postService->findPostsByUser($user);
+        $this->configurePaginator($paginator);
+
+        $model = new ViewModel(array(
+            'posts' => $paginator,
+            'route' => 'listPostsByUser'
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
 

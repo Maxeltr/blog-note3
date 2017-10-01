@@ -133,7 +133,6 @@ class ZendDbSqlMapper implements MapperInterface
      */
     public function findPostById($id, $hideUnpublished = true)
     {
-
         $parameters['where']['id'] = $id;
 
         if($hideUnpublished === true) {
@@ -415,7 +414,7 @@ class ZendDbSqlMapper implements MapperInterface
     {
         $parameters = array(
             'where' => array(
-                'author' => $user
+                'author' => $user->getId()
             ),
             'group' => array(
                 'id'

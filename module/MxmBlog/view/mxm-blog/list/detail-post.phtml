@@ -37,7 +37,9 @@
                 } ?>
             </p>
             <p class="blog-post-meta">
-                Author: <?php echo $this->escapeHtml($post->getAuthor()->getUserName()); ?>
+                Author: <a href="<?php echo $this->url('listPostsByUser',
+                            array('action' => 'listPostsByUser', 'id' => $post->getAuthor()->getId(), 'page' => '1')); ?>">
+                            <?php echo $this->escapeHtml($post->getAuthor()->getUserName()); ?></a>
             </p>
 
             <p class="blog-post-meta">

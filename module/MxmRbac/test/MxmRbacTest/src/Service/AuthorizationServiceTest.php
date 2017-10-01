@@ -120,7 +120,6 @@ class AuthorizationServiceTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->config = new Config($configArray);
-        //$this->rbac = $this->prophesize(Rbac::class);
 
         $this->rbac = new Rbac();
         $roles = $this->config->roles;
@@ -236,74 +235,84 @@ class AuthorizationServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(false, $authorizationService->isGranted('find.user', $user));
     }
 
-//    /**
-//     * @covers MxmRbac\Service\AuthorizationService::isGranted
-//     *
-//     */
-//    public function testIsGrantedWithAssertUserIdMatchesWhenCurrentUserIsAbsent()
-//    {
-//        $authorizationService = new AuthorizationService(
-//            $this->rbac->reveal(),
-//            $this->assertionPluginManager->reveal(),
-//            $this->config->reveal(),
-//            $this->inArrayValidator->reveal(),
-//            $this->logger->reveal()
-//        );
-//        $role = $this->rbac->hasRole(Argument::any())->willReturn(true);
-//        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
-//        $user = new User();
-//        $user->setId('1');
-//        $this->assertSame(false, $authorizationService->isGranted('find.user', $user));
-//    }
-//
-//    /**
-//     * @covers MxmRbac\Service\AuthorizationService::isGranted
-//     *
-//     */
-//    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOption()
-//    {
-//        $this->rbac->hasRole(Argument::any())->willReturn(true);
-//        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
-//        $this->currentUser->setRole('admin');
-//        $user = new User();
-//        $user->setId('1');
-//        $this->assertSame(true, $this->authorizationService->isGranted('find.user', $user));
-//        $user->setId('2');
-//        $this->assertSame(true, $this->authorizationService->isGranted('find.user', $user));
-//        $this->assertSame(true, $this->authorizationService->isGranted('find.user'));
-//    }
-//
-//    /**
-//     * @covers MxmRbac\Service\AuthorizationService::isGranted
-//     *
-//     */
-//    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOptionWhenPermissionDoesNotExist()
-//    {
-//        $this->rbac->hasRole(Argument::any())->willReturn(true);
-//        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
-//        $this->currentUser->setRole('admin');
-//        $user = new User();
-//        $user->setId('1');
-//        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission', $user));
-//        $user->setId('2');
-//        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission', $user));
-//        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission'));
-//    }
-//
-//    /**
-//     * @covers MxmRbac\Service\AuthorizationService::isGranted
-//     *
-//     */
-//    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsMatch()
-//    {
-//        $this->rbac->hasRole(Argument::any())->willReturn(true);
-//        $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeAuthorAssertion);
-//        $this->currentUser->setRole('author');
-//        $user = new User();
-//        $user->setId('1');
-//        $post = new Post();
-//        $post->setAuthor($user);
-//        $this->assertSame(true, $this->authorizationService->isGranted('edit.post', $post));
-//    }
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithAssertUserIdMatchesWhenCurrentUserIsAbsent()
+    {
+        $authorizationService = new AuthorizationService(
+            $this->rbac,
+            $this->assertionPluginManager->reveal(),
+            $this->config,
+            $this->inArrayValidator,
+            $this->logger->reveal()
+        );
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $user = new User();
+        $user->setId('1');
+        $this->assertSame(false, $authorizationService->isGranted('find.user', $user));
+    }
 
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOption()
+    {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $this->currentUser->setRole('admin');
+        $user = new User();
+        $user->setId('1');
+        $this->assertSame(true, $this->authorizationService->isGranted('find.user', $user));
+        $user->setId('2');
+        $this->assertSame(true, $this->authorizationService->isGranted('find.user', $user));
+        $this->assertSame(true, $this->authorizationService->isGranted('find.user'));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOptionWhenPermissionDoesNotExist()
+    {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $this->currentUser->setRole('admin');
+        $user = new User();
+        $user->setId('1');
+        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission', $user));
+        $user->setId('2');
+        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission', $user));
+        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission'));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsMatch()
+    {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeAuthorAssertion);
+        $this->currentUser->setRole('author');
+        $user = new User();
+        $user->setId('1');
+        $post = new Post();
+        $post->setAuthor($user);
+        $this->assertSame(true, $this->authorizationService->isGranted('edit.post', $post));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsDoNotMatch()
+    {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeAuthorAssertion);
+        $this->currentUser->setRole('author');
+        $user = new User();
+        $user->setId('2');
+        $post = new Post();
+        $post->setAuthor($user);
+        $this->assertSame(false, $this->authorizationService->isGranted('edit.post', $post));
+    }
 }
