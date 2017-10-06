@@ -48,6 +48,16 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
         ));
 
         $this->add([
+            'type' => 'csrf',
+            'name' => 'editPassword_csrf',
+            'options' => [
+                'csrf_options' => [
+                'timeout' => 600
+                ]
+            ],
+        ]);
+
+        $this->add([
             'type' => 'password',
             'name' => 'oldPassword',
             'attributes' => [

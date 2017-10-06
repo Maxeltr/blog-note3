@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -31,6 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\View\Helper\FormatDateI18n;
 use Zend\Config\Config;
 use MxmBlog\Service\DateTimeInterface;
+use Zend\Authentication\AuthenticationService;
 
 class FormatDateI18nFactory implements FactoryInterface
 {
@@ -38,7 +39,8 @@ class FormatDateI18nFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
         $datetime = new \DateTime();
+        $authenticationService = $container->get(AuthenticationService::class);
 
-        return new FormatDateI18n($config->blog_module, $datetime);
+        return new FormatDateI18n($config->blog_module, $datetime, $authenticationService);
     }
 }

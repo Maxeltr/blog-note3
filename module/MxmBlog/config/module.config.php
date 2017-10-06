@@ -84,6 +84,7 @@ return [
             Form\PostForm::class => Factory\Form\PostFormFactory::class,
             Form\PostFieldset::class => Factory\Form\PostFieldsetFactory::class,
             Form\CategoriesFieldset::class => Factory\Form\CategoriesFieldsetFactory::class,
+            Form\TagsFieldset::class => Factory\Form\TagsFieldsetFactory::class,
             Form\TagFieldset::class => Factory\Form\TagFieldsetFactory::class,
             Form\CategoryForm::class => Factory\Form\CategoryFormFactory::class,
             Form\CategoryFieldset::class => Factory\Form\CategoryFieldsetFactory::class,

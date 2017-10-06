@@ -116,7 +116,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
                 'should_create_template' => true,
                 'allow_add' => true,
                 'target_element' => array(
-                    'type' => 'MxmBlog\Form\TagFieldset',
+                    'type' => 'MxmBlog\Form\TagsFieldset',
                 ),
             ),
         ));

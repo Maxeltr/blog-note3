@@ -91,6 +91,8 @@ class User implements UserInterface
      */
     protected $dateToken;
 
+    protected $locale;
+
     /**
      *  {@inheritDoc}
      */
@@ -271,7 +273,7 @@ class User implements UserInterface
         return $this;
     }
 
-	/**
+    /**
      *  {@inheritDoc}
      */
     public function getEmailToken()
@@ -289,7 +291,7 @@ class User implements UserInterface
         return $this;
     }
 
-	/**
+    /**
      *  {@inheritDoc}
      */
     public function getDateEmailToken()
@@ -303,6 +305,24 @@ class User implements UserInterface
     public function setDateEmailToken(DateTimeInterface $dateEmailToken)
     {
         $this->dateEmailToken = $dateEmailToken;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
 
         return $this;
     }

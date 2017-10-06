@@ -37,6 +37,9 @@ use MxmRbac\Service\AuthorizationService;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmUser\Model\UserInterface;
+use Zend\Validator\Db\RecordExists;
+use Zend\Tag\ItemList;
+use MxmBlog\Exception\InvalidArgumentBlogException;
 
 class PostService implements PostServiceInterface
 {
@@ -69,12 +72,14 @@ class PostService implements PostServiceInterface
         MapperInterface $mapper,
         DateTimeInterface $datetime,
         IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
+        RecordExists $isRecordExists,
         AuthorizationService $authorizationService,
-            $authenticationService
+        AuthenticationService $authenticationService
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
         $this->IsPublishedRecordExistsValidator = $isPublishedValidator;
+        $this->isRecordExists = $isRecordExists;
         $this->authorizationService = $authorizationService;
         $this->authenticationService = $authenticationService;
     }
@@ -161,6 +166,9 @@ class PostService implements PostServiceInterface
         $user = $this->authenticationService->getIdentity();
         $post->setAuthor($user);
 
+        $this->unsetNonExistingTags($post);
+        $this->unsetNonExistingCategory($post);
+
         return $this->mapper->insertPost($post);
     }
 
@@ -181,8 +189,71 @@ class PostService implements PostServiceInterface
 
         $post->setVersion($post->getVersion() + 1);
 
+        $this->unsetNonExistingTags($post);
+	$this->unsetNonExistingCategory($post);
+
         return $this->mapper->updatePost($post);
     }
+
+    /**
+     * Unset tags that don't exist in db
+     *
+     * @param  PostInterface $post
+     * @return void
+     */
+	private function unsetNonExistingTags(PostInterface $post)		
+	{
+		$itemList = $post->getTags();
+
+		if(!$itemList instanceof ItemList) {
+            throw new InvalidArgumentBlogException(sprintf(
+					'Tags property of PostInterface should contain Zend\Tag\ItemList "%s"',
+					(is_object($itemList) ? get_class($itemList) : gettype($itemList))
+			));
+        }
+
+		$this->isRecordExists->setField('id');
+		$this->isRecordExists->setTable('tags');
+
+        foreach($itemList as $offset => $item) {
+
+            if(!$item instanceof TagInterface) {
+				throw new InvalidArgumentBlogException(sprintf(
+					'Itemlist of PostInterface should contain MxmBlog\Model\TagInterface "%s"',
+					(is_object($item) ? get_class($item) : gettype($item))
+				));
+            }
+
+			if(!$this->isRecordExists->isValid($item->getId())) {
+				$itemList->offsetUnset($offset);
+			}
+        }
+	}
+
+	/**
+     * Unset category that doesn't exist in db
+     *
+     * @param  PostInterface $post
+     * @return void
+     */
+	private function unsetNonExistingCategory(PostInterface $post)
+	{
+		$category = $post->getCategory();
+
+		if(!$category instanceof CategoryInterface) {
+            throw new InvalidArgumentBlogException(sprintf(
+                'Category property of PostInterface should contain CategoryInterface "%s"',
+                (is_object($category) ? get_class($category) : gettype($category))
+			));
+        }
+
+		$this->isRecordExists->setField('id');
+		$this->isRecordExists->setTable('category');
+
+		if(!$this->isRecordExists->isValid($category->getId())) {
+			$post->setCategory(new MxmBlog\Model\Category());		//TODO придумать что нить
+		}
+	}
 
     /**
      * {@inheritDoc}

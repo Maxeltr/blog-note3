@@ -171,7 +171,7 @@ class ListController extends AbstractActionController
             return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            
+
             return $this->notFoundAction();
         }
 
@@ -189,8 +189,14 @@ class ListController extends AbstractActionController
 
     public function listPostsByPublishedAction()
     {
-        $since = $this->params()->fromRoute('since');
-        $to = $this->params()->fromRoute('to');
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $since = $request->getPost('since', null);
+            $to = $request->getPost('to', null);
+        } else {
+            $since = $this->params()->fromRoute('since');
+            $to = $this->params()->fromRoute('to');
+        }
 
         $since = $since . ' 00:00:00';
         $to = $to . ' 23:59:59';

@@ -34,6 +34,7 @@ use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use MxmBlog\Service\PostService;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Authentication\AuthenticationService;
+use Zend\Validator\Db\RecordExists;
 
 class PostServiceFactory implements FactoryInterface
 {
@@ -44,11 +45,18 @@ class PostServiceFactory implements FactoryInterface
         $isPublishedRecordExistsValidator = $container->get(IsPublishedRecordExistsValidatorInterface::class);
         $authorizationService = $container->get(AuthorizationService::class);
         $authenticationService = $container->get(AuthenticationService::class);
+        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+        $isRecordExists = new RecordExists([
+            'table'   => 'tags',
+            'field'   => 'id',
+            'adapter' => $dbAdapter,
+        ]);
 
         return new PostService(
             $mapper,
             $dateTime,
             $isPublishedRecordExistsValidator,
+            $isRecordExists,
             $authorizationService,
             $authenticationService
         );

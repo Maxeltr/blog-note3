@@ -48,6 +48,16 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
         ));
 
         $this->add([
+            'type' => 'csrf',
+            'name' => 'editEmail_csrf',
+            'options' => [
+                'csrf_options' => [
+                'timeout' => 600
+                ]
+            ],
+        ]);
+
+        $this->add([
             'type' => 'text',
             'name' => 'newEmail',
             'attributes' => [

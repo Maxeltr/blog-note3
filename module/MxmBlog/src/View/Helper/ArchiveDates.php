@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -34,11 +34,11 @@ use Zend\Config\Config;
 class ArchiveDates extends AbstractHelper
 {
     protected $mapper;
-    
+
     protected $dateValidator;
-    
+
     protected $formatter;
-    
+
     public function __construct(MapperInterface $mapper, Date $dateValidator, \IntlDateFormatter $formatter)
     {
         $this->mapper = $mapper;
@@ -49,10 +49,10 @@ class ArchiveDates extends AbstractHelper
     public function __invoke()
     {
         $resultSet = $this->mapper->findPublishDates('month', 12);
-        
+
         $archive = array();
         foreach ($resultSet as $key => $result) {
-            if (array_key_exists('year', $result) && array_key_exists('month', $result) && 
+            if (array_key_exists('year', $result) && array_key_exists('month', $result) &&
                 array_key_exists('total', $result)) {
                 $this->dateValidator->setFormat('Y');
                 if (!$this->dateValidator->isValid($result['year'])) {
@@ -62,26 +62,26 @@ class ArchiveDates extends AbstractHelper
                 if (!$this->dateValidator->isValid($result['month'])) {
                     break;
                 }
-                if (!$result['year']) {
-                    break;
-                }
-                
+//                if (!$result['year']) {
+//                    break;
+//                }
+
                 $this->formatter->setPattern('Y');
                 $year = $this->formatter->format(
                     \DateTime::createFromFormat('Y|', $result['year'])
                 );
-                
+
                 $this->formatter->setPattern('LLLL');
                 $month = $this->formatter->format(
                     \DateTime::createFromFormat('m|', $result['month'])
                 );
-                
+
                 $archive[$year][$key]['monthNum'] = $result['month'];
                 $archive[$year][$key]['monthName'] = $month;
                 $archive[$year][$key]['total'] = $result['total'];
             }
         }
-        
+
         return $archive;
     }
 }

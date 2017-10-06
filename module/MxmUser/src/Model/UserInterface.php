@@ -212,4 +212,20 @@ interface UserInterface
      * @return $this
      */
     public function setDateEmailToken(DateTimeInterface $dateEmailToken);
+
+    /**
+     * Получить локаль (ru_RU)
+     *
+     * @return string locale
+     */
+    public function getLocale();
+
+
+    /**
+     * Установка локали (ru_RU)
+     * @param string $locale
+     *
+     * @return $this
+     */
+    public function setLocale($locale);
 }

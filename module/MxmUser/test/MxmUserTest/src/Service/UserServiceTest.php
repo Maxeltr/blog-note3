@@ -677,4 +677,63 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(ExpiredUserException::class, "Password token " . $token . " expired. User id " . $this->user->getId());
         $this->userService->setPassword('newPassword', $token);
     }
+
+    /**
+     * @covers MxmUser\Service\UserService::confirmEmail
+     *
+     */
+    public function testconfirmEmail()	
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid($token)->willReturn(true);
+        $this->mapper->findUserByEmailToken($token)->willReturn($this->user);
+        $tokenCreationDate = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+        $this->user->setDateEmailToken($tokenCreationDate);
+        $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
+	$this->mapper->updateUser($this->user)->shouldBeCalled();
+        $this->mapper->updateUser($this->user)->willReturn($this->user);
+	$user = $this->userService->confirmEmail($token);
+        $this->assertSame(true, $user->getEmailVerification());
+    }
+
+	/**
+     * @covers MxmUser\Service\UserService::confirmEmail
+     *
+     */
+    public function testconfirmEmailEmptyToken()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid($token)->willReturn(false);
+        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: token.');
+        $user = $this->userService->confirmEmail($token);
+    }
+
+	/**
+     * @covers MxmUser\Service\UserService::confirmEmail
+     *
+     */
+    public function testconfirmEmailTokenNotFound()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid($token)->willReturn(true);
+        $this->mapper->findUserByEmailToken($token)->willThrow(\Exception::class);
+        $this->setExpectedException(RecordNotFoundUserException::class, 'Token does not exists');
+        $this->userService->confirmEmail($token);
+    }
+
+	/**
+     * @covers MxmUser\Service\UserService::confirmEmail
+     *
+     */
+    public function testconfirmEmailExpiredToken()
+    {
+        $token = 'dsg4tfsgf5gs';
+        $this->notEmptyValidator->isValid($token)->willReturn(true);
+        $this->mapper->findUserByEmailToken($token)->willReturn($this->user);
+        $tokenCreationDate = new \DateTime('2017-01-01', new \DateTimeZone('Europe/Moscow'));
+        $this->user->setDateEmailToken($tokenCreationDate);
+        $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
+        $this->setExpectedException(ExpiredUserException::class, "Email token " . $token . " expired. User id " . $this->user->getId());
+        $user = $this->userService->confirmEmail($token);
+    }
 }

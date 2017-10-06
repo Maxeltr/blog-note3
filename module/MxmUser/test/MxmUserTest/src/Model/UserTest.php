@@ -46,7 +46,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
             'created' => new \DateTimeImmutable('1900-01-01 00:00:00', new \DateTimeZone('Europe/Moscow')),
             'dateToken' => new \DateTimeImmutable('1900-01-01 00:00:00', new \DateTimeZone('Asia/Barnaul')),
             'timebelt' => new \DateTimeZone('Europe/Moscow'),
-            'emailVerification' => true,		//add
+            'emailVerification' => true,
             'emailToken' => 'emailTestToken',
             'dateEmailToken' => new \DateTimeImmutable('1900-01-01 02:02:02', new \DateTimeZone('Asia/Barnaul')),
         ];

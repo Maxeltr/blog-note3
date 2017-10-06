@@ -10,42 +10,45 @@
         <div class="blog-post">
             <?php if (count($this->posts)): ?>
                 <?php foreach ($this->posts as $post): ?>
-                    
+
 <!--                        <h4><?php //echo $this->escapeHtml($post->getTitle()); ?></h4>-->
-                        
+
                         <h2><a href="<?php echo $this->url('detailPost',
                             array('action' => 'detailPost', 'id' => $post->getId())); ?>">
                             <?php echo $this->escapeHtml($post->getTitle()); ?></a></h2>
                         <p class="blog-post-meta">
-                            Category: <?php echo $this->escapeHtml($post->getCategory()->getTitle()); ?>
+                            Category: <?php if ($post->getCategory() instanceof \MxmBlog\Model\CategoryInterface) {
+                                            echo $this->escapeHtml($post->getCategory()->getTitle());
+                                    }  ?>
                         </p>
                         <p class="blog-post-meta">
-                            Tags: <?php $tags = $post->getTags();
+                            Tags: <?php if ($post->getTags() instanceof \MxmUser\Model\TagInterface) { ?>
+							<?php $tags = $post->getTags();
                             $tags->spreadWeightValues([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
                             foreach ($tags as $tag): ?>
                                 <?php echo $this->escapeHtml($tag->getTitle());?>
                                 <?php echo $this->escapeHtml($tag->getWeight());?>
                                 (<?php echo $this->escapeHtml($tag->getParam('weightValue'));?>)
-                            <?php endforeach; ?>
+                            <?php endforeach; }  ?>
                         </p>
                         <p>
                             <?php echo $this->htmlPurifier($post->getText()); ?>
                         </p>
-                                                
-                        
+
+
 <!--                        <p><a role="button" href="#" class="btn btn-default">View details »</a></p>-->
-                    
+
                 <?php endforeach; ?>
             <?php endif; ?>
-            
+
         </div><!-- /.blog-post -->
 
         <?php echo $this->paginationControl($this->posts,
             'Sliding',
-            'partial/paginator.phtml', 
+            'partial/paginator.phtml',
             array('route' => $this->route)); ?>
-        
-        
+
+
 
     </div><!-- /.blog-main -->
 
@@ -68,7 +71,7 @@
                 array('action' => 'listCategories')); ?>">Categories</a></li>
             </ol>
           </div>
-         <div class="sidebar-module">  
+         <div class="sidebar-module">
            <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
             </div>
         </div><!-- /.blog-sidebar -->

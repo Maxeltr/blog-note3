@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,7 +25,7 @@
  */
 
 namespace MxmUser\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
@@ -44,7 +44,7 @@ class EditUserForm extends Form
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
     }
-    
+
     public function init() {
         //parent::init();
         $this->add([
@@ -54,7 +54,17 @@ class EditUserForm extends Form
                 'use_as_base_fieldset' => true
             ]
         ]);
-                
+
+        $this->add([
+            'type' => 'csrf',
+            'name' => 'editUser_csrf',
+            'options' => [
+                'csrf_options' => [
+                'timeout' => 600
+                ]
+            ],
+        ]);
+
         $this->add([
             'type' => 'submit',
             'name' => 'submit',

@@ -39,7 +39,7 @@ class UserHydrator extends ClassMethods implements HydratorInterface
 
     private $userPrototype;
 
-    public function __construct(UserMapperInterface $userMapper,  $userPrototype)
+    public function __construct(UserMapperInterface $userMapper, UserInterface $userPrototype)
     {
         $this->userMapper = $userMapper;
         $this->userPrototype = $userPrototype;
