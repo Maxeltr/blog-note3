@@ -44,6 +44,8 @@ class EditEmailFormTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->form = new EditEmailForm(new InputFilter());
+        $csrf = $this->form->get('editEmail_csrf')->getValue();
+        $this->data['editEmail_csrf'] = $csrf;
 
         parent::setUp();
     }

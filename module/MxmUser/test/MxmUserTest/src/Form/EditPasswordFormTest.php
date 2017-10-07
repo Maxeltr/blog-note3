@@ -48,6 +48,8 @@ class EditPasswordFormTest extends \PHPUnit_Framework_TestCase
         $this->data35 = '12345678901234567890123456789012345';
 
         $this->form = new EditPasswordForm(new InputFilter());
+        $csrf = $this->form->get('editPassword_csrf')->getValue();
+        $this->data['editPassword_csrf'] = $csrf;
 
         parent::setUp();
     }

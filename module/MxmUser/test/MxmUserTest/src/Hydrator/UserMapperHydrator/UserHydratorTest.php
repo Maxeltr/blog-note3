@@ -50,6 +50,10 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
             'created' => 'TestCreated',
             'dateToken' => 'TestDateToken',
             'timebelt' => 'TestTimebelt',
+            'emailVerification' => true,
+            'emailToken' => 'testEmailToken',
+            'dateEmailToken' => 'dateEmailToken',
+            'locale' => 'Ru_ru',
         ];
 
         $this->user = new User();
@@ -71,9 +75,13 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->data['password'], $result->getPassword());
         $this->assertSame($this->data['role'], $result->getRole());
         $this->assertSame($this->data['passwordToken'], $result->getPasswordToken());
+        $this->assertSame($this->data['emailToken'], $result->getEmailToken());
+        $this->assertSame($this->data['emailVerification'], $result->getEmailVerification());
+        $this->assertSame($this->data['locale'], $result->getLocale());
         $this->assertSame(null, $result->getCreated());
         $this->assertSame(null, $result->getDateToken());
         $this->assertSame(null, $result->getTimebelt());
+        $this->assertSame(null, $result->getDateEmailToken());
     }
 
     /**
@@ -104,8 +112,9 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
             'emailVerification' => true,
             'emailToken' => 'testEmailToken',
             'dateEmailToken' => new \DateTimeImmutable('1900-01-01 01:01:01', new \DateTimeZone('Europe/Moscow')),
-
+            'locale' => 'Ru_ru',
         ];
+
         $this->user->setId('1');
         $this->user->setUsername('TestUsername');
         $this->user->setEmail('Test@email.com');
@@ -118,6 +127,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
         $this->user->setEmailVerification($data['emailVerification']);
         $this->user->setEmailToken($data['emailToken']);
         $this->user->setDateEmailToken($data['dateEmailToken']);
+        $this->user->setLocale($data['locale']);
 
         $result = $this->hydrator->extract($this->user);
         unset($data['created']);
@@ -125,7 +135,6 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
         unset($data['timebelt']);
         unset($data['dateEmailToken']);
         $this->assertSame($data, $result);
-
     }
 
     /**
@@ -137,5 +146,4 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
         $result = $this->hydrator->extract($user);
         $this->assertSame(array(), $result);
     }
-
 }

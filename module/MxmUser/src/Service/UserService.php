@@ -410,7 +410,7 @@ class UserService implements UserServiceInterface
         try {
             $user = $this->mapper->findUserByEmailToken($token);
         } catch (\Exception $e) {
-            throw new RecordNotFoundUserException("Token doesn't exists");
+            throw new RecordNotFoundUserException("Token does not exists");
         }
 
 	if ($this->isEmailTokenExpired($user)) {
