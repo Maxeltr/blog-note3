@@ -68,7 +68,7 @@ class DeleteController extends AbstractActionController
         } catch (NotAuthorizedUserException $e) {																	//add
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-            return $this->notFoundAction();	//TODO redirect ot access denied
+            return $this->redirect()->toRoute('notAuthorized');
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 

@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -36,7 +36,7 @@ class DateValidatorFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $dateTimeFormat = $config->user_module->dateTime->dateTimeFormat;
+        $dateTimeFormat = $config->defaults->dateTimeFormat;
         $validator = new Date(['format' => $dateTimeFormat]);
 
         return $validator;

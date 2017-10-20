@@ -60,7 +60,7 @@ class PostMapperHydratorFactory implements FactoryInterface
 
         $datetime = $container->get(DateTimeInterface::class);
         $dateValidator = $container->get(Date::class);
-        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config->blog_module);
+        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config);
 
         $user = $container->get(UserInterface::class);
         $userMapper = $container->get(UserMapperInterface::class);

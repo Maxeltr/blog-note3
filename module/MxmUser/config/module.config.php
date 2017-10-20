@@ -7,20 +7,25 @@ use Zend\Session\Validator\RemoteAddr;
 use Zend\Session\Validator\HttpUserAgent;
 
 return [
-    'user_module' => [
+    'mxm_user' => [
         'listController' => [
             'ItemCountPerPage' => 10,
         ],
-        'dateTime' => [
-            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
-            'locale' => 'ru_RU',
-            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-            'defaultDate' => '1900-01-01 00:00:00'
-        ],
+//        'dateTime' => [
+//            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
+//            'locale' => 'ru_RU',
+//            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
+//            'defaultDate' => '1900-01-01 00:00:00'
+//        ],
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmUser.log',
         ],
 
+    ],
+    'defaults' => [
+	'locale' => 'ru_RU',
+	'timezone' => 'Europe/Moscow',
+	'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
     'controllers' => [
         'factories' => [
@@ -37,13 +42,15 @@ return [
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
             \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
+            \Zend\i18n\Translator\TranslatorInterface::class => Zend\I18n\Translator\Translator::class
+
         ],
         'factories' => [
             Service\UserService::class => Factory\Service\UserServiceFactory::class,
             Service\DateTime::class => Factory\Service\DateTimeFactory::class,
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
-            \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            //\Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             Hydrator\TimezoneFormHydrator\TimezoneFormHydrator::class => Factory\Hydrator\TimezoneFormHydratorFactory::class,
             AuthenticationService::class => Factory\Service\AuthenticationServiceFactory::class,
             Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
@@ -51,8 +58,14 @@ return [
             Hydrator\UserFormHydrator\UserFormHydrator::class => Factory\Hydrator\UserFormHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
+            Zend\I18n\Translator\Translator::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
 
         ],
+        'delegators' => [
+            Zend\I18n\Translator\Translator::class => [
+                Translator\TranslatorDelegator::class
+            ],
+	],
         'invokables' => [
 
         ],
@@ -218,7 +231,7 @@ return [
             'MxmUser' => __DIR__ . '/../view',
         ],
     ],
-    // Session configuration.
+    // Настройки сессии. Если приложение не использует сессии, то модуль MxmUSer использует данные настройки.
     'session_config' => [
         'cookie_lifetime'     => 60*60*1, // Session cookie will expire in 1 hour.
         'gc_maxlifetime'      => 60*60*24*30, // How long to store session data on server (for 1 month).
@@ -235,4 +248,7 @@ return [
     'session_storage' => [
         'type' => SessionArrayStorage::class
     ],
+//    'session_containers' => [							//
+//        'MxmUser'
+//    ],
 ];

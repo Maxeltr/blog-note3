@@ -27,17 +27,19 @@
 namespace MxmBlog\Factory\Form;
 
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Form\TagFieldset;
+use MxmBlog\Form\TagsFieldset;
 use MxmBlog\Model\TagInterface;
 use Zend\Hydrator\ClassMethods;
 use Interop\Container\ContainerInterface;
+use MxmBlog\Mapper\MapperInterface;			
 
-class TagFieldsetFactory implements FactoryInterface
+class TagsFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new TagFieldset(
+        return new TagsFieldset(
             $container->get(TagInterface::class),
+			$container->get(MapperInterface::class),
             new ClassMethods(false),
             $requestedName,
             $options

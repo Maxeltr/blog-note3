@@ -6,18 +6,23 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\Router\Http\Literal;
 
 return [
-    'blog_module' => [
+    'mxm_blog' => [
         'listController' => [
             'ItemCountPerPage' => 10,
         ],
-        'dateTime' => [
-            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
-            'locale' => 'ru_RU',
-            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-        ],
+//        'dateTime' => [
+//            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
+//            'locale' => 'ru_RU',
+//            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
+//        ],
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmBlog.log',
         ],
+    ],
+    'defaults' => [
+        'locale' => 'ru_RU',
+        'timezone' => 'Europe/Moscow',
+        'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
     'controllers' => [
         'factories' => [
@@ -47,8 +52,7 @@ return [
             Model\Tag::class => Factory\Model\TagFactory::class,
             Model\Category::class => Factory\Model\CategoryFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
-            \Zend\I18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
-            \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            //\Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
         ],
         'invokables' => [

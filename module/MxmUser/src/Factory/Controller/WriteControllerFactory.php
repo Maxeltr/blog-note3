@@ -45,6 +45,7 @@ class WriteControllerFactory implements FactoryInterface
         $logger = $container->get(Logger::class);
         $userService = $container->get(UserServiceInterface::class);
         $formManager = $container->get('FormElementManager');
+        $sessionContainer = $container->get('MxmUser');
 
         $editUserForm = $formManager->get(EditUserForm::class);
         $registerUserForm = $formManager->get(RegisterUserForm::class);
@@ -61,7 +62,8 @@ class WriteControllerFactory implements FactoryInterface
             $editPasswordForm,
             $editEmailForm,
             $resetPasswordForm,
-            $setPasswordForm
+            $setPasswordForm,
+            $sessionContainer
         );
     }
 }

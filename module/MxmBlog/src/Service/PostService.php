@@ -70,7 +70,7 @@ class PostService implements PostServiceInterface
 
     public function __construct(
         MapperInterface $mapper,
-        DateTimeInterface $datetime,
+        \DateTimeInterface $datetime,
         IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
         RecordExists $isRecordExists,
         AuthorizationService $authorizationService,
@@ -153,7 +153,7 @@ class PostService implements PostServiceInterface
     public function insertPost(PostInterface $post)
     {
         if (!$this->authorizationService->isGranted('add.post')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "add.post" is required.');
         }
 
         $post->setCreated($this->datetime->modify('now'));
@@ -178,7 +178,7 @@ class PostService implements PostServiceInterface
     public function updatePost(PostInterface $post)
     {
         if (!$this->authorizationService->isGranted('edit.post', $post)) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "edit.post" is required.');
         }
 
         $post->setUpdated($this->datetime->modify('now'));
@@ -201,7 +201,7 @@ class PostService implements PostServiceInterface
      * @param  PostInterface $post
      * @return void
      */
-	private function unsetNonExistingTags(PostInterface $post)		
+	private function unsetNonExistingTags(PostInterface $post)
 	{
 		$itemList = $post->getTags();
 
@@ -261,7 +261,7 @@ class PostService implements PostServiceInterface
     public function deletePost(PostInterface $post)
     {
         if (!$this->authorizationService->isGranted('delete.post', $post)) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "delete.post" is required.');
         }
 
         return $this->mapper->deletePost($post);
@@ -289,7 +289,7 @@ class PostService implements PostServiceInterface
     public function insertCategory(CategoryInterface $category)
     {
         if (!$this->authorizationService->isGranted('add.category')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "add.category" is required.');
         }
 
         return $this->mapper->insertCategory($category);
@@ -301,7 +301,7 @@ class PostService implements PostServiceInterface
     public function updateCategory(CategoryInterface $category)
     {
         if (!$this->authorizationService->isGranted('edit.category')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "edit.category" is required.');
         }
 
         return $this->mapper->updateCategory($category);
@@ -313,7 +313,7 @@ class PostService implements PostServiceInterface
     public function deleteCategory(CategoryInterface $category)
     {
         if (!$this->authorizationService->isGranted('delete.category')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "delete.category" is required.');
         }
 
         return $this->mapper->deleteCategory($category);
@@ -341,7 +341,7 @@ class PostService implements PostServiceInterface
     public function insertTag(TagInterface $tag)
     {
         if (!$this->authorizationService->isGranted('add.tag')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "add.tag" is required.');
         }
 
         return $this->mapper->insertTag($tag);
@@ -353,7 +353,7 @@ class PostService implements PostServiceInterface
     public function updateTag(TagInterface $tag)
     {
         if (!$this->authorizationService->isGranted('edit.tag')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "edit.tag" is required.');
         }
 
         return $this->mapper->updateTag($tag);
@@ -365,7 +365,7 @@ class PostService implements PostServiceInterface
     public function deleteTag(TagInterface $tag)
     {
         if (!$this->authorizationService->isGranted('delete.tag')) {
-            throw new NotAuthorizedBlogException('Access denied');
+            throw new NotAuthorizedBlogException('Access denied. Permission "delete.tag" is required.');
         }
 
         return $this->mapper->deleteTag($tag);

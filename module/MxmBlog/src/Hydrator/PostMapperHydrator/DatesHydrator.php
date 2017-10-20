@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -35,36 +35,36 @@ use Zend\Config\Config;
 class DatesHydrator implements HydratorInterface
 {
     private $datetime;
-    
+
     private $dateValidator;
-    
+
     private $config;
-    
+
     public function __construct(DateTimeInterface $datetime, Date $dateValidator, Config $config)
     {
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;
         $this->config = $config;
     }
-    
+
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof PostInterface) {
             return $object;
         }
-        
+
         if (array_key_exists('created', $data) && $this->dateValidator->isValid($data['created'])) {
             $object->setCreated($this->datetime->modify($data['created']));
         }
-        
+
         if (array_key_exists('updated', $data) && $this->dateValidator->isValid($data['updated'])) {
             $object->setUpdated($this->datetime->modify($data['updated']));
         }
-        
+
         if (array_key_exists('published', $data) && $this->dateValidator->isValid($data['published'])) {
             $object->setPublished($this->datetime->modify($data['published']));
         }
-        
+
         return $object;
     }
 
@@ -73,22 +73,22 @@ class DatesHydrator implements HydratorInterface
         if (!$object instanceof PostInterface) {
             return array();
         }
-        
+
         $values = array();
-        
+
         $datetimeCreated = $object->getCreated();
         if ($datetimeCreated instanceof DateTimeInterface) {
-            $values ['created'] = $datetimeCreated->format($this->config->dateTime->dateTimeFormat);
+            $values ['created'] = $datetimeCreated->format($this->config->defaults->dateTimeFormat);
         }
-        
+
         $datetimeUpdated = $object->getUpdated();
         if ($datetimeUpdated instanceof DateTimeInterface) {
-            $values ['updated'] = $datetimeUpdated->format($this->config->dateTime->dateTimeFormat);
+            $values ['updated'] = $datetimeUpdated->format($this->config->defaults->dateTimeFormat);
         }
-        
+
         $datetimePublished = $object->getPublished();
         if ($datetimePublished instanceof DateTimeInterface) {
-            $values ['published'] = $datetimePublished->format($this->config->dateTime->dateTimeFormat);
+            $values ['published'] = $datetimePublished->format($this->config->defaults->dateTimeFormat);
         }
 
         return $values;

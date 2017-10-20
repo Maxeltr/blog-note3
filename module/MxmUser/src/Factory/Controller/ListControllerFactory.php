@@ -41,6 +41,6 @@ class ListControllerFactory implements FactoryInterface
         $logger = $container->get(Logger::class);
         $userService = $container->get(UserServiceInterface::class);
 
-        return new ListController($userService, $config->user_module, $logger);
+        return new ListController($userService, $config, $logger);
     }
 }

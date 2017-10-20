@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
@@ -36,8 +36,8 @@ class DateTimeFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        
-        $timezone = new \DateTimeZone($config->blog_module->dateTime->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
+
+        $timezone = new \DateTimeZone($config->defaults->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
         $datetime = new DateTimeImmutable('now', $timezone);
 
         return $datetime;

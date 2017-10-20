@@ -86,7 +86,7 @@ class ListController extends AbstractActionController
         $this->datetime = $datetime;
         $this->config = $config;
         $this->notEmptyValidator = $notEmptyValidator;
-        $this->dateTimeFormat = $this->config->dateTime->dateTimeFormat;
+        $this->dateTimeFormat = $this->config->defaults->dateTimeFormat;
         $this->logger = $logger;
         $this->userService = $userService;
     }
@@ -364,7 +364,7 @@ class ListController extends AbstractActionController
         $page = (int) $this->params()->fromRoute('page');
         $page = ($page < 1) ? 1 : $page;
         $paginator->setCurrentPageNumber($page);
-        $paginator->setItemCountPerPage($this->config->listController->ItemCountPerPage);
+        $paginator->setItemCountPerPage($this->config->mxm_blog->listController->ItemCountPerPage);
 
         return $this;
     }

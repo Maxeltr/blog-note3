@@ -46,9 +46,9 @@ class UserMapperHydratorFactory implements FactoryInterface
 
         $datetime = $container->get(DateTimeInterface::class);
         $dateValidator = $container->get(Date::class);
-        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config->user_module);
+        $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config);
 
-        $timebeltHydrator = new TimebeltHydrator($config->user_module);
+        $timebeltHydrator = new TimebeltHydrator($config);
 
         $aggregatehydrator = new AggregateHydrator();
         $aggregatehydrator->setEventManager($container->get('EventManager'));

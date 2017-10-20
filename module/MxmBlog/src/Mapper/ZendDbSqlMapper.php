@@ -449,13 +449,13 @@ class ZendDbSqlMapper implements MapperInterface
 
         if($since !== null) {
             $parameters['greaterThanOrEqualTo'] = array(
-                'created' => $since->format($this->config->dateTime->dateTimeFormat)
+                'created' => $since->format($this->config->defaults->dateTimeFormat)
             );
         }
 
         if($to !== null) {
             $parameters['lessThanOrEqualTo'] = array(
-                'created' => $to->format($this->config->dateTime->dateTimeFormat)
+                'created' => $to->format($this->config->defaults->dateTimeFormat)
             );
         }
 
@@ -484,13 +484,13 @@ class ZendDbSqlMapper implements MapperInterface
 
         if($since !== null) {
             $parameters['greaterThanOrEqualTo'] = array(
-                'updated' => $since->format($this->config->dateTime->dateTimeFormat)
+                'updated' => $since->format($this->config->defaults->dateTimeFormat)
             );
         }
 
         if($to !== null) {
             $parameters['lessThanOrEqualTo'] = array(
-                'updated' => $to->format($this->config->dateTime->dateTimeFormat)
+                'updated' => $to->format($this->config->defaults->dateTimeFormat)
             );
         }
 
@@ -519,13 +519,13 @@ class ZendDbSqlMapper implements MapperInterface
 
         if($since !== null) {
             $parameters['greaterThanOrEqualTo'] = array(
-                'published' => $since->format($this->config->dateTime->dateTimeFormat)
+                'published' => $since->format($this->config->defaults->dateTimeFormat)
             );
         }
 
         if($to !== null) {
             $parameters['lessThanOrEqualTo'] = array(
-                'published' => $to->format($this->config->dateTime->dateTimeFormat)
+                'published' => $to->format($this->config->defaults->dateTimeFormat)
             );
         }
 

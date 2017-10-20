@@ -37,6 +37,9 @@ use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\NotAuthorizedUserException;
 use Zend\Form\FormInterface;
 use Zend\Log\Logger;
+use Zend\Http\Request;
+use Zend\Router\RouteInterface;
+use Zend\Session\Container;
 
 class WriteController extends AbstractActionController
 {
@@ -60,6 +63,7 @@ class WriteController extends AbstractActionController
     protected $editEmailForm;
     protected $resetPasswordForm;
     protected $setPasswordForm;
+    protected $sessionContainer;
 
     public function __construct(
         Logger $logger,
@@ -69,7 +73,8 @@ class WriteController extends AbstractActionController
         FormInterface $editPasswordForm,
         FormInterface $editEmailForm,
         FormInterface $resetPasswordForm,
-        FormInterface $setPasswordForm
+        FormInterface $setPasswordForm,
+        Container $sessionContainer
     ) {
         $this->logger = $logger;
         $this->userService = $userService;
@@ -79,6 +84,7 @@ class WriteController extends AbstractActionController
         $this->editEmailForm = $editEmailForm;
         $this->resetPasswordForm = $resetPasswordForm;
         $this->setPasswordForm = $setPasswordForm;
+        $this->sessionContainer = $sessionContainer;
     }
 
     public function addUserAction()
@@ -135,7 +141,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedUserException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -164,7 +170,7 @@ class WriteController extends AbstractActionController
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-            return $this->notFoundAction();	//TODO redirect ot access denied
+            return $this->redirect()->toRoute('notAuthorized');
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -175,13 +181,14 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->editUserForm->setData($request->getPost());  //данные устанавливаются и в форму и в объект, т.к. форма и объект связаны
             if ($this->editUserForm->isValid()) {
-                try {
-                    $this->userService->updateUser($user);
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();
-                }
+                //try {
+                    $this->userService->updateUser($user);
+//                } catch (\Exception $e) {
+//                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+//
+//                    return $this->notFoundAction();
+//                }
 
                 return $this->redirect()->toRoute('detailUser',
                     ['id' => $user->getId()]);
@@ -216,7 +223,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedUserException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -329,6 +336,32 @@ class WriteController extends AbstractActionController
 
             return $this->notFoundAction();
         }
+
+        return $this->redirect()->toRoute('loginUser');
+    }
+
+    public function changeLanguageAction()
+    {
+        die('not implement');
+        $lang = $this->params()->fromQuery('lang', null);
+
+	if (isset($this->sessionContainer->locale)) {
+            $translator->setLocale($sessionContainer->locale);
+	}
+
+	$redirect = $this->params()->fromQuery('redirect', null);
+
+	$url = new Request();
+        $url->setMethod(Request::METHOD_GET);
+        $url->setUri($redirect);
+	$routeMatch = $this->router->match($url);
+
+        if ($routeMatch === null) {
+            return $this->redirect()->toRoute('home');
+        } else {
+            return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
+        }
+
 
         return $this->redirect()->toRoute('loginUser');
     }

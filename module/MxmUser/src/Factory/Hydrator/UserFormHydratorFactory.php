@@ -39,7 +39,7 @@ class UserFormHydratorFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
         $userHydrator = new UserHydrator();
-        $timebeltHydrator = new TimebeltHydrator($config->user_module);
+        $timebeltHydrator = new TimebeltHydrator($config);
 
         $aggregatehydrator = new AggregateHydrator();
         $aggregatehydrator->setEventManager($container->get('EventManager'));

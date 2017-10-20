@@ -43,6 +43,7 @@ $form->get('submit')->setValue('Change Email');
 echo $this->form()->openTag($form);
 
 echo $this->formElement($form->get('id'));
+echo $this->formElement($form->get('editEmail_csrf'));
 
 echo $this->formLabel($form->get('newEmail'));
 echo $this->formElement($form->get('newEmail'));

@@ -44,6 +44,7 @@ echo $this->form()->openTag($form);
 
 $user = $form->get('user');
 echo $this->formRow($user->get('id'));
+echo $this->formElement($form->get('editUser_csrf'));
 echo $this->formRow($user->get('username'));
 
 $timezone = $user->get('timebelt');

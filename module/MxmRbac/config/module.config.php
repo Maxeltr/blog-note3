@@ -31,6 +31,11 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\Router\Http\Literal;
 
 return [
+    'controllers' => [
+        'factories' => [
+            Controller\AuthorizeController::class => Factory\Controller\AuthorizeControllerFactory::class,
+        ],
+    ],
     'service_manager' => [
         'aliases' => [
             //'MustBeAuthorAssertion' => Assertion\MustBeAuthorAssertion::class
@@ -43,6 +48,20 @@ return [
         'invokables' => [
             //Assertion\MustBeAuthorAssertion::class => Assertion\MustBeAuthorAssertion::class,
         ],
+    ],
+    'router' => [
+        'routes' => [
+            'notAuthorized' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/not-authorized',
+                    'defaults' => [
+                        'controller' => Controller\AuthorizeController::class,
+                        'action'     => 'notAuthorized',
+                    ],
+                ],
+            ],
+        ]
     ],
     'rbac_module' => [
         'rbac_config' => [
@@ -110,5 +129,9 @@ return [
             'path' => __DIR__ . '/../../../data/logs/MxmRbac.log',
         ],
     ],
-
+    'view_manager' => [
+        'template_path_stack' => [
+            'MxmRbac' => __DIR__ . '/../view',
+        ],
+    ],
 ];

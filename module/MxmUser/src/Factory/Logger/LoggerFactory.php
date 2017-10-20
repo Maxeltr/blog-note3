@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -37,10 +37,10 @@ class LoggerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $writer = new Stream($config->user_module->logger->path);
+        $writer = new Stream($config->mxm_user->logger->path);
         $logger = new Logger();
         $logger->addWriter($writer);
-        
+
         return $logger;
     }
 }

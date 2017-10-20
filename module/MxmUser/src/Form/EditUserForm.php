@@ -55,15 +55,15 @@ class EditUserForm extends Form
             ]
         ]);
 
-        $this->add([
-            'type' => 'csrf',
-            'name' => 'editUser_csrf',
-            'options' => [
-                'csrf_options' => [
-                'timeout' => 600
-                ]
-            ],
-        ]);
+//        $this->add([                      //TODO не работает
+//            'type' => 'csrf',
+//            'name' => 'editUser_csrf',
+//            'options' => [
+//                'csrf_options' => [
+//                'timeout' => 600
+//                ]
+//            ],
+//        ]);
 
         $this->add([
             'type' => 'submit',

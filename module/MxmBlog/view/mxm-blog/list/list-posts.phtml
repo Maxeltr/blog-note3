@@ -13,9 +13,9 @@
 
 <!--                        <h4><?php //echo $this->escapeHtml($post->getTitle()); ?></h4>-->
 
-                        <h2><a href="<?php echo $this->url('detailPost',
+                        <h3><a href="<?php echo $this->url('detailPost',
                             array('action' => 'detailPost', 'id' => $post->getId())); ?>">
-                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h2>
+                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h3>
                         <p class="blog-post-meta">
                             Category: <?php if ($post->getCategory() instanceof \MxmBlog\Model\CategoryInterface) {
                                             echo $this->escapeHtml($post->getCategory()->getTitle());

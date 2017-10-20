@@ -32,6 +32,13 @@ use \DateTimeZone;
 interface UserInterface
 {
     /**
+     * Возвращает клон UserInterface для правильной гидрации.
+     *
+     * @return UserInterface
+     */
+    public function __clone();
+    
+    /**
      * Возвращает ID записи
      *
      * @return int ID

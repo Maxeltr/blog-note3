@@ -68,10 +68,10 @@ class DeleteController extends AbstractActionController
             if ($del === 'yes') {
                 try {
                     $this->postService->deletePost($post);
-                } catch (NotAuthorizedBlogException $e) {												//add
+                } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 }
             }
 
@@ -102,7 +102,7 @@ class DeleteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 }
             }
 
@@ -133,7 +133,7 @@ class DeleteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 }
             }
 

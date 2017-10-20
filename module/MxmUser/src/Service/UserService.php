@@ -125,7 +125,7 @@ class UserService implements UserServiceInterface
         }
 
         if (!$this->authorizationService->isGranted('find.users')) {
-            throw new NotAuthorizedUserException('Access denied');
+            throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
         }
 
         return $this->mapper->findAllUsers();
@@ -143,7 +143,7 @@ class UserService implements UserServiceInterface
         $user = $this->mapper->findUserById($id);
         if ($user instanceof UserInterface) {
             if (!$this->authorizationService->isGranted('find.user', $user)) {
-                throw new NotAuthorizedUserException('Access denied');
+                throw new NotAuthorizedUserException('Access denied. Permission "find.user" is required.');
             }
         } else {
             throw new Exception\RuntimeException('mapper->findUserById returns value which does not implement UserInterface');
@@ -198,7 +198,7 @@ class UserService implements UserServiceInterface
         }
 
         if (!$this->authorizationService->isGranted('edit.user', $user)) {
-            throw new NotAuthorizedUserException('Access denied');
+            throw new NotAuthorizedUserException('Access denied. Permission "edit.user" is required.');
         }
 
         return $this->mapper->updateUser($user);
@@ -214,7 +214,7 @@ class UserService implements UserServiceInterface
         }
 
         if (!$this->authorizationService->isGranted('delete.user', $user)) {
-            throw new NotAuthorizedUserException('Access denied');
+            throw new NotAuthorizedUserException('Access denied. Permission "delete.user" is required.');
         }
 
         return $this->mapper->deleteUser($user);
@@ -230,7 +230,7 @@ class UserService implements UserServiceInterface
         }
 
         if (!$this->authorizationService->isGranted('edit.email')) {
-            throw new NotAuthorizedUserException('Access denied');
+            throw new NotAuthorizedUserException('Access denied. Permission "edit.email" is required.');
         }
 
         if (!$this->notEmptyValidator->isValid($password)) {
@@ -262,7 +262,7 @@ class UserService implements UserServiceInterface
         }
 
         if (!$this->authorizationService->isGranted('edit.password')) {
-            throw new NotAuthorizedUserException('Access denied');
+            throw new NotAuthorizedUserException('Access denied. Permission "edit.password" is required.');
         }
 
         if (!$this->notEmptyValidator->isValid($oldPassword) or !$this->notEmptyValidator->isValid($newPassword)) {

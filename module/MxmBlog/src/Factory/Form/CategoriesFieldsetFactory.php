@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -32,6 +32,7 @@ use MxmBlog\Model\CategoryInterface;
 use Zend\Hydrator\ClassMethods;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Mapper\MapperInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class CategoriesFieldsetFactory implements FactoryInterface
 {
@@ -41,6 +42,7 @@ class CategoriesFieldsetFactory implements FactoryInterface
             $container->get(CategoryInterface::class),
             $container->get(MapperInterface::class),
             new ClassMethods(false),
+            $container->get(TranslatorInterface::class),
             $requestedName,
             $options
         );

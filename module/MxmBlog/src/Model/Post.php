@@ -115,6 +115,9 @@ class Post extends AbstractModel implements PostInterface
         if ($this->published instanceof DateTimeInterface) {
             $this->published = clone $this->published;
         }
+        if ($this->author instanceof UserInterface) {
+            $this->author = clone $this->author;
+        }
     }
 
     /**
@@ -300,7 +303,7 @@ class Post extends AbstractModel implements PostInterface
      */
     public function setIsPublished($isPublished)
     {
-        $this->isPublished = $isPublished;
+        $this->isPublished = (bool) $isPublished;
 
         return $this;
     }
@@ -319,7 +322,7 @@ class Post extends AbstractModel implements PostInterface
      */
     public function setVersion($version)
     {
-        $this->version = $version;
+        $this->version = (int) $version;
 
         return $this;
     }

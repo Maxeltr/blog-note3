@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -41,11 +41,11 @@ class ArchiveDatesFactory implements FactoryInterface
         $dateValidator = $container->get(Date::class);
         $config = new Config($container->get('config'));
         $formatter = new \IntlDateFormatter(
-            $config->blog_module->dateTime->locale,
+            $config->defaults->locale,
             \IntlDateFormatter::FULL,
             \IntlDateFormatter::FULL
         );
-        
+
         return new ArchiveDates($mapper, $dateValidator, $formatter);
     }
 }

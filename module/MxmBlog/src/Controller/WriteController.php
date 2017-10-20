@@ -98,7 +98,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -133,7 +133,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -160,7 +160,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -195,7 +195,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -222,7 +222,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();
@@ -257,7 +257,7 @@ class WriteController extends AbstractActionController
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-                    return $this->notFoundAction();	//TODO redirect ot access denied
+                    return $this->redirect()->toRoute('notAuthorized');
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     return $this->notFoundAction();

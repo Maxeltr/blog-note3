@@ -45,12 +45,12 @@ class ListControllerFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $postService = $container->get(PostServiceInterface::class);
         $dateValidator = $container->get(Date::class);
-        $dateValidator->setFormat($config->blog_module->dateTime->dateTimeFormat);
+        $dateValidator->setFormat($config->defaults->dateTimeFormat);
         $datetime = $container->get(DateTimeInterface::class);
         $notEmptyValidator = new NotEmpty();
         $notEmptyValidator->setType(NotEmpty::ALL);
         $userService = $container->get(UserServiceInterface::class);
 
-        return new ListController($postService, $dateValidator, $datetime, $config->blog_module, $notEmptyValidator, $logger, $userService);
+        return new ListController($postService, $dateValidator, $datetime, $config, $notEmptyValidator, $logger, $userService);
     }
 }

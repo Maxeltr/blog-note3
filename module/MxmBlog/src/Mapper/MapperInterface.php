@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -42,23 +42,23 @@ interface MapperInterface
      * @throw RecordNotFoundBlogException
      * @throw InvalidArgumentBlogException
      */
-    public function findPostById($id, $hideUnpublished);
-    
+    public function findPostById($id, $hideUnpublished = true);
+
     /**
      * @param string $name
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
-     * 
+     *
      * @return Paginator
      */
-    public function findPostsByName($name, $hideUnpublished);
-    
+    public function findPostsByName($name, $hideUnpublished = true);
+
     /**
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
-     * 
+     *
      * @return Paginator
      */
-    public function findAllPosts($hideUnpublished);
-    
+    public function findAllPosts($hideUnpublished = true);
+
     /**
      * @param PostInterface $post
      *
@@ -67,7 +67,7 @@ interface MapperInterface
      * @throw DataBaseErrorBlogException
      */
     public function insertPost(PostInterface $post);
-    
+
     /**
      * @param PostInterface $post
      *
@@ -76,53 +76,53 @@ interface MapperInterface
      * @throw DataBaseErrorBlogException
      */
     public function updatePost(PostInterface $post);
-    
+
     /**
      * @param PostInterface $post
      * Должен удалить полученный объект, реализующий PostInterface, и его связи
      * с тегами, и вернуть true (если удалено) или false (если неудача).
-     * 
+     *
      * @return bool
      */
     public function deletePost(PostInterface $post);
-    
+
     /**
      * @param CategoryInterface $category
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
      * @return Paginator
      */
-    public function findPostsByCategory(CategoryInterface $category, $hideUnpublished);
-    
+    public function findPostsByCategory(CategoryInterface $category, $hideUnpublished = true);
+
     /**
      * @param TagInterface $tag
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
      * @return Paginator
      */
-    public function findPostsByTag(TagInterface $tag, $hideUnpublished);
-    
+    public function findPostsByTag(TagInterface $tag, $hideUnpublished = true);
+
     /**
      * Найти статьи, написанные определенным пользователем.
      *
      * @param UserInterface $user
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
-     * 
+     *
      * @return Paginator
      */
-    public function findPostsByUser(/*UserInterface*/ $user, $hideUnpublished);
-    
+    public function findPostsByUser(/*UserInterface*/ $user, $hideUnpublished = true);
+
     /**
      * Найти статьи по дате создания.
-     * 
+     *
      * @param DateTime $since
      * @param DateTime $to
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
      * @return Paginator
      */
-    public function findPostsByCreateDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished);
-    
+    public function findPostsByCreateDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished = true);
+
     /**
      * Найти статьи по дате редактирования.
      *
@@ -132,8 +132,8 @@ interface MapperInterface
      *
      * @return Paginator
      */
-    public function findPostsByUpdateDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished);
-    
+    public function findPostsByUpdateDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished = true);
+
     /**
      * Найти статьи по дате публикации.
      *
@@ -143,7 +143,7 @@ interface MapperInterface
      * @return Paginator
      */
     public function findPostsByPublishDate(\DateTimeInterface $since, \DateTimeInterface $to);
-    
+
     /**
      * Найти даты, когда были публикации и подсчитать кол-во публикаций.
      *
@@ -154,7 +154,7 @@ interface MapperInterface
      * @return Zend\Db\ResultSet
      */
     public function findPublishDates($group, $limit, $paginated);
-    
+
     /**
      * @param int|string $id
      *
@@ -163,20 +163,20 @@ interface MapperInterface
      * @throw InvalidArgumentBlogException
      */
     public function findCategoryById($id);
-    
+
     /**
      * @param string $name
-     * 
+     *
      * @return Paginator
      */
     public function findCategoriesByName($name);
-    
+
     /**
-     * 
+     *
      * @return Paginator
      */
     public function findAllCategories();
-    
+
     /**
      * @param CategoryInterface $category
      *
@@ -185,7 +185,7 @@ interface MapperInterface
      * @throw DataBaseErrorBlogException
      */
     public function insertCategory(CategoryInterface $category);
-    
+
     /**
      * @param CategoryInterface $category
      *
@@ -194,14 +194,14 @@ interface MapperInterface
      * @throw DataBaseErrorBlogException
      */
     public function updateCategory(CategoryInterface $category);
-    
+
     /**
      * @param CategoryInterface $category
      *
      * @return bool
      */
     public function deleteCategory(CategoryInterface $category);
-    
+
     /**
      * @param int|string $id
      *
@@ -210,20 +210,20 @@ interface MapperInterface
      * @throw InvalidArgumentBlogException
      */
     public function findTagById($id);
-     
+
     /**
      * @param string $name
      *
      * @return Paginator
      */
     public function findTagsByName($name);
-    
+
     /**
-     * 
+     *
      * @return Paginator
      */
     public function findAllTags();
-        
+
     /**
      * @param TagInterface $tag
      *
@@ -232,7 +232,7 @@ interface MapperInterface
      * @throw DataBaseErrorBlogException
      */
     public function insertTag(TagInterface $tag);
-    
+
     /**
      * @param TagInterface $tag
      *
@@ -241,11 +241,11 @@ interface MapperInterface
      * @throw DataBaseErrorBlogException
      */
     public function updateTag(TagInterface $tag);
-    
+
     /**
      * Должен удалить полученный объект, реализующий TagInterface, и его связи
      * с статьями, и вернуть true (если удалено) или false (если неудача).
-     * 
+     *
      * @param TagInterface $tag
      *
      * @return bool

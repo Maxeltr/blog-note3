@@ -47,7 +47,7 @@ class User implements UserInterface
     protected $email;
 
     /**
-     * @var string
+     * @var bool
      */
     protected $emailVerification;
 
@@ -72,7 +72,7 @@ class User implements UserInterface
     protected $role;
 
     /**
-     * @var string
+     * @var DateTimeZone
      */
     protected $timebelt;
 
@@ -91,7 +91,30 @@ class User implements UserInterface
      */
     protected $dateToken;
 
+    /**
+     * @var string
+     */
     protected $locale;
+
+    /**
+     * Принудительно копируем this->object, иначе
+     * он будет указывать на один и тот же объект.
+     */
+    public function __clone()
+    {
+        if ($this->timebelt instanceof DateTimeZone) {
+            $this->timebelt = clone $this->timebelt;
+        }
+        if ($this->created instanceof DateTimeInterface) {
+            $this->created = clone $this->created;
+        }
+        if ($this->dateToken instanceof DateTimeInterface) {
+            $this->dateToken = clone $this->dateToken;
+        }
+        if ($this->dateEmailToken instanceof DateTimeInterface) {
+            $this->dateEmailToken = clone $this->dateEmailToken;
+        }
+    }
 
     /**
      *  {@inheritDoc}

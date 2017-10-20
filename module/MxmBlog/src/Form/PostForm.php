@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,7 +25,7 @@
  */
 
 namespace MxmBlog\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
@@ -44,7 +44,7 @@ class PostForm extends Form
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
     }
-    
+
     public function init() {
         //parent::init();
         $this->add(array(
@@ -54,12 +54,13 @@ class PostForm extends Form
                 'use_as_base_fieldset' => true
             )
         ));
-        
+
         $this->add(array(
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => array(
-                'value' => 'Send'
+                'value' => 'Send',
+                'class' => 'btn btn-default'
             )
         ));
     }

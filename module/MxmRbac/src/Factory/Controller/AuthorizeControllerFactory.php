@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,23 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\View\Helper;
+namespace MxmRbac\Factory\Controller;
 
-use Interop\Container\ContainerInterface;
+use MxmRbac\Controller\AuthorizeController;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\View\Helper\FormatDateI18n;
-use Zend\Config\Config;
-use MxmBlog\Service\DateTimeInterface;
-use Zend\Authentication\AuthenticationService;
+use Interop\Container\ContainerInterface;
 
-class FormatDateI18nFactory implements FactoryInterface
+class AuthorizeControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $config = new Config($container->get('config'));
-        $datetime = new \DateTime();
-        $authenticationService = $container->get(AuthenticationService::class);
-
-        return new FormatDateI18n($config, $datetime, $authenticationService);
+        return new AuthorizeController();
     }
 }

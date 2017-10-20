@@ -26,48 +26,47 @@
 
 namespace MxmBlog\Form;
 
-use MxmBlog\Model\CategoryInterface;
+use MxmBlog\Model\TagInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Mapper\MapperInterface;
-use Zend\i18n\Translator\TranslatorInterface;
 
-class CategoriesFieldset extends Fieldset implements InputFilterProviderInterface
+class TagsFieldset extends Fieldset implements InputFilterProviderInterface
 {
     public function __construct(
-        CategoryInterface $category,
+        TagInterface $tag,
         MapperInterface $mapper,
         HydratorInterface $hydrator,
-        TranslatorInterface $translator,
-        $name = "categories",
-        $options = []
+        $name = "tags",
+        $options = array()
     ) {
         parent::__construct($name, $options);
 
-        $categories = [];
-        $paginator=$mapper->findAllCategories();
-        $paginator->setItemCountPerPage(-1);    //получить все категории не разделенные на страницы
-        foreach ($paginator as $categoryObject) {
-            $categories[$categoryObject->getId()] = $categoryObject->getTitle();
+        $tags = array();
+        $paginator=$mapper->findAllTags();
+        $paginator->setItemCountPerPage(-1);    //получить все теги не разделенные на страницы
+        foreach($paginator as $tagObject) {
+            $tags[$tagObject->getId()] = $tagObject->getTitle();
         }
 
         $this->setHydrator($hydrator);
-        $this->setObject($category);
+        $this->setObject($tag);
 
-        $this->add([
-            'name' => 'id',
+        $this->add(array(
+            'name'=>'id',
             'type' => 'Zend\Form\Element\Select',
-            'attributes' => [
+            'attributes'=>array(
                 'type'=>'select',
                 'required' => 'required',
                 'class' => 'form-control',
-            ],
-            'options' => [
-                'label' => $translator->translate('Categories'),
-                'value_options' => $categories,
-            ],
-        ]);
+            ),
+            'options'=>array(
+                'label'=>'Tag',
+                //'disable_inarray_validator' => true,
+                'value_options' => $tags,
+            ),
+        ));
 
     }
 
@@ -79,14 +78,14 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
      */
     public function getInputFilterSpecification()
     {
-        return [
-            'id' => [
-                'filters' => [
-                    [
+        return array(
+            'id' => array(
+                'filters'=>array(
+                    array(
                         'name' => 'Int'
-                    ],
-                ],
-            ],
-        ];
+                    ),
+                ),
+            ),
+        );
     }
 }

@@ -63,7 +63,7 @@ class ZendDbSqlMapperFactory implements FactoryInterface
             $post,
             $category,
             $tag,
-            $config->blog_module
+            $config
         );
     }
 }

@@ -45,6 +45,6 @@ class AuthenticateControllerFactory implements FactoryInterface
         $formManager = $container->get('FormElementManager');
         $loginUserForm = $formManager->get(LoginUserForm::class);
 
-        return new AuthenticateController($userService, $loginUserForm, $router, $logger, $config->user_module);
+        return new AuthenticateController($userService, $loginUserForm, $router, $logger, $config);
     }
 }

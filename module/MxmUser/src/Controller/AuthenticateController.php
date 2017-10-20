@@ -111,7 +111,7 @@ class AuthenticateController extends AbstractActionController
                     $url->setMethod(Request::METHOD_GET);
                     $url->setUri($data['redirect']);
                     $routeMatch = $this->router->match($url);
-                    if ($routeMatch == null) {
+                    if ($routeMatch === null) {
                     //if (!$this->isRouteExists($data['redirect'])) {     //TODO не работает. Добавить доп параметры для разных роутов
 
                         return $this->redirect()->toRoute('home');
@@ -133,10 +133,12 @@ class AuthenticateController extends AbstractActionController
 
         $redirect = new Request();
         $redirect->setMethod(Request::METHOD_GET);
-        $redirect->setUri($this->params()->fromQuery('redirect', ''));
+        $redirect->setUri($this->params()->fromQuery('redirect', $this->url()->fromRoute('home')));
 
 	If ($this->router->match($redirect) !== null) {
-            $this->loginUserForm->get('redirect')->setValue($this->params()->fromQuery('redirect', ''));
+            $this->loginUserForm->get('redirect')->setValue($redirect->getUriString());
+	} else {
+            $this->loginUserForm->get('redirect')->setValue($this->url()->fromRoute('home'));
 	}
 
         return new ViewModel([

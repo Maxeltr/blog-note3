@@ -54,11 +54,9 @@ class FormatDateI18n extends DateFormat
         $locale = null,
         $pattern = null
     ) {
-        //parent::setTimezone($this->config->dateTime->timezone); //TODO устанавливать зону юзера
-        //parent::setLocale($this->config->dateTime->locale); //TODO устанавливать локаль юзера
-
         $timezone = null;
-        $user = $this->authenticationService->getIdentity();
+        $location = null;
+        $user = $this->authenticationService->getIdentity();    //TODO gjcvjnhtnm rfr d ltktufnjh
         if ($user instanceof UserInterface) {
             $timezone = $user->getTimebelt();
             $location = $user->getLocale();
@@ -67,16 +65,16 @@ class FormatDateI18n extends DateFormat
         if ($timezone instanceof \DateTimeZone) {
             parent::setTimezone($timezone->getName());
         } else{
-            parent::setTimezone($this->config->dateTime->timezone);
+            parent::setTimezone($this->config->defaults->timezone);
         }
 
         if (!empty($location)) {
-            parent::setLocale($user->getLocale());
+            parent::setLocale($location);
         } else{
-            parent::setLocale($this->config->dateTime->locale);
+            parent::setLocale($this->config->defaults->locale);
         }
 
-        $date = $this->datetime->modify($datetime->format($this->config->dateTime->dateTimeFormat));
+        $date = $this->datetime->modify($datetime->format($this->config->defaults->dateTimeFormat));
 
         return parent::__invoke(
             $date,

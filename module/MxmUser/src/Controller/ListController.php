@@ -74,7 +74,7 @@ class ListController extends AbstractActionController
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-            return $this->notFoundAction();	//TODO redirect ot access denied
+            return $this->redirect()->toRoute('notAuthorized');
 	} catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -103,7 +103,7 @@ class ListController extends AbstractActionController
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-            return $this->notFoundAction();	//TODO redirect ot access denied
+            return $this->redirect()->toRoute('notAuthorized');
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -120,7 +120,7 @@ class ListController extends AbstractActionController
         $page = (int) $this->params()->fromRoute('page');
         $page = ($page < 1) ? 1 : $page;
         $paginator->setCurrentPageNumber($page);
-        $paginator->setItemCountPerPage($this->config->listController->ItemCountPerPage);
+        $paginator->setItemCountPerPage($this->config->mxm_user->listController->ItemCountPerPage);
 
         return $this;
     }
