@@ -29,12 +29,19 @@ namespace MxmUser\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class RegisterUserForm extends Form
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         HydratorInterface $hydrator,
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "register_user",
         $options = array()
     ) {
@@ -43,6 +50,9 @@ class RegisterUserForm extends Form
         $this->setAttribute('method', 'post')
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
     }
 
     public function init() {
@@ -59,7 +69,7 @@ class RegisterUserForm extends Form
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             ]
         ]);
     }

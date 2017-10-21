@@ -32,17 +32,21 @@ use \DateTimeZone;
 use Zend\Config\Config;
 use Interop\Container\ContainerInterface;
 use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class TimebeltFieldsetFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $timezone = $config->user_module->dateTime->timezone;   //default timezone
+        $timezone = $config->defaults->timezone;
 
         return new TimebeltFieldset(
             new DateTimeZone($timezone),
             $container->get(TimezoneFormHydrator::class),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator'),
             $requestedName,
             $options
         );

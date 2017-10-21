@@ -29,11 +29,18 @@ namespace MxmUser\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditPasswordForm extends Form implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "edit_password",
         $options = array()
     ) {
@@ -41,6 +48,9 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add(array(
             'type' => 'hidden',
@@ -65,7 +75,7 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Old password'
+                'label' => $this->translator->translate('Old password')
             ]
         ]);
 
@@ -77,7 +87,7 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'New password'
+                'label' => $this->translator->translate('New password')
             ]
         ]);
 
@@ -89,7 +99,7 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Confirm password'
+                'label' => $this->translator->translate('Confirm password')
             ]
         ]);
 
@@ -97,7 +107,7 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             ]
         ]);
     }
@@ -122,6 +132,7 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]
@@ -138,6 +149,7 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]
@@ -154,12 +166,14 @@ class EditPasswordForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ],
                     [
                         'name'    => 'Identical',
                         'options' => [
                             'token' => 'newPassword',
+                            'translator' => $this->validatorTranslator
                         ],
                     ],
                 ]

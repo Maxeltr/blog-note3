@@ -31,6 +31,8 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
 use MxmUser\Form\EditUserForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditUserFormFactory implements FactoryInterface
 {
@@ -40,7 +42,9 @@ class EditUserFormFactory implements FactoryInterface
 
         return new EditUserForm(
             $aggregatehydrator,
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }

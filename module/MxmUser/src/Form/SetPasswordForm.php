@@ -29,11 +29,18 @@ namespace MxmUser\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class SetPasswordForm extends Form implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "set_password",
         $options = array()
     ) {
@@ -41,6 +48,9 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add(array(
             'type' => 'hidden',
@@ -55,7 +65,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'New password'
+                'label' => $this->translator->translate('New password')
             ]
         ]);
 
@@ -63,7 +73,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Captcha',
             'name' => 'setPassword_captcha',
             'options' => [
-                'label' => 'Please verify you are human',
+                'label' => $this->translator->translate('Please verify you are human'),
                 'captcha' => new \Zend\Captcha\Figlet(),
             ],
         ]);
@@ -82,7 +92,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             ]
         ]);
     }
@@ -102,6 +112,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]
@@ -120,6 +131,7 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
                             'encoding'=>'UTF-8',
                             'min'=>1,
                             'max'=>250,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]

@@ -29,11 +29,18 @@ namespace MxmUser\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class LoginUserForm extends Form implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "login_user",
         $options = array()
     ) {
@@ -41,6 +48,9 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add([
             'type' => 'text',
@@ -50,7 +60,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Email'
+                'label' => $this->translator->translate('Email')
             ]
         ]);
 
@@ -62,7 +72,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Password'
+                'label' => $this->translator->translate('Password')
             ]
         ]);
 
@@ -85,7 +95,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             ]
         ]);
     }
@@ -104,6 +114,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
+                            'translator' => $this->validatorTranslator
                         ],
                     ],
                 ]
@@ -120,6 +131,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]

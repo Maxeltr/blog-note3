@@ -29,11 +29,18 @@ namespace MxmUser\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditEmailForm extends Form implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "edit_email",
         $options = array()
     ) {
@@ -41,6 +48,9 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add(array(
             'type' => 'hidden',
@@ -65,7 +75,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'New email'
+                'label' => $this->translator->translate('New email')
             ]
         ]);
 
@@ -77,7 +87,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Confirm email'
+                'label' => $this->translator->translate('Confirm email')
             ]
         ]);
 
@@ -89,7 +99,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Password'
+                'label' => $this->translator->translate('Password')
             ]
         ]);
 
@@ -97,7 +107,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             ]
         ]);
     }
@@ -122,6 +132,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 250,
+                            'translator' => $this->validatorTranslator
                         ]
                     ],
                     [
@@ -129,6 +140,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
+                            'translator' => $this->validatorTranslator
                         ],
                     ],
                 ]
@@ -145,6 +157,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 250,
+                            'translator' => $this->validatorTranslator
                         ]
                     ],
                     [
@@ -152,12 +165,14 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
+                            'translator' => $this->validatorTranslator
                         ],
                     ],
                     [
                         'name'    => 'Identical',
                         'options' => [
                             'token' => 'newEmail',
+                            'translator' => $this->validatorTranslator
                         ],
                     ],
                 ]
@@ -173,7 +188,8 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 250,
+                            'max' => 3,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]

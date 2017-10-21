@@ -44,7 +44,7 @@ class Module
         $sharedEventManager = $eventManager->getSharedManager();
         $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], 100);
         $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], 100);
-}
+    }
 
     public function onError(MvcEvent $event)
     {

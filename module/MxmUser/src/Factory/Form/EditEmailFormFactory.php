@@ -30,6 +30,8 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\EditEmailForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditEmailFormFactory implements FactoryInterface
 {
@@ -37,7 +39,9 @@ class EditEmailFormFactory implements FactoryInterface
     {
 
         return new EditEmailForm(
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }

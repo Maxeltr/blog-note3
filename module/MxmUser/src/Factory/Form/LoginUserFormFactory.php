@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -30,6 +30,9 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\LoginUserForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Mvc\I18n\Translator;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class LoginUserFormFactory implements FactoryInterface
 {
@@ -37,7 +40,9 @@ class LoginUserFormFactory implements FactoryInterface
     {
 
         return new LoginUserForm(
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }

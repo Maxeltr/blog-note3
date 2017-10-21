@@ -31,6 +31,8 @@ use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditUserFieldsetFactory implements FactoryInterface
 {
@@ -39,6 +41,8 @@ class EditUserFieldsetFactory implements FactoryInterface
         return new EditUserFieldset(
             $container->get(UserInterface::class),
             $container->get(UserFormHydrator::class),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator'),
             $requestedName,
             $options
         );

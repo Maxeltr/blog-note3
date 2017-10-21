@@ -23,10 +23,20 @@ return [
 
     ],
     'defaults' => [
-	'locale' => 'ru_RU',
+	'locale' => 'ru',
 	'timezone' => 'Europe/Moscow',
 	'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
+    'translator' => array(
+        'locale' => 'en',
+        'translation_file_patterns' => array(
+            array(
+                'type'     => 'phpArray',
+                'base_dir' => __DIR__ . '/../languages',
+                'pattern'  => '%s.php',
+            ),
+        ),
+    ),
     'controllers' => [
         'factories' => [
             Controller\ListController::class => Factory\Controller\ListControllerFactory::class,
@@ -42,7 +52,9 @@ return [
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
             \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
-            \Zend\i18n\Translator\TranslatorInterface::class => Zend\I18n\Translator\Translator::class
+            \Zend\i18n\Translator\TranslatorInterface::class => Zend\I18n\Translator\Translator::class,
+            //\Zend\Validator\Translator\TranslatorInterface::class => Zend\Mvc\I18n\Translator::class
+
 
         ],
         'factories' => [
@@ -50,7 +62,7 @@ return [
             Service\DateTime::class => Factory\Service\DateTimeFactory::class,
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
-            //\Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
             Hydrator\TimezoneFormHydrator\TimezoneFormHydrator::class => Factory\Hydrator\TimezoneFormHydratorFactory::class,
             AuthenticationService::class => Factory\Service\AuthenticationServiceFactory::class,
             Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
@@ -59,11 +71,14 @@ return [
             Date::class => Factory\Validator\DateValidatorFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
             Zend\I18n\Translator\Translator::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
-
+            //Zend\Mvc\I18n\Translator::class => \Zend\Mvc\I18n\TranslatorFactory::class
         ],
         'delegators' => [
             Zend\I18n\Translator\Translator::class => [
                 Translator\TranslatorDelegator::class
+            ],
+            \Zend\Mvc\I18n\Translator::class => [
+                Translator\MvcTranslatorDelegator::class
             ],
 	],
         'invokables' => [
@@ -248,7 +263,7 @@ return [
     'session_storage' => [
         'type' => SessionArrayStorage::class
     ],
-//    'session_containers' => [							//
-//        'MxmUser'
-//    ],
+    'session_containers' => [							//
+        'MxmUserSessionContainer'
+    ],
 ];

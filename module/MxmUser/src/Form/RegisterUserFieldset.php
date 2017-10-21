@@ -30,15 +30,29 @@ use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "register_user", $options = array())
+    protected $translator;
+    protected $validatorTranslator;
+
+    public function __construct(
+        UserInterface $user,
+        HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
+        $name = "register_user",
+        $options = array())
     {
         parent::__construct($name, $options);
 
         $this->setHydrator($hydrator);
         $this->setObject($user);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add([
             'type' => 'text',
@@ -48,7 +62,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Username'
+                'label' => $this->translator->translate('Username')
             ]
         ]);
 
@@ -60,7 +74,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Email'
+                'label' => $this->translator->translate('Email')
             ]
         ]);
 
@@ -72,7 +86,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Password'
+                'label' => $this->translator->translate('Password')
             ]
         ]);
 
@@ -84,7 +98,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Confirm Password'
+                'label' => $this->translator->translate('Confirm Password')
             ]
         ]);
 
@@ -92,7 +106,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             'type' => 'Zend\Form\Element\Captcha',
             'name' => 'captcha',
             'options' => [
-                'label' => 'Please verify you are human',
+                'label' => $this->translator->translate('Please verify you are human'),
                 'captcha' => new \Zend\Captcha\Figlet(),
             ],
         ]);
@@ -131,6 +145,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 250,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]
@@ -146,6 +161,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                         'options' => [
                             'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
+                            'translator' => $this->validatorTranslator
                         ],
                     ],
                 ]
@@ -162,6 +178,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]
@@ -176,6 +193,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                         'name' => 'Identical',
                         'options' => [
                             'token' => 'password',
+                            'translator' => $this->validatorTranslator
                         ]
                     ],
                     [
@@ -184,6 +202,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 35,
+                            'translator' => $this->validatorTranslator
                         ]
                     ],
                 ]

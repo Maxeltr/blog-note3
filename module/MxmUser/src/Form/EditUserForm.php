@@ -29,12 +29,19 @@ namespace MxmUser\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditUserForm extends Form
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         HydratorInterface $hydrator,
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "edit_user",
         $options = array()
     ) {
@@ -43,6 +50,9 @@ class EditUserForm extends Form
         $this->setAttribute('method', 'post')
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
     }
 
     public function init() {
@@ -55,21 +65,21 @@ class EditUserForm extends Form
             ]
         ]);
 
-//        $this->add([                      //TODO не работает
-//            'type' => 'csrf',
-//            'name' => 'editUser_csrf',
-//            'options' => [
-//                'csrf_options' => [
-//                'timeout' => 600
-//                ]
-//            ],
-//        ]);
+        $this->add([
+            'type' => 'csrf',
+            'name' => 'editUser_csrf',
+            'options' => [
+                'csrf_options' => [
+                'timeout' => 600
+                ]
+            ],
+        ]);
 
         $this->add([
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             ]
         ]);
     }

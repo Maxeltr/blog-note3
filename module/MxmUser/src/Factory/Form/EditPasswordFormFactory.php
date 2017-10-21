@@ -30,6 +30,8 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\EditPasswordForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditPasswordFormFactory implements FactoryInterface
 {
@@ -37,7 +39,9 @@ class EditPasswordFormFactory implements FactoryInterface
     {
 
         return new EditPasswordForm(
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }

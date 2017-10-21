@@ -30,12 +30,19 @@ use \DateTimeZone;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         DateTimeZone $timezone,
         HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "timebelt",
         $options = array()
     ) {
@@ -46,6 +53,9 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
         $this->setHydrator($hydrator);
         $this->setObject($timezone);
 
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
+
         $this->add([
             'name' => 'timezoneId',
             'type' => 'Zend\Form\Element\Select',
@@ -55,7 +65,7 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
                 'class' => 'form-control',
             ],
             'options' => [
-                'label' => 'Timezone',
+                'label' => $this->translator->translate('Timezone'),
                 'value_options' => $timezones,
             ],
         ]);

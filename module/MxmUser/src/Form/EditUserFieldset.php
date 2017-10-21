@@ -30,15 +30,29 @@ use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(UserInterface $user, HydratorInterface $hydrator, $name = "edit_user", $options = array())
-    {
+    protected $translator;
+    protected $validatorTranslator;
+
+    public function __construct(
+        UserInterface $user,
+        HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
+        $name = "edit_user",
+        $options = array()
+    ) {
         parent::__construct($name, $options);
 
         $this->setHydrator($hydrator);
         $this->setObject($user);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add([
             'type' => 'hidden',
@@ -53,7 +67,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
                 'required' => 'required',
             ],
             'options' => [
-                'label' => 'Username'
+                'label' => $this->translator->translate('Username')
             ]
         ]);
     }
@@ -97,6 +111,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
                             'encoding'=>'UTF-8',
                             'min'=>1,
                             'max'=>250,
+                            'translator' => $this->validatorTranslator
                         ]
                     ]
                 ]
