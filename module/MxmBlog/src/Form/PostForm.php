@@ -29,12 +29,19 @@ namespace MxmBlog\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class PostForm extends Form
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         HydratorInterface $hydrator,
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "post_form",
         $options = array()
     ) {
@@ -43,6 +50,9 @@ class PostForm extends Form
         $this->setAttribute('method', 'post')
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
     }
 
     public function init() {
@@ -59,7 +69,7 @@ class PostForm extends Form
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => array(
-                'value' => 'Send',
+                'value' => $this->translator->translate('Send'),
                 'class' => 'btn btn-default'
             )
         ));

@@ -43,6 +43,7 @@ class CategoriesFieldsetFactory implements FactoryInterface
             $container->get(MapperInterface::class),
             new ClassMethods(false),
             $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator'),
             $requestedName,
             $options
         );

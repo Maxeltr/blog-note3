@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,42 +25,52 @@
  */
 
 namespace MxmBlog\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class TagForm extends Form
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         HydratorInterface $hydrator,
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "tag_form",
-        $options = array()
+        $options = []
     ) {
         parent::__construct($name, $options);
 
         $this->setAttribute('method', 'post')
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
     }
-    
+
     public function init() {
         //parent::init();
-        $this->add(array(
+        $this->add([
             'name' => 'tag',
             'type' => 'MxmBlog\Form\TagFieldset',
-            'options' => array(
+            'options' => [
                 'use_as_base_fieldset' => true
-            )
-        ));
-        
-        $this->add(array(
+            ]
+        ]);
+
+        $this->add([
             'type' => 'submit',
             'name' => 'submit',
-            'attributes' => array(
-                'value' => 'Send'
-            )
-        ));
+            'attributes' => [
+                'value' => $this->translator->translate('Send')
+            ]
+        ]);
     }
 }

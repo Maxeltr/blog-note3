@@ -31,13 +31,20 @@ use Zend\Hydrator\HydratorInterface;
 use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Mapper\MapperInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class TagsFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         TagInterface $tag,
         MapperInterface $mapper,
         HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "tags",
         $options = array()
     ) {
@@ -53,17 +60,19 @@ class TagsFieldset extends Fieldset implements InputFilterProviderInterface
         $this->setHydrator($hydrator);
         $this->setObject($tag);
 
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
+
         $this->add(array(
-            'name'=>'id',
+            'name' => 'id',
             'type' => 'Zend\Form\Element\Select',
-            'attributes'=>array(
-                'type'=>'select',
+            'attributes' => array(
+                'type' => 'select',
                 'required' => 'required',
                 'class' => 'form-control',
             ),
-            'options'=>array(
-                'label'=>'Tag',
-                //'disable_inarray_validator' => true,
+            'options' => array(
+                'label' => $this->translator->translate('Tag'),
                 'value_options' => $tags,
             ),
         ));
@@ -80,7 +89,7 @@ class TagsFieldset extends Fieldset implements InputFilterProviderInterface
     {
         return array(
             'id' => array(
-                'filters'=>array(
+                'filters' => array(
                     array(
                         'name' => 'Int'
                     ),

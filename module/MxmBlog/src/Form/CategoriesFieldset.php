@@ -32,14 +32,19 @@ use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Mapper\MapperInterface;
 use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class CategoriesFieldset extends Fieldset implements InputFilterProviderInterface
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         CategoryInterface $category,
         MapperInterface $mapper,
         HydratorInterface $hydrator,
         TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "categories",
         $options = []
     ) {
@@ -55,6 +60,9 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
         $this->setHydrator($hydrator);
         $this->setObject($category);
 
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
+
         $this->add([
             'name' => 'id',
             'type' => 'Zend\Form\Element\Select',
@@ -64,7 +72,7 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
                 'class' => 'form-control',
             ],
             'options' => [
-                'label' => $translator->translate('Categories'),
+                'label' => $translator->translate('Category'),
                 'value_options' => $categories,
             ],
         ]);

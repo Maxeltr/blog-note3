@@ -31,6 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Hydrator\PostFormHydrator\PostFormHydrator;
 use MxmBlog\Form\PostForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class PostFormFactory implements FactoryInterface
 {
@@ -40,7 +41,9 @@ class PostFormFactory implements FactoryInterface
 
         return new PostForm(
             $aggregatehydrator,
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }

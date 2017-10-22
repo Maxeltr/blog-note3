@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,28 +24,41 @@
  * THE SOFTWARE.
  */
 
-//Filename: /module/Blog/src/Blog/Form/TagsFieldset.php
 namespace MxmBlog\Form;
 
 use Zend\Form\Fieldset;
 use Zend\Tag\TaggableInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class TagFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(TaggableInterface $tag, HydratorInterface $hydrator, $name = "tag", $options = array())
-    {
+    protected $translator;
+    protected $validatorTranslator;
+
+    public function __construct(
+        TaggableInterface $tag,
+        HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
+        $name = "tag",
+        $options = array()
+    ){
         parent::__construct($name, $options);
-        
+
         $this->setHydrator($hydrator);
         $this->setObject($tag);
-        
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
+
         $this->add(array(
             'type' => 'hidden',
             'name' => 'id'
         ));
-        
+
         $this->add(array(
             'type' => 'text',
             'name' => 'title',
@@ -53,11 +66,11 @@ class TagFieldset extends Fieldset implements InputFilterProviderInterface
                 'class' => 'form-control'
             ),
             'options' => array(
-                'label' => 'Tag'
+                'label' => $this->translator->translate('Tag')
             )
         ));
     }
-    
+
     /**
      * Should return an array specification compatible with
      * {@link ZendInputFilterFactory::createInputFilter()}.
@@ -94,6 +107,7 @@ class TagFieldset extends Fieldset implements InputFilterProviderInterface
                             'encoding'=>'UTF-8',
                             'min'=>1,
                             'max'=>50,
+                            'translator' => $this->validatorTranslator
                         )
                     ),
                 )

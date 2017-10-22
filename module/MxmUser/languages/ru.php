@@ -11,9 +11,17 @@
  * RU-Revision: 08.Apr.2015
  */
 return [
-    // Zend\I18n\Validator\Alnum
+    //
     "Change Email" => "Изменить электронную почту",
-	"Send" => "Отправить",
-
-
+    "Send" => "Отправить",
+    "Login" => "Вход",
+    "Password" => "Пароль",
+    "Title" => "Заголовок",
+    "Text" => "Текст",
+    "Summary" => "Краткое описание",
+    "Category" => "Категория",
+    "Publish" => "Опубликовать",
+    "Tag" => "Тег",
+    "Add tag" => "Добавить тег",
+    "Choose tags" => "Выберите теги",
 ];

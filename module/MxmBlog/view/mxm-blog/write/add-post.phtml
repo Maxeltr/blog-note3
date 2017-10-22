@@ -6,7 +6,7 @@ $form = $this->form;
 $form->setAttribute('action', $this->url('addPost', array(), true));
 $form->prepare();
 
-$form->get('submit')->setValue('Add Post');
+//$form->get('submit')->setValue('Add Post');
 
 echo $this->form()->openTag($form);
 
@@ -29,7 +29,7 @@ echo $this->formElement($form->get('submit'));
 //echo $this->formCollection($form);
 ?>
 
-<button onclick="return add_category()" class="btn btn-default">Add a new tag</button>
+<button onclick="return add_category()" class="btn btn-default"><?php echo $this->translate('Add tag') ?></button>
 <script>
     function add_category() {
         var currentCount = $('form > fieldset > fieldset').length;

@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -31,7 +31,8 @@ use MxmBlog\Form\TagsFieldset;
 use MxmBlog\Model\TagInterface;
 use Zend\Hydrator\ClassMethods;
 use Interop\Container\ContainerInterface;
-use MxmBlog\Mapper\MapperInterface;			
+use MxmBlog\Mapper\MapperInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class TagsFieldsetFactory implements FactoryInterface
 {
@@ -39,8 +40,10 @@ class TagsFieldsetFactory implements FactoryInterface
     {
         return new TagsFieldset(
             $container->get(TagInterface::class),
-			$container->get(MapperInterface::class),
+            $container->get(MapperInterface::class),
             new ClassMethods(false),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator'),
             $requestedName,
             $options
         );

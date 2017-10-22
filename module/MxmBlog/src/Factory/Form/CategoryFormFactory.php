@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -31,6 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Form\CategoryForm;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\ClassMethods;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class CategoryFormFactory implements FactoryInterface
 {
@@ -38,7 +39,9 @@ class CategoryFormFactory implements FactoryInterface
     {
         return new CategoryForm(
             new ClassMethods(false),
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }

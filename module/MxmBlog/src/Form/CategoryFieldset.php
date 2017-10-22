@@ -30,15 +30,29 @@ use Zend\Form\Fieldset;
 use MxmBlog\Model\CategoryInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(CategoryInterface $category, HydratorInterface $hydrator, $name = "category", $options = array())
-    {
+    protected $translator;
+    protected $validatorTranslator;
+
+    public function __construct(
+        CategoryInterface $category,
+        HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
+        $name = "category",
+        $options = array()
+    ){
         parent::__construct($name, $options);
 
         $this->setHydrator($hydrator);
         $this->setObject($category);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
 
         $this->add(array(
             'type' => 'hidden',
@@ -53,7 +67,7 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
                 'required' => 'required',
             ),
             'options' => array(
-                'label' => 'Category'
+                'label' => $this->translator->translate('Category')
             )
         ));
     }
@@ -94,6 +108,7 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
                             'encoding'=>'UTF-8',
                             'min'=>1,
                             'max'=>50,
+                            'translator' => $this->validatorTranslator
                         )
                     ),
                 )

@@ -31,6 +31,7 @@ use MxmBlog\Model\PostInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Hydrator\PostFormHydrator\PostFormHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class PostFieldsetFactory implements FactoryInterface
 {
@@ -39,6 +40,8 @@ class PostFieldsetFactory implements FactoryInterface
         return new PostFieldset(
             $container->get(PostInterface::class),
             $container->get(PostFormHydrator::class),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator'),
             $requestedName,
             $options
         );

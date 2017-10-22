@@ -31,6 +31,7 @@ use MxmBlog\Form\TagFieldset;
 use MxmBlog\Model\TagInterface;
 use Zend\Hydrator\ClassMethods;
 use Interop\Container\ContainerInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class TagFieldsetFactory implements FactoryInterface
 {
@@ -39,6 +40,8 @@ class TagFieldsetFactory implements FactoryInterface
         return new TagFieldset(
             $container->get(TagInterface::class),
             new ClassMethods(false),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator'),
             $requestedName,
             $options
         );

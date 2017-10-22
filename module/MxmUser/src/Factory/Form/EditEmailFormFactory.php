@@ -31,7 +31,6 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\EditEmailForm;
 use Zend\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditEmailFormFactory implements FactoryInterface
 {

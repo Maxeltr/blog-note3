@@ -31,95 +31,109 @@ use Zend\Form\Fieldset;
 use Zend\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Model\PostInterface;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class PostFieldset extends Fieldset implements InputFilterProviderInterface
 {
-    public function __construct(PostInterface $post, HydratorInterface $hydrator, $name = "post", $options = array())
-    {
+    protected $translator;
+    protected $validatorTranslator;
+
+    public function __construct(
+        PostInterface $post,
+        HydratorInterface $hydrator,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
+        $name = "post",
+        $options = []
+    ){
         parent::__construct($name, $options);
 
         $this->setHydrator($hydrator);
         $this->setObject($post);
 
-        $this->add(array(
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
+
+        $this->add([
             'type' => 'hidden',
             'name' => 'id'
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'text',
             'name' => 'title',
-            'attributes'=>array(
+            'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
-            ),
-            'options' => array(
-                'label' => 'Blog Title'
-            )
-        ));
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Title')
+            ]
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'textarea',
             'name' => 'text',
-            'attributes'=>array(
+            'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
                 'rows' => '3',
-            ),
-            'options' => array(
-                'label' => 'The text'
-            )
-        ));
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Text')
+            ]
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'text',
             'name' => 'summary',
-            'attributes'=>array(
+            'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
-            ),
-            'options' => array(
-                'label' => 'Blog Summary'
-            )
-        ));
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Summary')
+            ]
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'checkbox',
-            'name'=>'isPublished',
-            'attributes'=>array(
+            'name' => 'isPublished',
+            'attributes' => [
                 'class' => 'form-control',
-            ),
-            'options'=>array(
-                'label'=>'Опубликовать',
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Publish'),
                 'checked_value' => 1,
                 'unchecked_value' => 0,
-            ),
-        ));
+            ],
+        ]);
     }
 
     public function init() {
         //parent::init();
-        $this->add(array(
+        $this->add([
             'name' => 'category',
             'type' => 'MxmBlog\Form\CategoriesFieldset',
-            'options' => array(
+            'options' => [
                 'use_as_base_fieldset' => true
-            )
-        ));
+            ]
+        ]);
 
-        $this->add(array(
+        $this->add([
             'type' => 'Zend\Form\Element\Collection',
             'name' => 'tags',
-            'options' => array(
-                'label' => 'Please choose tags',
+            'options' => [
+                'label' => $this->translator->translate('Choose tags'),
                 'count' => 1,
                 'should_create_template' => true,
                 'allow_add' => true,
-                'target_element' => array(
+                'target_element' => [
                     'type' => 'MxmBlog\Form\TagsFieldset',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
 
     }
 
@@ -131,89 +145,91 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification()
     {
-        return array(
-            'id' => array(
-                'filters'=>array(
-                    array(
+        return [
+            'id' => [
+                'filters' => [
+                    [
                         'name' => 'Int'
-                    ),
-                ),
-            ),
-            'title' => array(
+                    ],
+                ],
+            ],
+            'title' => [
                 'required' => true,
-                'filters'=>array(
-                    array(
+                'filters' => [
+                    [
                         'name' => 'StripTags'
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'StringTrim'
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'StripNewlines'
-                    ),
-                ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
-                            'encoding'=>'UTF-8',
-                            'min'=>1,
-                            'max'=>250,
-                        )
-                    )
-                )
-            ),
-            'text' => array(
+                    ],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250,
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ]
+                ]
+            ],
+            'text' => [
                 'required' => true,
-                'filters'=>array(
-                    array(
+                'filters' => [
+                    [
                         'name' => 'htmlpurifier'
-                        //'name' => 'Soflomo\Purifier\Factory\PurifierFilterFactory'
-                    ),
-                ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
-                            'encoding'=>'UTF-8',
-                            'min'=>1,
-                            'max'=>250000,
-                        )
-                    )
-                )
-            ),
-            'summary' => array(
+                    ],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250000,
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ]
+                ]
+            ],
+            'summary' => [
                 'required' => true,
-                'filters'=>array(
-                    array(
+                'filters' => [
+                    [
                         'name' => 'StripTags'
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'StringTrim'
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'StripNewlines'
-                    ),
-                ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
-                            'encoding'=>'UTF-8',
-                            'min'=>1,
-                            'max'=>250,
-                        )
-                    )
-                )
-            ),
-            'isPublished' => array(
+                    ],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250,
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ]
+                ]
+            ],
+            'isPublished' => [
                 'required' => true,
-                'filters'=>array(
-                    array(
+                'filters' => [
+                    [
                         'name' => 'Int'
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 }

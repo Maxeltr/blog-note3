@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -25,16 +25,23 @@
  */
 
 namespace MxmBlog\Form;
- 
+
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\HydratorInterface;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class CategoryForm extends Form
 {
+    protected $translator;
+    protected $validatorTranslator;
+
     public function __construct(
         HydratorInterface $hydrator,
         InputFilter $inputFilter,
+        TranslatorInterface $translator,
+        ValidatorTranslatorInterface $validatorTranslator,
         $name = "category_form",
         $options = array()
     ) {
@@ -43,10 +50,12 @@ class CategoryForm extends Form
         $this->setAttribute('method', 'post')
             ->setHydrator($hydrator)
             ->setInputFilter($inputFilter);
+
+        $this->translator = $translator;
+        $this->validatorTranslator = $validatorTranslator;
     }
-    
+
     public function init() {
-        //parent::init();
         $this->add(array(
             'name' => 'category',
             'type' => 'MxmBlog\Form\CategoryFieldset',
@@ -54,12 +63,12 @@ class CategoryForm extends Form
                 'use_as_base_fieldset' => true
             )
         ));
-        
+
         $this->add(array(
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => array(
-                'value' => 'Send'
+                'value' => $this->translator->translate('Send')
             )
         ));
     }

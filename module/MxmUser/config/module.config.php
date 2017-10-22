@@ -11,12 +11,6 @@ return [
         'listController' => [
             'ItemCountPerPage' => 10,
         ],
-//        'dateTime' => [
-//            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
-//            'locale' => 'ru_RU',
-//            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-//            'defaultDate' => '1900-01-01 00:00:00'
-//        ],
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmUser.log',
         ],

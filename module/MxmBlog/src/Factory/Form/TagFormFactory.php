@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -31,6 +31,7 @@ use Interop\Container\ContainerInterface;
 use MxmBlog\Form\TagForm;
 use Zend\InputFilter\InputFilter;
 use Zend\Hydrator\ClassMethods;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class TagFormFactory implements FactoryInterface
 {
@@ -38,7 +39,9 @@ class TagFormFactory implements FactoryInterface
     {
         return new TagForm(
             new ClassMethods(false),
-            new InputFilter()
+            new InputFilter(),
+            $container->get(TranslatorInterface::class),
+            $container->get('MvcTranslator')
         );
     }
 }
