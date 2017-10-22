@@ -112,13 +112,10 @@ class AuthenticateController extends AbstractActionController
                     $url->setUri($data['redirect']);
                     $routeMatch = $this->router->match($url);
                     if ($routeMatch === null) {
-                    //if (!$this->isRouteExists($data['redirect'])) {     //TODO не работает. Добавить доп параметры для разных роутов
 
                         return $this->redirect()->toRoute('home');
                     } else {
-                        //$redirectUrl = $this->router->assemble([], ['name' => $data['redirect']]);
-                        //$this->redirect()->toUrl($redirectUrl);
-                        //$this->logger->info($routeMatch->getMatchedRouteName() . '  ' . $routeMatch->getParams());
+
                         return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
@@ -128,14 +125,12 @@ class AuthenticateController extends AbstractActionController
                 }
             }
         }
-        //$this->loginUserForm->get('redirect')->setValue($this->getRedirectRouteFromQuery());    //TODO не работает. Добавить доп параметры для разных роутов
-        //$redirect = $this->params()->fromQuery('redirect', '');
 
         $redirect = new Request();
         $redirect->setMethod(Request::METHOD_GET);
         $redirect->setUri($this->params()->fromQuery('redirect', $this->url()->fromRoute('home')));
 
-	If ($this->router->match($redirect) !== null) {
+	if ($this->router->match($redirect) !== null) {
             $this->loginUserForm->get('redirect')->setValue($redirect->getUriString());
 	} else {
             $this->loginUserForm->get('redirect')->setValue($this->url()->fromRoute('home'));
@@ -158,42 +153,5 @@ class AuthenticateController extends AbstractActionController
         }
 
         return $this->redirect()->toRoute('loginUser');
-    }
-
-    /**
-     * @param $route
-     * @return bool
-     */
-    private function isRouteExists($route)
-    {
-        if (empty($route)) {
-            return false;
-        }
-
-        try {
-            $this->router->assemble(array(), array('name' => $route));
-        } catch (\Exception $e) {
-            $this->logger->err('isRouteExists ' . $e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());    //TODO Автоматически получать имя метода?
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Проверяет параметр 'redirect' в GET. Возвращает путь на который перенаправить юзера.
-     *
-     * @return string
-     */
-    private function getRedirectRouteFromQuery()
-    {
-        $redirect = $this->params()->fromQuery('redirect', '');     //TODO не работает. Добавить доп параметры для разных роутов
-        if ($redirect && $this->isRouteExists($redirect)) {
-
-            return $redirect;
-        }
-
-        return false;
     }
 }

@@ -24,4 +24,7 @@ return [
     "Tag" => "Тег",
     "Add tag" => "Добавить тег",
     "Choose tags" => "Выберите теги",
+    "Incorrect login and/or password." => "Неверный логин и/или пароль.",
+    "Incorrect login." => "Неверный логин.",
+
 ];
