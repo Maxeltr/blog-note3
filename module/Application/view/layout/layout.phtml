@@ -40,8 +40,8 @@
                 <div class="navbar-collapse collapse" id="navbar">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="<?php echo $this->url('changeLanguage',['action' => 'changeLanguage'],['query' => ['lang' => 'Ru',],]); ?>">Ru</a></li>
+                        <li><a href="<?php echo $this->url('changeLanguage',['action' => 'changeLanguage'],['query' => ['lang' => 'En',],]); ?>">En</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="../navbar/">Default</a></li>

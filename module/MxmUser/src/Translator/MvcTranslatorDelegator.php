@@ -54,13 +54,15 @@ class MvcTranslatorDelegator implements DelegatorFactoryInterface
 
         if ($authenticationService->hasIdentity()) {
             $user = $authenticationService->getIdentity();
-            $locale = $user->getLocale();
+            //if ($user instanceof \MxmUser\Model\UserInterface) {
+                $locale = $user->getLocale();
 
-            if (!empty($locale)) {
-                $translator->setLocale($locale);
+                if (!empty($locale)) {
+                    $translator->setLocale($locale);
 
-                return $mvcTranslator;
-            }
+                    return $mvcTranslator;
+                }
+            //}
         }
 
         $sessionContainer = $container->get('MxmUserSessionContainer');

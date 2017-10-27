@@ -327,12 +327,16 @@ class ZendDbSqlMapper implements MapperInterface
             'id' => 'id',
             'username' => 'username',
             'email' => 'email',
+            'emailVerification' => 'emailVerification',
+            'emailToken' => 'emailToken',
+            'dateEmailToken' => 'dateEmailToken',
             'password' => 'password',
             'role' => 'role',
             'timebelt' => 'timebelt',
             'created' => 'created',
             'passwordToken' => 'passwordToken',
             'dateToken' => 'dateToken',
+            'locale' => 'locale',
         ));
 
         if (array_key_exists('group', $parameters) && is_array($parameters['group'])) {

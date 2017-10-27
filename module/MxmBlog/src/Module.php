@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.

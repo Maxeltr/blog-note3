@@ -16,6 +16,7 @@ return [
     "Send" => "Отправить",
     "Login" => "Вход",
     "Password" => "Пароль",
+    "Confirm email" => "Подтвердить электронную почту",
     "Title" => "Заголовок",
     "Text" => "Текст",
     "Summary" => "Краткое описание",
@@ -24,7 +25,10 @@ return [
     "Tag" => "Тег",
     "Add tag" => "Добавить тег",
     "Choose tags" => "Выберите теги",
-    "Incorrect login and/or password." => "Неверный логин и/или пароль.",
-    "Incorrect login." => "Неверный логин.",
-
+    "Incorrect login and/or password" => "Неверный логин и/или пароль",
+    "Incorrect login" => "Неверный логин",
+    "First" => "Первая",
+    "Previous" => "Предыдущая",
+    "Next" => "Следующая",
+    "Last" => "Последняя",
 ];

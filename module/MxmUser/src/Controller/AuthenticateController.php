@@ -109,7 +109,11 @@ class AuthenticateController extends AbstractActionController
                 if ($resultCode === Result::SUCCESS) {
                     $url = new Request();
                     $url->setMethod(Request::METHOD_GET);
-                    $url->setUri($data['redirect']);
+                    try {
+                        $url->setUri($data['redirect']);
+                    } catch (\Exception $e) {
+                        return $this->redirect()->toRoute('home');
+                    }
                     $routeMatch = $this->router->match($url);
                     if ($routeMatch === null) {
 

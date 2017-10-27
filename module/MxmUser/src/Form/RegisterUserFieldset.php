@@ -44,8 +44,8 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
         TranslatorInterface $translator,
         ValidatorTranslatorInterface $validatorTranslator,
         $name = "register_user",
-        $options = array())
-    {
+        $options = array()
+    ){
         parent::__construct($name, $options);
 
         $this->setHydrator($hydrator);

@@ -56,8 +56,13 @@ class DatesHydrator implements HydratorInterface
         if (array_key_exists('created', $data) && $this->dateValidator->isValid($data['created'])) {
             $object->setCreated($this->datetime->modify($data['created']));
         }
+
         if (array_key_exists('dateToken', $data) && $this->dateValidator->isValid($data['dateToken'])) {
             $object->setDateToken($this->datetime->modify($data['dateToken']));
+        }
+
+        if (array_key_exists('dateEmailToken', $data) && $this->dateValidator->isValid($data['dateEmailToken'])) {
+            $object->setDateToken($this->datetime->modify($data['dateEmailToken']));
         }
 
         return $object;
@@ -75,9 +80,15 @@ class DatesHydrator implements HydratorInterface
         if ($datetimeCreated instanceof DateTimeInterface) {
             $values ['created'] = $datetimeCreated->format($this->config->defaults->dateTimeFormat);
         }
+
         $datetimeDateToken = $object->getDateToken();
         if ($datetimeDateToken instanceof DateTimeInterface) {
             $values ['dateToken'] = $datetimeDateToken->format($this->config->defaults->dateTimeFormat);
+        }
+
+        $dateEmailToken = $object->getDateEmailToken();
+        if ($dateEmailToken instanceof DateTimeInterface) {
+            $values ['dateEmailToken'] = $dateEmailToken->format($this->config->defaults->dateTimeFormat);
         }
 
         return $values;

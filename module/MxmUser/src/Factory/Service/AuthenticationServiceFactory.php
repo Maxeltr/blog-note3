@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
@@ -39,7 +39,7 @@ class AuthenticationServiceFactory implements FactoryInterface
     {
         $sessionManager =  $container->get(SessionManager::class);
         $authStorage = new SessionStorage('Zend_Auth', 'session', $sessionManager);
-        
+
         //$authStorage = new SessionStorage('someNamespace');
         $authAdapter = $container->get(AuthAdapter::class);
         $authService = new AuthenticationService();

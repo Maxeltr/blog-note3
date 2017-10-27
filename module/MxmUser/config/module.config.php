@@ -46,7 +46,7 @@ return [
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
             \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
-            \Zend\i18n\Translator\TranslatorInterface::class => Zend\I18n\Translator\Translator::class,
+            \Zend\i18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\Translator::class,
             //\Zend\Validator\Translator\TranslatorInterface::class => Zend\Mvc\I18n\Translator::class
 
 
@@ -64,7 +64,7 @@ return [
             Hydrator\UserFormHydrator\UserFormHydrator::class => Factory\Hydrator\UserFormHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
-            Zend\I18n\Translator\Translator::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
+            \Zend\I18n\Translator\Translator::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
             //Zend\Mvc\I18n\Translator::class => \Zend\Mvc\I18n\TranslatorFactory::class
         ],
         'delegators' => [
@@ -230,6 +230,16 @@ return [
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action'     => 'editEmail',
+                    ],
+                ],
+            ],
+            'changeLanguage' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/change/language',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action'     => 'changeLanguage',
                     ],
                 ],
             ],

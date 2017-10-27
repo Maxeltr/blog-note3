@@ -182,13 +182,13 @@ class WriteController extends AbstractActionController
             $this->editUserForm->setData($request->getPost());  //данные устанавливаются и в форму и в объект, т.к. форма и объект связаны
             if ($this->editUserForm->isValid()) {
 
-                //try {
+                try {
                     $this->userService->updateUser($user);
-//                } catch (\Exception $e) {
-//                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-//
-//                    return $this->notFoundAction();
-//                }
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
+                }
 
                 return $this->redirect()->toRoute('detailUser',
                     ['id' => $user->getId()]);
@@ -342,27 +342,30 @@ class WriteController extends AbstractActionController
 
     public function changeLanguageAction()
     {
-        die('not implement');
         $lang = $this->params()->fromQuery('lang', null);
+        try {
+            $this->userService->changeLanguage($lang);
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
-	if (isset($this->sessionContainer->locale)) {
-            $translator->setLocale($sessionContainer->locale);
-	}
-
-	$redirect = $this->params()->fromQuery('redirect', null);
-
-	$url = new Request();
-        $url->setMethod(Request::METHOD_GET);
-        $url->setUri($redirect);
-	$routeMatch = $this->router->match($url);
-
-        if ($routeMatch === null) {
-            return $this->redirect()->toRoute('home');
-        } else {
-            return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
+            return $this->notFoundAction();
         }
 
+        $redirect = $this->params()->fromQuery('redirect', null);
 
-        return $this->redirect()->toRoute('loginUser');
+        $url = new Request();
+        $url->setMethod(Request::METHOD_GET);
+        try {
+            $url->setUri($redirect);
+	} catch (\Exception $e) {
+            return $this->redirect()->toRoute('home');
+	}
+
+	$routeMatch = $this->router->match($url);
+	if ($routeMatch === null) {
+            return $this->redirect()->toRoute('home');
+	}
+
+	return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
     }
 }

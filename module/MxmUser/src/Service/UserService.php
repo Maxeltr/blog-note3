@@ -45,6 +45,7 @@ use MxmUser\Exception\NotAuthorizedUserException;
 use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
 use Zend\Math\Rand;
+use Zend\Session\Container as SessionContainer;
 
 class UserService implements UserServiceInterface
 {
@@ -93,6 +94,8 @@ class UserService implements UserServiceInterface
      */
     protected $mail;
 
+    protected $sessionContainer;
+
     public function __construct(
         MapperInterface $mapper,
         \DateTimeInterface $datetime,
@@ -102,7 +105,8 @@ class UserService implements UserServiceInterface
         RecordExists $isUserExists,
         AuthorizationService $authorizationService,
         Bcrypt $bcrypt,
-        MailService $mail
+        MailService $mail,
+        SessionContainer $sessionContainer
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -113,6 +117,7 @@ class UserService implements UserServiceInterface
         $this->authorizationService = $authorizationService;
         $this->bcrypt = $bcrypt;
         $this->mail = $mail;
+        $this->sessionContainer = $sessionContainer;
     }
 
     /**
@@ -425,10 +430,12 @@ class UserService implements UserServiceInterface
     private function isEmailTokenExpired($user)
     {
 	$tokenCreationDate = $user->getDateEmailToken();
-        $currentDate = $this->datetime->modify('now');
-        $interval = $tokenCreationDate->diff($currentDate);
-        if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
-            return true;
+        if ($tokenCreationDate instanceof \DateTimeInterface) {
+            $currentDate = $this->datetime->modify('now');
+            $interval = $tokenCreationDate->diff($currentDate);
+            if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
+                return true;
+            }
         }
 
 	return false;
@@ -437,12 +444,37 @@ class UserService implements UserServiceInterface
     private function isPasswordTokenExpired($user)
     {
         $tokenCreationDate = $user->getDateToken();
-        $currentDate = $this->datetime->modify('now');
-        $interval = $tokenCreationDate->diff($currentDate);
-        if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
-            return true;
+        if ($tokenCreationDate instanceof \DateTimeInterface) {
+            $currentDate = $this->datetime->modify('now');
+            $interval = $tokenCreationDate->diff($currentDate);
+            if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function changeLanguage($lang)
+    {
+        if (!$this->notEmptyValidator->isValid($lang)) {
+            throw new InvalidArgumentUserException("No params given: language.");
         }
 
-        return false;
+	if ($lang !== 'ru' and $lang !== 'en' and $lang !== 'Ru' and $lang !== 'En') {  //TODO сделать валидатор
+            return $this;
+	}
+
+	$this->sessionContainer->locale = $lang;
+
+	if ($this->authService->hasIdentity()) {
+            $currentUser = $this->authService->getIdentity();
+            $currentUser->setLocale($lang);
+            $this->mapper->updateUser($currentUser);
+        }
+
+        return $this;
     }
 }

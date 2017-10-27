@@ -57,6 +57,7 @@ class UserServiceFactory implements FactoryInterface
         ]);
         $bcrypt = new Bcrypt();
         $mail = $container->get(MailService::class);
+        $sessionContainer = $container->get('MxmUserSessionContainer');
 
         return new UserService(
             $mapper,
@@ -67,7 +68,8 @@ class UserServiceFactory implements FactoryInterface
             $recordExistsValidator,
             $authorizationService,
             $bcrypt,
-            $mail
+            $mail,
+            $sessionContainer
         );
     }
 }
