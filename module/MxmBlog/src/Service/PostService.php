@@ -138,11 +138,20 @@ class PostService implements PostServiceInterface
      */
     public function findPostsByUser(UserInterface $user)
     {
+        $posts = $this->mapper->findPostsByUser($user);
+
+	return $posts;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findUnPublishedPostsByUser(UserInterface $user)
+    {
         if ($this->authorizationService->isGranted('find.unpublished.posts', $user)) {      //если пользователь ищет свои статьи, то показывать неопубликованные
-            $posts = $this->mapper->findPostsByUser($user, false);
-        } else {
-            $posts = $this->mapper->findPostsByUser($user);
+            throw new NotAuthorizedBlogException('Access denied. Permission "find.unpublished.posts" is required.');
         }
+	$posts = $this->mapper->findPostsByUser($user, false);
 
 	return $posts;
     }

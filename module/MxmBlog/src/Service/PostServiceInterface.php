@@ -30,19 +30,37 @@ namespace MxmBlog\Service;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
+use MxmUser\Model\UserInterface;
 
 interface PostServiceInterface
 {
     /**
-     * Должен вернуть массив объектов, реализующих PostInterface или Paginator
+     * Должен Paginator
      *
-     * @return Array of Paginator
+     * @return Paginator
      */
     public function findAllPosts();
 
     /**
-     * Должен вернуть массив объектов, реализующих PostInterface или Paginator,
-     * одной категории
+     * Должен вернуть Paginator
+     *
+     * @param UserInterface $user
+     *
+     * @return Paginator
+     */
+    public function findPostsByUser(UserInterface $user);
+
+    /**
+     * Должен вернуть Paginator
+     *
+     * @param UserInterface $user
+     *
+     * @return Paginator
+     */
+    public function findUnpublishedPostsByUser(UserInterface $user);
+
+    /**
+     * Должен Paginator
      *
      * @param CategoryInterface $category
      *
@@ -51,8 +69,7 @@ interface PostServiceInterface
     public function findPostsByCategory(CategoryInterface $category);
 
     /**
-     * Должен вернуть массив объектов, реализующих PostInterface или Paginator,
-     * одной тега
+     * Должен вернуть Paginator
      *
      * @param TagInterface $tag
      *
