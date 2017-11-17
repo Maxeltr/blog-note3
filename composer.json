@@ -66,8 +66,7 @@
         "test": "phpunit"
     },
     "require-dev": {
-	"phpunit/phpunit-skeleton-generator": "*",
-        "zendframework/zend-developer-tools": "^1.1",
+	"zendframework/zend-developer-tools": "^1.1",
         "zendframework/zend-test": "^3.1"
     }
 }
