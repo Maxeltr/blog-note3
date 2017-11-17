@@ -42,7 +42,8 @@
             "MxmBlog\\": "module/MxmBlog/src/",
             "MxmUser\\": "module/MxmUser/src/",
             "MxmRbac\\": "module/MxmRbac/src/",
-            "MxmMail\\": "module/MxmMail/src/"
+            "MxmMail\\": "module/MxmMail/src/",
+            "MxmApi\\": "module/MxmApi/src/"
         }
     },
     "autoload-dev": {
