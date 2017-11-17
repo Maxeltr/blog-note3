@@ -33,7 +33,8 @@
         "zendframework/zend-text": "^2.6",
         "zendframework/zend-permissions-rbac": "^2.5",
         "zendframework/zend-mvc-i18n": "^1.0",
-        "zendframework/zend-i18n-resources": "^2.5"
+        "zendframework/zend-i18n-resources": "^2.5",
+        "zfcampus/zf-apigility": "^1.3"
     },
     "autoload": {
         "psr-4": {
