@@ -30,5 +30,4 @@ use MxmBlog\Model\Post;
 
 class PostEntity extends Post
 {
-    
 }

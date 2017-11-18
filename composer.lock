@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "673716609be5a7e651c79efb2914c7fe",
+    "content-hash": "cf7d09794162e10419a2bf6b264b3c02",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -141,6 +141,83 @@
                 "html"
             ],
             "time": "2017-06-03T02:28:16+00:00"
+        },
+        {
+            "name": "kriswallsmith/assetic",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kriswallsmith/assetic.git",
+                "reference": "e911c437dbdf006a8f62c2f59b15b2d69a5e0aa1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kriswallsmith/assetic/zipball/e911c437dbdf006a8f62c2f59b15b2d69a5e0aa1",
+                "reference": "e911c437dbdf006a8f62c2f59b15b2d69a5e0aa1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1",
+                "symfony/process": "~2.1|~3.0"
+            },
+            "conflict": {
+                "twig/twig": "<1.27"
+            },
+            "require-dev": {
+                "leafo/lessphp": "^0.3.7",
+                "leafo/scssphp": "~0.1",
+                "meenie/javascript-packer": "^1.1",
+                "mrclay/minify": "<2.3",
+                "natxet/cssmin": "3.0.4",
+                "patchwork/jsqueeze": "~1.0|~2.0",
+                "phpunit/phpunit": "~4.8 || ^5.6",
+                "psr/log": "~1.0",
+                "ptachoire/cssembed": "~1.0",
+                "symfony/phpunit-bridge": "~2.7|~3.0",
+                "twig/twig": "~1.23|~2.0",
+                "yfix/packager": "dev-master"
+            },
+            "suggest": {
+                "leafo/lessphp": "Assetic provides the integration with the lessphp LESS compiler",
+                "leafo/scssphp": "Assetic provides the integration with the scssphp SCSS compiler",
+                "leafo/scssphp-compass": "Assetic provides the integration with the SCSS compass plugin",
+                "patchwork/jsqueeze": "Assetic provides the integration with the JSqueeze JavaScript compressor",
+                "ptachoire/cssembed": "Assetic provides the integration with phpcssembed to embed data uris",
+                "twig/twig": "Assetic provides the integration with the Twig templating engine"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Assetic": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com",
+                    "homepage": "http://kriswallsmith.net/"
+                }
+            ],
+            "description": "Asset Management for PHP",
+            "homepage": "https://github.com/kriswallsmith/assetic",
+            "keywords": [
+                "assets",
+                "compression",
+                "minification"
+            ],
+            "time": "2016-11-11T18:43:20+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -287,6 +364,73 @@
             "time": "2016-10-10T12:19:37+00:00"
         },
         {
+            "name": "rwoverdijk/assetmanager",
+            "version": "1.7.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RWOverdijk/AssetManager.git",
+                "reference": "301810eb2ffece940909e79db6ef7fb055cbbd46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RWOverdijk/AssetManager/zipball/301810eb2ffece940909e79db6ef7fb055cbbd46",
+                "reference": "301810eb2ffece940909e79db6ef7fb055cbbd46",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/assetic": "^1.2.1",
+                "php": "^5.5 || ^7.0",
+                "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
+                "zendframework/zend-loader": "^2.5.1",
+                "zendframework/zend-modulemanager": "^2.7.2",
+                "zendframework/zend-mvc": "^2.7.9 || ^3.0.2",
+                "zendframework/zend-servicemanager": "^2.7.6 || ^3.1.1",
+                "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "~1.5.0",
+                "zendframework/zend-cache": "^2.7.1",
+                "zendframework/zend-console": "^2.6",
+                "zendframework/zend-http": "^2.5.4",
+                "zendframework/zend-view": "^2.8.1"
+            },
+            "suggest": {
+                "zendframework/zend-mvc-console": "zend-mvc-console provides the ability to expose zend-mvc as a console application"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "AssetManager": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Wesley Overdijk",
+                    "email": "r.w.overdijk@gmail.com",
+                    "homepage": "http://blog.spoonx.nl/"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.com/"
+                }
+            ],
+            "description": "An assetmanager module for Zend Framework 2.",
+            "homepage": "https://github.com/RWOverdijk/AssetManager",
+            "keywords": [
+                "asset",
+                "asset manager",
+                "zend framework 2",
+                "zf2"
+            ],
+            "time": "2017-07-31T07:32:20+00:00"
+        },
+        {
             "name": "soflomo/purifier",
             "version": "2.0.0-beta",
             "source": {
@@ -365,6 +509,55 @@
                 "zf2"
             ],
             "time": "2016-12-21T18:17:48+00:00"
+        },
+        {
+            "name": "symfony/process",
+            "version": "v3.3.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "a56a3989fb762d7b19a0cf8e7693ee99a6ffb78d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/a56a3989fb762d7b19a0cf8e7693ee99a6ffb78d",
+                "reference": "a56a3989fb762d7b19a0cf8e7693ee99a6ffb78d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "time": "2017-11-13T15:31:11+00:00"
         },
         {
             "name": "zendframework/zend-authentication",
@@ -4984,6 +5177,193 @@
                 "zf2"
             ],
             "time": "2017-10-29T16:35:35+00:00"
+        },
+        {
+            "name": "zfcampus/zf-apigility-admin",
+            "version": "1.5.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zfcampus/zf-apigility-admin.git",
+                "reference": "5ffe8f98fe25bec056aaed8acb8cd755f014b54a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin/zipball/5ffe8f98fe25bec056aaed8acb8cd755f014b54a",
+                "reference": "5ffe8f98fe25bec056aaed8acb8cd755f014b54a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0",
+                "zendframework/zend-code": "^2.6.3 || ^3.0.4",
+                "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
+                "zendframework/zend-filter": "^2.7.1",
+                "zendframework/zend-http": "^2.5.4",
+                "zendframework/zend-hydrator": "^1.1 || ^2.2.1",
+                "zendframework/zend-inputfilter": "^2.7.2",
+                "zendframework/zend-modulemanager": "^2.7.2",
+                "zendframework/zend-mvc": "^2.7.10 || ^3.0.2",
+                "zendframework/zend-servicemanager": "^2.7.6 || ^3.1.1",
+                "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1",
+                "zendframework/zend-validator": "^2.8.1",
+                "zendframework/zend-view": "^2.8.1",
+                "zfcampus/zf-api-problem": "^1.2.1",
+                "zfcampus/zf-apigility": "^1.3",
+                "zfcampus/zf-apigility-admin-ui": "^1.3.7",
+                "zfcampus/zf-apigility-provider": "^1.2",
+                "zfcampus/zf-configuration": "1.2.1 - 1.3.0 || >1.3.1 <2.0",
+                "zfcampus/zf-content-negotiation": "^1.2.2",
+                "zfcampus/zf-content-validation": "^1.3.4",
+                "zfcampus/zf-hal": "^1.4.2",
+                "zfcampus/zf-mvc-auth": "^1.4.2",
+                "zfcampus/zf-oauth2": "^1.4",
+                "zfcampus/zf-rest": "^1.3.1",
+                "zfcampus/zf-rpc": "^1.3",
+                "zfcampus/zf-versioning": "^1.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "^2.6.2",
+                "zendframework/zend-config": "^2.6",
+                "zendframework/zend-loader": "^2.5.1",
+                "zfcampus/zf-deploy": "^1.2"
+            },
+            "bin": [
+                "bin/apigility-upgrade-to-1.5"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5-dev",
+                    "dev-develop": "1.6-dev"
+                },
+                "zf": {
+                    "module": "ZF\\Apigility\\Admin"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZF\\Apigility\\Admin\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Apigility Admin module",
+            "homepage": "http://apigility.org/",
+            "keywords": [
+                "api",
+                "apigility",
+                "framework",
+                "zf2"
+            ],
+            "time": "2017-11-14T20:22:51+00:00"
+        },
+        {
+            "name": "zfcampus/zf-apigility-admin-ui",
+            "version": "1.3.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zfcampus/zf-apigility-admin-ui.git",
+                "reference": "20f5b79643c00fdc9b8e3ddd33d9700a9240ccd6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zfcampus/zf-apigility-admin-ui/zipball/20f5b79643c00fdc9b8e3ddd33d9700a9240ccd6",
+                "reference": "20f5b79643c00fdc9b8e3ddd33d9700a9240ccd6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0",
+                "zendframework/zend-view": "^2.8.1"
+            },
+            "require-dev": {
+                "zendframework/zend-console": "^2.6"
+            },
+            "suggest": {
+                "rwoverdijk/assetmanager": "^1.7, to expose assets under the document root (may not yet be released)",
+                "zfcampus/zf-asset-manager": "^1.0, to expose assets under the document root, until rwoverdijk/assetmanager 1.7 is released"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev",
+                    "dev-develop": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "Module.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Apigility Admin UI module",
+            "homepage": "http://apigility.org/",
+            "keywords": [
+                "api",
+                "apigility",
+                "framework",
+                "zf2"
+            ],
+            "time": "2016-12-19T17:46:02+00:00"
+        },
+        {
+            "name": "zfcampus/zf-configuration",
+            "version": "1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zfcampus/zf-configuration.git",
+                "reference": "e6c0ccff74b07390ee53855542e7d7861030daf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zfcampus/zf-configuration/zipball/e6c0ccff74b07390ee53855542e7d7861030daf8",
+                "reference": "e6c0ccff74b07390ee53855542e7d7861030daf8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0",
+                "zendframework/zend-config": "^2.6 || ^3.0",
+                "zendframework/zend-modulemanager": "^2.7.1",
+                "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1"
+            },
+            "require-dev": {
+                "container-interop/container-interop": "^1.1",
+                "phpunit/phpunit": "^5.7.15 || ^6.0.8",
+                "zendframework/zend-coding-standard": "~1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev",
+                    "dev-develop": "1.4-dev"
+                },
+                "zf": {
+                    "module": "ZF\\Configuration"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZF\\Configuration\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Zend Framework module providing a REST resource for manipulating configuration",
+            "homepage": "http://apigility.org/",
+            "keywords": [
+                "config",
+                "module",
+                "rest",
+                "zend",
+                "zf2"
+            ],
+            "time": "2017-11-14T23:07:10+00:00"
         }
     ],
     "aliases": [],

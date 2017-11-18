@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -36,23 +36,23 @@ use Zend\Hydrator\HydratorInterface;
 class TagsHydrator extends ClassMethods implements HydratorInterface
 {
     private $itemList;
-    
+
     private $item;
-    
+
     public function __construct(TagInterface $item, ItemList $itemList)
     {
         $this->item = $item;
         $this->itemList = $itemList;
         parent::__construct(false);
     }
-    
+
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof PostInterface) {
             return $object;
         }
 
-        //В $data['tags'] уже гидрированный массив объектов TagInterface?? (гидрирован гидратором 
+        //В $data['tags'] уже гидрированный массив объектов TagInterface?? (гидрирован гидратором
         //ClassMethods, переданным в форму фабрикой?).
         if (array_key_exists('tags', $data) && is_array($data['tags'])) {
             for($i=0, $countTags = count($data['tags']); $i < $countTags; $i++) {
@@ -60,13 +60,13 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
                     $this->itemList->offsetSet($i, $data['tags'][$i]);
                 }
             }
-			
+
         } else {
             throw new InvalidArgumentBlogException("TagsHydrator. hydrate. Invalid params given.");
         }
-        
+
         $object->setTags($this->itemList);
-        
+
         return $object;
     }
 
@@ -75,12 +75,12 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
         if (!$object instanceof PostInterface) {
             return array();
         }
-        
+
         $itemList = $object->getTags();
         if(!$itemList instanceof ItemList) {
             return array();
         }
-        
+
         $items = array();
         foreach($itemList as $item) {
             if($item instanceof TagInterface) {

@@ -33,6 +33,7 @@ return [
     'ZF\Rest',
     'ZF\ContentValidation',
     'ZF\Apigility',
+    'ZF\Configuration',
     'Application',
     'MxmBlog',
     'Soflomo\Purifier',
