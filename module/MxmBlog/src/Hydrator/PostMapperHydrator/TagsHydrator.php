@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -36,42 +36,44 @@ use Zend\Hydrator\HydratorInterface;
 class TagsHydrator extends ClassMethods implements HydratorInterface
 {
     private $itemList;
-    
+
     private $item;
-    
+
     public function __construct(TagInterface $item, ItemList $itemList)
     {
         $this->item = $item;
         $this->itemList = $itemList;
         parent::__construct(false);
     }
-    
+
     public function hydrate(array $data, $object)
     {
         if (!$object instanceof PostInterface) {
             return $object;
         }
-		if (array_key_exists('tagIds', $data) && array_key_exists('tagTitles', $data) && array_key_exists('tagWeights', $data)) {
+
+        if (array_key_exists('tagIds', $data) && array_key_exists('tagTitles', $data) && array_key_exists('tagWeights', $data)) {
+            $itemListClone = clone $this->itemList;
 
             $tagIds = explode(",", $data['tagIds']);
             $tagTitles = explode(",", $data['tagTitles']);
             $tagWeights = explode(",", $data['tagWeights']);
-        
+
             for($i=0, $countTagIds = count($tagIds); $i < $countTagIds; $i++) {
                 $tagClone = clone $this->item;
                 $tagClone->setId(!empty($tagIds[$i]) ? $tagIds[$i] : null);
                 $tagClone->setTitle(!empty($tagTitles[$i]) ? $tagTitles[$i] : '');
                 $tagClone->setWeight(!empty($tagWeights[$i]) ? $tagWeights[$i] : 0);
 
-                $this->itemList->offsetSet($i, $tagClone);
+                $itemListClone->offsetSet($i, $tagClone);
             }
-            
+
         } else {
             throw new InvalidArgumentBlogException("TagsHydrator. hydrate. Invalid params given.");
         }
-        
-        $object->setTags($this->itemList);
-        
+
+        $object->setTags($itemListClone);
+
         return $object;
     }
 
@@ -80,12 +82,12 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
         if (!$object instanceof PostInterface) {
             return array();
         }
-        
+
         $itemList = $object->getTags();
         if(!$itemList instanceof ItemList) {
             return array();
         }
-        
+
         $items = array();
         foreach($itemList as $item) {
             if($item instanceof TagInterface) {

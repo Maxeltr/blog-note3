@@ -880,27 +880,21 @@ class ZendDbSqlMapper implements MapperInterface
 
         $this->deletePostAssociationWithTags($post);
 
-        $repetition = array();
         for($offset=0, $countTags = count($tags); $offset < $countTags; $offset++) {
             $tag = $tags->offsetGet($offset);
-            $tagTitle = $tag->getTitle();
-            if (!in_array($tagTitle, $repetition) && !empty($tagTitle)) {
-                $repetition[] = $tagTitle;
-                $tagId = $this->getTagIdByName($tagTitle);
-                if ($tagId === null) {
-                    $this->insertTag($tag);
-                    $this->saveTagPostAssociation($tag->getId(), $post->getId());
-                } else {
-                    $this->saveTagPostAssociation($tagId, $post->getId());
-                    $tagInDb = $this->findTagById($tagId);
-                    $tag->setId($tagInDb->getId());
-                    $tag->setTitle($tagInDb->getTitle());
-                    $tag->setWeight($tagInDb->getWeight());
-                }
-
+            try {
+                $tagInDb = $this->findTagById($tag->getId());
+            } catch (\Exception $ex) {
+                //TODO log
+                $tags->offsetUnset($offset);
                 continue;
             }
-            $tags->offsetUnset($offset);
+
+            $tag->setId($tagInDb->getId());
+            $tag->setTitle($tagInDb->getTitle());
+            $tag->setWeight($tagInDb->getWeight());
+            
+            $this->saveTagPostAssociation($tag->getId(), $post->getId());
         }
 
         return $this;
