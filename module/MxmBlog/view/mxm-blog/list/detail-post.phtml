@@ -14,7 +14,7 @@
             </p>
             <p class="blog-post-meta">
                 Category: <?php if ($post->getCategory() instanceof \MxmBlog\Model\CategoryInterface) {
-                    $this->escapeHtml($post->getCategory()->getTitle());
+                    echo $this->escapeHtml($post->getCategory()->getTitle());
                 } ?>
             </p>
             <p class="blog-post-meta">
