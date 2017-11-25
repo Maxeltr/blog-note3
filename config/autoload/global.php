@@ -12,6 +12,11 @@
  */
 
 return [
+    'defaults' => [
+        'locale' => 'ru_RU',
+        'timezone' => 'Europe/Moscow',
+        'dateTimeFormat' => 'Y-m-d H:i:s',
+    ],
     'db' => [
         'driver' => 'Pdo',
         'username' => 'root',

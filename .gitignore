@@ -3,6 +3,7 @@ vendor/
 config/development.config.php
 data/cache/*
 data/logs/*
+data/files/*
 !data/cache/.gitkeep
 phpunit.xml
 ubuntu-xenial-16.04-cloudimg-console.log

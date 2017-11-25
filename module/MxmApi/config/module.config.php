@@ -27,9 +27,15 @@
 namespace MxmApi;
 
 return [
+    'defaults' => [
+        'locale' => 'ru_RU',
+        'timezone' => 'Europe/Moscow',
+        'dateTimeFormat' => 'Y-m-d H:i:s',
+    ],
     'service_manager' => [
         'factories' => [
             \MxmApi\V1\Rest\Post\PostResource::class => \MxmApi\V1\Rest\Post\PostResourceFactory::class,
+            \MxmApi\V1\Rest\File\FileResource::class => \MxmApi\V1\Rest\File\FileResourceFactory::class,
         ],
     ],
     'router' => [
@@ -43,11 +49,21 @@ return [
                     ],
                 ],
             ],
+            'mxm-api.rest.file' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/api/file[/:file_id]',
+                    'defaults' => [
+                        'controller' => 'MxmApi\\V1\\Rest\\File\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
         'uri' => [
             0 => 'mxm-api.rest.post',
+            1 => 'mxm-api.rest.file',
         ],
     ],
     'zf-rest' => [
@@ -73,13 +89,41 @@ return [
             'collection_class' => \MxmApi\V1\Rest\Post\PostCollection::class,
             'service_name' => 'post',
         ],
+        'MxmApi\\V1\\Rest\\File\\Controller' => [
+            'listener' => \MxmApi\V1\Rest\File\FileResource::class,
+            'route_name' => 'mxm-api.rest.file',
+            'route_identifier_name' => 'file_id',
+            'collection_name' => 'file',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \MxmApi\V1\Rest\File\File::class,
+            'collection_class' => \MxmApi\V1\Rest\File\FileCollection::class,
+            'service_name' => 'file',
+        ],
     ],
     'zf-content-negotiation' => [
         'controllers' => [
             'MxmApi\\V1\\Rest\\Post\\Controller' => 'HalJson',
+            'MxmApi\\V1\\Rest\\File\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'MxmApi\\V1\\Rest\\Post\\Controller' => [
+                0 => 'application/vnd.mxm-api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
+            'MxmApi\\V1\\Rest\\File\\Controller' => [
                 0 => 'application/vnd.mxm-api.v1+json',
                 1 => 'application/hal+json',
                 2 => 'application/json',
@@ -90,14 +134,18 @@ return [
                 0 => 'application/vnd.mxm-api.v1+json',
                 1 => 'application/json',
             ],
+            'MxmApi\\V1\\Rest\\File\\Controller' => [
+                0 => 'application/vnd.mxm-api.v1+json',
+                1 => 'application/json',
+            ],
         ],
     ],
     'zf-hal' => [
         'metadata_map' => [
             \MxmBlog\Model\Post::class => [
-                //'entity_identifier_name' => 'id',
+                'entity_identifier_name' => 'id',
                 'route_name' => 'mxm-api.rest.post',
-                //'route_identifier_name' => 'post_id',
+                'route_identifier_name' => 'post_id',
                 'hydrator' => \Zend\Hydrator\ClassMethods::class,
             ],
             \MxmUser\Model\User::class => [
@@ -126,10 +174,58 @@ return [
                 'hydrator' => \Zend\Hydrator\ClassMethods::class,
             ],
             \MxmApi\V1\Rest\Post\PostCollection::class => [
-                //'entity_identifier_name' => 'id',
+                'entity_identifier_name' => 'id',
                 'route_name' => 'mxm-api.rest.post',
-                //'route_identifier_name' => 'post_id',
+                'route_identifier_name' => 'post_id',
                 'is_collection' => true,
+            ],
+            \MxmApi\V1\Rest\File\FileEntity::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'mxm-api.rest.file',
+                'route_identifier_name' => 'file_id',
+                'hydrator' => \Zend\Hydrator\ClassMethods::class,
+            ],
+            \MxmApi\V1\Rest\File\FileCollection::class => [
+                'entity_identifier_name' => 'id',
+                'route_name' => 'mxm-api.rest.file',
+                'route_identifier_name' => 'file_id',
+                'is_collection' => true,
+            ],
+        ],
+    ],
+    'zf-content-validation' => [
+        'MxmApi\\V1\\Rest\\File\\Controller' => [
+            'input_filter' => 'MxmApi\\V1\\Rest\\File\\Validator',
+        ],
+    ],
+    'input_filter_specs' => [
+        'MxmApi\\V1\\Rest\\File\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\File\MimeType::class,
+                        'options' => [
+                            'mimeType' => [
+                                'text/plain'
+                            ],
+                        ],
+                    ],
+                ],
+                'filters' => [
+                    0 => [
+                        'name' => \Zend\Filter\File\RenameUpload::class,
+                        'options' => [
+                            'randomize' => true,
+                            'target' => 'data/files/file.txt',
+                        ],
+                    ],
+                ],
+                'name' => 'file',
+                'description' => 'file upload',
+                'type' => \Zend\InputFilter\FileInput::class,
+                'error_message' => 'file upload fail',
+                'field_type' => 'multipart/form-data',
             ],
         ],
     ],
