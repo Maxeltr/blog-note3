@@ -137,6 +137,7 @@ return [
             'MxmApi\\V1\\Rest\\File\\Controller' => [
                 0 => 'application/vnd.mxm-api.v1+json',
                 1 => 'application/json',
+                2 => 'multipart/form-data',
             ],
         ],
     ],

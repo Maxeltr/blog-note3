@@ -72,6 +72,7 @@
     "require-dev": {
 	"zendframework/zend-developer-tools": "^1.1",
         "zendframework/zend-test": "^3.1",
-        "zfcampus/zf-apigility-admin": "^1.5"
+        "zfcampus/zf-apigility-admin": "^1.5",
+		"phpunit/phpunit": "^6.0"
     }
 }

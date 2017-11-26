@@ -42,7 +42,7 @@ use MxmUser\Model\User;
 use MxmRbac\Assertion\AssertUserIdMatches;
 use MxmRbac\Assertion\MustBeAuthorAssertion;
 
-class AuthorizationServiceTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
 {
     protected $currentUser;
     protected $rbac;

@@ -79,7 +79,32 @@ class FileResource extends AbstractResourceListener
      */
     public function delete($id)
     {
-        return new ApiProblem(405, 'The DELETE method has not been defined for individual resources');
+        if (! Uuid::isValid($id)) {
+            throw new DomainException('Invalid identifier provided', 404);
+        }
+
+        $resultSet = $this->tableGateway->select(['id' => $id]);
+        if (0 === count($resultSet)) {
+            throw new DomainException('File record not found in DB', 404);
+        }
+        $fileEntity = $resultSet->current();
+
+        $path = $fileEntity->getPath();
+
+        if (!is_readable($path)) {
+            $this->response->setStatusCode(404);
+            return;
+        }
+
+        unlink($path);
+
+        $result = $this->tableGateway->delete(['id' => $id]);
+
+        if (!$result) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -144,8 +169,6 @@ class FileResource extends AbstractResourceListener
     public function fetchAll($params = [])
     {
         return new FileCollection(new DbTableGateway($this->tableGateway, null, ['uploaded' => 'DESC']));
-
-        return new ApiProblem(405, 'The GET method has not been defined for collections');
     }
 
     /**
