@@ -107,7 +107,7 @@ return [
             'collection_query_whitelist' => [],
             'page_size' => 25,
             'page_size_param' => null,
-            'entity_class' => \MxmApi\V1\Rest\File\File::class,
+            'entity_class' => \MxmApi\V1\Rest\File\FileEntity::class,
             'collection_class' => \MxmApi\V1\Rest\File\FileCollection::class,
             'service_name' => 'file',
         ],
@@ -202,7 +202,7 @@ return [
     'input_filter_specs' => [
         'MxmApi\\V1\\Rest\\File\\Validator' => [
             0 => [
-                'required' => true,
+                'required' => false,
                 'validators' => [
                     0 => [
                         'name' => \Zend\Validator\File\MimeType::class,
@@ -228,6 +228,23 @@ return [
                 'error_message' => 'file upload fail',
                 'field_type' => 'multipart/form-data',
             ],
+            1 => [
+                'required' => false,
+                'filters' => [],
+                'validators' => [],
+                'allow_empty' => false,
+                'continue_if_empty' => false,
+                'name' => 'filename',
+            ],
+            2 => [
+                'required' => false,
+                'filters' => [],
+                'validators' => [],
+                'allow_empty' => false,
+                'continue_if_empty' => false,
+                'name' => 'description',
+            ],
+
         ],
     ],
 ];

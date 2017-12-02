@@ -51,21 +51,25 @@ class FileResource extends AbstractResourceListener
     public function create($data)
     {
         $inputFilter = $this->getInputFilter();
-        $data = $inputFilter->getValues();
+        $file = $inputFilter->getValue('file');
+
+        if (empty($file['name']) or empty($file['tmp_name'])) {
+            return new ApiProblem(500, 'Create operation failed. No data received.');
+        }
 
         $id = Uuid::uuid4()->toString();
 
         $this->tableGateway->insert([
             'id' => $id,
-            'filename' => $data['file']['name'],
-            'path' => $data['file']['tmp_name'],
+            'filename' => $file['name'],
+            'path' => $file['tmp_name'],
             'description' => "",
             'uploaded' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat)
         ]);
 
         $resultSet = $this->tableGateway->select(['id' => $id]);
         if (0 === count($resultSet)) {
-            throw new DomainException('Insert operation failed or did not result in new row', 500);
+            return new ApiProblem(500, 'Insert operation failed or did not result in new row');
         }
 
         return $resultSet->current();
@@ -127,20 +131,19 @@ class FileResource extends AbstractResourceListener
     public function fetch($id)
     {
         if (! Uuid::isValid($id)) {
-            throw new DomainException('Invalid identifier provided', 404);
+            return new ApiProblem(404, 'Invalid identifier provided');
         }
 
         $resultSet = $this->tableGateway->select(['id' => $id]);
         if (0 === count($resultSet)) {
-            throw new DomainException('File record not found in DB', 404);
+            return new ApiProblem(404, 'File record not found in DB');
         }
         $fileEntity = $resultSet->current();
 
         $path = $fileEntity->getPath();
 
         if (!is_readable($path)) {
-            $this->response->setStatusCode(404);
-            return;
+            return new ApiProblem(404, 'File not found');
         }
 
         $headers = $this->response->getHeaders();
@@ -150,11 +153,10 @@ class FileResource extends AbstractResourceListener
         $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
 
         $fileContent = file_get_contents($path);
-        if ($fileContent != false) {
+        if ($fileContent !== false) {
             $this->response->setContent($fileContent);
         } else {
-            $this->response->setStatusCode(500);
-            return;
+            return new ApiProblem(500, "Can't read file");
         }
 
         return $this->response;
