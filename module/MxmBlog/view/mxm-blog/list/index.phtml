@@ -11,14 +11,14 @@
                 <?php foreach ($this->posts as $post): ?>
                     <div class="col-xs-6 col-lg-4">
                         <div class="div-1">
-                        <h3><a href="<?php echo $this->url('detailPost',
+                        <h1><a href="<?php echo $this->url('detailPost',
                             array('action' => 'detailPost', 'id' => $post->getId())); ?>">
-                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h3>
-                        
+                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h1>
+
                         <p>
                             <?php echo $this->htmlPurifier($post->getText()); ?>
                         </p>
-                                                
+
                         </div>
 <!--                        <p><a role="button" href="#" class="btn btn-default">View details »</a></p>-->
                     </div><!--/.col-xs-6.col-lg-4-->
@@ -43,5 +43,5 @@
 
 <?php echo $this->paginationControl($this->posts,
         'Sliding',
-        'partial/paginator.phtml', 
+        'partial/paginator.phtml',
         array('route' => 'listPosts')); ?>

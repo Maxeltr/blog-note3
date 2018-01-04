@@ -28,6 +28,7 @@ namespace MxmRbac\Assertion;
 
 use Zend\Permissions\Rbac\AssertionInterface;
 use Zend\Permissions\Rbac\Rbac;
+use MxmUser\Model\UserInterface;
 
 class MustBeAuthorAssertion implements AssertionInterface
 {
@@ -47,7 +48,11 @@ class MustBeAuthorAssertion implements AssertionInterface
 
     public function assert(Rbac $rbac)
     {
-        return $this->currentUser->getId() === $this->content->getAuthor()->getId();
+        $author = $this->content->getAuthor();
+        if ($author instanceof UserInterface) {
+            return $this->currentUser->getId() === $author->getId();
+        }
 
+        return false;
     }
 }
