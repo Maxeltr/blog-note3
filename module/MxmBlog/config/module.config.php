@@ -8,7 +8,7 @@ use Zend\Router\Http\Literal;
 return [
     'mxm_blog' => [
         'listController' => [
-            'ItemCountPerPage' => 10,
+            'ItemCountPerPage' => 9,
         ],
 //        'dateTime' => [
 //            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime

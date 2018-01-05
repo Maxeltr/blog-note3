@@ -7,3 +7,8 @@ a:hover, a:focus {
     color: #fefe54;
 }
 
+
+
+#sidebar > .list-group {
+    margin: 15px 10px 40px 10px
+}

@@ -41,4 +41,14 @@ return [
             //'Output.TidyFormat' => true,
         ],
     ],
+    'translator' => [
+        'locale' => 'en',
+        'translation_file_patterns' => [
+            [
+                'type'     => 'phpArray',
+                'base_dir' => __DIR__ . '/../../data/languages',
+                'pattern'  => '%s.php',
+            ],
+        ],
+    ],
 ];

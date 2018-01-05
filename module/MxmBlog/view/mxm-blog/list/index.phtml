@@ -1,11 +1,12 @@
 <div class="row row-offcanvas row-offcanvas-right">
-    <div class="page-header">
-      <h1>Example page header <small>Subtext for header</small></h1>
-    </div>
     <div class="col-xs-12 col-sm-9">
         <p class="pull-right visible-xs">
             <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
         </p>
+        <div class="jumbotron">
+            <h1>Hello, world!</h1>
+            <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try some responsive-range viewport sizes to see it in action.</p>
+        </div>
         <div class="row">
             <?php if (count($this->posts)): ?>
                 <?php foreach ($this->posts as $post): ?>
@@ -16,7 +17,7 @@
                             <?php echo $this->escapeHtml($post->getTitle()); ?></a></h1>
 
                         <p>
-                            <?php echo $this->htmlPurifier($post->getText()); ?>
+                            <?php echo $this->htmlPurifier($post->getSummary()); ?>
                         </p>
 
                         </div>

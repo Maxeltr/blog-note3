@@ -96,10 +96,13 @@ class ListController extends AbstractActionController
         $paginator = $this->postService->findAllPosts();
         $this->configurePaginator($paginator);
 
-        return new ViewModel([
+        $model = new ViewModel([
             'posts' => $paginator,
             'route' => 'listPosts'
         ]);
+        $model->setTemplate('mxm-blog/list/list-posts');
+
+        return $model;
     }
 
     public function listPostsAction()

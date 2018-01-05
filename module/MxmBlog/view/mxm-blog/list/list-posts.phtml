@@ -1,79 +1,53 @@
-
-<div class="blog-header">
-        <h1 class="blog-title">The Bootstrap Blog</h1>
-        <p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>
-      </div>
-
-<div class="row">
-
-    <div class="col-sm-8 blog-main">
-        <div class="blog-post">
+<div class="row row-offcanvas row-offcanvas-right">
+    <div class="col-xs-12 col-sm-9">
+        <p class="pull-right visible-xs">
+            <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
+        </p>
+        <div class="jumbotron">
+            <h1>Hello, world!</h1>
+            <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try some responsive-range viewport sizes to see it in action.</p>
+        </div>
+        <div class="row">
             <?php if (count($this->posts)): ?>
                 <?php foreach ($this->posts as $post): ?>
-
-<!--                        <h4><?php //echo $this->escapeHtml($post->getTitle()); ?></h4>-->
-
-                        <h3><a href="<?php echo $this->url('detailPost',
+                    <div class="col-xs-6 col-lg-4">
+                        <div class="div-1">
+                        <h1><a href="<?php echo $this->url('detailPost',
                             array('action' => 'detailPost', 'id' => $post->getId())); ?>">
-                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h3>
-                        <p class="blog-post-meta">
-                            Category: <?php if ($post->getCategory() instanceof \MxmBlog\Model\CategoryInterface) {
-                                            echo $this->escapeHtml($post->getCategory()->getTitle());
-                                    }  ?>
-                        </p>
-                        <p class="blog-post-meta">
-                            Tags: <?php if ($post->getTags() instanceof \Zend\Tag\ItemList) { ?>
-							<?php $tags = $post->getTags();
-                            $tags->spreadWeightValues([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-                            foreach ($tags as $tag): ?>
-                                <?php echo $this->escapeHtml($tag->getTitle());?>
-                                <?php echo $this->escapeHtml($tag->getWeight());?>
-                                (<?php echo $this->escapeHtml($tag->getParam('weightValue'));?>)
-                            <?php endforeach; }  ?>
-                        </p>
+                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h1>
+
                         <p>
-                            <?php echo $this->htmlPurifier($post->getText()); ?>
+                            <?php echo $this->htmlPurifier($post->getSummary()); ?>
                         </p>
 
-
+                        </div>
 <!--                        <p><a role="button" href="#" class="btn btn-default">View details »</a></p>-->
-
+                    </div><!--/.col-xs-6.col-lg-4-->
                 <?php endforeach; ?>
             <?php endif; ?>
+        </div><!--/row-->
+    </div><!--/.col-xs-12.col-sm-9-->
 
-        </div><!-- /.blog-post -->
+    <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
+        <div class="list-group">
+            <a class="list-group-item" href="<?php echo $this->url('listPosts',
+                array('action' => 'listPosts')); ?>">Articles</a>
+            <a class="list-group-item" href="<?php echo $this->url('listCategories',
+                array('action' => 'listCategories')); ?>">Categories</a>
+            <a class="list-group-item" href="#">Archives</a>
+            <a class="list-group-item" href="<?php echo $this->url('listTags',
+                array('action' => 'listTags')); ?>">Tags</a>
+        </div>
+        <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+        <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
 
-        <?php echo $this->paginationControl($this->posts,
-            'Sliding',
-            'partial/paginator.phtml',
-            array('route' => $this->route)); ?>
+    </div><!--/.sidebar-offcanvas-->
+</div><!--/row-->
+
+<?php echo $this->paginationControl($this->posts,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => 'listPosts')); ?>
 
 
 
-    </div><!-- /.blog-main -->
-
-        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-          <div class="sidebar-module sidebar-module-inset">
-            <h4>About</h4>
-            <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-          </div>
-          <div class="sidebar-module">
-            <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
-          </div>
-          <div class="sidebar-module">
-            <h4>Elsewhere</h4>
-            <ol class="list-unstyled">
-              <li><a href="<?php echo $this->url('listPosts',
-                array('action' => 'listPosts')); ?>">Articles</a></li>
-              <li><a href="<?php echo $this->url('listTags',
-                array('action' => 'listTags')); ?>">Tags</a></li>
-              <li><a href="<?php echo $this->url('listCategories',
-                array('action' => 'listCategories')); ?>">Categories</a></li>
-            </ol>
-          </div>
-         <div class="sidebar-module">
-           <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
-            </div>
-        </div><!-- /.blog-sidebar -->
-
-      </div>
