@@ -1,5 +1,5 @@
 <h4><a href="<?php echo $this->url('listArchives',
-    array('action' => 'listArchives')); ?>">Архив</a></h4>
+    array('action' => 'listArchives')); ?>"><?php echo $this->translate('Archives') ?></a></h4>
 <?php  $dates = $this->archiveDates('month');
     if (count($dates)) {
         foreach ($dates as $year => $months) { ?>
@@ -18,9 +18,9 @@
                             </li>
                         <?php } ?>
                     </ul>
-                </li>  
+                </li>
             </ol>
-        <?php 
+        <?php
         }
     }
 ?>

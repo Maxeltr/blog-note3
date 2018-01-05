@@ -13,7 +13,7 @@
 
 return [
     'defaults' => [
-        'locale' => 'ru_RU',
+        'locale' => 'ru',
         'timezone' => 'Europe/Moscow',
         'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
@@ -42,7 +42,7 @@ return [
         ],
     ],
     'translator' => [
-        'locale' => 'en',
+        'locale' => 'ru',
         'translation_file_patterns' => [
             [
                 'type'     => 'phpArray',

@@ -32,6 +32,8 @@ use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\View\Helper\ArchiveDates;
 use MxmBlog\Date;
 use Zend\Config\Config;
+use Zend\Authentication\AuthenticationService;
+use MxmUser\Model\UserInterface;
 
 class ArchiveDatesFactory implements FactoryInterface
 {
@@ -40,8 +42,27 @@ class ArchiveDatesFactory implements FactoryInterface
         $mapper = $container->get(MapperInterface::class);
         $dateValidator = $container->get(Date::class);
         $config = new Config($container->get('config'));
+        $authenticationService = $container->get(AuthenticationService::class);
+
+        $locale = null;
+
+        if ($authenticationService->hasIdentity()) {
+            $user = $authenticationService->getIdentity();
+            $locale = $user->getLocale();
+        }
+
+        if (empty($locale)) {
+            $sessionContainer = $container->get('MxmUserSessionContainer');
+
+            if (isset($sessionContainer->locale)) {
+                $locale = $sessionContainer->locale;
+            } else {
+                $locale = $config->defaults->locale;
+            }
+        }
+
         $formatter = new \IntlDateFormatter(
-            $config->defaults->locale,
+            $locale,
             \IntlDateFormatter::FULL,
             \IntlDateFormatter::FULL
         );

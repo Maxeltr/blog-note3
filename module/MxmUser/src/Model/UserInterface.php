@@ -37,7 +37,7 @@ interface UserInterface
      * @return UserInterface
      */
     public function __clone();
-    
+
     /**
      * Возвращает ID записи
      *
@@ -221,7 +221,7 @@ interface UserInterface
     public function setDateEmailToken(DateTimeInterface $dateEmailToken);
 
     /**
-     * Получить локаль (ru_RU)
+     * Получить локаль (ru)
      *
      * @return string locale
      */
@@ -229,7 +229,7 @@ interface UserInterface
 
 
     /**
-     * Установка локали (ru_RU)
+     * Установка локали (ru)
      * @param string $locale
      *
      * @return $this

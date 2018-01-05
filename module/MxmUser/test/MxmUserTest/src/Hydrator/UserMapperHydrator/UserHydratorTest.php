@@ -53,7 +53,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
             'emailVerification' => true,
             'emailToken' => 'testEmailToken',
             'dateEmailToken' => 'dateEmailToken',
-            'locale' => 'Ru_ru',
+            'locale' => 'ru',
         ];
 
         $this->user = new User();
@@ -112,7 +112,7 @@ class UserHydratorTest extends \PHPUnit_Framework_TestCase
             'emailVerification' => true,
             'emailToken' => 'testEmailToken',
             'dateEmailToken' => new \DateTimeImmutable('1900-01-01 01:01:01', new \DateTimeZone('Europe/Moscow')),
-            'locale' => 'Ru_ru',
+            'locale' => 'ru',
         ];
 
         $this->user->setId('1');

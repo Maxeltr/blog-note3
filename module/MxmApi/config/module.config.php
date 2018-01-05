@@ -28,7 +28,7 @@ namespace MxmApi;
 
 return [
     'defaults' => [
-        'locale' => 'ru_RU',
+        'locale' => 'ru',
         'timezone' => 'Europe/Moscow',
         'dateTimeFormat' => 'Y-m-d H:i:s',
     ],

@@ -12,7 +12,7 @@ return [
         ],
 //        'dateTime' => [
 //            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
-//            'locale' => 'ru_RU',
+//            'locale' => 'ru',
 //            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
 //        ],
         'logger' => [
@@ -20,7 +20,7 @@ return [
         ],
     ],
     'defaults' => [
-        'locale' => 'ru_RU',
+        'locale' => 'ru',
         'timezone' => 'Europe/Moscow',
         'dateTimeFormat' => 'Y-m-d H:i:s',
     ],

@@ -1,7 +1,7 @@
 <div class="row row-offcanvas row-offcanvas-right">
     <div class="col-xs-12 col-sm-9">
         <p class="pull-right visible-xs">
-            <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
+            <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button"><?php echo $this->translate('Toggle nav') ?></button>
         </p>
         <div class="jumbotron">
             <h1>Hello, world!</h1>
@@ -21,7 +21,7 @@
                         </p>
 
                         </div>
-<!--                        <p><a role="button" href="#" class="btn btn-default">View details »</a></p>-->
+                        <!-- <p><a role="button" href="#" class="btn btn-default">View details »</a></p> -->
                     </div><!--/.col-xs-6.col-lg-4-->
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -30,15 +30,14 @@
 
     <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
         <div class="list-group">
-            <a class="list-group-item" href="<?php echo $this->url('listPosts',
-                array('action' => 'listPosts')); ?>">Articles</a>
             <a class="list-group-item" href="<?php echo $this->url('listCategories',
-                array('action' => 'listCategories')); ?>">Categories</a>
-            <a class="list-group-item" href="#">Archives</a>
+                array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
             <a class="list-group-item" href="<?php echo $this->url('listTags',
-                array('action' => 'listTags')); ?>">Tags</a>
+                array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
         </div>
-        <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+        <div class="sidebar-module">
+            <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+        </div>
         <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
 
     </div><!--/.sidebar-offcanvas-->
@@ -47,7 +46,7 @@
 <?php echo $this->paginationControl($this->posts,
         'Sliding',
         'partial/paginator.phtml',
-        array('route' => 'listPosts')); ?>
+        array('route' => $route)); ?>
 
 
 

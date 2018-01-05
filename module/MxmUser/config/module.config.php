@@ -9,7 +9,7 @@ use Zend\Session\Validator\HttpUserAgent;
 return [
     'mxm_user' => [
         'listController' => [
-            'ItemCountPerPage' => 10,
+            'ItemCountPerPage' => 9,
         ],
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmUser.log',
@@ -22,7 +22,7 @@ return [
 	'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
     'translator' => array(
-        'locale' => 'en',
+        'locale' => 'ru',
         'translation_file_patterns' => array(
             array(
                 'type'     => 'phpArray',

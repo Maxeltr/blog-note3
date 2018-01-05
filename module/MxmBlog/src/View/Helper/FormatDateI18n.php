@@ -31,6 +31,7 @@ use Zend\Config\Config;
 use MxmBlog\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmUser\Model\UserInterface;
+use Zend\Session\Container as SessionContainer;
 
 class FormatDateI18n extends DateFormat
 {
@@ -38,11 +39,14 @@ class FormatDateI18n extends DateFormat
 
     protected $config;
 
-    public function __construct(Config $config, \DateTimeInterface $datetime, AuthenticationService $authenticationService)
+    protected $sessionContainer;
+
+    public function __construct(Config $config, \DateTimeInterface $datetime, AuthenticationService $authenticationService, SessionContainer $sessionContainer)
     {
         $this->config = $config;
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
+        $this->sessionContainer = $sessionContainer;
         parent::__construct();
     }
 
@@ -56,10 +60,13 @@ class FormatDateI18n extends DateFormat
     ) {
         $timezone = null;
         $location = null;
-        $user = $this->authenticationService->getIdentity();    //TODO gjcvjnhtnm rfr d ltktufnjh
-        if ($user instanceof UserInterface) {
-            $timezone = $user->getTimebelt();
-            $location = $user->getLocale();
+
+        if ($this->authenticationService->hasIdentity()) {
+            $user = $this->authenticationService->getIdentity();
+            if ($user instanceof UserInterface) {
+                $timezone = $user->getTimebelt();
+                $location = $user->getLocale();
+            }
         }
 
         if ($timezone instanceof \DateTimeZone) {
@@ -70,8 +77,12 @@ class FormatDateI18n extends DateFormat
 
         if (!empty($location)) {
             parent::setLocale($location);
-        } else{
-            parent::setLocale($this->config->defaults->locale);
+        } else {
+            if (isset($this->sessionContainer->locale)) {
+                parent::setLocale($this->sessionContainer->locale);
+            } else {
+                parent::setLocale($this->config->defaults->locale);
+            }
         }
 
         $date = $this->datetime->modify($datetime->format($this->config->defaults->dateTimeFormat));

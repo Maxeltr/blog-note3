@@ -35,4 +35,7 @@ return [
     "Hello" => "Здравствуйте",
     "Toggle navigation" => "Переключение навигации",
     "Toggle nav" => "Переключение навигации",
+    "Archives" => "Архив",
+    "Tags" => "Теги",
+    "Categories" => "Категории",
 ];

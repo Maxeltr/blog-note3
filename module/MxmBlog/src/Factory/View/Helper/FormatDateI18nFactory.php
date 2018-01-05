@@ -40,7 +40,8 @@ class FormatDateI18nFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $datetime = new \DateTime();
         $authenticationService = $container->get(AuthenticationService::class);
-
-        return new FormatDateI18n($config, $datetime, $authenticationService);
+        $sessionContainer = $container->get('MxmUserSessionContainer');
+        
+        return new FormatDateI18n($config, $datetime, $authenticationService, $sessionContainer);
     }
 }
