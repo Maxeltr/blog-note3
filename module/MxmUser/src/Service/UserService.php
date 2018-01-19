@@ -46,6 +46,7 @@ use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
 use Zend\Math\Rand;
 use Zend\Session\Container as SessionContainer;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class UserService implements UserServiceInterface
 {
@@ -94,6 +95,11 @@ class UserService implements UserServiceInterface
      */
     protected $mail;
 
+    /**
+     * @var Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
+
     protected $sessionContainer;
 
     public function __construct(
@@ -106,7 +112,8 @@ class UserService implements UserServiceInterface
         AuthorizationService $authorizationService,
         Bcrypt $bcrypt,
         MailService $mail,
-        SessionContainer $sessionContainer
+        SessionContainer $sessionContainer,
+        TranslatorInterface $translator
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -118,6 +125,7 @@ class UserService implements UserServiceInterface
         $this->bcrypt = $bcrypt;
         $this->mail = $mail;
         $this->sessionContainer = $sessionContainer;
+        $this->translator = $translator;
     }
 
     /**
@@ -180,9 +188,10 @@ class UserService implements UserServiceInterface
 
         $confirmEmailUrl = '<a href="' . 'http://' . $httpHost . '/confirm/email/' . $token . '">Confirm Email</a>';
 
-        $body = "Please follow the link below to confirm your email:\n";
+        $body = $this->translator->translate("Please follow the link below to confirm your email") . ":\n";
+
         $body .= " $confirmEmailUrl\n";
-        $body .= " If you haven't registered, please ignore this message.\n";
+        $body .= $this->translator->translate("If you haven't registered, please ignore this message") . "\n";
 
 //        $this->mail->setSubject('Confirm Email')->setBody($body)
 //            ->setFrom('qwer_qwerty_2018@inbox.ru')->setSenderName('blog-note3')
@@ -360,15 +369,15 @@ class UserService implements UserServiceInterface
 
         $this->mapper->updateUser($user);
 
-        $subject = 'Password Reset';
+        $subject = $this->translator->translate('Password Reset');
 
         $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 
-        $passwordResetUrl = '<a href="' . 'http://' . $httpHost . '/set/password/' . $token . '">Reset password</a>';
+        $passwordResetUrl = '<a href="' . 'http://' . $httpHost . '/set/password/' . $token . '">' . $this->translator->translate('Reset password') . '</a>';
 
-        $body = "Please follow the link below to reset your password:\n";
+        $body = $this->translator->translate("Please follow the link below to reset your password") . ":\n";
         $body .= " $passwordResetUrl\n";
-        $body .= " If you haven't asked to reset your password, please ignore this message.\n";
+        $body .= $this->translator->translate("If you haven't asked to reset your password, please ignore this message") . "\n";
 
         $this->mail->sendEmail($subject, $body, 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $user->getEmail(), $user->getUsername());
 

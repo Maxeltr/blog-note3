@@ -38,6 +38,7 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -58,6 +59,7 @@ class UserServiceFactory implements FactoryInterface
         $bcrypt = new Bcrypt();
         $mail = $container->get(MailService::class);
         $sessionContainer = $container->get('MxmUserSessionContainer');
+        $translator = $container->get(TranslatorInterface::class);
 
         return new UserService(
             $mapper,
@@ -69,7 +71,8 @@ class UserServiceFactory implements FactoryInterface
             $authorizationService,
             $bcrypt,
             $mail,
-            $sessionContainer
+            $sessionContainer,
+            $translator
         );
     }
 }

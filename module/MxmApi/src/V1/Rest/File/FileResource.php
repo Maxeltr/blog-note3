@@ -140,26 +140,32 @@ class FileResource extends AbstractResourceListener
         }
         $fileEntity = $resultSet->current();
 
-        $path = $fileEntity->getPath();
+        $params = $this->getEvent()->getQueryParams();
+	$download = array_key_exists('d', $params) ? $params['d'] : false;
 
-        if (!is_readable($path)) {
-            return new ApiProblem(404, 'File not found');
+        if ($download === 'true') {
+            $path = $fileEntity->getPath();
+            if (!is_readable($path)) {
+                return new ApiProblem(404, 'File not found');
+            }
+
+            $headers = $this->response->getHeaders();
+            $headers->addHeaderLine("Content-type: application/octet-stream");
+            $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . $fileEntity->getFilename() . "\"");
+            $headers->addHeaderLine("Content-length: " . filesize($path));
+            $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
+
+            $fileContent = file_get_contents($path);
+            if ($fileContent !== false) {
+                $this->response->setContent($fileContent);
+            } else {
+                return new ApiProblem(500, "Can't read file");
+            }
+
+            return $this->response;
         }
 
-        $headers = $this->response->getHeaders();
-        $headers->addHeaderLine("Content-type: application/octet-stream");
-        $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . $fileEntity->getFilename() . "\"");
-        $headers->addHeaderLine("Content-length: " . filesize($path));
-        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
-
-        $fileContent = file_get_contents($path);
-        if ($fileContent !== false) {
-            $this->response->setContent($fileContent);
-        } else {
-            return new ApiProblem(500, "Can't read file");
-        }
-
-        return $this->response;
+        return $fileEntity;
     }
 
     /**

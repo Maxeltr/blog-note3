@@ -4,6 +4,7 @@ namespace MxmApi\V1\Rest\Post;
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
 use MxmBlog\Mapper\MapperInterface as PostMapperInterface;
+use MxmBlog\Exception\RecordNotFoundBlogException;
 
 class PostResource extends AbstractResourceListener
 {
@@ -57,7 +58,11 @@ class PostResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        $post = $this->mapper->findPostById($id, false);
+        try {
+            $post = $this->mapper->findPostById($id, false);
+        } catch (RecordNotFoundBlogException $e) {
+            return new ApiProblemResponse(new ApiProblem(404, 'Entity not found'));
+        }
 
         return $post;
 

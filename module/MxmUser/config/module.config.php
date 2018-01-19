@@ -68,7 +68,7 @@ return [
             //Zend\Mvc\I18n\Translator::class => \Zend\Mvc\I18n\TranslatorFactory::class
         ],
         'delegators' => [
-            Zend\I18n\Translator\Translator::class => [
+            \Zend\I18n\Translator\Translator::class => [
                 Translator\TranslatorDelegator::class
             ],
             \Zend\Mvc\I18n\Translator::class => [

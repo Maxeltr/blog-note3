@@ -94,6 +94,8 @@ return [
                         'delete.post',
                         'find.unpublished.post',
                         'find.unpublished.posts',
+                        'add.category',
+			'add.tag',
 
                     ],
                 ],

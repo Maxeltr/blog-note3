@@ -38,6 +38,11 @@ return [
             \MxmApi\V1\Rest\File\FileResource::class => \MxmApi\V1\Rest\File\FileResourceFactory::class,
         ],
     ],
+    'hydrators' => [
+        'factories' => [
+            \MxmApi\V1\Rest\Post\UserHydrator::class => \MxmApi\V1\Rest\Post\UserHydratorFactory::class,
+        ],
+    ],
     'router' => [
         'routes' => [
             'mxm-api.rest.post' => [
@@ -153,7 +158,7 @@ return [
                 //'entity_identifier_name' => 'id',
                 'route_name' => 'mxm-api.rest.post',    //TODo change to user
                 //'route_identifier_name' => 'user_id',
-                'hydrator' => \Zend\Hydrator\ClassMethods::class,
+                'hydrator' =>  \MxmApi\V1\Rest\Post\UserHydrator::class,
             ],
             \MxmBlog\Model\Category::class => [
                 //'entity_identifier_name' => 'id',

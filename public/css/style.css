@@ -8,11 +8,15 @@ a:hover, a:focus {
 }
 
 .btn.active, .btn:active {
-    margin: 10px 0 10px 10px;
+    margin: 5px 5px 15px 5px;
     outline: 0;
     -webkit-box-shadow: 0 0 0;
     -moz-box-shadow: 0 0 0;
     box-shadow: 0 0 0;
+}
+
+.btn {
+    margin: 0 10px 20px 0;
 }
 
 #sidebar > .list-group {

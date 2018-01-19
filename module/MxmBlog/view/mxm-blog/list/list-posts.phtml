@@ -21,7 +21,8 @@
                         </p>
 
                         </div>
-                        <!-- <p><a role="button" href="#" class="btn btn-default">View details »</a></p> -->
+                         <p><a role="button" href="<?php echo $this->url('detailPost',
+                            array('action' => 'detailPost', 'id' => $post->getId())); ?>" class="btn btn-default">View details</a></p>
                     </div><!--/.col-xs-6.col-lg-4-->
                 <?php endforeach; ?>
             <?php endif; ?>
