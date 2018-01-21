@@ -24,33 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\V1\Rest\Post;
+namespace MxmApi\V1\Rest\Tag;
 
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\Filter\MethodMatchFilter;
-use Zend\Hydrator\Filter\FilterComposite;
+use MxmBlog\Mapper\MapperInterface as PostMapperInterface;
 
-class UserHydratorFactory
+class TagResourceFactory
 {
     public function __invoke($services)
     {
-        $hydrator = new ClassMethods(false);
+        $mapper = $services->get(PostMapperInterface::class);
 
-        $filters = [
-            'password' => new MethodMatchFilter('getPassword'),
-            'email' => new MethodMatchFilter('getEmail'),
-            'emailVerification' => new MethodMatchFilter('getEmailVerification'),
-            'emailToken' => new MethodMatchFilter('getEmailToken'),
-            'dateEmailToken' => new MethodMatchFilter('getDateEmailToken'),
-            'passwordToken' => new MethodMatchFilter('getPasswordToken'),
-            'dateToken' => new MethodMatchFilter('getDateToken'),
-            'locale' => new MethodMatchFilter('getLocale'),
-        ];
-
-        $composite = new FilterComposite([], $filters);
-
-        $hydrator->addFilter('excludes', $composite, FilterComposite::CONDITION_AND);
-
-        return $hydrator;
+        return new TagResource($mapper);
     }
 }

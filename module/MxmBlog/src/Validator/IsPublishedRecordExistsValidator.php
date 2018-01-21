@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -26,13 +26,32 @@
 
 namespace MxmBlog\Validator;
 
-use Zend\Validator\Db\RecordExists;
+use Zend\Db\Sql\Select;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
+use MxmBlog\Model\PostInterface;
+use Zend\Db\Sql\Sql;
+use Zend\Db\Adapter\Adapter;
 
-class IsPublishedRecordExistsValidator extends RecordExists implements IsPublishedRecordExistsValidatorInterface 
+class IsPublishedRecordExistsValidator implements IsPublishedRecordExistsValidatorInterface
 {
-    public function isPublished()
+    protected $dbAdapter;
+
+    public function __construct(Adapter $adapter)
     {
-        return parent::isValid(true);
+        $this->dbAdapter = $adapter;
+    }
+
+    public function isPublished(PostInterface $post)
+    {
+        $select = new Select();
+        $select->from('articles')->where(['id' => $post->getId()]);
+        $select->columns(['isPublished' => 'isPublished']);
+
+        $sql = new Sql($this->dbAdapter);
+        $stmt = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        return (bool) $result->current()['isPublished'];
+
     }
 }

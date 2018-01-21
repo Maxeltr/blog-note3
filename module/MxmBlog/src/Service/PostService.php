@@ -166,7 +166,7 @@ class PostService implements PostServiceInterface
         }
 
         $post->setCreated($this->datetime->modify('now'));
-        if ($post->getIsPublished() === 1) {
+        if ($post->getIsPublished() === true) {
             $post->setPublished($this->datetime->modify('now'));
         }
 
@@ -192,7 +192,7 @@ class PostService implements PostServiceInterface
 
         $post->setUpdated($this->datetime->modify('now'));
 
-        if ($post->getIsPublished() === true && $this->IsPublishedRecordExistsValidator->isPublished() !== true) {
+        if ($post->getIsPublished() === true && $this->IsPublishedRecordExistsValidator->isPublished($post) !== true) {
             $post->setPublished($this->datetime->modify('now'));
         }
 

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Validator;
+namespace MxmApi\V1\Rest\User;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Validator\IsPublishedRecordExistsValidator;
-use Zend\Db\Adapter\Adapter;
+use Zend\Hydrator\ClassMethods;
+use Zend\Hydrator\Filter\MethodMatchFilter;
+use Zend\Hydrator\Filter\FilterComposite;
 
-class IsPublishedRecordExistsValidatorFactory implements FactoryInterface
+class UserHydratorFactory
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke($services)
     {
-        $dbAdapter = $container->get(Adapter::class);
-        $validator = new IsPublishedRecordExistsValidator($dbAdapter);
+        $hydrator = new ClassMethods(false);
 
-        return $validator;
+        $filters = [
+            'password' => new MethodMatchFilter('getPassword'),
+            'email' => new MethodMatchFilter('getEmail'),
+            'emailVerification' => new MethodMatchFilter('getEmailVerification'),
+            'emailToken' => new MethodMatchFilter('getEmailToken'),
+            'dateEmailToken' => new MethodMatchFilter('getDateEmailToken'),
+            'passwordToken' => new MethodMatchFilter('getPasswordToken'),
+            'dateToken' => new MethodMatchFilter('getDateToken'),
+            'locale' => new MethodMatchFilter('getLocale'),
+        ];
+
+        $composite = new FilterComposite([], $filters);
+
+        $hydrator->addFilter('excludes', $composite, FilterComposite::CONDITION_AND);
+
+        return $hydrator;
     }
 }

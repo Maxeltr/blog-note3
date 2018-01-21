@@ -1,19 +1,44 @@
 <?php
-namespace MxmApi\V1\Rest\Post;
+
+/*
+ * The MIT License
+ *
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+namespace MxmApi\V1\Rest\User;
 
 use ZF\ApiProblem\ApiProblem;
 use ZF\Rest\AbstractResourceListener;
-use MxmBlog\Mapper\MapperInterface as PostMapperInterface;
-use MxmBlog\Exception\RecordNotFoundBlogException;
+use MxmUser\Mapper\MapperInterface as UserMapperInterface;
+use MxmUser\Exception\RecordNotFoundUserException;
 
-class PostResource extends AbstractResourceListener
+class UserResource extends AbstractResourceListener
 {
     /**
-     * @var MxmBlog\Mapper\MapperInterface
+     * @var MxmUser\Mapper\MapperInterface
      */
     protected $mapper;
 
-    public function __construct(PostMapperInterface $mapper)
+    public function __construct(UserMapperInterface $mapper)
     {
         $this->mapper = $mapper;
     }
@@ -59,12 +84,12 @@ class PostResource extends AbstractResourceListener
     public function fetch($id)
     {
         try {
-            $post = $this->mapper->findPostById($id);
-        } catch (RecordNotFoundBlogException $e) {
+            $user = $this->mapper->findUserById($id, false);
+        } catch (RecordNotFoundUserException $e) {
             return new ApiProblem(404, 'Entity not found');
         }
 
-        return $post;
+        return $user;
     }
 
     /**
@@ -75,9 +100,10 @@ class PostResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        $posts = $this->mapper->findAllPosts();
+        return new ApiProblem(405, 'The GET method has not been defined for collections');
+        $users = $this->mapper->findAllUsers();
 
-        return $posts;
+        return $users;
     }
 
     /**

@@ -893,7 +893,7 @@ class ZendDbSqlMapper implements MapperInterface
             $tag->setId($tagInDb->getId());
             $tag->setTitle($tagInDb->getTitle());
             $tag->setWeight($tagInDb->getWeight());
-            
+
             $this->saveTagPostAssociation($tag->getId(), $post->getId());
         }
 

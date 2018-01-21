@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -26,14 +26,14 @@
 
 namespace MxmBlog\Validator;
 
-use Zend\Validator\ValidatorInterface;
+use MxmBlog\Model\PostInterface;
 
-interface IsPublishedRecordExistsValidatorInterface extends ValidatorInterface
+interface IsPublishedRecordExistsValidatorInterface
 {
     /**
      * Confirms a record `IsPublished` exists in the table.
-     * 
+     *
      * @return bool
      */
-    public function isPublished();
+    public function isPublished(PostInterface $post);
 }

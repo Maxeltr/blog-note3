@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Factory\Validator;
+namespace MxmApi\V1\Rest\User;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Validator\IsPublishedRecordExistsValidator;
-use Zend\Db\Adapter\Adapter;
+use MxmUser\Model\User;
 
-class IsPublishedRecordExistsValidatorFactory implements FactoryInterface
+class UserEntity extends User
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $dbAdapter = $container->get(Adapter::class);
-        $validator = new IsPublishedRecordExistsValidator($dbAdapter);
-
-        return $validator;
-    }
 }
