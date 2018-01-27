@@ -63,7 +63,7 @@ class FileResource extends AbstractResourceListener
             'id' => $id,
             'filename' => $file['name'],
             'path' => $file['tmp_name'],
-            'description' => "",
+            'description' => $inputFilter->getValue('description'),
             'uploaded' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat)
         ]);
 

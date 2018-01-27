@@ -95,10 +95,74 @@ return [
             ],
         ],
     ],
+    'zf-oauth2' => array(
+        'db' => [
+            'dsn' => 'mysql:dbname=blog-note;host=localhost',
+            'username' => 'root',
+            'password' => '',
+        ],
+        'storage' => 'ZF\OAuth2\Adapter\PdoAdapter',
+        "grant_types" => [
+            "client_credentials" => true,
+//            "authorization_code" => true,
+//            "password" => true,
+//            "refresh_token" => true,
+//            "jwt" => true
+        ],
+//        'allow_implicit' => true,
+//        'access_lifetime' => 3600,
+//        'enforce_state'  => true,
+//        'storage_settings' => array(
+//           'user_table' => 'users',
+//        ),
+//         'options' => array(
+//            'always_issue_new_refresh_token' => true,
+//        ),
+    ),
+    'zf-mvc-auth' => [
+        'authentication' => [
+            'adapters' => [
+                'MxmApi' => [
+                    'adapter' => \ZF\MvcAuth\Authentication\OAuth2Adapter::class,
+                    'storage' => [
+                        'adapter' => \PDO::class,
+                        'dsn' => 'mysql:dbname=blog-note;host=localhost',
+                        'route' => '/oauth',
+                        'username' => 'root',
+                        'password' => '',
+                    ],
+                ],
+            ],
+            'map' => [
+                'MxmApi\\V1' => 'oauth2',
+            ],
+        ],
+        'authorization' => [
+            'MxmApi\\V1\\Rest\\File\\Controller' => [
+                'collection' => [
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
+                'entity' => [
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ],
+            ],
+        ],
+    ],
     'zf-versioning' => [
         'uri' => [
             0 => 'mxm-api.rest.post',
-            1 => 'mxm-api.rest.file',
+            1 => 'mxm-api.rest.user',
+            2 => 'mxm-api.rest.category',
+            3 => 'mxm-api.rest.tag',
+            4 => 'mxm-api.rest.file',
         ],
     ],
     'zf-rest' => [

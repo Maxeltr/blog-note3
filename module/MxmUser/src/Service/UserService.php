@@ -379,7 +379,7 @@ class UserService implements UserServiceInterface
         $body .= " $passwordResetUrl\n";
         $body .= $this->translator->translate("If you haven't asked to reset your password, please ignore this message") . "\n";
 
-        $this->mail->sendEmail($subject, $body, 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $user->getEmail(), $user->getUsername());
+        $this->mail->sendEmail($subject, $body, 'birisinsk@mail.ru', 'blog-note3', $user->getEmail(), $user->getUsername());
 
         return $this;
     }

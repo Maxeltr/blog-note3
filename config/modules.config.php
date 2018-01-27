@@ -34,6 +34,8 @@ return [
     'ZF\ContentValidation',
     'ZF\Apigility',
     'ZF\Configuration',
+    'ZF\\OAuth2',
+    'ZF\\MvcAuth',
     'Application',
     'MxmBlog',
     'Soflomo\Purifier',
