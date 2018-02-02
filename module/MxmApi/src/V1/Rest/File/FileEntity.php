@@ -48,10 +48,15 @@ class FileEntity
      */
     protected $description;
 
-     /**
+    /**
      * @var String
      */
     protected $uploaded;
+
+    /**
+     * @var String
+     */
+    protected $owner;
 
     /**
      * Get file ID
@@ -146,5 +151,24 @@ class FileEntity
     public function setUploaded($uploaded)
     {
         $this->uploaded = $uploaded;
+    }
+
+    /**
+     * Get file owner id
+     *
+     * @return String
+     */
+    public function getOwner()		
+    {
+        return $this->owner;
+    }
+    /**
+     * Set file owner id
+     *
+     * @param String
+     */
+    public function setOwner($owner)
+    {
+        $this->owner = $owner;
     }
 }

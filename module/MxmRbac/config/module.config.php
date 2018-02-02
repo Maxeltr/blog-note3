@@ -70,7 +70,8 @@ return [
                     'parent' => '',
                     'no_assertion' => true,
                     'permissions' => [
-
+                        'edit.options',
+                        'add.client'
                     ]
                 ],
                 'moderator' => [

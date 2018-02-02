@@ -32,22 +32,73 @@ return [
         'timezone' => 'Europe/Moscow',
         'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
+    'mxm_api' => [
+        'grant_types' => [
+            'client_credentials',
+            'authorization_code',
+            'password',
+            'refresh_token'
+        ],
+        'logger' => [
+            'path' => __DIR__ . '/../../../data/logs/MxmApi.log',
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            Controller\ApiController::class => Controller\ApiControllerFactory::class,
+        ],
+    ],
     'service_manager' => [
+        'aliases' => [
+            Service\DateTimeInterface::class => Service\DateTime::class,
+        ],
         'factories' => [
             \MxmApi\V1\Rest\Post\PostResource::class => \MxmApi\V1\Rest\Post\PostResourceFactory::class,
             \MxmApi\V1\Rest\Category\CategoryResource::class => \MxmApi\V1\Rest\Category\CategoryResourceFactory::class,
             \MxmApi\V1\Rest\Tag\TagResource::class => \MxmApi\V1\Rest\Tag\TagResourceFactory::class,
             \MxmApi\V1\Rest\User\UserResource::class => \MxmApi\V1\Rest\User\UserResourceFactory::class,
             \MxmApi\V1\Rest\File\FileResource::class => \MxmApi\V1\Rest\File\FileResourceFactory::class,
+            Service\ApiService::class => Service\ApiServiceFactory::class,
+            Service\DateTime::class => Service\DateTimeFactory::class,
         ],
+    ],
+    'form_elements' => [
+        'factories' => [
+            Form\AddClientForm::class => Form\AddClientFormFactory::class
+        ]
     ],
     'hydrators' => [
         'factories' => [
             \MxmApi\V1\Rest\User\UserHydrator::class => \MxmApi\V1\Rest\User\UserHydratorFactory::class,
         ],
     ],
+    'view_manager' => [
+        'template_path_stack' => [
+            'MxmApi' => __DIR__ . '/../view',
+        ],
+    ],
     'router' => [
         'routes' => [
+            'addClient' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/api/add/client',
+                    'defaults' => [
+                        'controller' => Controller\ApiController::class,
+                        'action' => 'addClient'
+                    ],
+                ],
+            ],
+            'detailClient' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/api/detail/client',
+                    'defaults' => [
+                        'controller' => Controller\ApiController::class,
+                        'action' => 'detailClient'
+                    ],
+                ],
+            ],
             'mxm-api.rest.post' => [
                 'type' => 'Segment',
                 'options' => [
