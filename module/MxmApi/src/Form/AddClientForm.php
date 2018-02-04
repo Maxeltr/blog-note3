@@ -26,6 +26,7 @@
 
 namespace MxmApi\Form;
 
+use Zend\Config\Config;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
@@ -36,13 +37,13 @@ class AddClientForm extends Form implements InputFilterProviderInterface
 {
     protected $translator;
     protected $validatorTranslator;
-    protected $grantTypes = ['client_credentials', 'authorization_code', 'password', 'refresh_token'];
+    protected $grantTypes;
 
     public function __construct(
         InputFilter $inputFilter,
         TranslatorInterface $translator,
         ValidatorTranslatorInterface $validatorTranslator,
-        $grantTypes,
+        Config $grantTypes,
         $name = "add_client",
         $options = array()
     ) {
@@ -53,6 +54,7 @@ class AddClientForm extends Form implements InputFilterProviderInterface
 
         $this->translator = $translator;
         $this->validatorTranslator = $validatorTranslator;
+        $this->grantTypes = $grantTypes->toArray();
 
         $this->add([
             'type' => 'text',

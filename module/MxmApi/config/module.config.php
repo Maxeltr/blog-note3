@@ -34,6 +34,7 @@ return [
     ],
     'mxm_api' => [
         'grant_types' => [
+            '',
             'client_credentials',
             'authorization_code',
             'password',
@@ -89,13 +90,34 @@ return [
                     ],
                 ],
             ],
-            'detailClient' => [
-                'type' => 'Literal',
+            'listClients' => [
+                'type' => 'Segment',
                 'options' => [
-                    'route' => '/api/detail/client',
+                    'route' => '/api/list/clients[page/:page]',
+                    'defaults' => [
+                        'page' => 1,
+                        'controller' => Controller\ApiController::class,
+                        'action' => 'listClients'
+                    ],
+                ],
+            ],
+            'detailClient' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/api/detail/client/:client_id',
                     'defaults' => [
                         'controller' => Controller\ApiController::class,
                         'action' => 'detailClient'
+                    ],
+                ],
+            ],
+            'revokeToken' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/revoke/token/:client_id',
+                    'defaults' => [
+                        'controller' => Controller\ApiController::class,
+                        'action' => 'revokeToken'
                     ],
                 ],
             ],

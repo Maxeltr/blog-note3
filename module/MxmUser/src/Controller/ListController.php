@@ -70,7 +70,7 @@ class ListController extends AbstractActionController
 	} catch (NotAuthenticatedUserException $e) {
             $redirectUrl = $this->url()->fromRoute('listUsers', ['page' => (int) $this->params()->fromRoute('page', '1')]);
 
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]); //TODO использовать flashmessenger?
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
         } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 

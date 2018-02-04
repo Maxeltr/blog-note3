@@ -1,0 +1,26 @@
+<h4><a href="<?php echo $this->url('listArchives',
+    array('action' => 'listArchives')); ?>"><?php echo $this->translate('Archives') ?></a></h4>
+<?php  $dates = $this->archiveDates('month');
+    if (count($dates)) {
+        foreach ($dates as $year => $months) { ?>
+            <a href="<?php echo $this->url('listArchivesPosts',
+                array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $year)); ?>">
+                <?php echo $this->escapeHtml($year); ?></a>
+            <ol class="list-unstyled">
+                <li>
+                    <ul>
+                        <?php foreach ($months as $month) { ?>
+                            <li>
+                                <a href="<?php echo $this->url('listArchivesPosts',
+                                    array('action' => 'listArchivesPosts', 'page' => '1', 'year' => $year, 'month' => $month['monthNum'])); ?>">
+                                    <?php echo $this->escapeHtml($month['monthName']); ?></a>
+                                (<?php echo $this->escapeHtml($month['total']); ?>)
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </li>
+            </ol>
+        <?php
+        }
+    }
+?>

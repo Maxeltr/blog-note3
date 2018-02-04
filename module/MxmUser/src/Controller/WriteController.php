@@ -149,7 +149,7 @@ class WriteController extends AbstractActionController
                 }
 
                 return $this->redirect()->toRoute('detailUser',
-                    array('id' => $user->getId()));     //TODO добавить flashmessenger
+                    array('id' => $user->getId()));
             }
         }
 

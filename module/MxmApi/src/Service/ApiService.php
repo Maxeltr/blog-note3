@@ -26,7 +26,11 @@
 
 namespace MxmApi\Service;
 
+use Zend\Paginator\Adapter;
+use Zend\Paginator\Paginator;
+use Zend\Config\Config;
 use Zend\Crypt\Password\Bcrypt;
+use Zend\Db\TableGateway\TableGateway;
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
@@ -43,16 +47,17 @@ use MxmApi\Exception\AlreadyExistsException;
 use MxmApi\Exception\InvalidPasswordException;
 use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\DataBaseErrorException;
+use Zend\Validator\Db\RecordExists;
 
 class ApiService implements ApiServiceInterface
 {
     /**
-     * @var DateTimeInterface;
+     * @var DateTimeInterface
      */
     protected $datetime;
 
     /**
-     * @var Zend\Authentication\AuthenticationService;
+     * @var Zend\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
@@ -66,16 +71,44 @@ class ApiService implements ApiServiceInterface
      */
     protected $bcrypt;
 
+    /**
+     * @var Zend\Db\TableGateway\TableGateway
+     */
+    protected $oauthClientsTableGateway;
+
+    /**
+     * @var Zend\Db\TableGateway\TableGateway
+     */
+    protected $oauthAccessTokensTableGateway;
+
+    /**
+     * @var Zend\Validator\Db\RecordExists
+     */
+    protected $clientExistsValidator;
+
+    /**
+     * @var Zend\Config\Config;
+     */
+    protected $grantTypes;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
-        Bcrypt $bcrypt
+        Bcrypt $bcrypt,
+        TableGateway $oauthClientsTableGateway,
+        TableGateway $oauthAccessTokensTableGateway,
+        RecordExists $clientExistsValidator,
+        Config $grantTypes
     ) {
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->bcrypt = $bcrypt;
+        $this->oauthClientsTableGateway = $oauthClientsTableGateway;
+        $this->oauthAccessTokensTableGateway = $oauthAccessTokensTableGateway;
+        $this->clientExistsValidator = $clientExistsValidator;
+        $this->grantTypes = $grantTypes;
     }
 
     /**
@@ -91,33 +124,83 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "add.client" is required.');
         }
 
-        $this->tableGateway->insert([
-            'client_id' => $data['id'],
-            'client_secret' => $data['client_secret'],
-            'grant_types' => $data['grant_types'],
+        if ($this->clientExistsValidator->isValid($data['client_id'])) {
+            throw new AlreadyExistsException("Client with " . $data['client_id'] . " already exists");
+        }
+
+        $this->oauthClientsTableGateway->insert([
+            'client_id' => $data['client_id'],
+            'client_secret' => $this->bcrypt->create($data['client_secret']),
+            'grant_types' => $this->grantTypes[$data['grant_types']],
             'scope' => $data['scope'],
             'user_id' => $this->authenticationService->getIdentity()->getId()
         ]);
 
-        $resultSet = $this->tableGateway->select(['id' => $id]);
-        //if (0 === count($resultSet)) {
-        //    throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
-        //}
-
-		//return $resultSet->current();
-
-        if ($resultSet instanceof ResultInterface) {
-            $newId = $resultSet->getGeneratedValue();
-            \zend\debug\debug::dump($newId);
-			die();
-
-            return $object;
+        $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $data['client_id']]);
+        if (0 === count($resultSet)) {
+            throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
         }
 
-
+	return $resultSet->current();
     }
 
+    public function findClientById($client_id)
+    {
+        if (empty($client_id)) {
+            throw new InvalidArgumentException('The client_id cannot be empty.');
+        }
 
+        if (!$this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
 
+        if (!$this->authorizationService->isGranted('find.client')) {
+            throw new NotAuthorizedException('Access denied. Permission "find.client" is required.');
+        }
+
+        $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $client_id]);
+        if (0 === count($resultSet)) {
+            throw new DataBaseErrorException("Select operation failed.");
+        }
+
+	return $resultSet->current();
+    }
+
+    public function revokeToken($client_id)
+    {
+        if (empty($client_id)) {
+            throw new InvalidArgumentException('The client_id cannot be empty.');
+        }
+
+        if (!$this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('revoke.token')) {
+            throw new NotAuthorizedException('Access denied. Permission "revoke.token" is required.');
+        }
+
+        return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client_id['client_id']]);
+    }
+
+    public function findAllClients()
+    {
+        if (!$this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('find.clients')) {
+            throw new NotAuthorizedException('Access denied. Permission "find.clients" is required.');
+        }
+
+        $resultSet = $this->oauthClientsTableGateway->select();
+        if (0 === count($resultSet)) {
+            throw new DataBaseErrorException("Select operation failed.");
+        }
+
+        $paginator = new Paginator(new Adapter\ArrayAdapter($resultSet->toArray()));
+
+        return $paginator;
+    }
 
 }

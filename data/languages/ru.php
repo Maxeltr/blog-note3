@@ -38,4 +38,8 @@ return [
     "Archives" => "Архив",
     "Tags" => "Теги",
     "Categories" => "Категории",
+    "Application name" => "Имя приложения",
+    "Application secret key" => "Секретный ключ приложения",
+    "Grant types" => "Типы разрешений",
+    "Scope" => "Цель",
 ];

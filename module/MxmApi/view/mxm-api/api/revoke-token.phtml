@@ -1,0 +1,10 @@
+ <h1>Revoke Token</h1>
+ <p>
+     Are you sure that you want to revoke
+     '<?php echo $this->escapeHtml($this->client['client_id']); ?>'
+
+ </p>
+ <form action="<?php echo $this->url('revokeToken', array(), true) ?>" method="post">
+     <input type="submit" name="delete_confirmation" value="yes">
+     <input type="submit" name="delete_confirmation" value="no">
+ </form>

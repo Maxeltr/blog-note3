@@ -31,7 +31,7 @@ THE SOFTWARE.
 <div class="row">
     <div class="col-sm-8 blog-main">
         <div class="blog-post">
-            <h2 class="blog-post-title"><?php echo $this->escapeHtml($client['client_id']; ?></h2>
+            <h2 class="blog-post-title"><?php echo $this->escapeHtml($client['client_id']); ?></h2>
             <p class="blog-post-meta">
                 secret: <?php echo $this->escapeHtml($client['client_secret']); ?>
             </p>
@@ -45,13 +45,13 @@ THE SOFTWARE.
                 user_id: <?php echo $this->escapeHtml($client['user_id']); ?>
             </p>
             <p>
-                <a href="<?php echo $this->url('revokeToken', array('action' => 'revokeToken')); ?>">Revoke token</a>
+                <a href="<?php echo $this->url('revokeToken', array('action' => 'revokeToken', 'client_id' => $client['client_id'])); ?>">Revoke token</a>
             </p>
            <p>
-                <a href="<?php echo $this->url('deleteClient', array('action' => 'deleteClient')); ?>">Delete client</a>
+                <a href="<?php //echo $this->url('deleteClient', array('action' => 'deleteClient')); ?>">Delete client</a>
             </p>
             <p>
-                <a href="<?php echo $this->url('editClient', array('action' => 'editClient', 'id' => $client['client_id'])); ?>">Edit client</a>
+                <a href="<?php //echo $this->url('editClient', array('action' => 'editClient', 'client_id' => $client['client_id'])); ?>">Edit client</a>
             </p>
 
         </div><!-- /.blog-post -->

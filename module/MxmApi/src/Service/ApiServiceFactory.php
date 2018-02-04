@@ -33,6 +33,10 @@ use MxmApi\Service\ApiService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Config\Config;
+use Zend\Validator\Db\RecordExists;
 
 class ApiServiceFactory implements FactoryInterface
 {
@@ -41,14 +45,31 @@ class ApiServiceFactory implements FactoryInterface
         $authorizationService = $container->get(AuthorizationService::class);
         $dateTime = $container->get(DateTimeInterface::class);
         $authService = $container->get(AuthenticationService::class);
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+        $dbAdapter = $container->get(Adapter::class);
         $bcrypt = new Bcrypt();
+
+        //$resultSet = new HydratingResultSet(new ClassMethods(false), new FileEntity());
+        $oauthClientsTableGateway = new TableGateway('oauth_clients', $dbAdapter, null, null);
+        $oauthAccessTokensTableGateway = new TableGateway('oauth_access_tokens', $dbAdapter, null, null);
+
+        $config = new Config($container->get('config'));
+        $grantTypes = $config->mxm_api->grant_types;
+
+        $recordExistsValidator = new RecordExists([
+            'table'   => 'oauth_clients',
+            'field'   => 'client_id',
+            'adapter' => $dbAdapter,
+        ]);
 
         return new ApiService(
             $dateTime,
             $authService,
             $authorizationService,
-            $bcrypt
+            $bcrypt,
+            $oauthClientsTableGateway,
+            $oauthAccessTokensTableGateway,
+            $recordExistsValidator,
+            $grantTypes
         );
     }
 }

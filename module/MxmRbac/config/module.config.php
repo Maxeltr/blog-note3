@@ -71,7 +71,10 @@ return [
                     'no_assertion' => true,
                     'permissions' => [
                         'edit.options',
-                        'add.client'
+                        'add.client',
+                        'find.client',
+                        'revoke.token',
+                        'find.clients'
                     ]
                 ],
                 'moderator' => [

@@ -109,7 +109,7 @@ class ApiController extends AbstractActionController
                 }
 
                 return $this->redirect()->toRoute('detailClient',    //TODO автоматически логинить юзера или перенаправить на страницу login?
-                    ['id' => $savedClient['id']]
+                    ['client_id' => $savedClient['client_id']]
                 );
             }
         }
@@ -121,20 +121,24 @@ class ApiController extends AbstractActionController
 
 	public function detailClientAction()
     {
-        $id = $this->params()->fromRoute('id');
+        $id = $this->params()->fromRoute('client_id');
         try {
             $client = $this->apiService->findClientById($id);
         } catch (RecordNotFoundException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->notFoundAction();
+
     	} catch (NotAuthenticatedException $e) {
             $redirectUrl = $this->url()->fromRoute('detailClient', ['id' => $id]);
 
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]); //TODO использовать flashmessenger?
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+
         } catch (NotAuthorizedException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->redirect()->toRoute('notAuthorized');
+
         } catch (\Exception $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -145,4 +149,78 @@ class ApiController extends AbstractActionController
             'client' => $client
         ));
     }
+
+    public function revokeTokenAction()
+    {
+        $id = $this->params()->fromRoute('client_id');
+        try {
+            $client = $this->apiService->findClientById($id);
+        } catch (RecordNotFoundException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+
+        } catch (NotAuthenticatedException $e) {
+            $redirectUrl = $this->url()->fromRoute('detailClient', ['id' => $id]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+
+        } catch (NotAuthorizedException $e) {																	//add
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $del = $request->getPost('delete_confirmation', 'no');
+
+            if ($del === 'yes') {
+                $result = $this->apiService->revokeToken($client);
+                if ($result === false) {
+                    $this->logger->err('ApiController. Client ' . $client['client_id'] . ' not deleted');
+
+                    return $this->notFoundAction();
+                }
+            }
+
+            return $this->redirect()->toRoute('listClients');	//TODO учитывать страницу, id и т.д.
+        }
+
+        return new ViewModel(array(
+            'client' => $client
+        ));
+    }
+
+    public function listClientsAction()
+    {
+        try {
+            $clients = $this->apiService->findAllClients();
+	} catch (NotAuthenticatedException $e) {
+            $redirectUrl = $this->url()->fromRoute('listClients', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+
+        } catch (NotAuthorizedException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+
+	} catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        return new ViewModel([
+            'clients' => $clients,
+            'route' => 'listClients'
+        ]);
+    }
+
 }
