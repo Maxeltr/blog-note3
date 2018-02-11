@@ -41,6 +41,7 @@ use MxmBlog\Model\Post;
 use MxmUser\Model\User;
 use MxmRbac\Assertion\AssertUserIdMatches;
 use MxmRbac\Assertion\MustBeAuthorAssertion;
+use MxmRbac\Exception\InvalidArgumentRbacException;
 
 class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -200,7 +201,9 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $user = new User();
         $user->setId('1');
-        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission', $user));
+        $this->expectException(InvalidArgumentRbacException::class);
+        $this->authorizationService->isGranted('nonexistent.permission', $user);
+        //$this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission', $user));
     }
 
     /**

@@ -32,17 +32,23 @@ use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use MxmRbac\Service\AuthorizationService;
+use Zend\Config\Config;
 
 class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
     protected $translator;
     protected $validatorTranslator;
+    protected $authorizationService;
+    protected $roles;
 
     public function __construct(
         UserInterface $user,
         HydratorInterface $hydrator,
         TranslatorInterface $translator,
         ValidatorTranslatorInterface $validatorTranslator,
+        AuthorizationService $authorizationService,
+        Config $roles,
         $name = "edit_user",
         $options = array()
     ) {
@@ -54,10 +60,13 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
         $this->translator = $translator;
         $this->validatorTranslator = $validatorTranslator;
 
-        $this->add([
-            'type' => 'hidden',
-            'name' => 'id'
-        ]);
+        $this->authorizationService = $authorizationService;
+        $this->roles = $roles;
+
+//        $this->add([
+//            'type' => 'hidden',
+//            'name' => 'id'
+//        ]);
 
         $this->add([
             'type' => 'text',
@@ -70,6 +79,23 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => $this->translator->translate('Username')
             ]
         ]);
+
+        if ($this->authorizationService->isGranted('change.roles')) {
+            $this->add([
+                'type' => 'Zend\Form\Element\Select',
+                'name' => 'role',
+                'attributes' => [
+                    'type' => 'select',
+                    'required' => 'required',
+                    'class' => 'form-control',
+                ],
+                'options' => [
+                    'label' => $this->translator->translate('Roles'),
+                    'value_options' => $this->roles->toArray(),
+                ],
+            ]);
+        }
+
     }
 
     public function init() {
@@ -91,12 +117,12 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification()
     {
-        return [
-            'id' => [
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ],
+        $filters = [
+//            'id' => [
+//                'filters' => [
+//                    ['name' => 'Int'],
+//                ],
+//            ],
             'username' => [
                 'required' => true,
                 'filters' => [
@@ -116,7 +142,16 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
                     ]
                 ]
             ],
-
         ];
+
+        if ($this->authorizationService->isGranted('change.roles')) {
+            $filters['role'] = [
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ];
+        }
+
+        return $filters;
     }
 }

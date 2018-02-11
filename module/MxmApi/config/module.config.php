@@ -470,7 +470,8 @@ return [
     'input_filter_specs' => [
         'MxmApi\\V1\\Rest\\File\\Validator' => [
             0 => [
-                'required' => false,
+                'name' => 'file',
+                'required' => true,
                 'validators' => [
                     0 => [
                         'name' => \Zend\Validator\File\MimeType::class,
@@ -490,27 +491,26 @@ return [
                         ],
                     ],
                 ],
-                'name' => 'file',
                 'description' => 'file upload',
                 'type' => \Zend\InputFilter\FileInput::class,
                 'error_message' => 'file upload fail',
                 'field_type' => 'multipart/form-data',
             ],
+//            1 => [
+//                'name' => 'filename',
+//                'required' => true,
+//                'filters' => [],
+//                'validators' => [],
+//                'allow_empty' => false,
+//                'continue_if_empty' => false,
+//            ],
             1 => [
-                'required' => false,
-                'filters' => [],
-                'validators' => [],
-                'allow_empty' => false,
-                'continue_if_empty' => false,
-                'name' => 'filename',
-            ],
-            2 => [
-                'required' => false,
-                'filters' => [],
-                'validators' => [],
-                'allow_empty' => false,
-                'continue_if_empty' => false,
                 'name' => 'description',
+                'required' => true,
+                'filters' => [],
+                'validators' => [],
+                'allow_empty' => false,
+                'continue_if_empty' => false,
             ],
 
         ],

@@ -183,7 +183,7 @@ class WriteController extends AbstractActionController
             if ($this->editUserForm->isValid()) {
 
                 try {
-                    $this->userService->updateUser($user);
+                    $this->userService->updateUser($user);  //add check
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 

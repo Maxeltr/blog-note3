@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,31 +24,36 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Hydrator;
+namespace MxmRbac\Service;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
-use MxmUser\Hydrator\UserFormHydrator\UserHydrator;
-use MxmUser\Hydrator\UserFormHydrator\TimebeltHydrator;
-use MxmUser\Hydrator\UserFormHydrator\RoleHydrator;
-use Zend\Config\Config;
+use MxmUser\Model\UserInterface;
 
-class UserFormHydratorFactory implements FactoryInterface
+interface AuthorizationServiceInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $userHydrator = new UserHydrator();
-        $timebeltHydrator = new TimebeltHydrator($config);
-        $roleHydrator = new RoleHydrator($config);
 
-        $aggregatehydrator = new AggregateHydrator();
-        $aggregatehydrator->setEventManager($container->get('EventManager'));
-        $aggregatehydrator->add($userHydrator);
-        $aggregatehydrator->add($timebeltHydrator);
-        $aggregatehydrator->add($roleHydrator);
+    /**
+     * Check if the permission is granted to the current identity
+     *
+     * @param string $permission
+     * @param mixed $content
+     *
+     * @return bool
+     */
+    public function isGranted($permission, $content = null);
 
-        return $aggregatehydrator;
-    }
+	/**
+     * Set current identity
+     *
+     * @param MxmUser\Model\UserInterface $currentUser
+     *
+     * @return $this
+     */
+    public function setCurrentUser(UserInterface $currentUser);
+
+    /**
+     * Get current identity
+     *
+     * @return MxmUser\Model\UserInterface
+     */
+    public function getCurrentUser();
 }

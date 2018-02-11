@@ -34,11 +34,12 @@ use MxmRbac\Assertion\AssertionPluginManager;
 use Zend\Config\Config;
 use Zend\Validator\InArray;
 use Zend\Log\Logger;
+use MxmRbac\Exception\InvalidArgumentRbacException;
 
-class AuthorizationService
+class AuthorizationService implements AuthorizationServiceInterface
 {
     /*
-     * @var string Name of Role
+     * @var MxmUser\Model\UserInterface
      */
     protected $currentUser;
 
@@ -48,7 +49,7 @@ class AuthorizationService
     protected $rbac;
 
     /*
-     * @var Zend\Permissions\Rbac\Rbac
+     * @var MxmRbac\Assertion\AssertionPluginManager
      */
     protected $assertionPluginManager;
 
@@ -67,10 +68,12 @@ class AuthorizationService
      */
     protected $logger;
 
-    protected $assertions = [
-	'MustBeAuthorAssertion',
-	'AssertUserIdMatches',
-    ];
+//    protected $assertions = [
+//	'MustBeAuthorAssertion',
+//	'AssertUserIdMatches',
+//	'MustBeOwnerAssertion',
+//	'AssertClientIdMatches'
+//    ];
 
     public function __construct
     (
@@ -84,9 +87,13 @@ class AuthorizationService
         $this->currentUser = $currentUser;
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
-         $this->config = $config;
+        $this->config = $config;
         $this->inArrayValidator = $inArrayValidator;
         $this->logger = $logger;
+
+        if (!$this->config->assertions) {
+            throw new InvalidArgumentRbacException('There are no assertions in config.');
+        }
     }
 
     /**
@@ -115,21 +122,51 @@ class AuthorizationService
 
         $isGranted = true;
         $assertionNames = $this->getAssertionNames($permission);                    //get assertions for given permission
+
         if (count($assertionNames) < 1) {                                           //assertions for given permission is absent?
+            if ($content !== null) {
+                throw new InvalidArgumentRbacException("There are no assertions for the permission $permission.");
+            }
+
             $isGranted = $this->checkIsGranted($role, $permission);
+
         } else {
+            if ($content === null) {
+                return false;
+            }
+
             foreach ($assertionNames as $assertionName) {
-                if ($content === null) {
-                    return false;
-                }
                 $assertion = $this->assertionPluginManager->get($assertionName);
                 $assertion->setCurrentUser($this->currentUser);
                 $assertion->setContent($content);
+
                 $isGranted = $isGranted && $this->checkIsGranted($role, $permission, $assertion);
+
+                if ($isGranted !== true) {
+                    break;
+                }
             }
         }
 
         return $isGranted;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCurrentUser(UserInterface $currentUser)
+    {
+        $this->currentUser = $currentUser;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCurrentUser()
+    {
+        return $this->currentUser;
     }
 
     private function checkIsGranted($role, $permission, $assertion = null)
@@ -153,10 +190,14 @@ class AuthorizationService
      */
     private function getAssertionNames($permission)
     {
+
         $assertions = [];
-	foreach ($this->assertions as $assertion) {
-            if (isset($this->config->assertions->$assertion) && $this->config->assertions->$assertion->permissions) {		//TODO проверить очередность
-		$this->inArrayValidator->setHaystack($this->config->assertions->$assertion->permissions->toArray());
+
+	foreach ($this->config->assertions as $assertion => $permissions) {
+
+            if ($permissions->permissions) {
+		$this->inArrayValidator->setHaystack($permissions->permissions->toArray());
+
                 if ($this->inArrayValidator->isValid($permission)) {
                     $assertions[] = $assertion;
 		}

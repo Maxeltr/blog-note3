@@ -155,7 +155,7 @@ class UserService implements UserServiceInterface
 
         $user = $this->mapper->findUserById($id);
         if ($user instanceof UserInterface) {
-            if (!$this->authorizationService->isGranted('find.user', $user)) {
+            if (!$this->authorizationService->isGranted('find.user')) {
                 throw new NotAuthorizedUserException('Access denied. Permission "find.user" is required.');
             }
         } else {
@@ -178,6 +178,8 @@ class UserService implements UserServiceInterface
         $user->setPassword($passwordHash);
 
         $user->setCreated($this->datetime->modify('now'));
+
+        $user->setRole('user');
 
         $token = Rand::getString(32, '0123456789abcdefghijklmnopqrstuvwxyz', true);
         $user->setEmailToken($token);
@@ -214,6 +216,10 @@ class UserService implements UserServiceInterface
         if (!$this->authorizationService->isGranted('edit.user', $user)) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.user" is required.');
         }
+
+//        if ($user->getRole() !== null && ! $this->authorizationService->isGranted('change.roles')) {
+//            throw new NotAuthorizedUserException('Access denied. Permission "change.roles" is required.');
+//        }
 
         return $this->mapper->updateUser($user);
     }

@@ -116,6 +116,10 @@ class ApiService implements ApiServiceInterface
      */
     public function addClient($data)
     {
+        if (empty($data) or !is_array($data)) {
+            throw new InvalidArgumentException('Data must be array and cannot be empty.');	
+        }
+
         if (!$this->authenticationService->hasIdentity()) {
             throw new NotAuthenticatedException('The user is not logged in');
         }
@@ -160,16 +164,16 @@ class ApiService implements ApiServiceInterface
 
         $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $client_id]);
         if (0 === count($resultSet)) {
-            throw new DataBaseErrorException("Select operation failed.");
+            throw new RecordNotFoundException('Client ' . $client['client_id'] . 'not found.');
         }
 
 	return $resultSet->current();
     }
 
-    public function revokeToken($client_id)
+    public function revokeToken($client)
     {
-        if (empty($client_id)) {
-            throw new InvalidArgumentException('The client_id cannot be empty.');
+        if (empty($client)) {
+            throw new InvalidArgumentException('The client cannot be empty.');
         }
 
         if (!$this->authenticationService->hasIdentity()) {
@@ -180,7 +184,7 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "revoke.token" is required.');
         }
 
-        return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client_id['client_id']]);
+        return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client['client_id']]);
     }
 
     public function findAllClients()
@@ -203,4 +207,22 @@ class ApiService implements ApiServiceInterface
         return $paginator;
     }
 
+    public function deleteClient($client)
+    {
+        if (empty($client)) {
+            throw new InvalidArgumentException('Client is requried');
+        }
+
+        if (!$this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('delete.client')) {
+            throw new NotAuthorizedException('Access denied. Permission "delete.client" is required.');
+        }
+
+        $this->revokeToken($client);
+
+        return $this->oauthClientsTableGateway->delete(['client_id' => $client['client_id']]);;
+    }
 }

@@ -43,9 +43,14 @@ $form->get('submit')->setValue('Edit User');
 echo $this->form()->openTag($form);
 
 $user = $form->get('user');
-echo $this->formRow($user->get('id'));
+//echo $this->formRow($user->get('id'));
 echo $this->formElement($form->get('editUser_csrf'));
 echo $this->formRow($user->get('username'));
+
+if ($user->has('role')) {
+    echo $this->formRow($user->get('role'));
+}
+
 
 $timezone = $user->get('timebelt');
 echo $this->formRow($timezone->get('timezoneId'));

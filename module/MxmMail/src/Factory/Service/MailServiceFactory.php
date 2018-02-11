@@ -30,13 +30,17 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmMail\Logger;
 use MxmMail\Service\MailService;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Mail\Transport\Sendmail;
 
 class MailServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $logger = $container->get(Logger::class);
-        $mail = new MailService($logger);
+        $translator = $container->get(TranslatorInterface::class);
+        $transport = new Sendmail();
+        $mail = new MailService($translator, $logger, $transport);
 
         return $mail;
     }

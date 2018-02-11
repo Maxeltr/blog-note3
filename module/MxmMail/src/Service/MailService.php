@@ -31,14 +31,66 @@ use Zend\Mail\Message as MailMessage;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mail\Transport\Sendmail as SendMailTransport;
 use Zend\Mime\Part as MimePart;
+use Zend\Mail\Address\AddressInterface;
+use Zend\Mail\AddressList;
 
 class MailService
 {
+    /*
+     * @var Zend\Log\LoggerInterface
+     */
     protected $logger;
 
-    public function __construct(LoggerInterface $logger)
+    /*
+     * @var Zend\Mime\Part
+     */
+    protected $mimePart;
+
+    /*
+     * @var Zend\Mime\Message
+     */
+    protected $body;
+
+    /*
+     * @var Zend\Mail\Message
+     */
+    protected $mailMessage;
+
+    /*
+     * @var string
+     */
+    protected $encoding = 'UTF-8';
+
+    /*
+     * @var string
+     */
+    protected $subject;
+
+    /*
+     * @var Zend\Mail\AddressList
+     */
+    protected $from;
+
+    /*
+     * @var Zend\Mail\AddressList
+     */
+    protected $to;
+
+    /*
+     * Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
+
+    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, TransportInterface $transport)
     {
         $this->logger = $logger;
+
+        $this->body = new MimeMessage();
+        $this->mailMessage = new MailMessage();
+        $this->from = new AddressList();
+        $this->to = new AddressList();
+        $this->transport = $transport;
+        $this->translator = $translator;
     }
 
     public function sendEmail($subject, $body, $from, $senderName, $to, $recipientName)
@@ -61,5 +113,101 @@ class MailService
         $this->logger->info('Message was sent to ' . $to . ' with subject ' . $subject . '.');
 
         return $this;
+    }
+
+    public function send()
+    {
+        $this->mailMessage->setEncoding($this->encoding);
+        $this->mailMessage->setBody($this->body);
+        $this->mailMessage->setSubject($this->subject);
+        $this->mailMessage->setFrom($this->from);
+        $this->mailMessage->setTo($this->to);
+
+        $this->transport->send($this->mailMessage);
+
+        $this->logger->info($this->translator->translate('Message was sent to') . ' ' . $to . ' '
+            . $this->translator->translate('with subject') . ' ' . $subject . '.'
+        );
+
+        return $this;
+    }
+
+    public function setBody($message, $type = null)
+    {
+        $mimePart = new MimePart($message);
+        if ($type !== null) {
+            $mimePart->setType($type);
+        }
+
+        $this->body->setParts([$mimePart]);
+
+        return $this;
+    }
+
+    public function addBody($message, $type = null)
+    {
+        $mimePart = new MimePart($message);
+        if ($type !== null) {
+            $mimePart->setType($type);
+        }
+
+        $this->body->addPart([$mimePart]);
+
+        return $this;
+    }
+
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    public function setTo($emailOrAddress, $name = null)
+    {
+        $this->to = new AddressList();
+        $this->to->add($emailOrAddress, $name);
+
+        return $this;
+    }
+
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    public function setFrom($emailOrAddress, $name = null)
+    {
+        $this->from = new AddressList();
+        $this->from->add($emailOrAddress, $name);
+
+        return $this;
+    }
+
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    public function setEncoding($encoding)
+    {
+        $this->encoding = $encoding;
+
+        return $this;
+    }
+
+    public function getEncoding()
+    {
+        return $this->encoding;
     }
 }

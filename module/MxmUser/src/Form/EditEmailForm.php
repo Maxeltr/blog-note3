@@ -52,10 +52,10 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
         $this->translator = $translator;
         $this->validatorTranslator = $validatorTranslator;
 
-        $this->add(array(
-            'type' => 'hidden',
-            'name' => 'id'
-        ));
+//        $this->add(array(
+//            'type' => 'hidden',
+//            'name' => 'id'
+//        ));
 
         $this->add([
             'type' => 'csrf',
@@ -115,11 +115,11 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
-            'id' => [
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ],
+//            'id' => [
+//                'filters' => [
+//                    ['name' => 'Int'],
+//                ],
+//            ],
             'newEmail' => [
                 'required' => true,
                 'filters' => [

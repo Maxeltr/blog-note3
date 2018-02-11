@@ -1,8 +1,6 @@
 <?php
 namespace MxmApi\V1\Rest\File;
 
-use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
 use Zend\Db\TableGateway\TableGateway;
 use DomainException;
 use InvalidArgumentException;
@@ -12,6 +10,11 @@ use Zend\Paginator\Adapter\DbTableGateway;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Config\Config;
 use Zend\Http\Response;
+use ZF\ApiProblem\ApiProblem;
+use ZF\Rest\AbstractResourceListener;
+use ZF\MvcAuth\Identity\AuthenticatedIdentity;
+use MxmRbac\Service\AuthorizationService;
+use MxmUser\Mapper\MapperInterface;
 
 class FileResource extends AbstractResourceListener
 {
@@ -35,12 +38,30 @@ class FileResource extends AbstractResourceListener
      */
     protected $response;
 
-    public function __construct(TableGateway $tableGateway, \DateTimeInterface $datetime, Config $config, Response $response)
-    {
+    /**
+     * @var MxmRbac\Service\AuthorizationService
+     */
+    protected $authorizationService;
+
+    /**
+     * @var MxmUser\Mapper\MapperInterface
+     */
+    protected $userMapper;
+
+    public function __construct(
+        TableGateway $tableGateway,
+        \DateTimeInterface $datetime,
+        Config $config,
+        Response $response,
+        AuthorizationService $authorizationService,
+        MapperInterface $mapper
+    ){
         $this->tableGateway = $tableGateway;
         $this->datetime = $datetime;
         $this->config = $config;
         $this->response = $response;
+        $this->authorizationService = $authorizationService;
+        $this->userMapper = $mapper;
     }
     /**
      * Create a resource
@@ -57,6 +78,13 @@ class FileResource extends AbstractResourceListener
             return new ApiProblem(500, 'Create operation failed. No data received.');
         }
 
+        $identity = $this->getIdentity();
+        if ($identity instanceof AuthenticatedIdentity) {
+            $authenticatedIdentity = $identity->getAuthenticationIdentity();
+            \Zend\Debug\Debug::dump($authenticatedIdentity);
+        }
+        die();
+
         $id = Uuid::uuid4()->toString();
 
         $this->tableGateway->insert([
@@ -64,7 +92,9 @@ class FileResource extends AbstractResourceListener
             'filename' => $file['name'],
             'path' => $file['tmp_name'],
             'description' => $inputFilter->getValue('description'),
-            'uploaded' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat)
+            'uploaded' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat),
+            'owner' => $identity['user_id'],
+            'client' => $identity['client_id'],
         ]);
 
         $resultSet = $this->tableGateway->select(['id' => $id]);
@@ -130,6 +160,18 @@ class FileResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
+        $identity = $this->getIdentity();
+        if ($identity instanceof AuthenticatedIdentity) {
+            \Zend\Debug\Debug::dump($identity);
+        }
+
+        $user = $this->userMapper->findUserById($identity['user_id']);
+
+        if (!$this->authorizationService->isGranted('fetch.file.rest', $user)) {
+
+        }
+
+        die();
         if (! Uuid::isValid($id)) {
             return new ApiProblem(404, 'Invalid identifier provided');
         }

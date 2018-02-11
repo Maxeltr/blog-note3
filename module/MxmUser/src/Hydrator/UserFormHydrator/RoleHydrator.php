@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,49 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Form;
+namespace MxmUser\Hydrator\UserFormHydrator;
 
-use MxmUser\Form\EditUserFieldset;
 use MxmUser\Model\UserInterface;
-use Interop\Container\ContainerInterface;
-use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
-use MxmRbac\Service\AuthorizationService;
+use Zend\Hydrator\HydratorInterface;
+use \DateTimeZone;
 use Zend\Config\Config;
 
-class EditUserFieldsetFactory implements FactoryInterface
+class RoleHydrator implements HydratorInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $authorizationService = $container->get(AuthorizationService::class);
+    protected $config;
+    protected $roleNames;
 
-        $config = new Config($container->get('config'));
-        $roles = $config->rbac_module->rbac_config->roles;
-        $roleNames = [];
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+        $roles = $this->config->rbac_module->rbac_config->roles;
+        $this->roleNames = [];
         foreach  ($roles as $role => $options) {
-            $roleNames[] = $role;
+            $this->roleNames[] = $role;
+        }
+    }
+
+    public function hydrate(array $data, $object)
+    {
+        if (!$object instanceof UserInterface) {
+            return $object;
         }
 
-        return new EditUserFieldset(
-            $container->get(UserInterface::class),
-            $container->get(UserFormHydrator::class),
-            $container->get(TranslatorInterface::class),
-            $container->get('MvcTranslator'),
-            $authorizationService,
-            new Config($roleNames),
-            $requestedName,
-            $options
-        );
+        if (array_key_exists('role', $data)) {
+            $object->setRole($this->roleNames[$data['role']]);
+        }
+
+        return $object;
+    }
+
+    public function extract($object)
+    {
+        if (!$object instanceof UserInterface) {
+            return [];
+        }
+
+        $values ['role'] = $object->getRole();
+
+        return $values;
     }
 }

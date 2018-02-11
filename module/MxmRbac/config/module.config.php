@@ -63,7 +63,7 @@ return [
             ],
         ]
     ],
-    'rbac_module' => [
+    'rbac_module' => [      //TODO rename to mxm_rbac
         'rbac_config' => [
             'roles' => [
                 'admin' => [
@@ -71,20 +71,20 @@ return [
                     'no_assertion' => true,
                     'permissions' => [
                         'edit.options',
-                        'add.client',
-                        'find.client',
-                        'revoke.token',
-                        'find.clients'
+                        'change.roles',
+                        'add.client.rest',
+                        'find.client.rest',
+                        'revoke.token.rest',
+                        'find.clients.rest',
+                        'fetch.file.rest',
                     ]
                 ],
                 'moderator' => [
                     'parent' => 'admin',
                     //'no_assertion' => true,
                     'permissions' => [
-                        'add.category',
                         'edit.category',
                         'delete.category',
-                        'add.tag',
                         'edit.tag',
                         'delete.tag',
                         'find.users'
@@ -127,6 +127,18 @@ return [
                         'edit.user',
                         'delete.user',
                         'find.unpublished.posts',
+                    ]
+                ],
+                'MustBeOwnerAssertion' => [
+                    'permissions' => [
+                        'fetch.file.rest',
+
+                    ]
+                ],
+                'AssertClientIdMatches' => [
+                    'permissions' => [
+                        'fetch.file.rest',
+
                     ]
                 ],
             ],
