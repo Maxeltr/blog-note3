@@ -33,6 +33,8 @@ use Zend\Mail\Transport\Sendmail as SendMailTransport;
 use Zend\Mime\Part as MimePart;
 use Zend\Mail\Address\AddressInterface;
 use Zend\Mail\AddressList;
+use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Mail\Transport\TransportInterface;
 
 class MailService
 {

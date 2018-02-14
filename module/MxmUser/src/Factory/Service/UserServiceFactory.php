@@ -39,6 +39,7 @@ use Zend\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
 use Zend\i18n\Translator\TranslatorInterface;
+use MxmUser\Validator\IsPropertyMatchesDb;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -56,6 +57,12 @@ class UserServiceFactory implements FactoryInterface
             'field'   => 'email',
             'adapter' => $dbAdapter,
         ]);
+        $isRoleMatchesDbvalidator = new IsPropertyMatchesDb([
+            'table'   => 'users',
+            'field'   => 'id',
+            'adapter' => $dbAdapter,
+            'property' => 'role'
+        ]);
         $bcrypt = new Bcrypt();
         $mail = $container->get(MailService::class);
         $sessionContainer = $container->get('MxmUserSessionContainer');
@@ -68,6 +75,7 @@ class UserServiceFactory implements FactoryInterface
             $emailValidator,
             $notEmptyValidator,
             $recordExistsValidator,
+            $isRoleMatchesDbvalidator,
             $authorizationService,
             $bcrypt,
             $mail,

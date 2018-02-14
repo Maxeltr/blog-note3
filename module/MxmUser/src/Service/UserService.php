@@ -47,6 +47,7 @@ use MxmMail\Service\MailService;
 use Zend\Math\Rand;
 use Zend\Session\Container as SessionContainer;
 use Zend\i18n\Translator\TranslatorInterface;
+use MxmUser\Validator\IsPropertyMatchesDb;
 
 class UserService implements UserServiceInterface
 {
@@ -81,6 +82,11 @@ class UserService implements UserServiceInterface
     protected $isUserExists;
 
     /**
+     * @var MxmUser\Validator\IsPropertyMatchesDb
+     */
+    protected $isRoleMatchesDb;
+
+    /**
      * @var MxmRbac\Service\AthorizationService
      */
     protected $authorizationService;
@@ -109,6 +115,7 @@ class UserService implements UserServiceInterface
         EmailAddress $emailValidator,
         NotEmpty $notEmptyValidator,
         RecordExists $isUserExists,
+        IsPropertyMatchesDb $isRoleMatchesDb,
         AuthorizationService $authorizationService,
         Bcrypt $bcrypt,
         MailService $mail,
@@ -121,6 +128,7 @@ class UserService implements UserServiceInterface
         $this->emailValidator = $emailValidator;
         $this->notEmptyValidator = $notEmptyValidator;
         $this->isUserExists = $isUserExists;
+        $this->isRoleMatchesDb = $isRoleMatchesDb;
         $this->authorizationService = $authorizationService;
         $this->bcrypt = $bcrypt;
         $this->mail = $mail;
@@ -217,9 +225,9 @@ class UserService implements UserServiceInterface
             throw new NotAuthorizedUserException('Access denied. Permission "edit.user" is required.');
         }
 
-//        if ($user->getRole() !== null && ! $this->authorizationService->isGranted('change.roles')) {
-//            throw new NotAuthorizedUserException('Access denied. Permission "change.roles" is required.');
-//        }
+        if (!$this->isRoleMatchesDb->isValid($user) && !$this->authorizationService->isGranted('change.roles')) {
+            throw new NotAuthorizedUserException('Access denied. Permission "change.roles" is required.');
+        }
 
         return $this->mapper->updateUser($user);
     }
