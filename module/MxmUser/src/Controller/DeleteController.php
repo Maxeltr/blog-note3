@@ -65,7 +65,7 @@ class DeleteController extends AbstractActionController
             $redirectUrl = $this->url()->fromRoute('detailUser', ['id' => $id]);
 
             return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedUserException $e) {																	//add
+        } catch (NotAuthorizedUserException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->redirect()->toRoute('notAuthorized');

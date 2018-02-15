@@ -165,7 +165,7 @@ class ApiController extends AbstractActionController
 
             return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
 
-        } catch (NotAuthorizedException $e) {																	//add
+        } catch (NotAuthorizedException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->redirect()->toRoute('notAuthorized');

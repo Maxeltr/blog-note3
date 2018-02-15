@@ -77,6 +77,9 @@ return [
                         'revoke.token.rest',
                         'find.clients.rest',
                         'fetch.file.rest',
+                        'fetch.files.rest',
+                        'delete.file.rest',
+                        //'create.file.rest',
                     ]
                 ],
                 'moderator' => [

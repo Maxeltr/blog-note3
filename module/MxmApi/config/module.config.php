@@ -481,6 +481,13 @@ return [
                             ],
                         ],
                     ],
+                    1 => [
+                        'name'=>'Zend\Validator\File\Size',
+                        'options' => [
+                            //'min' => '10kB',
+                            'max' => '4MB'
+                        ]
+                    ],
                 ],
                 'filters' => [
                     0 => [
@@ -507,8 +514,26 @@ return [
             1 => [
                 'name' => 'description',
                 'required' => true,
-                'filters' => [],
-                'validators' => [],
+                'filters' => [
+                    0 => [
+                        'name' => 'StripTags',
+                        'options' => []
+                    ],
+                    1 => [
+                        'name' => 'StringTrim',
+                        'options' => []  
+                    ],
+                ],
+                'validators' => [
+                    0 => [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 250
+                        ]
+                    ]
+                ],
                 'allow_empty' => false,
                 'continue_if_empty' => false,
             ],

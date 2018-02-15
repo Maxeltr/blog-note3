@@ -71,19 +71,36 @@ class FileResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        $inputFilter = $this->getInputFilter();
-        $file = $inputFilter->getValue('file');
+        //$inputFilter = $this->getInputFilter();
+        //$file = $inputFilter->getValue('file');
+        $file = $data->file;
 
         if (empty($file['name']) or empty($file['tmp_name'])) {
+
+//            if (is_readable($file['tmp_name'])) {
+//                unlink($file['tmp_name']);
+//            }
+
             return new ApiProblem(500, 'Create operation failed. No data received.');
         }
 
         $identity = $this->getIdentity();
         if ($identity instanceof AuthenticatedIdentity) {
             $authenticatedIdentity = $identity->getAuthenticationIdentity();
-            \Zend\Debug\Debug::dump($authenticatedIdentity);
+            if (! $authenticatedIdentity) {
+//                if (is_readable($file['tmp_name'])) {
+//                    unlink($file['tmp_name']);
+//                }
+
+                return new ApiProblem(401, 'Unauthorized');
+            }
         }
-        die();
+
+        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        $this->authorizationService->setCurrentUser($user);
+        if (! $this->authorizationService->isGranted('create.file.rest')) {
+            return new ApiProblem(403, 'Forbidden. Permission create.file.rest is required.');
+        }
 
         $id = Uuid::uuid4()->toString();
 
@@ -91,7 +108,7 @@ class FileResource extends AbstractResourceListener
             'id' => $id,
             'filename' => $file['name'],
             'path' => $file['tmp_name'],
-            'description' => $inputFilter->getValue('description'),
+            'description' => $data->description,
             'uploaded' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat),
             'owner' => $identity['user_id'],
             'client' => $identity['client_id'],
@@ -117,17 +134,30 @@ class FileResource extends AbstractResourceListener
             throw new DomainException('Invalid identifier provided', 404);
         }
 
+        $identity = $this->getIdentity();
+        if ($identity instanceof AuthenticatedIdentity) {
+            $authenticatedIdentity = $identity->getAuthenticationIdentity();
+            if (! $authenticatedIdentity) {
+                return new ApiProblem(401, 'Unauthorized');
+            }
+        }
+
+        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        $this->authorizationService->setCurrentUser($user);
+        if (! $this->authorizationService->isGranted('delete.file.rest')) {
+            return new ApiProblem(403, 'Forbidden. Permission delete.file.rest is required.');
+        }
+
         $resultSet = $this->tableGateway->select(['id' => $id]);
         if (0 === count($resultSet)) {
-            throw new DomainException('File record not found in DB', 404);
+            return new ApiProblem(404, 'File record not found.');
         }
         $fileEntity = $resultSet->current();
 
         $path = $fileEntity->getPath();
 
         if (!is_readable($path)) {
-            $this->response->setStatusCode(404);
-            return;
+            return new ApiProblem(404, 'File not found.');
         }
 
         unlink($path);
@@ -149,6 +179,20 @@ class FileResource extends AbstractResourceListener
      */
     public function deleteList($data)
     {
+        $identity = $this->getIdentity();
+        if ($identity instanceof AuthenticatedIdentity) {
+            $authenticatedIdentity = $identity->getAuthenticationIdentity();
+            if (! $authenticatedIdentity) {
+                return new ApiProblem(401, 'Unauthorized');
+            }
+        }
+
+        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        $this->authorizationService->setCurrentUser($user);
+        if (! $this->authorizationService->isGranted('delete.files.rest')) {
+            return new ApiProblem(403, 'Forbidden. Permission delete.files.rest is required.');
+        }
+
         return new ApiProblem(405, 'The DELETE method has not been defined for collections');
     }
 
@@ -162,16 +206,18 @@ class FileResource extends AbstractResourceListener
     {
         $identity = $this->getIdentity();
         if ($identity instanceof AuthenticatedIdentity) {
-            \Zend\Debug\Debug::dump($identity);
+            $authenticatedIdentity = $identity->getAuthenticationIdentity();
+            if (! $authenticatedIdentity) {
+                return new ApiProblem(401, 'Unauthorized');
+            }
         }
 
-        $user = $this->userMapper->findUserById($identity['user_id']);
-
-        if (!$this->authorizationService->isGranted('fetch.file.rest', $user)) {
-
+        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        $this->authorizationService->setCurrentUser($user);
+        if (! $this->authorizationService->isGranted('fetch.file.rest')) {
+            return new ApiProblem(403, 'Forbidden. Permission fetch.file.rest is required.');
         }
 
-        die();
         if (! Uuid::isValid($id)) {
             return new ApiProblem(404, 'Invalid identifier provided');
         }
@@ -218,6 +264,20 @@ class FileResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
+        $identity = $this->getIdentity();
+        if ($identity instanceof AuthenticatedIdentity) {
+            $authenticatedIdentity = $identity->getAuthenticationIdentity();
+            if (! $authenticatedIdentity) {
+                return new ApiProblem(401, 'Unauthorized');
+            }
+        }
+
+        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        $this->authorizationService->setCurrentUser($user);
+        if (! $this->authorizationService->isGranted('fetch.files.rest')) {
+            return new ApiProblem(403, 'Forbidden. Permission fetch.files.rest is required.');
+        }
+
         return new FileCollection(new DbTableGateway($this->tableGateway, null, ['uploaded' => 'DESC']));
     }
 
