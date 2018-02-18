@@ -59,6 +59,11 @@ class FileEntity
     protected $owner;
 
     /**
+     * @var String
+     */
+    protected $client;
+
+    /**
      * Get file ID
      *
      * @return String
@@ -158,7 +163,7 @@ class FileEntity
      *
      * @return String
      */
-    public function getOwner()		
+    public function getOwner()
     {
         return $this->owner;
     }
@@ -170,5 +175,24 @@ class FileEntity
     public function setOwner($owner)
     {
         $this->owner = $owner;
+    }
+
+    /**
+     * Get client (the program which downloaded the file)
+     *
+     * @return String
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+    /**
+     * Set client (the program which downloaded the file)
+     *
+     * @param String
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
     }
 }

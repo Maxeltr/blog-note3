@@ -74,12 +74,13 @@ return [
                         'change.roles',
                         'add.client.rest',
                         'find.client.rest',
+                        'delete.client.rest',
                         'revoke.token.rest',
                         'find.clients.rest',
                         'fetch.file.rest',
                         'fetch.files.rest',
                         'delete.file.rest',
-                        //'create.file.rest',
+                        'create.file.rest',
                     ]
                 ],
                 'moderator' => [

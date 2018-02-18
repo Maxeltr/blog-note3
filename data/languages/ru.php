@@ -42,4 +42,6 @@ return [
     "Application secret key" => "Секретный ключ приложения",
     "Grant types" => "Типы разрешений",
     "Scope" => "Цель",
+    "Email" => "Электронная почта",
+    "Please log in" => "Пожалуйста, войдите"
 ];

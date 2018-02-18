@@ -117,15 +117,15 @@ class ApiService implements ApiServiceInterface
     public function addClient($data)
     {
         if (empty($data) or !is_array($data)) {
-            throw new InvalidArgumentException('Data must be array and cannot be empty.');	
+            throw new InvalidArgumentException('Data must be array and cannot be empty.');
         }
 
         if (!$this->authenticationService->hasIdentity()) {
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('add.client')) {
-            throw new NotAuthorizedException('Access denied. Permission "add.client" is required.');
+        if (!$this->authorizationService->isGranted('add.client.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "add.client.rest" is required.');
         }
 
         if ($this->clientExistsValidator->isValid($data['client_id'])) {
@@ -158,8 +158,8 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('find.client')) {
-            throw new NotAuthorizedException('Access denied. Permission "find.client" is required.');
+        if (!$this->authorizationService->isGranted('find.client.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "find.client.rest" is required.');
         }
 
         $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $client_id]);
@@ -180,8 +180,8 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('revoke.token')) {
-            throw new NotAuthorizedException('Access denied. Permission "revoke.token" is required.');
+        if (!$this->authorizationService->isGranted('revoke.token.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "revoke.token.rest" is required.');
         }
 
         return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client['client_id']]);
@@ -193,8 +193,8 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('find.clients')) {
-            throw new NotAuthorizedException('Access denied. Permission "find.clients" is required.');
+        if (!$this->authorizationService->isGranted('find.clients.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
         }
 
         $resultSet = $this->oauthClientsTableGateway->select();
@@ -217,8 +217,8 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('delete.client')) {
-            throw new NotAuthorizedException('Access denied. Permission "delete.client" is required.');
+        if (!$this->authorizationService->isGranted('delete.client.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "delete.client.rest" is required.');
         }
 
         $this->revokeToken($client);

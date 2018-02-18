@@ -121,6 +121,16 @@ return [
                     ],
                 ],
             ],
+            'deleteClient' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/api/delete/client/:client_id',
+                    'defaults' => [
+                        'controller' => Controller\ApiController::class,
+                        'action' => 'deleteClient'
+                    ],
+                ],
+            ],
             'mxm-api.rest.post' => [
                 'type' => 'Segment',
                 'options' => [
@@ -521,7 +531,7 @@ return [
                     ],
                     1 => [
                         'name' => 'StringTrim',
-                        'options' => []  
+                        'options' => []
                     ],
                 ],
                 'validators' => [

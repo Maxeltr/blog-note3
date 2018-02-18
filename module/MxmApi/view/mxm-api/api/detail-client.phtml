@@ -48,7 +48,7 @@ THE SOFTWARE.
                 <a href="<?php echo $this->url('revokeToken', array('action' => 'revokeToken', 'client_id' => $client['client_id'])); ?>">Revoke token</a>
             </p>
            <p>
-                <a href="<?php //echo $this->url('deleteClient', array('action' => 'deleteClient')); ?>">Delete client</a>
+                <a href="<?php echo $this->url('deleteClient', array('action' => 'deleteClient', 'client_id' => $client['client_id'])); ?>">Delete client</a>
             </p>
             <p>
                 <a href="<?php //echo $this->url('editClient', array('action' => 'editClient', 'client_id' => $client['client_id'])); ?>">Edit client</a>

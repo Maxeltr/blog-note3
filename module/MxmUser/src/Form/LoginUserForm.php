@@ -49,6 +49,8 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);
 
+        $this->setAttribute('class', 'form-signin');
+
         $this->translator = $translator;
         $this->validatorTranslator = $validatorTranslator;
 
@@ -57,10 +59,14 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             'name' => 'email',
             'attributes' => [
                 'class' => 'form-control',
+                'placeholder' => 'Email',
                 'required' => 'required',
             ],
             'options' => [
-                'label' => $this->translator->translate('Email')
+                'label' => $this->translator->translate('Email'),
+                'label_attributes' => [
+                    'class' => 'sr-only',
+                ]
             ]
         ]);
 
@@ -69,10 +75,14 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             'name' => 'password',
             'attributes' => [
                 'class' => 'form-control',
+                'placeholder' => 'Password',
                 'required' => 'required',
             ],
             'options' => [
-                'label' => $this->translator->translate('Password')
+                'label' => $this->translator->translate('Password'),
+                'label_attributes' => [
+                    'class' => 'sr-only',
+                ]
             ]
         ]);
 
@@ -95,6 +105,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
+                'class' => 'btn btn-default',
                 'value' => $this->translator->translate('Send')
             ]
         ]);

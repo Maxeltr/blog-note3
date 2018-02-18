@@ -139,6 +139,8 @@ class AuthenticateController extends AbstractActionController
 	} else {
             $this->loginUserForm->get('redirect')->setValue($this->url()->fromRoute('home'));
 	}
+        
+        $this->layout('layout/loginLayout');
 
         return new ViewModel([
             'form' => $this->loginUserForm,

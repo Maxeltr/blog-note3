@@ -71,16 +71,10 @@ class FileResource extends AbstractResourceListener
      */
     public function create($data)
     {
-        //$inputFilter = $this->getInputFilter();
-        //$file = $inputFilter->getValue('file');
-        $file = $data->file;
+        $inputFilter = $this->getInputFilter();
+        $file = $inputFilter->getValue('file');
 
         if (empty($file['name']) or empty($file['tmp_name'])) {
-
-//            if (is_readable($file['tmp_name'])) {
-//                unlink($file['tmp_name']);
-//            }
-
             return new ApiProblem(500, 'Create operation failed. No data received.');
         }
 
@@ -88,9 +82,7 @@ class FileResource extends AbstractResourceListener
         if ($identity instanceof AuthenticatedIdentity) {
             $authenticatedIdentity = $identity->getAuthenticationIdentity();
             if (! $authenticatedIdentity) {
-//                if (is_readable($file['tmp_name'])) {
-//                    unlink($file['tmp_name']);
-//                }
+                unlink($file['tmp_name']);
 
                 return new ApiProblem(401, 'Unauthorized');
             }
@@ -99,6 +91,8 @@ class FileResource extends AbstractResourceListener
         $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
         $this->authorizationService->setCurrentUser($user);
         if (! $this->authorizationService->isGranted('create.file.rest')) {
+            unlink($file['tmp_name']);
+
             return new ApiProblem(403, 'Forbidden. Permission create.file.rest is required.');
         }
 
@@ -108,14 +102,16 @@ class FileResource extends AbstractResourceListener
             'id' => $id,
             'filename' => $file['name'],
             'path' => $file['tmp_name'],
-            'description' => $data->description,
+            'description' => $inputFilter->getValue('description'),
             'uploaded' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat),
-            'owner' => $identity['user_id'],
-            'client' => $identity['client_id'],
+            'owner' => $authenticatedIdentity['user_id'],
+            'client' => $authenticatedIdentity['client_id'],
         ]);
 
         $resultSet = $this->tableGateway->select(['id' => $id]);
         if (0 === count($resultSet)) {
+            unlink($file['tmp_name']);
+            
             return new ApiProblem(500, 'Insert operation failed or did not result in new row');
         }
 
