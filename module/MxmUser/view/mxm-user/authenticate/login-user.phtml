@@ -1,45 +1,62 @@
-
-
 <?php if ($this->error) : ?>
-<p class="error">
-    There were one or more issues with your submission. Please correct them as
-    indicated below.
-</p>
-<p>
-    <?php echo $this->escapeHtml($this->translate($this->error)); ?>
-</p>
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">X</span>
+            </button>
+            <p>
+                <?php
+                    echo $this->translate("There were one or more issues. Please correct them as indicated below.");
+                ?>
+            </p>
+            <p>
+                <strong>
+                    <?php
+                        if (is_string($this->error)) {
+                            echo $this->escapeHtml($this->translate($this->error)) . "!";
+                        }
+                        echo $this->formElementErrors($form->get('email'));
+                        echo $this->formElementErrors($form->get('password'));
+                    ?>
+                </strong>
+            </p>
+        </div>
+    </div>
 <?php endif; ?>
+
 <div class="site-wrapper">
     <div class="site-wrapper-inner">
         <div class="cover-container">
             <div class="inner cover">
+                <?php
+                    $form = $this->form;
+                    $form->setAttribute('action', $this->url('loginUser', array(), true));
+                    $form->prepare();
+                    echo $this->form()->openTag($form);
+                ?>
+                <h2 class="form-signin-heading">
+                    <?php echo $this->escapeHtml($this->translate('Please log in')); ?>
+                </h2>
+                <div class="form-group <?php echo empty($form->get('email')->getMessages()) ? '' : 'has-error'; ?>">
+                    <?php
+                        echo $this->formLabel($form->get('email'));
+                        echo $this->formElement($form->get('email'));
+                    ?>
+                </div>
+                <div class="form-group <?php echo empty($form->get('password')->getMessages()) ? '' : 'has-error'; ?>">
+                    <?php
+                        echo $this->formLabel($form->get('password'));
+                        echo $this->formElement($form->get('password'));
+                    ?>
+                </div>
+                <?php
+                    echo $this->formElement($form->get('redirect'));
+                    echo $this->formElement($form->get('login_csrf'));
 
-<?php
-$form = $this->form;
-$form->setAttribute('action', $this->url('loginUser', array(), true));
-$form->prepare();
+                    echo $this->formElement($form->get('submit'));
 
-echo $this->form()->openTag($form); ?>
-
-<h2 class="form-signin-heading"><?php echo $this->escapeHtml($this->translate('Please log in')); ?></h2>
-
-<?php
-echo $this->formLabel($form->get('email'));
-echo $this->formElement($form->get('email'));
-echo $this->formElementErrors($form->get('email'));     //TODO ошибки в модальном окне?
-
-echo $this->formLabel($form->get('password'));
-echo $this->formElement($form->get('password'));
-echo $this->formElementErrors($form->get('password'));
-
-echo $this->formElement($form->get('redirect'));
-echo $this->formElement($form->get('login_csrf'));
-
-echo $this->formElement($form->get('submit'));
-
-echo $this->form()->closeTag();
-?>
-
+                    echo $this->form()->closeTag();
+                ?>
             </div>
         </div>
     </div>

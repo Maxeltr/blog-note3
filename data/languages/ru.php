@@ -43,5 +43,10 @@ return [
     "Grant types" => "Типы разрешений",
     "Scope" => "Цель",
     "Email" => "Электронная почта",
-    "Please log in" => "Пожалуйста, войдите"
+    "Please log in" => "Пожалуйста, войдите",
+    "There were one or more issues. Please correct them as indicated below." => "Была одна или несколько проблем. Пожалуйста, исправьте их, как указано ниже.",
+    "Incorrect login" => "Неверный логин",
+    "Incorrect login and/or password" => "Неверный логин и/или пароль",
+    "View details" => "Просмотр сведений",
+    
 ];

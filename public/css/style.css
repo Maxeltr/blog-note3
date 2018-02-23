@@ -37,3 +37,14 @@ body {
     text-shadow: none;
     background-color: #000084;
 }
+
+.alert-dismissable .close, .alert-dismissible .close {
+    color: #ff5555;
+    position: relative;
+    top: -2px;
+    right: 21px;
+    opacity: 1;
+}
+.has-error .form-control {
+    border: 2px solid #a94442;
+}

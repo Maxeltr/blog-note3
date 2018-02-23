@@ -111,7 +111,7 @@ class FileResource extends AbstractResourceListener
         $resultSet = $this->tableGateway->select(['id' => $id]);
         if (0 === count($resultSet)) {
             unlink($file['tmp_name']);
-            
+
             return new ApiProblem(500, 'Insert operation failed or did not result in new row');
         }
 
@@ -227,7 +227,7 @@ class FileResource extends AbstractResourceListener
         $params = $this->getEvent()->getQueryParams();
 	$download = array_key_exists('d', $params) ? $params['d'] : false;
 
-        if ($download === 'true') {
+        if ($download === '1') {
             $path = $fileEntity->getPath();
             if (!is_readable($path)) {
                 return new ApiProblem(404, 'File not found');

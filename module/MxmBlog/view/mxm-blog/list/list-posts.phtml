@@ -1,53 +1,61 @@
-<div class="row row-offcanvas row-offcanvas-right">
-    <div class="col-xs-12 col-sm-9">
-        <p class="pull-right visible-xs">
-            <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button"><?php echo $this->translate('Toggle nav') ?></button>
-        </p>
-        <div class="jumbotron">
-            <h1>Hello, world!</h1>
-            <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try some responsive-range viewport sizes to see it in action.</p>
+<div class="container">
+    <div class="row row-offcanvas row-offcanvas-right">
+        <div class="col-xs-12 col-sm-9">
+            <p class="pull-right visible-xs">
+                <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button"><?php echo $this->translate('Toggle nav') ?></button>
+            </p>
+            <div class="jumbotron">
+                <h1>Hello, world!</h1>
+                <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try some responsive-range viewport sizes to see it in action.</p>
+            </div>
+            <?php $countColumns = 3;
+            $countPosts = $this->posts->getCurrentItemCount();
+            if ($countPosts):
+                for ($i = 0; $i < $countPosts; $i = $i + $countColumns ): ?>
+                    <div class="row">
+                        <?php for ($j = 0; $j < $countColumns; $j++):
+                        $iterator = $this->posts->getIterator();
+                            if ($iterator->valid()): ?>
+                                <div class="col-xs-12 col-md-4">
+                                    <div class="div-1">
+                                        <?php $post = $iterator->current();
+                                        $iterator->next(); ?>
+                                        <h1><a href="<?php echo $this->url('detailPost',
+                                            array('action' => 'detailPost', 'id' => $post->getId())); ?>">
+                                            <?php echo $this->escapeHtml($post->getTitle()); ?></a>
+                                        </h1>
+                                        <p>
+                                            <?php echo $this->htmlPurifier($post->getSummary()); ?>
+                                        </p>
+                                    </div>
+                                    <p><a role="button" href="<?php echo $this->url('detailPost',
+                                        array('action' => 'detailPost', 'id' => $post->getId())); ?>" class="btn btn-default"><?php echo $this->translate('View details') ?></a>
+                                    </p>
+                                </div>
+                            <?php endif;
+                        endfor; ?>
+                    </div>
+                <?php endfor;
+            endif; ?>
         </div>
-        <div class="row">
-            <?php if (count($this->posts)): ?>
-                <?php foreach ($this->posts as $post): ?>
-                    <div class="col-xs-6 col-lg-4">
-                        <div class="div-1">
-                        <h1><a href="<?php echo $this->url('detailPost',
-                            array('action' => 'detailPost', 'id' => $post->getId())); ?>">
-                            <?php echo $this->escapeHtml($post->getTitle()); ?></a></h1>
-
-                        <p>
-                            <?php echo $this->htmlPurifier($post->getSummary()); ?>
-                        </p>
-
-                        </div>
-                         <p><a role="button" href="<?php echo $this->url('detailPost',
-                            array('action' => 'detailPost', 'id' => $post->getId())); ?>" class="btn btn-default">View details</a></p>
-                    </div><!--/.col-xs-6.col-lg-4-->
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div><!--/row-->
-    </div><!--/.col-xs-12.col-sm-9-->
-
-    <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
-        <div class="list-group">
-            <a class="list-group-item" href="<?php echo $this->url('listCategories',
-                array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
-            <a class="list-group-item" href="<?php echo $this->url('listTags',
-                array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
+        <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
+            <div class="list-group">
+                <a class="list-group-item" href="<?php echo $this->url('listCategories',
+                    array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
+                <a class="list-group-item" href="<?php echo $this->url('listTags',
+                    array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
+            </div>
+            <div class="sidebar-module">
+                <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+            </div>
+            <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
         </div>
-        <div class="sidebar-module">
-            <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
-        </div>
-        <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
+    </div>
 
-    </div><!--/.sidebar-offcanvas-->
-</div><!--/row-->
-
-<?php echo $this->paginationControl($this->posts,
-        'Sliding',
-        'partial/paginator.phtml',
-        array('route' => $route)); ?>
-
+    <?php echo $this->paginationControl($this->posts,
+            'Sliding',
+            'partial/paginator.phtml',
+            array('route' => $route)); ?>
+</div>
 
 
