@@ -78,7 +78,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
             'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
-                'rows' => '3',
+                'rows' => '20',
             ],
             'options' => [
                 'label' => $this->translator->translate('Text')
@@ -86,11 +86,12 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
         ]);
 
         $this->add([
-            'type' => 'text',
+            'type' => 'textarea',
             'name' => 'summary',
             'attributes' => [
                 'class' => 'form-control',
                 'required' => 'required',
+                'rows' => '5',
             ],
             'options' => [
                 'label' => $this->translator->translate('Summary')
@@ -101,7 +102,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => 'checkbox',
             'name' => 'isPublished',
             'attributes' => [
-                'class' => 'form-control',
+                //'class' => 'form-control',
             ],
             'options' => [
                 'label' => $this->translator->translate('Publish'),
@@ -125,13 +126,16 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Collection',
             'name' => 'tags',
             'options' => [
-                'label' => $this->translator->translate('Choose tags'),
+                //'label' => $this->translator->translate('Choose tags'),
                 'count' => 1,
                 'should_create_template' => true,
                 'allow_add' => true,
                 'target_element' => [
                     'type' => 'MxmBlog\Form\TagsFieldset',
                 ],
+            ],
+            'attributes' => [
+                'class' => 'form-group',
             ],
         ]);
 

@@ -89,6 +89,7 @@ class WriteController extends AbstractActionController
 
     public function addPostAction()
     {
+        $error = false;
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->postForm->setData($request->getPost());
@@ -106,12 +107,15 @@ class WriteController extends AbstractActionController
 
                 return $this->redirect()->toRoute('detailPost',
                     array('id' => $savedPost->getId()));
+            } else {
+                $error = true;
             }
         }
 
-        return new ViewModel(array(
-            'form' => $this->postForm
-        ));
+        return new ViewModel([
+            'form' => $this->postForm,
+            'error' => $error
+        ]);
     }
 
     public function editPostAction()

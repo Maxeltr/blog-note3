@@ -45,7 +45,7 @@ class AuthenticationServiceFactory implements FactoryInterface
         $authService = new AuthenticationService();
         $authService->setStorage($authStorage);
         $authService->setAdapter($authAdapter);
-        
+
         return $authService;
     }
 }
