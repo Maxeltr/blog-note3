@@ -4,22 +4,18 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">X</span>
             </button>
-            <p>
+            <?php
+                echo $this->translate("There were one or more issues. Please correct them as indicated below.");
+            ?>
+            <strong>
                 <?php
-                    echo $this->translate("There were one or more issues. Please correct them as indicated below.");
+                    if (is_string($this->error)) {
+                        echo $this->escapeHtml($this->translate($this->error)) . "!";
+                    }
+                    echo $this->formElementErrors($form->get('email'));
+                    echo $this->formElementErrors($form->get('password'));
                 ?>
-            </p>
-            <p>
-                <strong>
-                    <?php
-                        if (is_string($this->error)) {
-                            echo $this->escapeHtml($this->translate($this->error)) . "!";
-                        }
-                        echo $this->formElementErrors($form->get('email'));
-                        echo $this->formElementErrors($form->get('password'));
-                    ?>
-                </strong>
-            </p>
+            </strong>
         </div>
     </div>
 <?php endif; ?>
@@ -27,7 +23,7 @@
 <div class="site-wrapper">
     <div class="site-wrapper-inner">
         <div class="cover-container">
-            <div class="inner cover">
+            <div class="inner dialog">
                 <?php
                     $form = $this->form;
                     $form->setAttribute('action', $this->url('loginUser', array(), true));
