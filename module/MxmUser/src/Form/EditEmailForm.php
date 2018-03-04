@@ -124,6 +124,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [
@@ -149,6 +150,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [

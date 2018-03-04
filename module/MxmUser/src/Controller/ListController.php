@@ -26,6 +26,7 @@
 
 namespace MxmUser\Controller;
 
+use MxmUser\Exception\RecordNotFoundUserException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;

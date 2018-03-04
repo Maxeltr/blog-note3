@@ -54,6 +54,8 @@ echo $this->formRow($userFieldset->get('confirmPassword'));
 $timezone = $userFieldset->get('timebelt');
 echo $this->formRow($timezone->get('timezoneId'));
 
+echo $this->formRow($userFieldset->get('localeId'));
+
 echo $this->formLabel($userFieldset->get('captcha'));
 echo $this->formElement($userFieldset->get('captcha'));
 echo $this->formElementErrors($userFieldset->get('captcha'));

@@ -33,6 +33,7 @@ use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Zend\Config\Config;
 
 class RegisterUserFieldsetFactory implements FactoryInterface
 {
@@ -43,6 +44,7 @@ class RegisterUserFieldsetFactory implements FactoryInterface
             $container->get(UserFormHydrator::class),
             $container->get(TranslatorInterface::class),
             $container->get('MvcTranslator'),
+            $config = new Config($container->get('config')),
             $requestedName,
             $options
         );

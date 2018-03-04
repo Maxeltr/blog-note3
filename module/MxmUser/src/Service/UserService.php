@@ -337,13 +337,16 @@ class UserService implements UserServiceInterface
                 throw new RecordNotFoundUserException("User with email address " . $email . " doesn't exists");
             }
 
-            if ($user->getEmailVerification() === false && $this->isEmailTokenExpired($user) === true) {
-                $this->mapper->deleteUser($user);
-                throw new ExpiredUserException("Email token " . $token . " expired. User id " . $user->getId() . ' was deleted.');
-            }
-
             $storage = $this->authService->getStorage();
             $storage->write($user);
+
+            if ($user->getEmailVerification() !== true && $this->isEmailTokenExpired($user) === true) {
+                $token = $user->getEmailToken();
+                $userId = $user->getId();
+                $this->mapper->deleteUser($user);
+                $this->logoutUser();
+                throw new ExpiredUserException("Email token " . $token . " expired. User id " . $userId . ' was deleted.');
+            }
         }
 
         return $result;
@@ -456,7 +459,7 @@ class UserService implements UserServiceInterface
         if ($tokenCreationDate instanceof \DateTimeInterface) {
             $currentDate = $this->datetime->modify('now');
             $interval = $tokenCreationDate->diff($currentDate);
-            if ($interval->i > 1) {     //TODO срок годности токена вынести в настройки
+            if ($interval->d > 1) {     //TODO срок годности токена вынести в настройки d - кол-во дней
                 return true;
             }
         }

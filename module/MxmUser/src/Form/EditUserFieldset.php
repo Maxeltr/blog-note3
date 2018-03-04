@@ -41,6 +41,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
     protected $validatorTranslator;
     protected $authorizationService;
     protected $roles;
+    protected $config;
 
     public function __construct(
         UserInterface $user,
@@ -49,6 +50,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
         ValidatorTranslatorInterface $validatorTranslator,
         AuthorizationService $authorizationService,
         Config $roles,
+        Config $config,
         $name = "edit_user",
         $options = array()
     ) {
@@ -62,6 +64,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->authorizationService = $authorizationService;
         $this->roles = $roles;
+        $this->config = $config;
 
 //        $this->add([
 //            'type' => 'hidden',
@@ -96,6 +99,19 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
             ]);
         }
 
+        $this->add([
+            'name' => 'localeId',
+            'type' => 'Zend\Form\Element\Select',
+            'attributes' => [
+                'type' => 'select',
+                'required' => 'required',
+                'class' => 'form-control',
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Locale'),
+                'value_options' => $this->config->mxm_user->locales->toArray(),
+            ],
+        ]);
     }
 
     public function init() {
@@ -141,6 +157,11 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
                         ]
                     ]
                 ]
+            ],
+            'localeId' => [
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
             ],
         ];
 

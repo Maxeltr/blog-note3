@@ -37,6 +37,7 @@ class UserHydrator implements HydratorInterface
      * @var array
      */
     protected $skipProperties = [
+        'locale',
         'role',
         'datetoken',
         'created',

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\TimezoneFormHydrator;
+namespace MxmUser\Hydrator\UserFormHydrator;
 
+use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
 use Zend\Config\Config;
 
-class TimezoneFormHydrator implements HydratorInterface
+class LocaleHydrator implements HydratorInterface
 {
     protected $config;
 
@@ -41,32 +41,24 @@ class TimezoneFormHydrator implements HydratorInterface
 
     public function hydrate(array $data, $object)
     {
-        if (!$object instanceof DateTimeZone) {
-            return $object;
-        }
-        $object = null;
-        $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-
-        if (array_key_exists('timezoneId', $data))
-        {
-            $timezone = new DateTimeZone($timezones[$data['timezoneId']]);
-        } else {
+        if (!$object instanceof UserInterface) {
             return $object;
         }
 
+        if (array_key_exists('localeId', $data)) {
+            $object->setLocale($this->config->mxm_user->locales->toArray()[$data['localeId']]);
+        }
 
-        return $timezone;
+        return $object;
     }
 
     public function extract($object)
     {
-        if (!$object instanceof DateTimeZone) {
-            return array();
+        if (!$object instanceof UserInterface) {
+            return [];
         }
 
-        $values = array();
-
-        $values ['timebelt'] = $object->getName();
+        $values = ['localeId' => array_search($object->getLocale(), $this->config->mxm_user->locales->toArray())];
 
         return $values;
     }

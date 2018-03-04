@@ -56,15 +56,17 @@ class TimebeltHydrator implements HydratorInterface
     public function extract($object)
     {
         if (!$object instanceof UserInterface) {
-            return array();
+            return [];
         }
 
-        $values = array();
-
+        $values = [];
         $timezone = $object->getTimebelt();
+
         if ($timezone instanceof DateTimeZone) {
-            $values ['timebelt'] = $timezone->getName();
+            $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU');
+            $values ['timebelt'] = ['timezoneId' => array_search($timezone->getName(), $timezones)];
         }
+
         return $values;
     }
 }

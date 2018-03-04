@@ -28,7 +28,6 @@ namespace MxmUser\Hydrator\UserFormHydrator;
 
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
 use Zend\Config\Config;
 
 class RoleHydrator implements HydratorInterface
@@ -65,7 +64,7 @@ class RoleHydrator implements HydratorInterface
             return [];
         }
 
-        $values ['role'] = $object->getRole();
+        $values ['role'] = array_search($object->getRole(), $this->roleNames);
 
         return $values;
     }

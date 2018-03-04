@@ -14,7 +14,10 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmUser.log',
         ],
-
+        'locales' => [
+            'Ru',
+            'En'
+        ]
     ],
     'defaults' => [
 	'locale' => 'ru',

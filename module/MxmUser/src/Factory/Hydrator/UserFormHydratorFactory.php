@@ -32,6 +32,7 @@ use Zend\Hydrator\Aggregate\AggregateHydrator;
 use MxmUser\Hydrator\UserFormHydrator\UserHydrator;
 use MxmUser\Hydrator\UserFormHydrator\TimebeltHydrator;
 use MxmUser\Hydrator\UserFormHydrator\RoleHydrator;
+use MxmUser\Hydrator\UserFormHydrator\LocaleHydrator;
 use Zend\Config\Config;
 
 class UserFormHydratorFactory implements FactoryInterface
@@ -42,12 +43,14 @@ class UserFormHydratorFactory implements FactoryInterface
         $userHydrator = new UserHydrator();
         $timebeltHydrator = new TimebeltHydrator($config);
         $roleHydrator = new RoleHydrator($config);
+        $localeHydrator = new LocaleHydrator($config);
 
         $aggregatehydrator = new AggregateHydrator();
         $aggregatehydrator->setEventManager($container->get('EventManager'));
         $aggregatehydrator->add($userHydrator);
         $aggregatehydrator->add($timebeltHydrator);
         $aggregatehydrator->add($roleHydrator);
+        $aggregatehydrator->add($localeHydrator);
 
         return $aggregatehydrator;
     }

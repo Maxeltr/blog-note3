@@ -118,6 +118,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [

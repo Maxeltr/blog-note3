@@ -32,17 +32,20 @@ use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Zend\Config\Config;
 
 class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
     protected $translator;
     protected $validatorTranslator;
+    protected $config;
 
     public function __construct(
         UserInterface $user,
         HydratorInterface $hydrator,
         TranslatorInterface $translator,
         ValidatorTranslatorInterface $validatorTranslator,
+        Config $config,
         $name = "register_user",
         $options = array()
     ){
@@ -53,6 +56,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
 
         $this->translator = $translator;
         $this->validatorTranslator = $validatorTranslator;
+        $this->config = $config;
 
         $this->add([
             'type' => 'text',
@@ -110,6 +114,20 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'captcha' => new \Zend\Captcha\Figlet(),
             ],
         ]);
+
+        $this->add([
+            'name' => 'localeId',
+            'type' => 'Zend\Form\Element\Select',
+            'attributes' => [
+                'type' => 'select',
+                'required' => 'required',
+                'class' => 'form-control',
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Locale'),
+                'value_options' => $this->config->mxm_user->locales->toArray(),
+            ],
+        ]);
     }
 
     public function init() {
@@ -154,6 +172,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [
@@ -206,6 +225,11 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                         ]
                     ],
                 ]
+            ],
+            'localeId' => [
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
             ],
         ];
     }

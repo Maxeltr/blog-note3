@@ -56,6 +56,7 @@ class EditUserFieldsetFactory implements FactoryInterface
             $container->get('MvcTranslator'),
             $authorizationService,
             new Config($roleNames),
+            $config = new Config($container->get('config')),
             $requestedName,
             $options
         );

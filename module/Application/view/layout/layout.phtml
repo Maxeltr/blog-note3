@@ -61,7 +61,7 @@
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">
                                     <?php if ($user) {
-                                        echo $this->translate('Hello') . ', ' . $this->escapeHtml($user->getUserName());
+                                        echo $this->translate('Hello') . ', ' . $this->escapeHtml($user->getUsername());
                                     } else {
                                         echo $this->translate('Not logged in');
                                     } ?>

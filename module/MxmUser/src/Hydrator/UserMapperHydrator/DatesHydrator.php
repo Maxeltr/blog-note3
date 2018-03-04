@@ -62,7 +62,7 @@ class DatesHydrator implements HydratorInterface
         }
 
         if (array_key_exists('dateEmailToken', $data) && $this->dateValidator->isValid($data['dateEmailToken'])) {
-            $object->setDateToken($this->datetime->modify($data['dateEmailToken']));
+            $object->setDateEmailToken($this->datetime->modify($data['dateEmailToken']));
         }
 
         return $object;
