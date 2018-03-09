@@ -217,6 +217,7 @@ class WriteController extends AbstractActionController
 
     public function addCategoryAction()
     {
+        $error = false;
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->categoryForm->setData($request->getPost());
@@ -234,11 +235,14 @@ class WriteController extends AbstractActionController
 
                 return $this->redirect()->toRoute('detailCategory',
                     array('id' => $savedCategory->getId()));
+            } else {
+                $error = true;
             }
         }
 
         return new ViewModel(array(
-            'form' => $this->categoryForm
+            'form' => $this->categoryForm,
+            'error' => $error
         ));
     }
 

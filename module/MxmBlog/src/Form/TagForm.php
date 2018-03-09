@@ -69,7 +69,8 @@ class TagForm extends Form
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => $this->translator->translate('Send')
+                'value' => $this->translator->translate('Send'),
+                'class' => 'btn btn-default'
             ]
         ]);
     }

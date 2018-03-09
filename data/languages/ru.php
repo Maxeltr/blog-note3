@@ -48,5 +48,15 @@ return [
     "Incorrect login" => "Неверный логин",
     "Incorrect login and/or password" => "Неверный логин и/или пароль",
     "View details" => "Просмотр сведений",
-    
+    "Add category, please." => "Добавьте категорию, пожалуйста.",
+    "Add tag, please." => "Добавьте метку, пожалуйста.",
+    "Add article, please." => "Добавьте статью, пожалуйста.",
+    "Edit article, please." => "Отредактируйте статью, пожалуйста.",
+    "Edit category, please." => "Отредактируйте категорию, пожалуйста.",
+    "Edit tag, please." => "Отредактируйте метку, пожалуйста.",
+    "Are you sure that you want to delete" => "Вы уверены, что хотите удалить",
+    "Article" => "Статья",
+    "by author" => "автора",
+    "Published" => "Опубликовано",
+    "Author" => "Автор",
 ];

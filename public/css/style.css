@@ -61,3 +61,38 @@ body {
 input, textarea, select, button {
     font-family: DOS, Monaco, Menlo, Consolas, "Courier New", monospace;
 }
+
+code {
+    padding: 14px 8px;
+    background-color: #000;
+    color: #48484c !important;
+    border: 0;
+}
+
+h2 {
+    font-size: 18px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: #ffffff;
+    white-space: normal;
+}
+
+hr {
+    margin: 6px 0 7px;
+    border: 0;
+    border-top: 0px solid #bbbbbb;
+    border-bottom: 2px solid #ffffff;
+}
+
+/*.page-header {
+    padding: 20px 20px;
+    margin: 20px 0 20px;
+    background: #00aaaa;
+}
+
+.page-header h1 {
+    color: #000000;
+}*/

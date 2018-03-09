@@ -26,7 +26,7 @@
         <div class="cover-container">
             <div class="inner cover">
                 <div class="page-header">
-                <h1>Hello, world!</h1>
+                <h1><?php echo $this->translate('Add article, please.') ?></h1>
             </div>
                 <?php $form = $this->form;
                 $form->setAttribute('action', $this->url('addPost', array(), true));
@@ -83,5 +83,3 @@
         </div>
     </div>
 </div>
-
-

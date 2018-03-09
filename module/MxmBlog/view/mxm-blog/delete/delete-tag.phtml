@@ -1,9 +1,19 @@
-<h1>DeleteController::deleteAction()</h1>
- <p>
-     Are you sure that you want to delete
-     '<?php echo $this->escapeHtml($this->tag->getTitle()); ?>'
- </p>
- <form action="<?php echo $this->url('deleteTag', array(), true) ?>" method="post">
-     <input type="submit" name="delete_confirmation" value="yes">
-     <input type="submit" name="delete_confirmation" value="no">
- </form>
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner dialog">
+                <h2 class="form-signin-heading">
+                    <?php echo $this->translate('Are you sure that you want to delete'); ?>?
+                </h2>
+                <p>
+                    <?php echo $this->translate('Tag'); ?>
+                    "<?php echo $this->escapeHtml($this->tag->getTitle()); ?>"
+                </p>
+                <form action="<?php echo $this->url('deleteTag', array(), true) ?>" method="post">
+                    <input type="submit" class='btn btn-default' name="delete_confirmation" value="yes">
+                    <input type="submit" class='btn btn-default' name="delete_confirmation" value="no">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

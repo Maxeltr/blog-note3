@@ -54,7 +54,7 @@ class UserHydrator extends ClassMethods implements HydratorInterface
 
         try {
             $author = $this->userMapper->findUserById($data['author']);
-        } catch (RecordNotFoundUserException $ex) {
+        } catch (RecordNotFoundUserException $ex) {                         //TODO add logger
             return $object;
         }
 
