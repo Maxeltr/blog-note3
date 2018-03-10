@@ -59,4 +59,5 @@ return [
     "by author" => "автора",
     "Published" => "Опубликовано",
     "Author" => "Автор",
+    "Category decription" => "Описание категории",
 ];

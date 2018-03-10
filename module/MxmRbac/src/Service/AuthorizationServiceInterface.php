@@ -41,19 +41,19 @@ interface AuthorizationServiceInterface
      */
     public function isGranted($permission, $content = null);
 
-	/**
+    /**
      * Set current identity
      *
-     * @param MxmUser\Model\UserInterface $currentUser
+     * @param MxmUser\Model\UserInterface $identity
      *
      * @return $this
      */
-    public function setCurrentUser(UserInterface $currentUser);
+    public function setIdentity(UserInterface $identity);
 
     /**
      * Get current identity
      *
      * @return MxmUser\Model\UserInterface
      */
-    public function getCurrentUser();
+    public function getIdentity();
 }

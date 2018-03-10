@@ -32,6 +32,7 @@ use MxmRbac\Assertion\AssertionPluginManager;
 use MxmRbac\Assertion\MustBeAuthorAssertion;
 use MxmRbac\Assertion\AssertUserIdMatches;
 use Zend\ServiceManager\Factory\InvokableFactory;
+use MxmRbac\Assertion\MustBeOwnerAssertion;
 
 class AssertionPluginManagerFactory implements FactoryInterface
 {
@@ -41,10 +42,12 @@ class AssertionPluginManagerFactory implements FactoryInterface
             'factories' => [
                 MustBeAuthorAssertion::class => InvokableFactory::class,
                 AssertUserIdMatches::class => InvokableFactory::class,
+                MustBeOwnerAssertion::class => InvokableFactory::class,
             ],
             'aliases' => [
                 'MustBeAuthorAssertion' => MustBeAuthorAssertion::class,
                 'AssertUserIdMatches' => AssertUserIdMatches::class,
+                'MustBeOwnerAssertion' => MustBeOwnerAssertion::class,
             ]
         ];
 

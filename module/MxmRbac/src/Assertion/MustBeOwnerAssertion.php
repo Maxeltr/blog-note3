@@ -28,8 +28,26 @@ namespace MxmRbac\Assertion;
 
 use Zend\Permissions\Rbac\AssertionInterface;
 use Zend\Permissions\Rbac\Rbac;
+use MxmUser\Model\UserInterface;
 
 class MustBeOwnerAssertion implements AssertionInterface
 {
+    protected $identity;
 
+    protected $content;
+
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+    public function setIdentity(UserInterface $identity)
+    {
+        $this->identity = $identity;
+    }
+
+    public function assert(Rbac $rbac)
+    {
+        return $this->identity->getId() == $this->content->getOwner();
+    }
 }

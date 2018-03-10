@@ -32,7 +32,7 @@ use MxmUser\Model\UserInterface;
 
 class MustBeAuthorAssertion implements AssertionInterface
 {
-    protected $currentUser;
+    protected $identity;
 
     protected $content;
 
@@ -41,16 +41,16 @@ class MustBeAuthorAssertion implements AssertionInterface
         $this->content = $content;
     }
 
-    public function setCurrentUser($currentUser)
+    public function setIdentity($identity)
     {
-        $this->currentUser = $currentUser;
+        $this->identity = $identity;
     }
 
     public function assert(Rbac $rbac)
     {
         $author = $this->content->getAuthor();
         if ($author instanceof UserInterface) {
-            return $this->currentUser->getId() === $author->getId();
+            return $this->identity->getId() === $author->getId();
         }
 
         return false;

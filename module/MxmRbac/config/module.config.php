@@ -68,7 +68,7 @@ return [
             'roles' => [
                 'admin' => [
                     'parent' => '',
-                    'no_assertion' => true,
+                    //'no_assertion' => true,
                     'permissions' => [
                         'edit.options',
                         'change.roles',
@@ -131,17 +131,18 @@ return [
                         'edit.user',
                         'delete.user',
                         'find.unpublished.posts',
+                        'fetch.files.rest',
                     ]
                 ],
                 'MustBeOwnerAssertion' => [
                     'permissions' => [
                         'fetch.file.rest',
-
+                        'delete.file.rest',
                     ]
                 ],
                 'AssertClientIdMatches' => [
                     'permissions' => [
-                        'fetch.file.rest',
+                        //'fetch.file.rest',
 
                     ]
                 ],

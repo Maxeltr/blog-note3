@@ -92,7 +92,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
+        return $this->createObject($select, $this->aggregateHydrator, clone $this->userPrototype);
     }
 
     /**
@@ -105,7 +105,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
+        return $this->createObject($select, $this->aggregateHydrator, clone $this->userPrototype);
     }
 
     /**
@@ -118,7 +118,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
+        return $this->createObject($select, $this->aggregateHydrator, clone $this->userPrototype);
     }
 
     /**
@@ -131,7 +131,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createObject($select, $this->aggregateHydrator, $this->userPrototype);
+        return $this->createObject($select, $this->aggregateHydrator, clone $this->userPrototype);
     }
 
     /**
@@ -177,7 +177,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createUserSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->aggregateHydrator, $this->userPrototype);
+        return $this->createPaginator($select, $this->aggregateHydrator, clone $this->userPrototype);
     }
 
    /**

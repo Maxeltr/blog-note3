@@ -15,6 +15,7 @@ use ZF\Rest\AbstractResourceListener;
 use ZF\MvcAuth\Identity\AuthenticatedIdentity;
 use MxmRbac\Service\AuthorizationService;
 use MxmUser\Mapper\MapperInterface;
+use MxmUser\Exception\RecordNotFoundUserException;
 
 class FileResource extends AbstractResourceListener
 {
@@ -88,8 +89,13 @@ class FileResource extends AbstractResourceListener
             }
         }
 
-        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        $this->authorizationService->setCurrentUser($user);
+        try {
+            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        } catch (RecordNotFoundUserException $e) {
+            return new ApiProblem(401, 'Unauthorized. Identity not found.');
+        }
+
+        $this->authorizationService->setIdentity($currentUser);
         if (! $this->authorizationService->isGranted('create.file.rest')) {
             unlink($file['tmp_name']);
 
@@ -127,7 +133,7 @@ class FileResource extends AbstractResourceListener
     public function delete($id)
     {
         if (! Uuid::isValid($id)) {
-            throw new DomainException('Invalid identifier provided', 404);
+            return new ApiProblem(404, 'Invalid identifier provided');
         }
 
         $identity = $this->getIdentity();
@@ -138,17 +144,22 @@ class FileResource extends AbstractResourceListener
             }
         }
 
-        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        $this->authorizationService->setCurrentUser($user);
-        if (! $this->authorizationService->isGranted('delete.file.rest')) {
-            return new ApiProblem(403, 'Forbidden. Permission delete.file.rest is required.');
-        }
-
         $resultSet = $this->tableGateway->select(['id' => $id]);
         if (0 === count($resultSet)) {
             return new ApiProblem(404, 'File record not found.');
         }
         $fileEntity = $resultSet->current();
+
+        try {
+            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        } catch (RecordNotFoundUserException $e) {
+            return new ApiProblem(401, 'Unauthorized. Identity not found.');
+        }
+
+        $this->authorizationService->setIdentity($currentUser);
+        if (! $this->authorizationService->isGranted('delete.file.rest', $fileEntity)) {
+            return new ApiProblem(403, 'Forbidden. Permission delete.file.rest is required.');
+        }
 
         $path = $fileEntity->getPath();
 
@@ -183,9 +194,26 @@ class FileResource extends AbstractResourceListener
             }
         }
 
-        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        $this->authorizationService->setCurrentUser($user);
-        if (! $this->authorizationService->isGranted('delete.files.rest')) {
+        $user = null;
+        if (array_key_exists('user', $params)) {				//fetch by user
+            $userId = (string) $params['user'];
+            try {
+                $user = $this->userMapper->findUserById($userId);
+            } catch (RecordNotFoundUserException $e) {
+                return new ApiProblem(404, 'User not found.');
+            }
+        }
+
+        try {
+            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        } catch (RecordNotFoundUserException $e) {
+            return new ApiProblem(401, 'Unauthorized. Identity not found.');
+        }
+
+        $owner = $user !== null ? $user : $currentUser;
+
+        $this->authorizationService->setIdentity($currentUser);
+        if (! $this->authorizationService->isGranted('delete.files.rest', $owner)) {
             return new ApiProblem(403, 'Forbidden. Permission delete.files.rest is required.');
         }
 
@@ -208,10 +236,10 @@ class FileResource extends AbstractResourceListener
             }
         }
 
-        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        $this->authorizationService->setCurrentUser($user);
-        if (! $this->authorizationService->isGranted('fetch.file.rest')) {
-            return new ApiProblem(403, 'Forbidden. Permission fetch.file.rest is required.');
+        try {
+            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        } catch (RecordNotFoundUserException $e) {
+            return new ApiProblem(401, 'Unauthorized. Identity not found.');
         }
 
         if (! Uuid::isValid($id)) {
@@ -223,6 +251,11 @@ class FileResource extends AbstractResourceListener
             return new ApiProblem(404, 'File record not found in DB');
         }
         $fileEntity = $resultSet->current();
+
+        $this->authorizationService->setIdentity($currentUser);
+        if (! $this->authorizationService->isGranted('fetch.file.rest', $fileEntity)) {
+            return new ApiProblem(403, 'Forbidden. Permission fetch.file.rest is required.');
+        }
 
         $params = $this->getEvent()->getQueryParams();
 	$download = array_key_exists('d', $params) ? $params['d'] : false;
@@ -268,13 +301,30 @@ class FileResource extends AbstractResourceListener
             }
         }
 
-        $user = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        $this->authorizationService->setCurrentUser($user);
-        if (! $this->authorizationService->isGranted('fetch.files.rest')) {
+        $user = null;
+        if (array_key_exists('user', $params)) {
+            $userId = (string) $params['user'];
+            try {
+                $user = $this->userMapper->findUserById($userId);
+            } catch (RecordNotFoundUserException $e) {
+                return new ApiProblem(404, 'User not found.');
+            }
+        }
+
+        try {
+            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
+        } catch (RecordNotFoundUserException $e) {
+            return new ApiProblem(401, 'Unauthorized. Identity not found.');
+        }
+
+        $owner = $user !== null ? $user : $currentUser;
+
+        $this->authorizationService->setIdentity($currentUser);
+        if (! $this->authorizationService->isGranted('fetch.files.rest', $owner)) {
             return new ApiProblem(403, 'Forbidden. Permission fetch.files.rest is required.');
         }
 
-        return new FileCollection(new DbTableGateway($this->tableGateway, null, ['uploaded' => 'DESC']));
+        return new FileCollection(new DbTableGateway($this->tableGateway, ['owner' => $owner->getId()], ['uploaded' => 'DESC']));
     }
 
     /**

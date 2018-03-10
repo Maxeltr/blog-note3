@@ -352,7 +352,7 @@ return [
                 0 => 'GET',
                 1 => 'POST',
             ],
-            'collection_query_whitelist' => [],
+            'collection_query_whitelist' => ['user'],
             'page_size' => 25,
             'page_size_param' => null,
             'entity_class' => \MxmApi\V1\Rest\File\FileEntity::class,

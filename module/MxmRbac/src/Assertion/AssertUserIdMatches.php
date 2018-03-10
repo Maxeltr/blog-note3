@@ -28,26 +28,27 @@ namespace MxmRbac\Assertion;
 
 use Zend\Permissions\Rbac\AssertionInterface;
 use Zend\Permissions\Rbac\Rbac;
+use MxmUser\Model\UserInterface;
 
 class AssertUserIdMatches implements AssertionInterface
 {
-    protected $currentUser;
+    protected $identity;
 
-    protected $user;
+    protected $content;
 
-    public function setContent($user)
+    public function setContent(UserInterface $content)
     {
-        $this->user = $user;
+        $this->content = $content;
     }
 
-    public function setCurrentUser($currentUser)
+    public function setIdentity(UserInterface $identity)
     {
-        $this->currentUser = $currentUser;
+        $this->identity = $identity;
     }
 
     public function assert(Rbac $rbac)
     {
-        return $this->currentUser->getId() === $this->user->getId();
+        return $this->identity->getId() === $this->content->getId();
 
     }
 }

@@ -39,9 +39,9 @@ use MxmRbac\Exception\InvalidArgumentRbacException;
 class AuthorizationService implements AuthorizationServiceInterface
 {
     /*
-     * @var MxmUser\Model\UserInterface
+     * @var идентификационные данные (относительно чего идентифицировать)
      */
-    protected $currentUser;
+    protected $identity;
 
     /*
      * @var Zend\Permissions\Rbac\Rbac
@@ -82,9 +82,9 @@ class AuthorizationService implements AuthorizationServiceInterface
         Config $config,
         InArray $inArrayValidator,
         Logger $logger,
-        UserInterface $currentUser = null
+        $identity = null
     ) {
-        $this->currentUser = $currentUser;
+        $this->identity = $identity;
         $this->rbac = $rbac;
         $this->assertionPluginManager = $assertionPluginManager;
         $this->config = $config;
@@ -107,16 +107,16 @@ class AuthorizationService implements AuthorizationServiceInterface
     public function isGranted($permission, $content = null)
     {
 
-        if (empty($this->currentUser)) {
+        if (empty($this->identity)) {
             return false;
         }
 
-        $role = $this->currentUser->getRole();
+        $role = $this->identity->getRole();
         if (!$this->rbac->hasRole($role)) {
             return false;
         }
 
-        if ($this->config->roles->$role->get('no_assertion', false)) {             //option 'no_assertion' is present?
+        if ($this->config->roles->$role->get('no_assertion', false) === true) {             //option 'no_assertion' is present?
             return $this->checkIsGranted($role, $permission);
         }
 
@@ -137,7 +137,7 @@ class AuthorizationService implements AuthorizationServiceInterface
 
             foreach ($assertionNames as $assertionName) {
                 $assertion = $this->assertionPluginManager->get($assertionName);
-                $assertion->setCurrentUser($this->currentUser);
+                $assertion->setIdentity($this->identity);
                 $assertion->setContent($content);
 
                 $isGranted = $isGranted && $this->checkIsGranted($role, $permission, $assertion);
@@ -154,9 +154,9 @@ class AuthorizationService implements AuthorizationServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function setCurrentUser(UserInterface $currentUser)
+    public function setIdentity(UserInterface $identity)
     {
-        $this->currentUser = $currentUser;
+        $this->identity = $identity;
 
         return $this;
     }
@@ -164,9 +164,9 @@ class AuthorizationService implements AuthorizationServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function getCurrentUser()
+    public function getIdentity()
     {
-        return $this->currentUser;
+        return $this->identity;
     }
 
     private function checkIsGranted($role, $permission, $assertion = null)
