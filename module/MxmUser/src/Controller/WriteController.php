@@ -181,9 +181,8 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->editUserForm->setData($request->getPost());  //данные устанавливаются и в форму и в объект, т.к. форма и объект связаны
             if ($this->editUserForm->isValid()) {
-
                 try {
-                    $this->userService->updateUser($user);  //add check
+                    $this->userService->updateUser($user);
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 

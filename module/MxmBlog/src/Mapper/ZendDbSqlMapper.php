@@ -141,7 +141,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createObject($select, $this->postHydrator, $this->postPrototype);
+        return $this->createObject($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
@@ -195,7 +195,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
 
     }
 
@@ -219,7 +219,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
    /**
@@ -341,7 +341,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
@@ -404,7 +404,7 @@ class ZendDbSqlMapper implements MapperInterface
         ));
         $select->group('id');
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
@@ -430,7 +430,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
@@ -465,7 +465,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
@@ -500,7 +500,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
@@ -533,7 +533,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         $select = $this->createPostSelectQuery($parameters);
 
-        return $this->createPaginator($select, $this->postHydrator, $this->postPrototype);
+        return $this->createPaginator($select, $this->postHydrator, clone $this->postPrototype);
     }
 
     /**
