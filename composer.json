@@ -36,7 +36,7 @@
         "zendframework/zend-i18n-resources": "^2.5",
         "zfcampus/zf-apigility": "^1.3",
         "rwoverdijk/assetmanager": "^1.7",
-		"ramsey/uuid": "^2.8"
+	"ramsey/uuid": "^2.8"
     },
     "autoload": {
         "psr-4": {
@@ -45,7 +45,8 @@
             "MxmUser\\": "module/MxmUser/src/",
             "MxmRbac\\": "module/MxmRbac/src/",
             "MxmMail\\": "module/MxmMail/src/",
-            "MxmApi\\": "module/MxmApi/src/"
+            "MxmApi\\": "module/MxmApi/src/",
+            "MxmAdmin\\": "module/MxmAdmin/src/"
         }
     },
     "autoload-dev": {
@@ -73,6 +74,6 @@
 	"zendframework/zend-developer-tools": "^1.1",
         "zendframework/zend-test": "^3.1",
         "zfcampus/zf-apigility-admin": "^1.5",
-		"phpunit/phpunit": "^6.0"
+	"phpunit/phpunit": "^6.0"
     }
 }

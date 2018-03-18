@@ -26,8 +26,8 @@
         <div class="cover-container">
             <div class="inner cover">
                 <div class="page-header">
-                <h1><?php echo $this->translate('Edit article, please.') ?></h1>
-            </div>
+                    <h1><?php echo $this->translate('Edit article, please.') ?></h1>
+                </div>
                 <?php $form = $this->form;
                 $form->setAttribute('action', $this->url('editPost', array(), true));
                 $form->prepare();
@@ -37,9 +37,8 @@
                     <?php echo $this->formRow($post->get('id')); ?>
                 </div>
                 <div class="form-group <?php echo empty($form->get('post')->get('title')->getMessages()) ? '' : 'has-error'; ?>">
-                   <?php echo $this->formLabel($form->get('post')->get('title'));
-                    echo $this->formElement($form->get('post')->get('title'));
-                     ?>
+                    <?php echo $this->formLabel($form->get('post')->get('title'));
+                    echo $this->formElement($form->get('post')->get('title')); ?>
                 </div>
                 <div class="form-group <?php echo empty($form->get('post')->get('text')->getMessages()) ? '' : 'has-error'; ?>">
                     <?php echo $this->formLabel($form->get('post')->get('text'));
@@ -51,8 +50,7 @@
                     echo $this->formElement($form->get('post')->get('summary')); ?>
                 </div>
                 <div class="form-group <?php echo empty($form->get('post')->get('category')->get('id')->getMessages()) ? '' : 'has-error'; ?>">
-                    <?php $category = $post->get('category');
-                    echo $this->formLabel($form->get('post')->get('category')->get('id'));
+                    <?php echo $this->formLabel($form->get('post')->get('category')->get('id'));
                     echo $this->formElement($form->get('post')->get('category')->get('id')); ?>
                 </div>
                 <?php echo $this->formCollection($post->get('tags'));

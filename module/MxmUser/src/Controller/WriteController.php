@@ -89,6 +89,7 @@ class WriteController extends AbstractActionController
 
     public function addUserAction()
     {
+        $error = null;
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->registerUserForm->setData($request->getPost());
@@ -110,11 +111,14 @@ class WriteController extends AbstractActionController
                 return $this->redirect()->toRoute('detailUser',    //TODO автоматически логинить юзера или перенаправить на страницу login?
                     ['id' => $savedUser->getId()]
                 );
+            } else {
+                $error = true;
             }
         }
 
         return new ViewModel([
             'form' => $this->registerUserForm,
+            'error' => $error
         ]);
     }
 

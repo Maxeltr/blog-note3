@@ -59,13 +59,13 @@ class FormatDateI18n extends DateFormat
         $pattern = null
     ) {
         $timezone = null;
-        $location = null;
+        $lang = null;
 
         if ($this->authenticationService->hasIdentity()) {
             $user = $this->authenticationService->getIdentity();
             if ($user instanceof UserInterface) {
                 $timezone = $user->getTimebelt();
-                $location = $user->getLocale();
+                $lang = $user->getLocale();
             }
         }
 
@@ -75,8 +75,8 @@ class FormatDateI18n extends DateFormat
             parent::setTimezone($this->config->defaults->timezone);
         }
 
-        if (!empty($location)) {
-            parent::setLocale($location);
+        if (!empty($lang)) {
+            parent::setLocale($lang);
         } else {
             if (isset($this->sessionContainer->locale)) {
                 parent::setLocale($this->sessionContainer->locale);

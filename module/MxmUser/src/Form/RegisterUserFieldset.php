@@ -102,7 +102,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => 'required',
             ],
             'options' => [
-                'label' => $this->translator->translate('Confirm Password')
+                'label' => $this->translator->translate('Confirm password')
             ]
         ]);
 
@@ -112,6 +112,9 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             'options' => [
                 'label' => $this->translator->translate('Please verify you are human'),
                 'captcha' => new \Zend\Captcha\Figlet(),
+            ],
+            'attributes' => [
+                'class' => 'form-control',
             ],
         ]);
 

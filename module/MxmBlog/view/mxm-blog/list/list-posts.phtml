@@ -10,11 +10,11 @@
             </div>
             <?php $countColumns = 3;
             $countPosts = $this->posts->getCurrentItemCount();
+            $iterator = $this->posts->getIterator();
             if ($countPosts):
                 for ($i = 0; $i < $countPosts; $i = $i + $countColumns ): ?>
                     <div class="row">
                         <?php for ($j = 0; $j < $countColumns; $j++):
-                        $iterator = $this->posts->getIterator();
                             if ($iterator->valid()): ?>
                                 <div class="col-xs-12 col-md-4">
                                     <div class="div-1">
