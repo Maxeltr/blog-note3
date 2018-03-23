@@ -11,6 +11,8 @@
  * file.
  */
 
+use Zend\Navigation\Service\DefaultNavigationFactory;
+
 return [
     'defaults' => [
         'locale' => 'ru',
@@ -50,5 +52,32 @@ return [
                 'pattern'  => '%s.php',
             ],
         ],
+    ],
+    'navigation' => [
+        'changeLanguageMenu' => [
+            [
+                'label' => 'Рус',
+                'route' => 'changeLanguage',
+                'action' => 'changeLanguage',
+                'controller' => 'WriteController',
+                'query' => ['lang' => 'Ru']
+            ],
+            [
+                'label' => 'En',
+                'route' => 'changeLanguage',
+                'action' => 'changeLanguage',
+                'controller' => 'WriteController',
+                'query' => ['lang' => 'En']
+            ],
+        ],
+
+    ],
+    'service_manager' => [
+        'abstract_factories' => [
+            \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
+        ],
+//        'factories' => [
+//            'navigation' => DefaultNavigationFactory::class,
+//        ],
     ],
 ];

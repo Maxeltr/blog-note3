@@ -1,0 +1,23 @@
+<ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+        <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+            <?php echo $this->translate('Not logged in'); ?>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">
+                <?php echo $this->translate('Not logged in'); ?>
+            </li>
+            <li class="divider" role="separator"></li>
+            <li>
+                <a href="<?php echo $this->url('loginUser'); ?>"><?php echo $this->translate('Login'); ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('addUser', ['action' => 'addUser']); ?>"><?php echo $this->translate('Register') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('resetPassword', ['action' => 'resetPassword']); ?>"><?php echo $this->translate('Reset password') ?></a>
+            </li>
+        </ul>
+    </li>
+</ul>

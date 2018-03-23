@@ -1,0 +1,20 @@
+<ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+        <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+            <?php echo $this->translate('Logged in'); ?>
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">
+                <?php echo $this->translate('Hello') . ', ' . $this->escapeHtml($user->getUsername()); ?>
+            </li>
+            <li class="divider" role="separator"></li>
+            <li>
+                <a href="<?php echo $this->url('detailUser', ['action' => 'detailUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('Profile') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('logoutUser'); ?>"><?php echo $this->translate('Logout'); ?></a>
+            </li>
+        </ul>
+    </li>
+</ul>

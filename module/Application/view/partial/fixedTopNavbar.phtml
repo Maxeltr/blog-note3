@@ -1,0 +1,25 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                <span class="sr-only"><?php echo $this->translate('Toggle navigation') ?></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="<?php echo $this->url('home'); ?>" class="navbar-brand"><?php echo $this->translate('Home') ?></a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar">
+            <?php echo $this->navigation('Zend\Navigation\changeLanguageMenu')->menu()->setUlClass('nav navbar-nav'); ?>
+            <ul class="nav navbar-nav navbar-right">
+                <?php $user = $this->identity();
+                    if ($user) {
+                        echo $this->partial('partial/signoutMenu.phtml');
+                    } else {
+                        echo $this->partial('partial/signinMenu.phtml');
+                    }
+                ?>
+            </ul>
+        </div>
+    </div>
+</nav>
