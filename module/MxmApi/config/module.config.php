@@ -52,6 +52,7 @@ return [
     'service_manager' => [
         'aliases' => [
             Service\DateTimeInterface::class => Service\DateTime::class,
+            Service\ApiServiceInterface::class => Service\ApiService::class,
         ],
         'factories' => [
             \MxmApi\V1\Rest\Post\PostResource::class => \MxmApi\V1\Rest\Post\PostResourceFactory::class,

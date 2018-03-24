@@ -28,14 +28,73 @@ namespace MxmAdmin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Paginator\Paginator;
+use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmUser\Exception\NotAuthorizedUserException;
+use MxmUser\Exception\RecordNotFoundUserException;
+use MxmUser\Service\UserServiceInterface;
+use Zend\Config\Config;
+use Zend\Log\Logger;
 
 class AdminController  extends AbstractActionController
 {
+    /**
+     * @var Zend\Config\Config
+     */
+    protected $config;
+
+	/**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
+	/**
+     * @var \MxmUser\Service\UserServiceInterface
+     */
+    protected $userService;
+
+    public function __construct(
+        UserServiceInterface $userService,
+        Config $config,
+        Logger $logger
+    ) {
+        $this->userService = $userService;
+        $this->config = $config;
+        $this->logger = $logger;
+    }
+
     public function indexAction()
     {
-        $model = new ViewModel(['content' => 'amin module']);
-        //$model->setTemplate('mxm-blog/list/list-posts');
+        try {
+            $paginator = $this->userService->findAllUsers();
+        } catch (NotAuthenticatedUserException $e) {
+            $redirectUrl = $this->url()->fromRoute('manageUsers', ['page' => (int) $this->params()->fromRoute('page', '1')]);
 
-        return $model;
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'users' => $paginator,
+            'route' => 'manageUsers'
+        ]);
+    }
+
+    private function configurePaginator(Paginator $paginator)
+    {
+        $page = (int) $this->params()->fromRoute('page');
+        $page = ($page < 1) ? 1 : $page;
+        $paginator->setCurrentPageNumber($page);
+        $paginator->setItemCountPerPage($this->config->mxm_admin->adminController->ItemCountPerPage);
+
+        return $this;
     }
 }

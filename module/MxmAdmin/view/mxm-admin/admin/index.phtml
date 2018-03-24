@@ -1,18 +1,43 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
-        <h1>DFiunvred</h1>
-        <?php
-            echo($this->content);
-        ?>
-    </body>
-</html>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <?php echo $this->navigation('Zend\Navigation\adminSidebar')->menu()->setUlClass("nav nav-sidebar"); ?>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
+            <h2 class="sub-header"><?php echo $this->translate('Users'); ?></h2>
+            <form action="<?php //echo $this->url('processUsers', array(), true) ?>" method="post">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><?php echo $this->translate('Mark'); ?></th>
+                                <th><?php echo $this->translate('Username'); ?></th>
+                                <th><?php echo $this->translate('Timezone'); ?></th>
+                                <th><?php echo $this->translate('Language'); ?></th>
+				<th><?php echo $this->translate('Role'); ?></th>
+				<th><?php echo $this->translate('Created'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0;
+                            foreach ($this->users as $user): ?>
+                                <tr>
+                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($user->getId()); ?>'></td>
+                                    <td><?php echo $this->escapeHtml($user->getUsername()); ?></td>
+                                    <td><?php if ($user->getTimebelt() instanceof \DateTimeZone) { echo $this->escapeHtml($user->getTimebelt()->getName()); } ?></td>
+                                    <td><?php echo $this->escapeHtml($user->getLocale()); ?></td>
+                                    <td><?php echo $this->escapeHtml($user->getRole()); ?></td>
+                                    <td><?php if ($user->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($user->getCreated()); } ?></td>
+                                </tr>
+                            <?php $i++;
+                            endforeach; ?>
+                        </tbody>
+                    </table>
+                    <input type="submit" class='btn btn-default' name="edit_users" value="editUsers">
+                    <input type="submit" class='btn btn-default' name="delete_users" value="deleteUsers">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

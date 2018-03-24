@@ -137,4 +137,14 @@ hr {
   }
 }
 
+.nav nav-sidebar.active,
+.nav nav-sidebar.active:hover,
+.nav nav-sidebar.active:focus {
+  border-color: #aa5500;
+}
 
+
+li.active {
+  background-color: #bbbbbb;
+  border-color: #bbbbbb;
+}

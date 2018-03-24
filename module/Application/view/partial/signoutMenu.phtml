@@ -6,7 +6,8 @@
         </a>
         <ul class="dropdown-menu">
             <li class="dropdown-header">
-                <?php echo $this->translate('Hello') . ', ' . $this->escapeHtml($user->getUsername()); ?>
+                <?php $user = $this->identity();
+                echo $this->translate('Hello') . ', ' . $this->escapeHtml($user->getUsername()); ?>
             </li>
             <li class="divider" role="separator"></li>
             <li>

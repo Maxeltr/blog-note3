@@ -68,7 +68,7 @@ return [
             'roles' => [
                 'admin' => [
                     'parent' => '',
-                    //'no_assertion' => true,
+                    'no_assertion' => true,
                     'permissions' => [
                         'edit.options',
                         'change.roles',
