@@ -87,6 +87,8 @@ class FileResource extends AbstractResourceListener
 
                 return new ApiProblem(401, 'Unauthorized');
             }
+        } else {
+            return new ApiProblem(401, 'Can not get identity');
         }
 
         try {
@@ -142,6 +144,8 @@ class FileResource extends AbstractResourceListener
             if (! $authenticatedIdentity) {
                 return new ApiProblem(401, 'Unauthorized');
             }
+        } else {
+            return new ApiProblem(401, 'Can not get identity');
         }
 
         $resultSet = $this->tableGateway->select(['id' => $id]);
@@ -192,6 +196,8 @@ class FileResource extends AbstractResourceListener
             if (! $authenticatedIdentity) {
                 return new ApiProblem(401, 'Unauthorized');
             }
+        } else {
+            return new ApiProblem(401, 'Can not get identity');
         }
 
         $user = null;
@@ -234,6 +240,8 @@ class FileResource extends AbstractResourceListener
             if (! $authenticatedIdentity) {
                 return new ApiProblem(401, 'Unauthorized');
             }
+        } else {
+            return new ApiProblem(401, 'Can not get identity');
         }
 
         try {
@@ -299,6 +307,8 @@ class FileResource extends AbstractResourceListener
             if (! $authenticatedIdentity) {
                 return new ApiProblem(401, 'Unauthorized');
             }
+        } else {
+            return new ApiProblem(401, 'Can not get identity');
         }
 
         $user = null;

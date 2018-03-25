@@ -1,12 +1,13 @@
-<?php if ($this->error) : ?>
-<p class="error">
-    There were one or more issues with your submission. Please correct them as
-    indicated below.
-</p>
-<?php endif; ?>
-<p>
-    <?php $this->headTitle("Not Authorized"); ?>
-
-	<h1>Not Authorized</h1>
-	<div class="alert-warning">You have no permisson.</div>
-</p>
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner dialog">
+                <h2 class="form-signin-heading">
+                    <?php echo $this->translate('Authorization error'); ?>
+                </h2>
+                <div class="alert-warning"><p><?php echo $this->translate('You have no permissons.'); ?></p></div>
+                <a class="btn btn-default" href="<?php echo $this->url('home'); ?>" role="button"><?php echo $this->translate('OK'); ?></a>
+            </div>
+        </div>
+    </div>
+</div>

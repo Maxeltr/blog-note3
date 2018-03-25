@@ -82,4 +82,9 @@ return [
     "Logs" => "Логи",
     "Clients" => "Клиенты",
     "Posts" => "Посты",
+    "You have not verified your account, so it has been deleted." => "Вы не подтвердили свою учетную запись, поэтому она была удалена.",
+    "Your account was deleted" => "Ваша учетная запись была удалена",
+    "OK" => "Хорошо",
+    "You have no permissons." => "У Вас нет разрешений.",
+    "Authorization error" => "Ошибка авторизации",
 ];

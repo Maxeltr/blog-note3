@@ -459,7 +459,7 @@ class UserService implements UserServiceInterface
         if ($tokenCreationDate instanceof \DateTimeInterface) {
             $currentDate = $this->datetime->modify('now');
             $interval = $tokenCreationDate->diff($currentDate);
-            if ($interval->d > 1) {     //TODO срок годности токена вынести в настройки d - кол-во дней
+            if ($interval->days > 1) {     //TODO срок годности токена вынести в настройки d - кол-во дней
                 return true;
             }
         }

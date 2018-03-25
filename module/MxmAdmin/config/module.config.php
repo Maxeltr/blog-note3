@@ -59,7 +59,7 @@ return [
                     'route'    => '/manage/files',
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'manageFiles',
                     ],
                 ],
             ],
@@ -69,7 +69,7 @@ return [
                     'route'    => '/manage/users',
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'manageUsers',
                     ],
                 ],
             ],

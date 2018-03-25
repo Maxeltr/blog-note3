@@ -53,17 +53,21 @@ class AdminController  extends AbstractActionController
      */
     protected $userService;
 
+    protected $fileResource;
+
     public function __construct(
         UserServiceInterface $userService,
+        FileResource $fileResource,
         Config $config,
         Logger $logger
     ) {
         $this->userService = $userService;
+        $this->fileResource = $fileResource;
         $this->config = $config;
         $this->logger = $logger;
     }
 
-    public function indexAction()
+    public function manageUsersAction()
     {
         try {
             $paginator = $this->userService->findAllUsers();
@@ -85,6 +89,18 @@ class AdminController  extends AbstractActionController
         return new ViewModel([
             'users' => $paginator,
             'route' => 'manageUsers'
+        ]);
+    }
+
+    public function manageFilesAction()
+    {
+
+
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'users' => $paginator,
+            'route' => 'manageFiles'
         ]);
     }
 

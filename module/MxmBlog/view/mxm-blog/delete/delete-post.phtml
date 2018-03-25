@@ -9,7 +9,9 @@
                     <?php echo $this->translate('Article'); ?>
                     "<?php echo $this->escapeHtml($this->post->getTitle()); ?>"
                     <?php echo $this->translate('by author'); ?>
-                    "<?php echo $this->escapeHtml($this->post->getAuthor()->getUsername()); ?>"
+                    "<?php if ($this->post->getAuthor() instanceof \MxmUser\Model\UserInterface) {
+                        echo $this->escapeHtml($this->post->getAuthor()->getUsername());
+                    } ?>"
                 </p>
                 <form action="<?php echo $this->url('deletePost', array(), true) ?>" method="post">
                     <input type="submit" class='btn btn-default' name="delete_confirmation" value="yes">

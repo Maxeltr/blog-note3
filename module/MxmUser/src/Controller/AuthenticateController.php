@@ -97,8 +97,10 @@ class AuthenticateController extends AbstractActionController
                     $result = $this->userService->loginUser($data['email'], $data['password']);
                 } catch (ExpiredUserException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel();
+                    $model->setTemplate('mxm-user/authenticate/not-confirmed');
 
-                    return $this->notFoundAction();		//TODO redirect to page with error
+                     return $model;
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
@@ -112,6 +114,7 @@ class AuthenticateController extends AbstractActionController
                     try {
                         $url->setUri($data['redirect']);
                     } catch (\Exception $e) {
+                        $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                         return $this->redirect()->toRoute('home');
                     }
                     $routeMatch = $this->router->match($url);
@@ -135,7 +138,12 @@ class AuthenticateController extends AbstractActionController
 
         $redirect = new Request();
         $redirect->setMethod(Request::METHOD_GET);
-        $redirect->setUri($this->params()->fromQuery('redirect', $this->url()->fromRoute('home')));
+        try {
+            $redirect->setUri($this->params()->fromQuery('redirect', $this->url()->fromRoute('home')));
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+            $redirect->setUri($this->url()->fromRoute('home'));
+        }
 
 	if ($this->router->match($redirect) !== null) {
             $this->loginUserForm->get('redirect')->setValue($redirect->getUriString());

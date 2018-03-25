@@ -33,7 +33,6 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmApi\Service\ApiServiceInterface;
-use MxmApi\V1\Rest\File\FileResource;
 
 class AdminControllerFactory implements FactoryInterface
 {
@@ -44,7 +43,7 @@ class AdminControllerFactory implements FactoryInterface
         $userService = $container->get(UserServiceInterface::class);
         $postService = $container->get(PostServiceInterface::class);
         $apiService = $container->get(ApiServiceInterface::class);
-        $fileResource = $container->get(FileResource::class);
+
 
         return new AdminController($userService, $config, $logger);
     }

@@ -1,0 +1,13 @@
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner dialog">
+                <h2 class="form-signin-heading">
+                    <?php echo $this->translate('Your account was deleted'); ?>
+                </h2>
+                <div class="alert-warning"><p><?php echo $this->translate('You have not verified your account, so it has been deleted.'); ?></p></div>
+                <a class="btn btn-default" href="<?php echo $this->url('addUser', ['action' => 'addUser']); ?>" role="button"><?php echo $this->translate('OK'); ?></a>
+            </div>
+        </div>
+    </div>
+</div>
