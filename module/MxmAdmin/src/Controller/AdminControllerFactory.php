@@ -44,7 +44,6 @@ class AdminControllerFactory implements FactoryInterface
         $postService = $container->get(PostServiceInterface::class);
         $apiService = $container->get(ApiServiceInterface::class);
 
-
-        return new AdminController($userService, $config, $logger);
+        return new AdminController($userService, $apiService, $config, $logger);
     }
 }

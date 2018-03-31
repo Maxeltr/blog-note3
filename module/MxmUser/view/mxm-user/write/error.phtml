@@ -1,37 +1,14 @@
-<!DOCTYPE html>
-<!--
-The MIT License
-
-Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
--->
-
-<p class="error">
-    There were one or more issues with your submission. Please correct them as
-    indicated below.
-</p>
-
-<?php if ($this->error) : ?>
-<p>
-<h1><?php echo $this->escapeHtml($this->error); ?></h1>
-</p>
-<?php endif; ?>
-
-
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner dialog">
+                <h2 class="form-signin-heading">
+                    <?php echo $this->translate('An error occurred'); ?>
+                </h2>
+                <?php $errorMessage = $errorMessage ? $this->errorMessage : 'Unknown  error occurred'; ?>
+                <div class="alert-warning"><p><?php echo $this->translate($errorMessage); ?></p></div>
+                <a class="btn btn-default" href="<?php echo $this->url('home'); ?>" role="button"><?php echo $this->translate('OK'); ?></a>
+            </div>
+        </div>
+    </div>
+</div>

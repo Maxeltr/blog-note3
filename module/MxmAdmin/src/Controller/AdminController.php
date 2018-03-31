@@ -35,6 +35,9 @@ use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Service\UserServiceInterface;
 use Zend\Config\Config;
 use Zend\Log\Logger;
+use MxmApi\Service\ApiServiceInterface;
+use MxmApi\Exception\NotAuthorizedException;
+use MxmApi\Exception\NotAuthenticatedException;
 
 class AdminController  extends AbstractActionController
 {
@@ -53,16 +56,16 @@ class AdminController  extends AbstractActionController
      */
     protected $userService;
 
-    protected $fileResource;
+    protected $apiService;
 
     public function __construct(
         UserServiceInterface $userService,
-        FileResource $fileResource,
+        ApiServiceInterface $apiService,
         Config $config,
         Logger $logger
     ) {
         $this->userService = $userService;
-        $this->fileResource = $fileResource;
+        $this->apiService = $apiService;
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -94,13 +97,51 @@ class AdminController  extends AbstractActionController
 
     public function manageFilesAction()
     {
+        try {
+            $paginator = $this->apiService->findAllFiles();
+        } catch (NotAuthenticatedException $e) {
+            $redirectUrl = $this->url()->fromRoute('manageFiles', ['page' => (int) $this->params()->fromRoute('page', '1')]);
 
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
         $this->configurePaginator($paginator);
 
         return new ViewModel([
-            'users' => $paginator,
+            'files' => $paginator,
             'route' => 'manageFiles'
+        ]);
+    }
+
+    public function manageClientsAction()
+    {
+        try {
+            $paginator = $this->apiService->findAllClients();
+        } catch (NotAuthenticatedException $e) {
+            $redirectUrl = $this->url()->fromRoute('manageClients', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'clients' => $paginator,
+            'route' => 'manageClients'
         ]);
     }
 

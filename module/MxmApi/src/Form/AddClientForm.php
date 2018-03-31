@@ -32,6 +32,9 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Zend\Hydrator\Reflection as ReflectionHydrator;
+use MxmApi\Model\Client;
+use Zend\Hydrator\HydratorInterface;
 
 class AddClientForm extends Form implements InputFilterProviderInterface
 {
@@ -44,10 +47,15 @@ class AddClientForm extends Form implements InputFilterProviderInterface
         TranslatorInterface $translator,
         ValidatorTranslatorInterface $validatorTranslator,
         Config $grantTypes,
+        Client $client,
+        HydratorInterface $hydrator,
         $name = "add_client",
         $options = array()
     ) {
         parent::__construct($name, $options);
+
+        $this->setHydrator($hydrator);
+        $this->setObject($client);
 
         $this->setAttribute('method', 'post')
             ->setInputFilter($inputFilter);

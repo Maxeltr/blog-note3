@@ -5,39 +5,46 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
-            <h2 class="sub-header"><?php echo $this->translate('Users'); ?></h2>
-            <form action="<?php echo $this->url('manageUsers', array(), true) ?>" method="post">
+            <h2 class="sub-header"><?php echo $this->translate('Files'); ?></h2>
+            <form action="<?php echo $this->url('manageFiles', array(), true) ?>" method="post">
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th><?php echo $this->translate('Mark'); ?></th>
-                                <th><?php echo $this->translate('Username'); ?></th>
-                                <th><?php echo $this->translate('Timezone'); ?></th>
-                                <th><?php echo $this->translate('Language'); ?></th>
-				<th><?php echo $this->translate('Role'); ?></th>
-				<th><?php echo $this->translate('Created'); ?></th>
+                                <th><?php echo $this->translate('Filename'); ?></th>
+                                <th><?php echo $this->translate('Path'); ?></th>
+                                <th><?php echo $this->translate('Description'); ?></th>
+				<th><?php echo $this->translate('Uploaded'); ?></th>
+				<th><?php echo $this->translate('Owner'); ?></th>
+                                <th><?php echo $this->translate('Client'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $i = 0;
-                            foreach ($this->users as $user): ?>
+                            foreach ($this->files as $file): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($user->getId()); ?>'></td>
-                                    <td><?php echo $this->escapeHtml($user->getUsername()); ?></td>
-                                    <td><?php if ($user->getTimebelt() instanceof \DateTimeZone) { echo $this->escapeHtml($user->getTimebelt()->getName()); } ?></td>
-                                    <td><?php echo $this->escapeHtml($user->getLocale()); ?></td>
-                                    <td><?php echo $this->escapeHtml($user->getRole()); ?></td>
-                                    <td><?php if ($user->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($user->getCreated()); } ?></td>
+                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($file->getId()); ?>'></td>
+                                    <td><?php echo $this->escapeHtml($file->getFilename()); ?></td>
+                                    <td><?php echo $this->escapeHtml($file->getPath()); ?></td>
+                                    <td><?php echo $this->escapeHtml($file->getDescription()); ?></td>
+                                    <td><?php echo $this->escapeHtml($file->getUploaded());  ?></td>
+                                    <td><?php echo $this->escapeHtml($file->getOwner()); ?></td>
+                                    <td><?php echo $this->escapeHtml($file->getClient()); ?></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>
                         </tbody>
                     </table>
-                    <input type="submit" class='btn btn-default' name="edit_users" value="editUsers">
-                    <input type="submit" class='btn btn-default' name="delete_users" value="deleteUsers">
+                    <input type="submit" class='btn btn-default' name="delete_users" value="deleteFiles">
                 </div>
             </form>
         </div>
+    </div>
+    <div class="container">
+    <?php echo $this->paginationControl($this->files,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $this->route)); ?>
     </div>
 </div>

@@ -53,6 +53,7 @@ return [
         'aliases' => [
             Service\DateTimeInterface::class => Service\DateTime::class,
             Service\ApiServiceInterface::class => Service\ApiService::class,
+            Mapper\MapperInterface::class => Mapper\ZendTableGatewayMapper::class,
         ],
         'factories' => [
             \MxmApi\V1\Rest\Post\PostResource::class => \MxmApi\V1\Rest\Post\PostResourceFactory::class,
@@ -62,6 +63,9 @@ return [
             \MxmApi\V1\Rest\File\FileResource::class => \MxmApi\V1\Rest\File\FileResourceFactory::class,
             Service\ApiService::class => Service\ApiServiceFactory::class,
             Service\DateTime::class => Service\DateTimeFactory::class,
+            Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
+            Hydrator\ClientFormHydrator::class =>Hydrator\ClientFormHydrator\ClientFormHydratorFactory::class,
+            Hydrator\ClientMapperHydrator::class =>Hydrator\ClientMapperHydrator\ClientMapperHydratorFactory::class,
         ],
     ],
     'form_elements' => [

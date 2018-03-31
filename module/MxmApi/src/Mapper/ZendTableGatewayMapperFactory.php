@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +24,46 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\Form;
+namespace MxmApi\Mapper;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\InputFilter\InputFilter;
-use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Hydrator\ClassMethods;
+use Zend\Hydrator\Reflection as ReflectionHydrator;
+use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 use Zend\Config\Config;
+use Zend\Db\Adapter\Adapter;
+use MxmApi\Model\ClientInterface;
+use MxmApi\V1\Rest\File\FileEntity;
+use Zend\Db\ResultSet\HydratingResultSet;
 use MxmApi\Model\Client;
-use MxmApi\Hydrator\ClientFormHydrator;
+use Zend\Db\TableGateway\TableGateway;
+use MxmApi\Hydrator\ClientMapperHydrator;
 
-class AddClientFormFactory implements FactoryInterface
+class ZendTableGatewayMapperFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $dbAdapter = $container->get(Adapter::class);
+
+        $fileHydrator = new ReflectionHydrator();
+        $fileResultSet = new HydratingResultSet($fileHydrator, new FileEntity());
+        $fileTableGateway = new TableGateway('files', $dbAdapter, null, $fileResultSet);
+
+        $clientHydrator = $container->get(ClientMapperHydrator::class);
+        $clientResultSet = new HydratingResultSet($clientHydrator, new Client());
+        $oauthClientsTableGateway = new TableGateway('oauth_clients', $dbAdapter, null, $clientResultSet);
+
+        $oauthAccessTokensTableGateway = new TableGateway('oauth_access_tokens', $dbAdapter, null, null);
+
         $config = new Config($container->get('config'));
-        $grantTypes = $config->mxm_api->grant_types;
 
-        $hydrator = $container->get(ClientFormHydrator::class);
-
-        return new AddClientForm(
-            new InputFilter(),
-            $container->get(TranslatorInterface::class),
-            $container->get('MvcTranslator'),
-            $grantTypes,
-            new Client(),
-            $hydrator
+        return new ZendTableGatewayMapper(
+            $oauthClientsTableGateway,
+            $oauthAccessTokensTableGateway,
+            $fileTableGateway,
+            $clientHydrator,
+            $config
         );
     }
 }

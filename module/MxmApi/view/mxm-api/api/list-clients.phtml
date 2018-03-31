@@ -12,8 +12,8 @@
                     <div class="col-xs-6 col-lg-4">
                         <div class="div-1">
                         <h3><a href="<?php echo $this->url('detailClient',
-                            array('action' => 'detailClient', 'client_id' => $client['client_id'])); ?>">
-                            <?php echo $this->escapeHtml($client['client_id']); ?></a></h3>
+                            array('action' => 'detailClient', 'client_id' => $client->getClientId())); ?>">
+                            <?php echo $this->escapeHtml($client->getClientId()); ?></a></h3>
 
 <!--                        <p>
                            Tag id: <?php //echo $this->escapeHtml($tag->getId()); ?>

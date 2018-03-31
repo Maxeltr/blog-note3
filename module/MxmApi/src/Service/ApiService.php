@@ -48,6 +48,11 @@ use MxmApi\Exception\InvalidPasswordException;
 use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\DataBaseErrorException;
 use Zend\Validator\Db\RecordExists;
+use Zend\Paginator\Adapter\DbTableGateway;
+use MxmUser\Exception\RecordNotFoundUserException;
+use MxmUser\Mapper\MapperInterface as UserMapperInterface;
+use MxmApi\Model\Client;
+use MxmApi\Mapper\ZendTableGatewayMapper;
 
 class ApiService implements ApiServiceInterface
 {
@@ -82,6 +87,11 @@ class ApiService implements ApiServiceInterface
     protected $oauthAccessTokensTableGateway;
 
     /**
+     * @var Zend\Db\TableGateway\TableGateway
+     */
+    protected $fileTableGateway;
+
+    /**
      * @var Zend\Validator\Db\RecordExists
      */
     protected $clientExistsValidator;
@@ -91,6 +101,16 @@ class ApiService implements ApiServiceInterface
      */
     protected $grantTypes;
 
+    /**
+     * @var MxmUser\Mapper\MapperInterface
+     */
+    protected $userMapper;
+
+    /**
+     * @var MxmApi\Mapper\ZendTableGatewayMapper
+     */
+    protected $apiMapper;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
@@ -98,7 +118,10 @@ class ApiService implements ApiServiceInterface
         Bcrypt $bcrypt,
         TableGateway $oauthClientsTableGateway,
         TableGateway $oauthAccessTokensTableGateway,
+        TableGateway $fileTableGateway,
         RecordExists $clientExistsValidator,
+        UserMapperInterface $userMapper,
+        ZendTableGatewayMapper $apiMapper,
         Config $grantTypes
     ) {
         $this->datetime = $datetime;
@@ -107,7 +130,10 @@ class ApiService implements ApiServiceInterface
         $this->bcrypt = $bcrypt;
         $this->oauthClientsTableGateway = $oauthClientsTableGateway;
         $this->oauthAccessTokensTableGateway = $oauthAccessTokensTableGateway;
+        $this->fileTableGateway = $fileTableGateway;
         $this->clientExistsValidator = $clientExistsValidator;
+        $this->userMapper = $userMapper;
+        $this->apiMapper = $apiMapper;
         $this->grantTypes = $grantTypes;
     }
 
@@ -116,8 +142,11 @@ class ApiService implements ApiServiceInterface
      */
     public function addClient($data)
     {
-        if (empty($data) or !is_array($data)) {
-            throw new InvalidArgumentException('Data must be array and cannot be empty.');
+        if (! $data instanceof Client) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be Client object; received "%s"',
+                (is_object($data) ? get_class($data) : gettype($data))
+            ));
         }
 
         if (!$this->authenticationService->hasIdentity()) {
@@ -128,29 +157,20 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "add.client.rest" is required.');
         }
 
-        if ($this->clientExistsValidator->isValid($data['client_id'])) {
-            throw new AlreadyExistsException("Client with " . $data['client_id'] . " already exists");
+        if ($this->clientExistsValidator->isValid($data->getClientId())) {
+            throw new AlreadyExistsException("Client with " . $data->getClientId() . " already exists");
         }
 
-        $this->oauthClientsTableGateway->insert([
-            'client_id' => $data['client_id'],
-            'client_secret' => $this->bcrypt->create($data['client_secret']),
-            'grant_types' => $this->grantTypes[$data['grant_types']],
-            'scope' => $data['scope'],
-            'user_id' => $this->authenticationService->getIdentity()->getId()
-        ]);
+        $data->setClientSecret($this->bcrypt->create($data->getClientSecret()));
+        $data->setUserId($this->authenticationService->getIdentity()->getId());
 
-        $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $data['client_id']]);
-        if (0 === count($resultSet)) {
-            throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
-        }
+        return $this->apiMapper->insertClient($data);
 
-	return $resultSet->current();
     }
 
-    public function findClientById($client_id)
+    public function findClientById($clientId)
     {
-        if (empty($client_id)) {
+        if (empty($clientId)) {
             throw new InvalidArgumentException('The client_id cannot be empty.');
         }
 
@@ -158,16 +178,15 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('find.client.rest')) {
+        $client = $this->apiMapper->findClientById($clientId);
+
+        $user = $this->userMapper->findUserById($client->getUserId());
+
+        if (!$this->authorizationService->isGranted('find.client.rest', $user)) {
             throw new NotAuthorizedException('Access denied. Permission "find.client.rest" is required.');
         }
 
-        $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $client_id]);
-        if (0 === count($resultSet)) {
-            throw new RecordNotFoundException('Client ' . $client['client_id'] . 'not found.');
-        }
-
-	return $resultSet->current();
+	return $client;
     }
 
     public function revokeToken($client)
@@ -180,11 +199,13 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('revoke.token.rest')) {
+        $user = $this->userMapper->findUserById($client->getUserId());
+
+        if (!$this->authorizationService->isGranted('revoke.token.rest', $user)) {
             throw new NotAuthorizedException('Access denied. Permission "revoke.token.rest" is required.');
         }
 
-        return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client['client_id']]);
+        return $this->apiMapper->deleteToken($client);
     }
 
     public function findAllClients()
@@ -197,14 +218,7 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
         }
 
-        $resultSet = $this->oauthClientsTableGateway->select();
-        if (0 === count($resultSet)) {
-            throw new DataBaseErrorException("Select operation failed.");
-        }
-
-        $paginator = new Paginator(new Adapter\ArrayAdapter($resultSet->toArray()));
-
-        return $paginator;
+        return $this->apiMapper->findAllClients();;
     }
 
     public function deleteClient($client)
@@ -217,12 +231,44 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        if (!$this->authorizationService->isGranted('delete.client.rest')) {
+        $user = $this->userMapper->findUserById($client['user_id']);
+
+        if (!$this->authorizationService->isGranted('delete.client.rest', $user)) {
             throw new NotAuthorizedException('Access denied. Permission "delete.client.rest" is required.');
         }
 
         $this->revokeToken($client);
 
         return $this->oauthClientsTableGateway->delete(['client_id' => $client['client_id']]);;
+    }
+
+    public function findAllFiles()
+    {
+        if (!$this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('fetch.files.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
+        }
+
+        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['uploaded' => 'DESC']));
+
+        return $paginator;
+    }
+
+    public function findAllFilesByUser(UserInterface $user = null)
+    {
+        if (!$this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('fetch.files.rest', $user)) {
+            throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
+        }
+
+        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $user->getId()], ['uploaded' => 'DESC']));
+
+        return $paginator;
     }
 }

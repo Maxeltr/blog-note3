@@ -37,6 +37,11 @@ use Zend\Db\Adapter\Adapter;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Config\Config;
 use Zend\Validator\Db\RecordExists;
+use MxmApi\V1\Rest\File\FileEntity;
+use Zend\Hydrator\ClassMethods;
+use Zend\Db\ResultSet\HydratingResultSet;
+use MxmUser\Mapper\MapperInterface as UserMapperInterface;
+use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 
 class ApiServiceFactory implements FactoryInterface
 {
@@ -47,6 +52,10 @@ class ApiServiceFactory implements FactoryInterface
         $authService = $container->get(AuthenticationService::class);
         $dbAdapter = $container->get(Adapter::class);
         $bcrypt = new Bcrypt();
+
+        $fileTable = 'files';
+        $resultSet = new HydratingResultSet(new ClassMethods(false), new FileEntity());
+        $fileTableGateway = new TableGateway($fileTable, $dbAdapter, null, $resultSet);
 
         //$resultSet = new HydratingResultSet(new ClassMethods(false), new FileEntity());
         $oauthClientsTableGateway = new TableGateway('oauth_clients', $dbAdapter, null, null);
@@ -61,6 +70,10 @@ class ApiServiceFactory implements FactoryInterface
             'adapter' => $dbAdapter,
         ]);
 
+        $userMapper = $container->get(UserMapperInterface::class);
+
+        $apiMapper = $container->get(ApiMapperInterface::class);
+
         return new ApiService(
             $dateTime,
             $authService,
@@ -68,7 +81,10 @@ class ApiServiceFactory implements FactoryInterface
             $bcrypt,
             $oauthClientsTableGateway,
             $oauthAccessTokensTableGateway,
+            $fileTableGateway,
             $recordExistsValidator,
+            $userMapper,
+            $apiMapper,
             $grantTypes
         );
     }

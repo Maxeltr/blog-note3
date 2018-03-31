@@ -24,32 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\Form;
+namespace MxmApi\Hydrator\ClientFormHydrator;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\InputFilter\InputFilter;
-use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Hydrator\Strategy\StrategyInterface;
 use Zend\Config\Config;
-use MxmApi\Model\Client;
-use MxmApi\Hydrator\ClientFormHydrator;
 
-class AddClientFormFactory implements FactoryInterface
+class GrantTypesStrategy implements StrategyInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    protected $grantTypes;
+
+    public function __construct(Config $grantTypes)
     {
-        $config = new Config($container->get('config'));
-        $grantTypes = $config->mxm_api->grant_types;
+        $this->grantTypes = $grantTypes->toArray();
+    }
 
-        $hydrator = $container->get(ClientFormHydrator::class);
+    public function extract($value)
+    {
+        return array_search($value, $this->grantTypes);
+    }
 
-        return new AddClientForm(
-            new InputFilter(),
-            $container->get(TranslatorInterface::class),
-            $container->get('MvcTranslator'),
-            $grantTypes,
-            new Client(),
-            $hydrator
-        );
+    public function hydrate($value)
+    {
+        return $this->grantTypes[$value];
     }
 }

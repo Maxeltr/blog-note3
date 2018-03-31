@@ -108,8 +108,8 @@ class ApiController extends AbstractActionController
                     return $this->notFoundAction();
                 }
 
-                return $this->redirect()->toRoute('detailClient',    //TODO автоматически логинить юзера или перенаправить на страницу login?
-                    ['client_id' => $savedClient['client_id']]
+                return $this->redirect()->toRoute('detailClient',
+                    ['client_id' => $savedClient->getClientId()]
                 );
             }
         }
@@ -183,7 +183,7 @@ class ApiController extends AbstractActionController
             if ($del === 'yes') {
                 $result = $this->apiService->revokeToken($client);
                 if ($result === false) {
-                    $this->logger->err('ApiController. Client (' . $client['client_id'] . ')' . $token . ' not revoked');
+                    $this->logger->err('ApiController. Client (' . $client->getClientId() . ')' . $token . ' not revoked');
 
                     return $this->notFoundAction();
                 }
@@ -256,7 +256,7 @@ class ApiController extends AbstractActionController
             if ($del === 'yes') {
                 $result = $this->apiService->deleteClient($client);
                 if ($result === false) {
-                    $this->logger->err('Client ' . $client['client_id'] . ' not deleted');
+                    $this->logger->err('Client ' . $client->getClientId() . ' not deleted');
 
                     return $this->redirect()->toRoute('detailClient', ['id' => $id]);
                 }

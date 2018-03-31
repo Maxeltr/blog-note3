@@ -31,24 +31,24 @@ THE SOFTWARE.
 <div class="row">
     <div class="col-sm-8 blog-main">
         <div class="blog-post">
-            <h2 class="blog-post-title"><?php echo $this->escapeHtml($client['client_id']); ?></h2>
+            <h2 class="blog-post-title"><?php echo $this->escapeHtml($client->getClientId()); ?></h2>
             <p class="blog-post-meta">
-                secret: <?php echo $this->escapeHtml($client['client_secret']); ?>
+                secret: <?php echo $this->escapeHtml($client->getClientSecret()); ?>
             </p>
             <p class="blog-post-meta">
-                grant_types: <?php echo $this->escapeHtml($client['grant_types']); ?>
+                grant_types: <?php echo $this->escapeHtml($client->getGrantTypes()); ?>
             </p>
             <p class="blog-post-meta">
-                scope: <?php echo $this->escapeHtml($client['scope']); ?>
+                scope: <?php echo $this->escapeHtml($client->getScope()); ?>
             </p>
             <p class="blog-post-meta">
-                user_id: <?php echo $this->escapeHtml($client['user_id']); ?>
+                user_id: <?php echo $this->escapeHtml($client->getUserId()); ?>
             </p>
             <p>
-                <a href="<?php echo $this->url('revokeToken', array('action' => 'revokeToken', 'client_id' => $client['client_id'])); ?>">Revoke token</a>
+                <a href="<?php echo $this->url('revokeToken', array('action' => 'revokeToken', 'client_id' => $client->getClientId())); ?>">Revoke token</a>
             </p>
            <p>
-                <a href="<?php echo $this->url('deleteClient', array('action' => 'deleteClient', 'client_id' => $client['client_id'])); ?>">Delete client</a>
+                <a href="<?php echo $this->url('deleteClient', array('action' => 'deleteClient', 'client_id' => $client->getClientId())); ?>">Delete client</a>
             </p>
             <p>
                 <a href="<?php //echo $this->url('editClient', array('action' => 'editClient', 'client_id' => $client['client_id'])); ?>">Edit client</a>

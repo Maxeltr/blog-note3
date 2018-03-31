@@ -251,10 +251,11 @@ class WriteController extends AbstractActionController
             if ($this->resetPasswordForm->isValid()) {
                 $data = $this->resetPasswordForm->getData();
                 try {
-                    $result = $this->userService->resetPassword($data['email']);
+                    $this->userService->resetPassword($data['email']);
                 } catch (RecordNotFoundUserException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     $model = new ViewModel([
-                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                        'errorMessage' => 'Cannot reset password. Email not found.'
                     ]);
                     $model->setTemplate('mxm-user/write/error');
 
@@ -284,15 +285,17 @@ class WriteController extends AbstractActionController
                 try {
                     $result = $this->userService->setPassword($data['password'], $data['token']);
                 } catch (RecordNotFoundUserException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     $model = new ViewModel([
-                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                        'errorMessage' => 'Cannot change password. Token not found.'
                     ]);
                     $model->setTemplate('mxm-user/write/error');
 
                     return $model;
                 } catch (ExpiredUserException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     $model = new ViewModel([
-                        'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                        'errorMessage' => 'Cannot change password. The token has expired.'
                     ]);
                     $model->setTemplate('mxm-user/write/error');
 
@@ -321,15 +324,17 @@ class WriteController extends AbstractActionController
         try {
             $this->userService->confirmEmail($token);
         } catch (RecordNotFoundUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             $model = new ViewModel([
-                'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                'errorMessage' => 'Registration cannot be completed. Token not found.'
             ]);
             $model->setTemplate('mxm-user/write/error');
 
             return $model;
         } catch (ExpiredUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
             $model = new ViewModel([
-                'error' => $e->getMessage()     //TODO использовать flashmessenger?
+                'errorMessage' => 'Registration cannot be completed. The token has expired.'
             ]);
             $model->setTemplate('mxm-user/write/error');
 

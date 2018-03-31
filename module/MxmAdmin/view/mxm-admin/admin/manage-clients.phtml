@@ -1,0 +1,48 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <?php echo $this->navigation('Zend\Navigation\adminSidebar')->menu()->setUlClass("nav nav-sidebar"); ?>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
+            <h2 class="sub-header"><?php echo $this->translate('Clients'); ?></h2>
+            <form action="<?php echo $this->url('manageClients', array(), true) ?>" method="post">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><?php echo $this->translate('Mark'); ?></th>
+                                <th><?php echo $this->translate('ID'); ?></th>
+                                <th><?php echo $this->translate('Secret'); ?></th>
+                                <th><?php echo $this->translate('Grant Types'); ?></th>
+				<th><?php echo $this->translate('Scope'); ?></th>
+				<th><?php echo $this->translate('User ID'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0;
+                            foreach ($this->clients as $client): ?>
+                                <tr>
+                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($client->getClientId()); ?>'></td>
+                                    <td><?php echo $this->escapeHtml($client->getClientId()); ?></td>
+                                    <td><?php echo $this->escapeHtml($client->getClientSecret()); ?></td>
+                                    <td><?php echo $this->escapeHtml($client->getGrantTypes()); ?></td>
+                                    <td><?php echo $this->escapeHtml($client->getScope());  ?></td>
+                                    <td><?php echo $this->escapeHtml($client->getUserId()); ?></td>
+                                </tr>
+                            <?php $i++;
+                            endforeach; ?>
+                        </tbody>
+                    </table>
+                    <input type="submit" class='btn btn-default' name="delete_clients" value="deleteClients">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+    <?php echo $this->paginationControl($this->clients,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $this->route)); ?>
+    </div>
+</div>

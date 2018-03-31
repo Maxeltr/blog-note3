@@ -28,6 +28,7 @@ namespace MxmAdmin;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
 use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'mxm_admin' => [
@@ -54,9 +55,12 @@ return [
     'router' => [
         'routes' => [
             'manageFiles' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/files',
+                    'route'    => '/manage/files[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
                         'action'     => 'manageFiles',
@@ -64,9 +68,12 @@ return [
                 ],
             ],
             'manageUsers' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/users',
+                    'route'    => '/manage/users[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
                         'action'     => 'manageUsers',
@@ -74,52 +81,67 @@ return [
                 ],
             ],
             'manageClients' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/clients',
+                    'route'    => '/manage/clients[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'manageClients',
                     ],
                 ],
             ],
             'managePosts' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/posts',
+                    'route'    => '/manage/posts[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'managePosts',
                     ],
                 ],
             ],
             'manageCategories' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/categories',
+                    'route'    => '/manage/categories[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'manageCategories',
                     ],
                 ],
             ],
             'manageTags' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/tags',
+                    'route'    => '/manage/tags[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'manageTags',
                     ],
                 ],
             ],
             'manageLogs' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/manage/logs',
+                    'route'    => '/manage/logs[/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'index',
+                        'action'     => 'manageLogs',
                     ],
                 ],
             ],
