@@ -38,6 +38,7 @@ use Zend\Log\Logger;
 use MxmApi\Service\ApiServiceInterface;
 use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\NotAuthenticatedException;
+use MxmBlog\Service\PostServiceInterface;
 
 class AdminController  extends AbstractActionController
 {
@@ -61,11 +62,13 @@ class AdminController  extends AbstractActionController
     public function __construct(
         UserServiceInterface $userService,
         ApiServiceInterface $apiService,
+        PostServiceInterface $postService,
         Config $config,
         Logger $logger
     ) {
         $this->userService = $userService;
         $this->apiService = $apiService;
+        $this->postService = $postService;
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -142,6 +145,31 @@ class AdminController  extends AbstractActionController
         return new ViewModel([
             'clients' => $paginator,
             'route' => 'manageClients'
+        ]);
+    }
+
+    public function managePostsAction()
+    {
+        try {
+            $paginator = $this->postService->findAllPosts(false);
+        } catch (NotAuthenticatedException $e) {
+            $redirectUrl = $this->url()->fromRoute('managePosts', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'posts' => $paginator,
+            'route' => 'managePosts'
         ]);
     }
 

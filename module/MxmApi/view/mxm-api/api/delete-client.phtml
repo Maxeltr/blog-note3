@@ -1,7 +1,7 @@
 <h1>Delete Client</h1>
  <p>
      Are you sure that you want to delete
-     '<?php echo $this->escapeHtml($this->client['client_id']); ?>'
+     '<?php echo $this->escapeHtml($this->client->getClientID()); ?>'
  </p>
  <form action="<?php echo $this->url('deleteClient', array(), true) ?>" method="post">
      <input type="submit" name="delete_confirmation" value="yes">

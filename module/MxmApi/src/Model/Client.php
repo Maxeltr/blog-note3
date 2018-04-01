@@ -26,7 +26,7 @@
 
 namespace MxmApi\Model;
 
-class Client
+class Client implements ClientInterface
 {
     /**
      * @var string ID

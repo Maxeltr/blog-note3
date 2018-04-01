@@ -77,21 +77,6 @@ class ApiService implements ApiServiceInterface
     protected $bcrypt;
 
     /**
-     * @var Zend\Db\TableGateway\TableGateway
-     */
-    protected $oauthClientsTableGateway;
-
-    /**
-     * @var Zend\Db\TableGateway\TableGateway
-     */
-    protected $oauthAccessTokensTableGateway;
-
-    /**
-     * @var Zend\Db\TableGateway\TableGateway
-     */
-    protected $fileTableGateway;
-
-    /**
      * @var Zend\Validator\Db\RecordExists
      */
     protected $clientExistsValidator;
@@ -116,9 +101,6 @@ class ApiService implements ApiServiceInterface
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
         Bcrypt $bcrypt,
-        TableGateway $oauthClientsTableGateway,
-        TableGateway $oauthAccessTokensTableGateway,
-        TableGateway $fileTableGateway,
         RecordExists $clientExistsValidator,
         UserMapperInterface $userMapper,
         ZendTableGatewayMapper $apiMapper,
@@ -128,9 +110,6 @@ class ApiService implements ApiServiceInterface
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->bcrypt = $bcrypt;
-        $this->oauthClientsTableGateway = $oauthClientsTableGateway;
-        $this->oauthAccessTokensTableGateway = $oauthAccessTokensTableGateway;
-        $this->fileTableGateway = $fileTableGateway;
         $this->clientExistsValidator = $clientExistsValidator;
         $this->userMapper = $userMapper;
         $this->apiMapper = $apiMapper;
@@ -231,7 +210,7 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthenticatedException('The user is not logged in');
         }
 
-        $user = $this->userMapper->findUserById($client['user_id']);
+        $user = $this->userMapper->findUserById($client->getUserId());
 
         if (!$this->authorizationService->isGranted('delete.client.rest', $user)) {
             throw new NotAuthorizedException('Access denied. Permission "delete.client.rest" is required.');
@@ -239,7 +218,7 @@ class ApiService implements ApiServiceInterface
 
         $this->revokeToken($client);
 
-        return $this->oauthClientsTableGateway->delete(['client_id' => $client['client_id']]);;
+        return $this->apiMapper->deleteClient($client);
     }
 
     public function findAllFiles()
@@ -252,9 +231,7 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
         }
 
-        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['uploaded' => 'DESC']));
-
-        return $paginator;
+        return $this->apiMapper->findAllFiles();
     }
 
     public function findAllFilesByUser(UserInterface $user = null)
@@ -267,8 +244,6 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
         }
 
-        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $user->getId()], ['uploaded' => 'DESC']));
-
-        return $paginator;
+        return $this->apiMapper->findAllFiles($user);
     }
 }

@@ -103,9 +103,15 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function findAllPosts()
+    public function findAllPosts($hideUnpublished = true)
     {
-        return $this->mapper->findAllPosts();
+        if ($hideUnpublished === false) {
+            if (! $this->authorizationService->isGranted('find.unpublished.posts')) {
+                throw new NotAuthorizedBlogException('Access denied. Permission "find.unpublished.posts" is required.');
+            }
+        }
+
+        return $this->mapper->findAllPosts($hideUnpublished);
     }
 
     /**
@@ -210,59 +216,58 @@ class PostService implements PostServiceInterface
      * @param  PostInterface $post
      * @return void
      */
-	private function unsetNonExistingTags(PostInterface $post)
-	{
-		$itemList = $post->getTags();
+    private function unsetNonExistingTags(PostInterface $post)
+    {
+        $itemList = $post->getTags();
 
-		if(!$itemList instanceof ItemList) {
+        if(!$itemList instanceof ItemList) {
             throw new InvalidArgumentBlogException(sprintf(
-					'Tags property of PostInterface should contain Zend\Tag\ItemList "%s"',
-					(is_object($itemList) ? get_class($itemList) : gettype($itemList))
-			));
+                'Tags property of PostInterface should contain Zend\Tag\ItemList "%s"',
+                (is_object($itemList) ? get_class($itemList) : gettype($itemList))
+            ));
         }
 
-		$this->isRecordExists->setField('id');
-		$this->isRecordExists->setTable('tags');
+        $this->isRecordExists->setField('id');
+        $this->isRecordExists->setTable('tags');
 
         foreach($itemList as $offset => $item) {
-
             if(!$item instanceof TagInterface) {
-				throw new InvalidArgumentBlogException(sprintf(
-					'Itemlist of PostInterface should contain MxmBlog\Model\TagInterface "%s"',
-					(is_object($item) ? get_class($item) : gettype($item))
-				));
+                throw new InvalidArgumentBlogException(sprintf(
+                    'Itemlist of PostInterface should contain MxmBlog\Model\TagInterface "%s"',
+                    (is_object($item) ? get_class($item) : gettype($item))
+                ));
             }
 
-			if(!$this->isRecordExists->isValid($item->getId())) {
-				$itemList->offsetUnset($offset);
-			}
+            if(!$this->isRecordExists->isValid($item->getId())) {
+                $itemList->offsetUnset($offset);
+            }
         }
-	}
+    }
 
-	/**
+    /**
      * Unset category that doesn't exist in db
      *
      * @param  PostInterface $post
      * @return void
      */
-	private function unsetNonExistingCategory(PostInterface $post)
-	{
-		$category = $post->getCategory();
+    private function unsetNonExistingCategory(PostInterface $post)
+    {
+        $category = $post->getCategory();
 
-		if(!$category instanceof CategoryInterface) {
+        if(!$category instanceof CategoryInterface) {
             throw new InvalidArgumentBlogException(sprintf(
                 'Category property of PostInterface should contain CategoryInterface "%s"',
                 (is_object($category) ? get_class($category) : gettype($category))
-			));
+            ));
         }
 
-		$this->isRecordExists->setField('id');
-		$this->isRecordExists->setTable('category');
+        $this->isRecordExists->setField('id');
+        $this->isRecordExists->setTable('category');
 
-		if(!$this->isRecordExists->isValid($category->getId())) {
-			$post->setCategory(new MxmBlog\Model\Category());		//TODO придумать что нить
-		}
-	}
+        if(!$this->isRecordExists->isValid($category->getId())) {
+            $post->setCategory(new MxmBlog\Model\Category());		//TODO придумать что нить
+        }
+    }
 
     /**
      * {@inheritDoc}

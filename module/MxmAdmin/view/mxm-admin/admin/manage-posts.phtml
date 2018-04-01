@@ -1,0 +1,57 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <?php echo $this->navigation('Zend\Navigation\adminSidebar')->menu()->setUlClass("nav nav-sidebar"); ?>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
+            <h2 class="sub-header"><?php echo $this->translate('Posts'); ?></h2>
+            <form action="<?php echo $this->url('managePosts', array(), true) ?>" method="post">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><?php echo $this->translate('Mark'); ?></th>
+                                <th><?php echo $this->translate('ID'); ?></th>
+                                <th><?php echo $this->translate('Title'); ?></th>
+				<th><?php echo $this->translate('Author'); ?></th>
+                                <th><?php echo $this->translate('Category'); ?></th>
+				<th><?php echo $this->translate('Created'); ?></th>
+                                <th><?php echo $this->translate('Updated'); ?></th>
+                                <th><?php echo $this->translate('Published'); ?></th>
+                                <th><?php echo $this->translate('Published'); ?></th>
+                                <th><?php echo $this->translate('Version'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0;
+                            foreach ($this->posts as $post): ?>
+                                <tr>
+                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($post->getId()); ?>'></td>
+                                    <td><?php echo $this->escapeHtml($post->getId()); ?></td>
+                                    <td><?php echo $this->escapeHtml($post->getTitle()); ?></td>
+                                    <td><?php if ($post->getAuthor() instanceof \MxmUser\Model\UserInterface) { echo $this->escapeHtml($post->getAuthor()->getUsername()); } ?></td>
+                                    <td><?php if ($post->getCategory() instanceof \MxmBlog\Model\CategoryInterface) { echo $this->escapeHtml($post->getCategory()->getTitle()); } ?></td>
+                                    <td><?php if ($post->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($post->getCreated(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); } ?></td>
+                                    <td><?php if ($post->getUpdated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($post->getUpdated(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); } ?></td>
+                                    <td><?php if ($post->getPublished() instanceof \DateTimeInterface) { echo $this->formatDateI18n($post->getPublished(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); } ?></td>
+                                    <td><?php echo $this->escapeHtml($post->getIsPublished()); ?></td>
+                                    <td><?php echo $this->escapeHtml($post->getVersion()); ?></td>
+                                </tr>
+                            <?php $i++;
+                            endforeach; ?>
+                        </tbody>
+                    </table>
+                    <input type="submit" class='btn btn-default' name="edit_posts" value="editPosts">
+                    <input type="submit" class='btn btn-default' name="delete_posts" value="deletePosts">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+    <?php echo $this->paginationControl($this->posts,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $this->route)); ?>
+    </div>
+</div>

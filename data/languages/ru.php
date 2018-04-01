@@ -105,5 +105,8 @@ return [
     "Cannot change password. The token has expired." => "Невозможно изменить пароль. Срок действия токена истек.",
     "Registration cannot be completed. Token not found." => "Регистрация не может быть завершена. Токен не найден.",
     "Registration cannot be completed. The token has expired." => "Регистрация не может быть завершена. Срок действия токена истек.",
-    
+    "Version" => "Версия",
+    "Updated" => "Обновлено",
+    "Updated" => "Обновлено",
+    "Updated" => "Обновлено",
 ];

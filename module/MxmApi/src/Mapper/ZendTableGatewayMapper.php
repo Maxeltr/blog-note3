@@ -121,4 +121,23 @@ class ZendTableGatewayMapper //implements MapperInterface
     {
         return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client->getClientId()]);
     }
+
+    public function deleteClient($client)
+    {
+        return $this->oauthClientsTableGateway->delete(['client_id' => $client->getClientID()]);
+    }
+
+    public function findAllFiles()
+    {
+        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['uploaded' => 'DESC']));
+
+        return $paginator;
+    }
+
+    public function findAllFilesByUser(UserInterface $user = null)
+    {
+        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $user->getId()], ['uploaded' => 'DESC']));
+
+        return $paginator;
+    }
 }

@@ -40,4 +40,10 @@
             </form>
         </div>
     </div>
+    <div class="container">
+    <?php echo $this->paginationControl($this->users,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $this->route)); ?>
+    </div>
 </div>
