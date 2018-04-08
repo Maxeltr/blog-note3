@@ -24,28 +24,36 @@
  * THE SOFTWARE.
  */
 
-namespace MxmAdmin\Controller;
+namespace MxmAdmin\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmApi\Service\ApiServiceInterface;
-use MxmAdmin\Service\AdminServiceInterface;
+use MxmApi\Service\DateTimeInterface;
+use MxmApi\Service\ApiService;
+use Zend\Authentication\AuthenticationService;
+use Zend\Crypt\Password\Bcrypt;
+use MxmRbac\Service\AuthorizationService;
+use Zend\Db\Adapter\Adapter;
+use Zend\Config\Config;
+use Zend\Validator\Db\RecordExists;
+use Zend\Http\Response;
 
-class AdminControllerFactory implements FactoryInterface
+class AdminServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $authorizationService = $container->get(AuthorizationService::class);
+        $dateTime = $container->get(DateTimeInterface::class);
+        $authService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $userService = $container->get(UserServiceInterface::class);
-        $postService = $container->get(PostServiceInterface::class);
-        $apiService = $container->get(ApiServiceInterface::class);
-        $adminService = $container->get(AdminServiceInterface::class);
+        $response = new Response();
 
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger);
+        return new AdminService(
+            $dateTime,
+            $authService,
+            $authorizationService,
+            $response,
+            $config
+        );
     }
 }

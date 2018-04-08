@@ -30,6 +30,8 @@ use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmBlog\Exception\NotAuthenticatedBlogException;
+use MxmBlog\Exception\NotAuthorizedBlogException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;
@@ -93,7 +95,22 @@ class ListController extends AbstractActionController
 
     public function indexAction()
     {
-        $paginator = $this->postService->findAllPosts();
+        try {
+            $paginator = $this->postService->findAllPosts();
+        } catch (NotAuthenticatedBlogException $e) {
+            $redirectUrl = $this->url()->fromRoute('listPosts', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedBlogException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
         $this->configurePaginator($paginator);
 
         $model = new ViewModel([
@@ -107,7 +124,22 @@ class ListController extends AbstractActionController
 
     public function listPostsAction()
     {
-        $paginator = $this->postService->findAllPosts();
+        try {
+            $paginator = $this->postService->findAllPosts();
+        } catch (NotAuthenticatedBlogException $e) {
+            $redirectUrl = $this->url()->fromRoute('listPosts', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedBlogException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
         $this->configurePaginator($paginator);
 
         return new ViewModel([

@@ -33,8 +33,8 @@ interface ApiServiceInterface
     /**
      * Добавить данные клиента (приложение, сайт) в базу данных.
      *
-     * @param  array $data
-     * @return array|\ArrayObject|null
+     * @param  ClientInterface $data
+     * @return ClientInterface
      * @throws InvalidArgumentException
      * @throws NotAuthenticatedException
      * @throws NotAuthorizedException
@@ -46,7 +46,7 @@ interface ApiServiceInterface
      * Извлечь данные клиента (приложение, сайт) из базы данных.
      *
      * @param  string $client_id
-     * @return array|\ArrayObject|null
+     * @return ClientInterface
      * @throws InvalidArgumentException
      * @throws NotAuthenticatedException
      * @throws NotAuthorizedException
@@ -57,7 +57,7 @@ interface ApiServiceInterface
     /**
      * Отозвать токен клиента (приложение, сайт).
      *
-     * @param  array $client
+     * @param  ClientInterface $client
      * @return int
      * @throws InvalidArgumentException
      * @throws NotAuthenticatedException
@@ -78,7 +78,7 @@ interface ApiServiceInterface
     /**
      * Удалить данные клиента (приложение, сайт) из базы данных.
      *
-     * @param  array $client
+     * @param  ClientInterface $client
      * @return int
      * @throws InvalidArgumentException
      * @throws NotAuthenticatedException

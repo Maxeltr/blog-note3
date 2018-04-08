@@ -40,8 +40,9 @@ use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
 use MxmApi\Model\Client;
 use Zend\Paginator\Adapter\DbTableGateway;
+use MxmApi\Model\ClientInterface;
 
-class ZendTableGatewayMapper //implements MapperInterface
+class ZendTableGatewayMapper implements MapperInterface
 {
     /**
      * @var Zend\Config\Config;
@@ -85,7 +86,7 @@ class ZendTableGatewayMapper //implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function insertClient(Client $client)
+    public function insertClient(ClientInterface $client)
     {
         $data = $this->clientHydrator->extract($client);
 
@@ -99,6 +100,9 @@ class ZendTableGatewayMapper //implements MapperInterface
         return $resultSet->current();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function findClientById($clientId)
     {
         $resultSet = $this->oauthClientsTableGateway->select(['client_id' => $clientId]);
@@ -109,6 +113,9 @@ class ZendTableGatewayMapper //implements MapperInterface
         return $resultSet->current();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function findAllClients()
     {
         $paginatorAdapter = new DbTableGateway($this->oauthClientsTableGateway);
@@ -117,16 +124,22 @@ class ZendTableGatewayMapper //implements MapperInterface
         return $paginator;
     }
 
-    public function deleteToken($client)
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteToken(ClientInterface $client)
     {
         return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client->getClientId()]);
     }
 
-    public function deleteClient($client)
+    public function deleteClient(ClientInterface $client)
     {
-        return $this->oauthClientsTableGateway->delete(['client_id' => $client->getClientID()]);
+        return $this->oauthClientsTableGateway->delete(['client_id' => $client->getClientId()]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function findAllFiles()
     {
         $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['uploaded' => 'DESC']));
@@ -134,6 +147,9 @@ class ZendTableGatewayMapper //implements MapperInterface
         return $paginator;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function findAllFilesByUser(UserInterface $user = null)
     {
         $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $user->getId()], ['uploaded' => 'DESC']));

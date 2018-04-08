@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmAdmin\Controller;
+namespace MxmBlog\Exception;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmApi\Service\ApiServiceInterface;
-use MxmAdmin\Service\AdminServiceInterface;
-
-class AdminControllerFactory implements FactoryInterface
+class NotAuthenticatedBlogException extends RuntimeBlogException implements BlogExceptionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $userService = $container->get(UserServiceInterface::class);
-        $postService = $container->get(PostServiceInterface::class);
-        $apiService = $container->get(ApiServiceInterface::class);
-        $adminService = $container->get(AdminServiceInterface::class);
-
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger);
-    }
 }

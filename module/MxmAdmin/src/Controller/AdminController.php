@@ -32,6 +32,8 @@ use Zend\Paginator\Paginator;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\NotAuthorizedUserException;
 use MxmUser\Exception\RecordNotFoundUserException;
+use MxmBlog\Exception\NotAuthorizedBlogException;
+use MxmBlog\Exception\NotAuthenticatedBlogException;
 use MxmUser\Service\UserServiceInterface;
 use Zend\Config\Config;
 use Zend\Log\Logger;
@@ -39,6 +41,9 @@ use MxmApi\Service\ApiServiceInterface;
 use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\NotAuthenticatedException;
 use MxmBlog\Service\PostServiceInterface;
+use MxmAdmin\Service\AdminServiceInterface;
+use MxmAdmin\Exception\NotAuthenticatedException as NotAuthenticatedAdminException;
+use MxmAdmin\Exception\NotAuthorizedException as NotAuthorizedAdminException;
 
 class AdminController  extends AbstractActionController
 {
@@ -57,18 +62,28 @@ class AdminController  extends AbstractActionController
      */
     protected $userService;
 
+    /**
+     * @var \MxmApi\Service\ApiServiceInterface
+     */
     protected $apiService;
+
+	/**
+     * @var \MxmAdmin\Service\AdminServiceInterface
+     */
+    protected $adminService;
 
     public function __construct(
         UserServiceInterface $userService,
         ApiServiceInterface $apiService,
         PostServiceInterface $postService,
+        AdminServiceInterface $adminService,
         Config $config,
         Logger $logger
     ) {
         $this->userService = $userService;
         $this->apiService = $apiService;
         $this->postService = $postService;
+        $this->adminService = $adminService;
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -152,11 +167,11 @@ class AdminController  extends AbstractActionController
     {
         try {
             $paginator = $this->postService->findAllPosts(false);
-        } catch (NotAuthenticatedException $e) {
+        } catch (NotAuthenticatedBlogException $e) {
             $redirectUrl = $this->url()->fromRoute('managePosts', ['page' => (int) $this->params()->fromRoute('page', '1')]);
 
             return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedException $e) {
+        } catch (NotAuthorizedBlogException $e) {
             $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->redirect()->toRoute('notAuthorized');
@@ -171,6 +186,91 @@ class AdminController  extends AbstractActionController
             'posts' => $paginator,
             'route' => 'managePosts'
         ]);
+    }
+
+    public function manageCategoriesAction()
+    {
+        try {
+            $paginator = $this->postService->findAllCategories();
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'categories' => $paginator,
+            'route' => 'manageCategories'
+        ]);
+    }
+
+    public function manageTagsAction()
+    {
+        try {
+            $paginator = $this->postService->findAllTags();
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'tags' => $paginator,
+            'route' => 'manageTags'
+        ]);
+    }
+
+    public function manageLogsAction()
+    {
+        try {
+            $paginator = $this->adminService->findAllLogs();
+        } catch (NotAuthenticatedAdminException $e) {
+            $redirectUrl = $this->url()->fromRoute('manageLogs', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedAdminException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        $this->configurePaginator($paginator);
+
+        return new ViewModel([
+            'logs' => $paginator,
+            'route' => 'manageLogs'
+        ]);
+    }
+
+    public function downloadLogFileAction()
+    {
+        $file = $this->params()->fromRoute('file', '');
+        //$path = urldecode($this->params()->fromQuery('file', ''));
+        try {
+            $response = $this->adminService->downloadLogFile($file);
+        } catch (NotAuthenticatedAdminException $e) {
+            $redirectUrl = $this->url()->fromRoute('downloadLogFile', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (NotAuthorizedAdminException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        return $response;
     }
 
     private function configurePaginator(Paginator $paginator)

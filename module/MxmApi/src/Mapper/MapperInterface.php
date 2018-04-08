@@ -24,28 +24,57 @@
  * THE SOFTWARE.
  */
 
-namespace MxmAdmin\Controller;
+namespace MxmApi\Mapper;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmApi\Service\ApiServiceInterface;
-use MxmAdmin\Service\AdminServiceInterface;
+use MxmUser\Model\UserInterface;
+use MxmApi\Model\ClientInterface;
 
-class AdminControllerFactory implements FactoryInterface
+interface MapperInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $userService = $container->get(UserServiceInterface::class);
-        $postService = $container->get(PostServiceInterface::class);
-        $apiService = $container->get(ApiServiceInterface::class);
-        $adminService = $container->get(AdminServiceInterface::class);
+    /**
+     * @param ClientInterface $client
+     *
+     * @return ClientInterface
+     * @throw DataBaseErrorException
+     */
+    public function insertClient(ClientInterface $client);
 
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger);
-    }
+    /**
+     * @param int|string $clientId
+     *
+     * @return ClientInterface
+     * @throw RecordNotFoundException
+     */
+    public function findClientById($clientId);
+
+    /**
+     * @return Zend\Paginator\Paginator
+     */
+    public function findAllClients();
+
+    /**
+     * @param ClientInterface $client
+     *
+     * @return int
+     */
+    public function deleteToken(ClientInterface $client);
+
+    /**
+     * @param ClientInterface $client
+     *
+     * @return int
+     */
+    public function deleteClient(ClientInterface $client);
+
+    /**
+     * @return Zend\Paginator\Paginator
+     */
+    public function findAllFiles();
+
+    /**
+     * @param UserInterface $user
+     *
+     * @return Zend\Paginator\Paginator
+     */
+    public function findAllFilesByUser(UserInterface $user = null);
 }

@@ -53,6 +53,7 @@ use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Model\Client;
 use MxmApi\Mapper\ZendTableGatewayMapper;
+use MxmApi\Model\ClientInterface;
 
 class ApiService implements ApiServiceInterface
 {
@@ -121,9 +122,9 @@ class ApiService implements ApiServiceInterface
      */
     public function addClient($data)
     {
-        if (! $data instanceof Client) {
+        if (! $data instanceof ClientInterface) {
             throw new InvalidArgumentException(sprintf(
-                'The data must be Client object; received "%s"',
+                'The data must be ClientInterface object; received "%s"',
                 (is_object($data) ? get_class($data) : gettype($data))
             ));
         }

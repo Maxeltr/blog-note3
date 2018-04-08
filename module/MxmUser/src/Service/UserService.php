@@ -187,7 +187,12 @@ class UserService implements UserServiceInterface
 
         $user->setCreated($this->datetime->modify('now'));
 
-        $user->setRole('user');
+        $totalUsers = $this->mapper->findAllUsers()->getTotalItemCount();
+        if ($totalUsers === 0) {
+            $user->setRole('admin');
+        } else {
+            $user->setRole('user');
+        }
 
         $token = Rand::getString(32, '0123456789abcdefghijklmnopqrstuvwxyz', true);
         $user->setEmailToken($token);

@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <?php echo $this->navigation('Zend\Navigation\adminSidebar')->menu()->setUlClass("nav nav-sidebar"); ?>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
+            <h2 class="sub-header"><?php echo $this->translate('Tags'); ?></h2>
+            <form action="<?php echo $this->url('manageTags', array(), true) ?>" method="post">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th><?php echo $this->translate('Mark'); ?></th>
+                                <th><?php echo $this->translate('ID'); ?></th>
+                                <th><?php echo $this->translate('Title'); ?></th>
+								<th><?php echo $this->translate('Weight'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0;
+                            foreach ($this->tags as $tag): ?>
+                                <tr>
+                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($tag->getId()); ?>'></td>
+                                    <td><?php echo $this->escapeHtml($tag->getId()); ?></td>
+                                    <td><?php echo $this->escapeHtml($tag->getTitle()); ?></td>
+                                    <td><?php echo $this->escapeHtml($tag->getWeight()); ?></td>
+                                </tr>
+                            <?php $i++;
+                            endforeach; ?>
+                        </tbody>
+                    </table>
+                    <input type="submit" class='btn btn-default' name="edit_tags" value="editTags">
+                    <input type="submit" class='btn btn-default' name="delete_tags" value="deleteTags">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+    <?php echo $this->paginationControl($this->tags,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $this->route)); ?>
+    </div>
+</div>

@@ -38,6 +38,9 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmAdmin.log',
         ],
+        'logs' => [
+            'path' => __DIR__ . '/../../../data/logs/',
+        ]
     ],
     'controllers' => [
         'factories' => [
@@ -48,8 +51,12 @@ return [
         'abstract_factories' => [
             \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
         ],
+        'aliases' => [
+            Service\AdminServiceInterface::class => Service\AdminService::class,
+        ],
         'factories' => [
             Logger::class => Logger\LoggerFactory::class,
+            Service\AdminService::class => Service\AdminServiceFactory::class,
         ],
     ],
     'router' => [
@@ -142,6 +149,19 @@ return [
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
                         'action'     => 'manageLogs',
+                    ],
+                ],
+            ],
+            'downloadLogFile' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/download/log[/:file]',
+                    'constraints' => [
+                        'file' => '[a-zA-Z][a-zA-Z0-9._-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\AdminController::class,
+                        'action'     => 'downloadLogFile',
                     ],
                 ],
             ],

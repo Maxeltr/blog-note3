@@ -24,28 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace MxmAdmin\Controller;
+namespace MxmAdmin\Service;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmApi\Service\ApiServiceInterface;
-use MxmAdmin\Service\AdminServiceInterface;
-
-class AdminControllerFactory implements FactoryInterface
+interface AdminServiceInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $userService = $container->get(UserServiceInterface::class);
-        $postService = $container->get(PostServiceInterface::class);
-        $apiService = $container->get(ApiServiceInterface::class);
-        $adminService = $container->get(AdminServiceInterface::class);
-
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger);
-    }
+    /**
+     * Найти все файлы в папке указанной в module.config.php
+     *
+     * @return Zend\Paginator\Paginator
+     *
+     * @throws NotAuthenticatedException
+     * @throws NotAuthorizedException
+     */
+    public function findAllLogs();
 }

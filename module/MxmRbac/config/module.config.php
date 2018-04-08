@@ -81,6 +81,8 @@ return [
                         'fetch.files.rest',
                         'delete.file.rest',
                         'create.file.rest',
+                        'find.logs',
+                        'download.log',
                     ]
                 ],
                 'moderator' => [

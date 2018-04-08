@@ -36,6 +36,7 @@ use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use MxmBlog\Exception\RecordNotFoundBlogException;
+use MxmBlog\Exception\NotAuthenticatedBlogException;
 use MxmUser\Model\UserInterface;
 use Zend\Validator\Db\RecordExists;
 use Zend\Tag\ItemList;
@@ -106,6 +107,10 @@ class PostService implements PostServiceInterface
     public function findAllPosts($hideUnpublished = true)
     {
         if ($hideUnpublished === false) {
+            if (! $this->authenticationService->hasIdentity()) {
+                throw new NotAuthenticatedBlogException('The user is not logged in');
+            }
+
             if (! $this->authorizationService->isGranted('find.unpublished.posts')) {
                 throw new NotAuthorizedBlogException('Access denied. Permission "find.unpublished.posts" is required.');
             }

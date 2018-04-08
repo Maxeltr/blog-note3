@@ -35,11 +35,17 @@ use MxmUser\Model\UserInterface;
 interface PostServiceInterface
 {
     /**
-     * Должен Paginator
+     * Найти все статьи, если $hideUnpublished = false. Найти все
+     * опубликованные статьи, если $hideUnpublished = true.
+     *
+     * @param bool $hideUnpublished
+     *
+     * @throw NotAuthenticatedBlogException
+     * @throw NotAuthorizedBlogException
      *
      * @return Paginator
      */
-    public function findAllPosts();
+    public function findAllPosts($hideUnpublished = true);
 
     /**
      * Должен вернуть Paginator
@@ -88,8 +94,7 @@ interface PostServiceInterface
 
     /**
      * Должен сохранять объект, реализующий PostInterface и возвращать его же.
-     * Также должен сохранять связи тег-статья в соответствующей таблице БД и тег
-     * если он отсутствует в базе.
+     * Также должен сохранять связи тег-статья в соответствующей таблице БД и тег.
      *
      * @param  PostInterface $post
      * @return PostInterface
@@ -99,8 +104,7 @@ interface PostServiceInterface
 
     /**
      * Должен обновить объект, реализующий PostInterface и возвращать его же.
-     * Также должен сохранять связи тег-статья в соответствующей таблице БД и тег
-     * если он отсутствует в базе.
+     * Также должен сохранять связи тег-статья в соответствующей таблице БД.
      *
      * @param  PostInterface $post
      * @return PostInterface
