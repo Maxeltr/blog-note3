@@ -18,6 +18,7 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmBlog.log',
         ],
+        'optionFilePath' => __DIR__ . '/options.php',
     ],
     'defaults' => [
         'locale' => 'ru',
@@ -93,6 +94,7 @@ return [
             Form\CategoryForm::class => Factory\Form\CategoryFormFactory::class,
             Form\CategoryFieldset::class => Factory\Form\CategoryFieldsetFactory::class,
             Form\TagForm::class => Factory\Form\TagFormFactory::class,
+            Form\GreetingForm::class => Factory\Form\GreetingFormFactory::class,
         ]
     ],
     'router' => [
@@ -381,6 +383,16 @@ return [
                     'defaults' => [
                         'controller' => Controller\DeleteController::class,
                         'action' => 'deleteCategory'
+                    ],
+                ],
+            ],
+            'editGreeting' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/edit/greeting',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editGreeting'
                     ],
                 ],
             ],

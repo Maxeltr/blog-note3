@@ -41,9 +41,15 @@ use MxmUser\Model\UserInterface;
 use Zend\Validator\Db\RecordExists;
 use Zend\Tag\ItemList;
 use MxmBlog\Exception\InvalidArgumentBlogException;
+use Zend\Config\Config;
 
 class PostService implements PostServiceInterface
 {
+    /**
+     * @var string
+     */
+    const MISSING_KEY_ERROR = 'Invalid greeting options detected, %s array must contain %s key.';
+
     /**
      * @var \Blog\Mapper\MapperInterface
      */
@@ -69,13 +75,19 @@ class PostService implements PostServiceInterface
      */
     protected $authenticationService;
 
+    /**
+     * @var Zend\Config\Config
+     */
+    protected $config;
+
     public function __construct(
         MapperInterface $mapper,
         \DateTimeInterface $datetime,
         IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
         RecordExists $isRecordExists,
         AuthorizationService $authorizationService,
-        AuthenticationService $authenticationService
+        AuthenticationService $authenticationService,
+        Config $config
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -83,6 +95,7 @@ class PostService implements PostServiceInterface
         $this->isRecordExists = $isRecordExists;
         $this->authorizationService = $authorizationService;
         $this->authenticationService = $authenticationService;
+        $this->config = $config;
     }
 
     /**
@@ -396,5 +409,56 @@ class PostService implements PostServiceInterface
     public function findPublishDates($group)
     {
         return $this->mapper->findPublishDates($group, null, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getGreeting()
+    {
+        $options = \Zend\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
+
+        return $options;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function editGreeting($greeting)
+    {
+        if (! $this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedBlogException('The user is not logged in');
+        }
+
+        if (! $this->authorizationService->isGranted('edit.greeting')) {
+            throw new NotAuthorizedBlogException('Access denied. Permission "edit.greeting" is required.');
+        }
+
+        if (! is_array($greeting)) {
+            throw new InvalidArgumentBlogException(sprintf(
+                'Greeting must be an array, received "%s"',
+                (is_object($greeting) ? get_class($greeting) : gettype($greeting))
+        ));
+        }
+
+        if (! array_key_exists('caption', $greeting)) {
+            throw new InvalidArgumentBlogException(sprintf(self::MISSING_KEY_ERROR, 'greeting', 'caption'));
+        }
+
+        if (! array_key_exists('message', $greeting)) {
+            throw new InvalidArgumentBlogException(sprintf(self::MISSING_KEY_ERROR, 'greeting', 'message'));
+        }
+
+        $whitelist = ['caption', 'message'];
+        $greeting = array_intersect_key($greeting, array_flip($whitelist));
+
+        $result = \Zend\Config\Factory::toFile($this->config->mxm_blog->optionFilePath, ['greeting' => $greeting]);
+        if ($result === false) {
+            throw new RuntimeBlogException('Unable to save greeting.');
+        }
+
+        $options = \Zend\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
+
+        return $options;
     }
 }

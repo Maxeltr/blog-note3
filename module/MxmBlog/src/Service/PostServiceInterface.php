@@ -232,4 +232,27 @@ interface PostServiceInterface
      */
     public function findPublishDates($group);
 
+    /**
+     * Получить приветственную надпись для главной страницы в виде
+     * массива ['caption' => 'Hello, world!', 'message' => 'bla-bla-bla'].
+     *
+     * @return array ['caption' => 'Hello, world!', 'message' => 'bla-bla-bla']
+     *
+     * @throws Zend\Config\Exception\InvalidArgumentException
+     * @throws Zend\Config\Exception\RuntimeException
+     */
+    public function getGreeting();
+
+    /**
+     * Изменить приветственную надпись для главной страницы.
+     *
+     * @param array $greeting Массив должен иметь ключи caption и message.
+     *
+     * @return array ['caption' => 'Hello, world!', 'message' => 'bla-bla-bla']
+     *
+     * @throws Zend\Config\Exception\InvalidArgumentException
+     * @throws Zend\Config\Exception\RuntimeException
+     * @throws MxmBlog\Exception\RuntimeBlogException
+     */
+    public function editGreeting($greeting);
 }

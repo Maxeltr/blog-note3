@@ -35,6 +35,7 @@ use MxmBlog\Service\PostService;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Validator\Db\RecordExists;
+use Zend\Config\Config;
 
 class PostServiceFactory implements FactoryInterface
 {
@@ -52,13 +53,16 @@ class PostServiceFactory implements FactoryInterface
             'adapter' => $dbAdapter,
         ]);
 
+        $config = new Config($container->get('config'));
+
         return new PostService(
             $mapper,
             $dateTime,
             $isPublishedRecordExistsValidator,
             $isRecordExists,
             $authorizationService,
-            $authenticationService
+            $authenticationService,
+            $config
         );
     }
 }

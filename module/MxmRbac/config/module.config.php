@@ -83,6 +83,7 @@ return [
                         'create.file.rest',
                         'find.logs',
                         'download.log',
+                        'edit.greeting',
                     ]
                 ],
                 'moderator' => [

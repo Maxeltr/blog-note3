@@ -115,7 +115,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel([
             'posts' => $paginator,
-            'route' => 'listPosts'
+            'route' => 'listPosts',
+            'greeting' => $this->postService->getGreeting()
         ]);
         $model->setTemplate('mxm-blog/list/list-posts');
 
@@ -144,7 +145,8 @@ class ListController extends AbstractActionController
 
         return new ViewModel([
             'posts' => $paginator,
-            'route' => 'listPosts'
+            'route' => 'listPosts',
+            'greeting' => $this->postService->getGreeting()
         ]);
     }
 
@@ -164,7 +166,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel([
             'posts' => $paginator,
-            'route' => 'listPostsByCategory'
+            'route' => 'listPostsByCategory',
+            'greeting' => $this->postService->getGreeting()
         ]);
         $model->setTemplate('mxm-blog/list/list-posts');
 
@@ -187,7 +190,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'listPostsByTag'
+            'route' => 'listPostsByTag',
+            'greeting' => $this->postService->getGreeting()
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
 
@@ -215,7 +219,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'listPostsByUser'
+            'route' => 'listPostsByUser',
+            'greeting' => $this->postService->getGreeting()
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
 
@@ -251,7 +256,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'listPostsByPublished'
+            'route' => 'listPostsByPublished',
+            'greeting' => $this->postService->getGreeting()
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
 
@@ -274,7 +280,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel(array(
             'posts' => $paginator,
-            'route' => 'listArchivesPosts'
+            'route' => 'listArchivesPosts',
+            'greeting' => $this->postService->getGreeting()
         ));
         $model->setTemplate('mxm-blog/list/list-posts');
 
@@ -326,7 +333,8 @@ class ListController extends AbstractActionController
 
         $model = new ViewModel(array(
             'archives' => $paginator,
-            'route' => 'listArchives'
+            'route' => 'listArchives',
+            'greeting' => $this->postService->getGreeting()
         ));
         $model->setTemplate('mxm-blog/list/list-archives');
 

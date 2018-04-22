@@ -77,6 +77,7 @@ return [
     "Language" => "Язык",
     "Mark" => "Отмечать",
     "Users" => "Пользователи",
+    "User" => "Пользователь",
     "Dashboard" => "Информационная панель",
     "Files" => "Файлы",
     "Logs" => "Логи",
@@ -113,4 +114,6 @@ return [
     "Size" => "Размер",
     "Date" => "Дата",
     "Download" => "Скачать",
+    "Are you sure that you want to revoke token of client" => "Вы уверены, что хотите отозвать токен клиента",
+
 ];

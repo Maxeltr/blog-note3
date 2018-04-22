@@ -34,6 +34,9 @@ use Zend\Log\Logger;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Exception\DataBaseErrorBlogException;
 use MxmBlog\Exception\NotAuthorizedBlogException;
+use MxmBlog\Exception\NotAuthenticatedBlogException;
+use Zend\Http\Request;
+use Zend\Router\RouteInterface;
 
 class WriteController extends AbstractActionController
 {
@@ -63,6 +66,12 @@ class WriteController extends AbstractActionController
 
     /**
      *
+     * @var Zend\Form\FormInterface
+     */
+    protected $greetingForm;
+
+    /**
+     *
      * @var Zend\Log\Logger
      */
     protected $logger;
@@ -78,13 +87,17 @@ class WriteController extends AbstractActionController
         FormInterface $postForm,
         FormInterface $tagForm,
         FormInterface $categoryForm,
-        Logger $logger
+        FormInterface $greetingForm,
+        Logger $logger,
+        RouteInterface $router
     ) {
         $this->postService = $postService;
         $this->postForm = $postForm;
         $this->tagForm = $tagForm;
         $this->categoryForm = $categoryForm;
+        $this->greetingForm = $greetingForm;
         $this->logger = $logger;
+        $this->router = $router;
     }
 
     public function addPostAction()
@@ -280,4 +293,64 @@ class WriteController extends AbstractActionController
                 'form' => $this->categoryForm
         ));
     }
+
+    public function editGreetingAction()
+    {
+        $error = false;
+        $request = $this->getRequest();
+        try {
+            $greeting = $this->postService->getGreeting();
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+            return $this->notFoundAction();
+        }
+
+        $this->greetingForm->setData($greeting['greeting']);
+        if ($request->isPost()) {
+            $this->greetingForm->setData($request->getPost());
+            if ($this->greetingForm->isValid()) {
+                try {
+                    $this->postService->editGreeting($this->greetingForm->getData());
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->redirect()->toRoute('notAuthorized');
+                } catch (NotAuthenticatedBlogException $e) {
+                    $redirectUrl = $this->url()->fromRoute('editGreeting');
+
+                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
+                }
+
+                $url = new Request();
+                $url->setMethod(Request::METHOD_GET);
+                $redirect = $this->params()->fromQuery('redirect', $this->url()->fromRoute('home'));
+                try {
+                    $url->setUri($redirect);
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->redirect()->toRoute('home');
+                }
+                $routeMatch = $this->router->match($url);
+                if ($routeMatch === null) {
+
+                    return $this->redirect()->toRoute('home');
+                } else {
+
+                    return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
+                }
+            } else {
+                $error = true;
+            }
+        }
+
+        return new ViewModel(array(
+            'form' => $this->greetingForm,
+            'error' => $error
+        ));
+	}
 }
