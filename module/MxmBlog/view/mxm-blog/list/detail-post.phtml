@@ -22,6 +22,13 @@
                     } ?>
                 </p>
                 <p>
+                    <?php echo $this->translate('Published'); ?>: <?php if ($post->getIsPublished()) {
+                        echo $this->translate('Yes');
+                    } else {
+                        echo $this->translate('No');
+                    } ?>
+                </p>
+                <p>
                     <?php echo $this->htmlPurifier($post->getText()); ?>
                 </p>
                 <hr>

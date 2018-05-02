@@ -38,7 +38,7 @@ return [
     ],
     'service_manager' => [
         'aliases' => [
-            //'MustBeAuthorAssertion' => Assertion\MustBeAuthorAssertion::class
+            Service\AuthorizationServiceInterface::class => Service\AuthorizationService::class,
         ],
         'factories' => [
             Service\AuthorizationService::class => Factory\Service\AuthorizationServiceFactory::class,
@@ -47,6 +47,14 @@ return [
         ],
         'invokables' => [
             //Assertion\MustBeAuthorAssertion::class => Assertion\MustBeAuthorAssertion::class,
+        ],
+    ],
+    'view_helpers' => [
+        'aliases' => [
+            'isGranted' => View\Helper\IsGranted::class,
+        ],
+        'factories' => [
+            View\Helper\IsGranted::class => Factory\View\Helper\IsGrantedFactory::class,
         ],
     ],
     'router' => [
@@ -73,10 +81,10 @@ return [
                         'edit.options',
                         'change.roles',
                         'add.client.rest',
-                        'find.client.rest',
+                        //'find.client.rest',
                         'delete.client.rest',
                         'revoke.token.rest',
-                        'find.clients.rest',
+                        //'find.clients.rest',
                         'fetch.file.rest',
                         'fetch.files.rest',
                         'delete.file.rest',
@@ -84,6 +92,7 @@ return [
                         'find.logs',
                         'download.log',
                         'edit.greeting',
+                        'delete.categories',
                     ]
                 ],
                 'moderator' => [
@@ -118,6 +127,8 @@ return [
                         'delete.user',
 			'edit.password',
 			'edit.email',
+                        'find.clients.rest',
+                        'find.client.rest',
                     ]
                 ],
             ],
@@ -135,6 +146,8 @@ return [
                         'delete.user',
                         'find.unpublished.posts',
                         'fetch.files.rest',
+                        'find.clients.rest',
+                        'find.client.rest'
                     ]
                 ],
                 'MustBeOwnerAssertion' => [

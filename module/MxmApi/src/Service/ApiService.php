@@ -54,6 +54,7 @@ use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Model\Client;
 use MxmApi\Mapper\ZendTableGatewayMapper;
 use MxmApi\Model\ClientInterface;
+use Zend\Log\Logger;
 
 class ApiService implements ApiServiceInterface
 {
@@ -97,6 +98,11 @@ class ApiService implements ApiServiceInterface
      */
     protected $apiMapper;
 
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
@@ -105,7 +111,8 @@ class ApiService implements ApiServiceInterface
         RecordExists $clientExistsValidator,
         UserMapperInterface $userMapper,
         ZendTableGatewayMapper $apiMapper,
-        Config $grantTypes
+        Config $grantTypes,
+        Logger $logger
     ) {
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
@@ -115,6 +122,7 @@ class ApiService implements ApiServiceInterface
         $this->userMapper = $userMapper;
         $this->apiMapper = $apiMapper;
         $this->grantTypes = $grantTypes;
+        $this->logger = $logger;
     }
 
     /**
@@ -199,6 +207,19 @@ class ApiService implements ApiServiceInterface
         }
 
         return $this->apiMapper->findAllClients();;
+    }
+
+    public function findClientsByUser($user)
+    {
+        if (! $this->authenticationService->hasIdentity()) {
+            throw new NotAuthenticatedException('The user is not logged in');
+        }
+
+        if (! $this->authorizationService->isGranted('find.clients.rest', $user)) {
+            throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
+        }
+
+        return $this->apiMapper->findClientsByUser($user);
     }
 
     public function deleteClient($client)

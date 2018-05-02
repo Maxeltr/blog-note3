@@ -15,23 +15,25 @@
                                 <th><?php echo $this->translate('ID'); ?></th>
                                 <th><?php echo $this->translate('Title'); ?></th>
                                 <th><?php echo $this->translate('Description'); ?></th>
+                                <th><?php echo $this->translate('Edit'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $i = 0;
                             foreach ($this->categories as $category): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($category->getId()); ?>'></td>
+                                    <td><input type="checkbox" name="checkbox[<?php echo $i; ?>]" value='<?php echo $this->escapeHtml($category->getId()); ?>'></td>
                                     <td><?php echo $this->escapeHtml($category->getId()); ?></td>
                                     <td><?php echo $this->escapeHtml($category->getTitle()); ?></td>
                                     <td><?php echo $this->escapeHtml($category->getDescription()); ?></td>
+                                    <td><a href="<?php echo $this->url('editCategory', array('action' => 'editCategory', 'id' => $category->getId())); ?>"><?php echo $this->translate('Edit'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>
                         </tbody>
                     </table>
-                    <input type="submit" class='btn btn-default' name="edit_categories" value="editCategories">
-                    <input type="submit" class='btn btn-default' name="delete_categories" value="deleteCategories">
+                    <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Edit'); ?>">
+                    <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Delete'); ?>">
                 </div>
             </form>
         </div>

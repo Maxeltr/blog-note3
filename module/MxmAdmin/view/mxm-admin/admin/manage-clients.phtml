@@ -23,7 +23,7 @@
                             <?php $i = 0;
                             foreach ($this->clients as $client): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($client->getClientId()); ?>'></td>
+                                    <td><input type="checkbox" name="checkbox[<?php echo $i; ?>]" value='<?php echo $this->escapeHtml($client->getClientId()); ?>'></td>
                                     <td><?php echo $this->escapeHtml($client->getClientId()); ?></td>
                                     <td><?php echo $this->escapeHtml($client->getClientSecret()); ?></td>
                                     <td><?php echo $this->escapeHtml($client->getGrantTypes()); ?></td>
@@ -34,7 +34,7 @@
                             endforeach; ?>
                         </tbody>
                     </table>
-                    <input type="submit" class='btn btn-default' name="delete_clients" value="deleteClients">
+                    <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Delete'); ?>">
                 </div>
             </form>
         </div>

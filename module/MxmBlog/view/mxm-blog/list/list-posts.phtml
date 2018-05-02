@@ -7,7 +7,9 @@
             <div class="jumbotron">
                 <h1><?php echo $this->escapeHtml($this->greeting['greeting']['caption']); ?></h1>
                 <p><?php echo $this->escapeHtml($this->greeting['greeting']['message']); ?>
+                <?php if ($this->isGranted('edit.greeting')): ?>
                 <a role="button" class="btn btn-default pull-right" href="<?php echo $this->url('editGreeting',['action' => 'editGreeting']); ?>">Edit</a>
+                <?php endif; ?>
                 </p>
             </div>
             <?php $countColumns = 3;
@@ -50,7 +52,7 @@
             <div class="sidebar-module">
                 <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
             </div>
-            <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
+            <?php //echo $this->partial('partial/contentManagerPanel.phtml'); ?>
         </div>
     </div>
 

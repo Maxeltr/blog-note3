@@ -24,30 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmAdmin\Controller;
+namespace MxmApi\Logger;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmApi\Service\ApiServiceInterface;
-use MxmAdmin\Service\AdminServiceInterface;
-use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Log\Logger;
+use Zend\Config\Config;
+use Zend\Log\Writer\Stream;
 
-class AdminControllerFactory implements FactoryInterface
+class LoggerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $userService = $container->get(UserServiceInterface::class);
-        $postService = $container->get(PostServiceInterface::class);
-        $apiService = $container->get(ApiServiceInterface::class);
-        $adminService = $container->get(AdminServiceInterface::class);
-        $translator = $container->get(TranslatorInterface::class);
+        $writer = new Stream($config->mxm_api->logger->path);
+        $logger = new Logger();
+        $logger->addWriter($writer);
 
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger, $translator);
+        return $logger;
     }
 }

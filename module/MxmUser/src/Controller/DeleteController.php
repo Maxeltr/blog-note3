@@ -33,6 +33,7 @@ use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use Zend\Log\Logger;
 use MxmUser\Exception\NotAuthorizedUserException;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class DeleteController extends AbstractActionController
 {
@@ -41,15 +42,21 @@ class DeleteController extends AbstractActionController
      */
     protected $userService;
 
-	/**
+    /**
      * @var Zend\Log\Logger
      */
     protected $logger;
 
-    public function __construct(UserServiceInterface $userService, Logger $logger)
+    /**
+     * @var Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
+
+    public function __construct(UserServiceInterface $userService, Logger $logger, TranslatorInterface $translator)
     {
         $this->userService = $userService;
 	$this->logger = $logger;
+        $this->translator = $translator;
     }
 
     public function deleteUserAction()
@@ -77,9 +84,9 @@ class DeleteController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $del = $request->getPost('delete_confirmation', 'no');
+            $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
-            if ($del === 'yes') {
+            if ($del === $this->translator->translate('Yes')) {
                 $result = $this->userService->deleteUser($user);
                 if ($result === false) {
                     $this->logger->err('DeleteController. User ' . $user->getID() . ' not deleted');

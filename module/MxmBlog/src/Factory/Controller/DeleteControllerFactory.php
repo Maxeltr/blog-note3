@@ -31,6 +31,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmBlog\Logger;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class DeleteControllerFactory implements FactoryInterface
 {
@@ -38,7 +39,8 @@ class DeleteControllerFactory implements FactoryInterface
     {
         $logger = $container->get(Logger::class);
         $postService = $container->get(PostServiceInterface::class);
+        $translator = $container->get(TranslatorInterface::class);
 
-        return new DeleteController($postService, $logger);
+        return new DeleteController($postService, $logger, $translator);
     }
 }

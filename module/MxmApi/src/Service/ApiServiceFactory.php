@@ -36,7 +36,7 @@ use MxmRbac\Service\AuthorizationService;
 use Zend\Db\Adapter\Adapter;
 use Zend\Config\Config;
 use Zend\Validator\Db\RecordExists;
-
+use MxmApi\Logger;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 
@@ -62,6 +62,8 @@ class ApiServiceFactory implements FactoryInterface
         $userMapper = $container->get(UserMapperInterface::class);
 
         $apiMapper = $container->get(ApiMapperInterface::class);
+        $logger = $container->get(Logger::class);
+
 
         return new ApiService(
             $dateTime,
@@ -71,7 +73,8 @@ class ApiServiceFactory implements FactoryInterface
             $recordExistsValidator,
             $userMapper,
             $apiMapper,
-            $grantTypes
+            $grantTypes,
+            $logger
         );
     }
 }

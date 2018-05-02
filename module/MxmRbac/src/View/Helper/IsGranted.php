@@ -24,30 +24,21 @@
  * THE SOFTWARE.
  */
 
-namespace MxmAdmin\Controller;
+namespace MxmRbac\View\Helper;
 
-use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Service\UserServiceInterface;
-use MxmBlog\Service\PostServiceInterface;
-use MxmApi\Service\ApiServiceInterface;
-use MxmAdmin\Service\AdminServiceInterface;
-use Zend\i18n\Translator\TranslatorInterface;
+use MxmRbac\Service\AuthorizationServiceInterface;
+use Zend\View\Helper\AbstractHelper;
 
-class AdminControllerFactory implements FactoryInterface
+class IsGranted extends AbstractHelper
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $userService = $container->get(UserServiceInterface::class);
-        $postService = $container->get(PostServiceInterface::class);
-        $apiService = $container->get(ApiServiceInterface::class);
-        $adminService = $container->get(AdminServiceInterface::class);
-        $translator = $container->get(TranslatorInterface::class);
+    protected $authorizationService;
 
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger, $translator);
+    public function __construct(AuthorizationServiceInterface $authorizationService)
+    {
+        $this->authorizationService = $authorizationService;
+    }
+
+    public function __invoke($permission, $content = null) {
+        return $this->authorizationService->isGranted($permission, $content);
     }
 }

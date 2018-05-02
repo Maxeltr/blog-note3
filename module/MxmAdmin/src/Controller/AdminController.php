@@ -44,6 +44,7 @@ use MxmBlog\Service\PostServiceInterface;
 use MxmAdmin\Service\AdminServiceInterface;
 use MxmAdmin\Exception\NotAuthenticatedException as NotAuthenticatedAdminException;
 use MxmAdmin\Exception\NotAuthorizedException as NotAuthorizedAdminException;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class AdminController  extends AbstractActionController
 {
@@ -52,12 +53,12 @@ class AdminController  extends AbstractActionController
      */
     protected $config;
 
-	/**
+    /**
      * @var Zend\Log\Logger
      */
     protected $logger;
 
-	/**
+    /**
      * @var \MxmUser\Service\UserServiceInterface
      */
     protected $userService;
@@ -67,10 +68,15 @@ class AdminController  extends AbstractActionController
      */
     protected $apiService;
 
-	/**
+    /**
      * @var \MxmAdmin\Service\AdminServiceInterface
      */
     protected $adminService;
+
+    /**
+     * @var Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
 
     public function __construct(
         UserServiceInterface $userService,
@@ -78,7 +84,8 @@ class AdminController  extends AbstractActionController
         PostServiceInterface $postService,
         AdminServiceInterface $adminService,
         Config $config,
-        Logger $logger
+        Logger $logger,
+        TranslatorInterface $translator
     ) {
         $this->userService = $userService;
         $this->apiService = $apiService;
@@ -86,6 +93,7 @@ class AdminController  extends AbstractActionController
         $this->adminService = $adminService;
         $this->config = $config;
         $this->logger = $logger;
+        $this->translator = $translator;
     }
 
     public function manageUsersAction()
@@ -190,6 +198,29 @@ class AdminController  extends AbstractActionController
 
     public function manageCategoriesAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $action = $request->getPost('action', $this->translator->translate('No'));
+            if ($action === $this->translator->translate('Delete')) {
+                try {
+                    $this->postService->deleteCategories($request->getPost('checkbox', []));
+                } catch (NotAuthorizedBlogException $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->redirect()->toRoute('notAuthorized');
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel([
+                        'errorMessage' => 'Cannot delete categories.',
+                        'route' => 'manageCategories'
+                    ]);
+                    $model->setTemplate('mxm-admin/admin/error');
+
+                    return $model;
+                }
+            }
+        }
+
         try {
             $paginator = $this->postService->findAllCategories();
         } catch (\Exception $e) {
@@ -253,7 +284,6 @@ class AdminController  extends AbstractActionController
     public function downloadLogFileAction()
     {
         $file = $this->params()->fromRoute('file', '');
-        //$path = urldecode($this->params()->fromQuery('file', ''));
         try {
             $response = $this->adminService->downloadLogFile($file);
         } catch (NotAuthenticatedAdminException $e) {

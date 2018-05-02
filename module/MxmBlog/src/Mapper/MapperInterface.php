@@ -203,6 +203,13 @@ interface MapperInterface
     public function deleteCategory(CategoryInterface $category);
 
     /**
+     * @param array $categories Массив id категорий
+     *
+     * @return bool
+     */
+    public function deleteCategories($categories);
+
+    /**
      * @param int|string $id
      *
      * @return TagInterface

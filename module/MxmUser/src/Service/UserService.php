@@ -250,7 +250,7 @@ class UserService implements UserServiceInterface
             throw new NotAuthorizedUserException('Access denied. Permission "delete.user" is required.');
         }
 
-        return $this->mapper->deleteUser($user);
+        return $this->mapper->deleteUser($user);    //TODO удалить все статьи, клиенты и т.д. связанные с этим юзером?
     }
 
     /**

@@ -41,6 +41,8 @@ use MxmApi\Exception\AlreadyExistsException;
 use MxmApi\Exception\InvalidPasswordException;
 use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\DataBaseErrorException;
+use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmUser\Service\UserServiceInterface;
 
 class ApiController extends AbstractActionController
 {
@@ -61,19 +63,24 @@ class ApiController extends AbstractActionController
     protected $apiService;
 
     /**
-     * @var Zend\Authentication\AuthenticationService;
+     * @var Zend\Authentication\AuthenticationService
      */
     protected $authService;
+
+    /**
+     * @var MxmUser\Service\UserServiceInterface
+     */
+    protected $userService;
 
     public function __construct(
         ApiServiceInterface $apiService,
         FormInterface $addClientForm,
-        //AuthenticationService $authService,
+        UserServiceInterface $userService,
         Logger $logger
     ) {
         $this->apiService = $apiService;
         $this->addClientForm = $addClientForm;
-        //$this->authService = $authService;
+        $this->userService = $userService;
         $this->logger = $logger;
     }
 
@@ -122,6 +129,7 @@ class ApiController extends AbstractActionController
 	public function detailClientAction()
     {
         $id = $this->params()->fromRoute('client_id');
+
         try {
             $client = $this->apiService->findClientById($id);
         } catch (RecordNotFoundException $e) {
@@ -221,6 +229,49 @@ class ApiController extends AbstractActionController
             'clients' => $clients,
             'route' => 'listClients'
         ]);
+    }
+
+    public function listClientsByUserAction()
+    {
+        $userId = $this->params()->fromRoute('id');
+
+        try {
+            $user = $this->userService->findUserById($userId);
+        } catch (NotAuthenticatedUserException $e) {
+            $redirectUrl = $this->url()->fromRoute('listClientsByUser', ['id' => $userId, 'page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        try {
+            $clients = $this->apiService->findClientsByUser($user);
+	} catch (NotAuthenticatedException $e) {
+            $redirectUrl = $this->url()->fromRoute('listClientsByUser', ['page' => (int) $this->params()->fromRoute('page', '1')]);
+
+            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+
+        } catch (NotAuthorizedException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->redirect()->toRoute('notAuthorized');
+
+	} catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+            return $this->notFoundAction();
+        }
+
+        $model = new ViewModel([
+            'clients' => $clients,
+            'route' => 'listClientsByUser'
+        ]);
+        $model->setTemplate('mxm-api/api/list-clients');
+
+        return $model;
     }
 
     public function deleteClientAction()

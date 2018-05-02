@@ -10,8 +10,8 @@
                     "<?php echo $this->escapeHtml($this->tag->getTitle()); ?>"
                 </p>
                 <form action="<?php echo $this->url('deleteTag', array(), true) ?>" method="post">
-                    <input type="submit" class='btn btn-default' name="delete_confirmation" value="yes">
-                    <input type="submit" class='btn btn-default' name="delete_confirmation" value="no">
+                    <input type="submit" class='btn btn-default' name="delete_confirmation" value="<?php echo $this->translate('Yes'); ?>">
+                    <input type="submit" class='btn btn-default' name="delete_confirmation" value="<?php echo $this->translate('No'); ?>">
                 </form>
             </div>
         </div>

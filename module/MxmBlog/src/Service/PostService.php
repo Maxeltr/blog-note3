@@ -162,7 +162,13 @@ class PostService implements PostServiceInterface
      */
     public function findPostsByUser(UserInterface $user)
     {
-        $posts = $this->mapper->findPostsByUser($user);
+        if ($this->authorizationService->isGranted('find.unpublished.posts', $user)) {
+            $posts = $this->mapper->findPostsByUser($user, false);
+        } else {
+            $posts = $this->mapper->findPostsByUser($user);
+        }
+
+
 
 	return $posts;
     }
@@ -349,6 +355,42 @@ class PostService implements PostServiceInterface
         }
 
         return $this->mapper->deleteCategory($category);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteCategories($categories)
+    {
+        if (!$this->authorizationService->isGranted('delete.categories')) {
+            throw new NotAuthorizedBlogException('Access denied. Permission "delete.categories" is required.');
+        }
+
+        if (! is_array($categories)) {
+            throw new InvalidArgumentBlogException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($categories) ? get_class($categories) : gettype($categories))
+            ));
+        }
+
+        if (empty($categories)) {
+            throw new InvalidArgumentBlogException('The data array is empty');
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof CategoryInterface) {
+                return $value->getId();
+            } else {
+                throw new InvalidArgumentBlogException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of CategoryInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        return $this->mapper->deleteCategories(array_map($func, $categories));
     }
 
     /**

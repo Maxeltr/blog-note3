@@ -1,0 +1,14 @@
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner dialog">
+                <h2 class="form-signin-heading">
+                    <?php echo $this->translate('An error occurred'); ?>
+                </h2>
+                <?php $errorMessage = $errorMessage ? $this->errorMessage : 'Unknown  error occurred'; ?>
+                <div class="alert-warning"><p><?php echo $this->translate($errorMessage); ?></p></div>
+                <a class="btn btn-default" href="<?php echo $this->url($this->route); ?>" role="button"><?php echo $this->translate('OK'); ?></a>
+            </div>
+        </div>
+    </div>
+</div>

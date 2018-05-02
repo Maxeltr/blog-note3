@@ -127,6 +127,17 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
+    public function findClientsByUser($user)
+    {
+        $paginatorAdapter = new DbTableGateway($this->oauthClientsTableGateway, ['user_id' => $user->getId()]);
+        $paginator = new Paginator($paginatorAdapter);
+
+        return $paginator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function deleteToken(ClientInterface $client)
     {
         return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client->getClientId()]);

@@ -107,7 +107,8 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => $this->translator->translate('Send')
+                'value' => $this->translator->translate('Send'),
+                'class' => 'btn btn-default'
             ]
         ]);
     }

@@ -168,6 +168,17 @@ interface PostServiceInterface
     public function deleteCategory(CategoryInterface $category);
 
     /**
+     * Удалить несколько категорий.
+     *
+     * @param array $categories
+     *
+     * @return bool
+     * @throw NotAuthorizedBlogException
+     * @throws InvalidArgumentBlogException
+     */
+    public function deleteCategories($categories);
+
+    /**
      * Должен вернуть массив объектов, реализующих TagInterface или Paginator
      *
      * @return Paginator

@@ -12,13 +12,13 @@
                     if (is_string($this->error)) {
                         echo $this->escapeHtml($this->translate($this->error)) . "!";
                     }
-                    echo $this->formElementErrors($form->get('userFieldset')->get('username'));
-                    echo $this->formElementErrors($form->get('userFieldset')->get('email'));
-                    echo $this->formElementErrors($form->get('userFieldset')->get('password'));
-                    echo $this->formElementErrors($form->get('userFieldset')->get('confirmPassword'));
-                    echo $this->formElementErrors($form->get('userFieldset')->get('timebelt')->get('timezoneId'));
-                    echo $this->formElementErrors($form->get('userFieldset')->get('localeId'));
-                    echo $this->formElementErrors($form->get('userFieldset')->get('captcha'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('username'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('email'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('password'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('confirmPassword'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('timebelt')->get('timezoneId'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('localeId'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('captcha'));
                 ?>
             </strong>
         </div>

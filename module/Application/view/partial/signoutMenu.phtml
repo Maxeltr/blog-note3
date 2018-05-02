@@ -11,8 +11,43 @@
             </li>
             <li class="divider" role="separator"></li>
             <li>
+                <a href="<?php echo $this->url('listPostsByUser', ['action' => 'listPostsByUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('My posts') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('listCategories', ['action' => 'listCategories']); ?>"><?php echo $this->translate('Categories') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('listTags', ['action' => 'listTags']); ?>"><?php echo $this->translate('Tags') ?></a>
+            </li>
+
+            <li>
+                <a href="<?php echo $this->url('addPost', ['action' => 'addPost']); ?>"><?php echo $this->translate('Add post') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('addCategory', ['action' => 'addCategory']); ?>"><?php echo $this->translate('Add category') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('addTag', ['action' => 'addTag']); ?>"><?php echo $this->translate('Add tag') ?></a>
+            </li>
+            <li class="divider" role="separator"></li>
+            <li>
                 <a href="<?php echo $this->url('detailUser', ['action' => 'detailUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('Profile') ?></a>
             </li>
+            <li>
+                <a href="<?php echo $this->url('listUsers', ['action' => 'listUsers']); ?>"><?php echo $this->translate('Users') ?></a>
+            </li>
+            <li class="divider" role="separator"></li>
+            <li>
+                <a href="<?php echo $this->url('listClientsByUser', ['action' => 'listClientsByUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('My clients') ?></a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('addClient', ['action' => 'addClient']); ?>"><?php echo $this->translate('Add client') ?></a>
+            </li>
+            <li class="divider" role="separator"></li>
+            <li>
+                <a href="<?php echo $this->url('manageClients', ['action' => 'manageClients']); ?>"><?php echo $this->translate('Admin panel') ?></a>
+            </li>
+            <li class="divider" role="separator"></li>
             <li>
                 <a href="<?php echo $this->url('logoutUser'); ?>"><?php echo $this->translate('Logout'); ?></a>
             </li>

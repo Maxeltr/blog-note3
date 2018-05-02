@@ -70,6 +70,18 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
         ]);
 
         $this->add([
+            'type' => 'password',
+            'name' => 'confirmPassword',
+            'attributes' => [
+                'class' => 'form-control',
+                'required' => 'required',
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Confirm password')
+            ]
+        ]);
+
+        $this->add([
             'type' => 'Zend\Form\Element\Captcha',
             'name' => 'setPassword_captcha',
             'options' => [
@@ -92,7 +104,8 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
             'type' => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => $this->translator->translate('Send')
+                'value' => $this->translator->translate('Send'),
+                'class' => 'btn btn-default'
             ]
         ]);
     }
@@ -115,6 +128,30 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
                             'translator' => $this->validatorTranslator
                         ]
                     ]
+                ]
+            ],
+            'confirmPassword' => [
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Identical',
+                        'options' => [
+                            'token' => 'password',
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ],
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 35,
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ],
                 ]
             ],
             'token' => [

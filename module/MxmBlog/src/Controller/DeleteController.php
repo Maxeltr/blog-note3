@@ -32,6 +32,7 @@ use Zend\View\Model\ViewModel;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use Zend\Log\Logger;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class DeleteController extends AbstractActionController
 {
@@ -46,10 +47,16 @@ class DeleteController extends AbstractActionController
      */
     protected $logger;
 
-    public function __construct(PostServiceInterface $postService, Logger $logger)
+    /**
+     * @var Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
+
+    public function __construct(PostServiceInterface $postService, Logger $logger, TranslatorInterface $translator)
     {
         $this->postService = $postService;
         $this->logger = $logger;
+        $this->translator = $translator;
     }
 
     public function deletePostAction()
@@ -57,21 +64,27 @@ class DeleteController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $post = $this->postService->findPostById($id);
-        } catch (RecordNotFoundBlogException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return $this->notFoundAction();
         }
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $del = $request->getPost('delete_confirmation', 'no');
+            $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
-            if ($del === 'yes') {
+            if ($del === $this->translator->translate('Yes')) {
                 try {
                     $this->postService->deletePost($post);
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
                     return $this->redirect()->toRoute('notAuthorized');
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
                 }
             }
 
@@ -88,21 +101,27 @@ class DeleteController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $category = $this->postService->findCategoryById($id);
-        } catch (RecordNotFoundBlogException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return $this->notFoundAction();
         }
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $del = $request->getPost('delete_confirmation', 'no');
+            $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
-            if ($del === 'yes') {
+            if ($del === $this->translator->translate('Yes')) {
                 try {
                     $this->postService->deleteCategory($category);
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
                     return $this->redirect()->toRoute('notAuthorized');
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
                 }
             }
 
@@ -119,21 +138,27 @@ class DeleteController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         try {
             $tag = $this->postService->findTagById($id);
-        } catch (RecordNotFoundBlogException $ex) {
+        } catch (\Exception $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
             return $this->notFoundAction();
         }
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $del = $request->getPost('delete_confirmation', 'no');
+            $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
-            if ($del === 'yes') {
+            if ($del === $this->translator->translate('Yes')) {
                 try {
                     $this->postService->deleteTag($tag);
                 } catch (NotAuthorizedBlogException $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
                     return $this->redirect()->toRoute('notAuthorized');
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+
+                    return $this->notFoundAction();
                 }
             }
 

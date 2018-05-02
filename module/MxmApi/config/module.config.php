@@ -66,6 +66,7 @@ return [
             Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
             Hydrator\ClientFormHydrator::class =>Hydrator\ClientFormHydrator\ClientFormHydratorFactory::class,
             Hydrator\ClientMapperHydrator::class =>Hydrator\ClientMapperHydrator\ClientMapperHydratorFactory::class,
+            Logger::class => Logger\LoggerFactory::class,
         ],
     ],
     'form_elements' => [
@@ -99,10 +100,28 @@ return [
                 'type' => 'Segment',
                 'options' => [
                     'route' => '/api/list/clients[page/:page]',
+                    'constraints' => [
+                        'page' => '[1-9]\d*',
+                    ],
                     'defaults' => [
                         'page' => 1,
                         'controller' => Controller\ApiController::class,
                         'action' => 'listClients'
+                    ],
+                ],
+            ],
+            'listClientsByUser' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/api/list/clients/user/:id[page/:page]',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'page' => 1,
+                        'controller' => Controller\ApiController::class,
+                        'action' => 'listClientsByUser'
                     ],
                 ],
             ],

@@ -35,6 +35,8 @@ use MxmAdmin\Exception\NotAuthenticatedException;
 use MxmAdmin\Exception\NotAuthorizedException;
 use MxmAdmin\Exception\RuntimeException;
 use Zend\Http\Response;
+use MxmAdmin\Exception\InvalidArgumentException;
+use Zend\Filter\StaticFilter;
 
 class AdminService implements AdminServiceInterface
 {
@@ -136,7 +138,14 @@ class AdminService implements AdminServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "download.log" is required.');
         }
 
-        $path = $this->config->mxm_admin->logs->path . $file;
+        if (! is_string($file)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be string; received "%s"',
+                (is_object($file) ? get_class($file) : gettype($file))
+            ));
+        }
+
+        $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'BaseName');
 
         if (!is_readable($path)) {
             throw new RuntimeException('Path "' . $path . '" is not readable.');

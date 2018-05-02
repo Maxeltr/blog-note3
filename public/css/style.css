@@ -58,9 +58,19 @@ body {
     border: 2px solid #bbbbbb;
 }
 
-input, textarea, select, button {
-    font-family: DOS, Monaco, Menlo, Consolas, "Courier New", monospace;
+body,
+code,
+kbd,
+pre,
+samp,
+tooltip, 
+popover {
+  font-family: PT Mono, Monaco, Menlo, Consolas, "Courier New", monospace;
 }
+
+/*input, textarea, select, button {
+    font-family: PT Mono, Monaco, Menlo, Consolas, "Courier New", monospace;
+}*/
 
 code {
     padding: 14px 8px;

@@ -33,13 +33,15 @@ use MxmApi\Service\ApiService;
 use Zend\Log\Logger;
 use Zend\Config\Config;
 use Zend\Log\Writer\Stream;
+use MxmUser\Service\UserServiceInterface;
 
 class ApiControllerFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $apiService = $container->get(ApiService::class);
-        
+        $userService = $container->get(UserServiceInterface::class);
+
         $formManager = $container->get('FormElementManager');
         $addClientForm = $formManager->get(AddClientForm::class);
 
@@ -48,6 +50,6 @@ class ApiControllerFactory implements FactoryInterface
         $logger = new Logger();
         $logger->addWriter($writer);
 
-        return new ApiController($apiService, $addClientForm, $logger);
+        return new ApiController($apiService, $addClientForm, $userService, $logger);
     }
 }

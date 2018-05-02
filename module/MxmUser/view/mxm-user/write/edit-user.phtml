@@ -1,39 +1,71 @@
-
-
-<?php if ($this->error) : ?>
-<p class="error">
-    There were one or more issues with your submission. Please correct them as
-    indicated below.
-</p>
-<p>
-    <?php echo $this->escapeHtml($this->error); ?>
-</p>
+<?php if ($this->error): ?>	
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">X</span>
+            </button>
+            <?php
+                echo $this->translate("There were one or more issues. Please correct them as indicated below.");
+            ?>
+            <strong>
+                <?php
+                    if (is_string($this->error)) {
+                        echo $this->escapeHtml($this->translate($this->error)) . "!";
+                    }
+                    echo $this->formElementErrors($this->form->get('user')->get('username'));
+                    if ($this->form->get('user')->has('role')) {
+                        echo $this->formElementErrors($this->form->get('user')->get('role'));
+                    }
+                    echo $this->formElementErrors($this->form->get('user')->get('localeId'));
+                    echo $this->formElementErrors($this->form->get('user')->get('timebelt')->get('timezoneId'));
+                ?>
+            </strong>
+        </div>
+    </div>
 <?php endif; ?>
-
-<?php
-$form = $this->form;
-$form->setAttribute('action', $this->url('editUser', array(), true));
-$form->prepare();
-
-$form->get('submit')->setValue('Edit User');
-
-echo $this->form()->openTag($form);
-
-$user = $form->get('user');
-//echo $this->formRow($user->get('id'));
-echo $this->formElement($form->get('editUser_csrf'));
-echo $this->formRow($user->get('username'));
-
-if ($user->has('role')) {
-    echo $this->formRow($user->get('role'));
-}
-
-echo $this->formRow($user->get('localeId'));
-
-$timezone = $user->get('timebelt');
-echo $this->formRow($timezone->get('timezoneId'));
-
-echo $this->formElement($form->get('submit'));
-
-echo $this->form()->closeTag();
-?>
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="inner cover">
+                <div class="page-header">
+                <h1><?php echo $this->translate('Edit user data, please.') ?></h1>
+            </div>
+                <?php $form = $this->form;
+                $userFieldset = $form->get('user');
+                $timezoneFieldset = $userFieldset->get('timebelt');
+                $form->setAttribute('action', $this->url('editUser', array(), true));
+                $form->prepare();
+                echo $this->form()->openTag($form); ?>
+                <div class="form-group <?php echo empty($userFieldset->get('username')->getMessages()) ? '' : 'has-error'; ?>">
+                   <?php echo $this->formLabel($userFieldset->get('username'));
+                    echo $this->formElement($userFieldset->get('username'));
+                    ?>
+                </div>
+                <?php if ($userFieldset->has('role')) : ?>
+                <div class="form-group <?php echo empty($userFieldset->get('role')->getMessages()) ? '' : 'has-error'; ?>">
+                   <?php echo $this->formLabel($userFieldset->get('role'));
+                    echo $this->formElement($userFieldset->get('role'));
+                    ?>
+                </div>
+                <?php endif; ?>
+                <div class="form-group <?php echo empty($userFieldset->get('localeId')->getMessages()) ? '' : 'has-error'; ?>">
+                   <?php echo $this->formLabel($userFieldset->get('localeId'));
+                    echo $this->formElement($userFieldset->get('localeId'));
+                    ?>
+                </div>
+                <div class="form-group <?php echo empty($timezoneFieldset->get('timezoneId')->getMessages()) ? '' : 'has-error'; ?>">
+                   <?php echo $this->formLabel($timezoneFieldset->get('timezoneId'));
+                    echo $this->formElement($timezoneFieldset->get('timezoneId'));
+                    ?>
+                </div>
+                <div class="form-group">
+                    <?php echo $this->formElement($form->get('editUser_csrf')); ?>
+                </div>
+                <div class="form-group">
+                    <?php echo $this->formElement($form->get('submit')); ?>
+                </div>
+                <?php echo $this->form()->closeTag(); ?>
+            </div>
+        </div>
+    </div>
+</div>

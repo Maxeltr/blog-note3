@@ -37,14 +37,14 @@
         <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
             <div class="list-group">
                 <a class="list-group-item" href="<?php echo $this->url('listPosts',
-                    array('action' => 'listPosts')); ?>">Articles</a>
+                    array('action' => 'listPosts')); ?>"><?php echo $this->translate('Articles') ?></a>
                 <a class="list-group-item" href="<?php echo $this->url('listCategories',
-                    array('action' => 'listCategories')); ?>">Categories</a>
-                <a class="list-group-item" href="#">Archives</a>
+                    array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
+                <a class="list-group-item" href="#"><?php echo $this->translate('Archives') ?></a>
                 <a class="list-group-item" href="<?php echo $this->url('listTags',
-                    array('action' => 'listTags')); ?>">Tags</a>
+                    array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
             </div>
-            <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
+            <?php //echo $this->partial('partial/contentManagerPanel.phtml'); ?>
         </div><!--/.sidebar-offcanvas-->
     </div><!--/row-->
 

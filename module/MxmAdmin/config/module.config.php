@@ -61,6 +61,16 @@ return [
     ],
     'router' => [
         'routes' => [
+            'manage' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/manage',
+                    'defaults' => [
+                        'controller' => Controller\AdminController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
             'manageFiles' => [
                 'type' => Segment::class,
                 'options' => [

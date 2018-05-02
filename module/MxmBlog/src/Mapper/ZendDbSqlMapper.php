@@ -701,6 +701,21 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
+    public function deleteCategories($categories)
+    {
+        $action = new Delete('category');
+        $action->where->in('id', $categories);
+
+        $sql = new Sql($this->dbAdapter);
+        $stmt = $sql->prepareStatementForSqlObject($action);
+        $result = $stmt->execute();
+
+        return (bool)$result->getAffectedRows();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function findTagById($id)
     {
         $select = new Select('articles_tags');
