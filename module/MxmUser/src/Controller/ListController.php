@@ -95,6 +95,7 @@ class ListController extends AbstractActionController
         try {
             $user = $this->userService->findUserById($id);
         } catch (RecordNotFoundUserException $e) {
+            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
 
             return $this->notFoundAction();
 	} catch (NotAuthenticatedUserException $e) {

@@ -130,4 +130,5 @@ return [
     "Admin panel" => "Админка",
     "My clients" => "Мои клиенты",
     "Articles" => "Статьи",
+    "Enter your email, specified during registration, to get reset password instructions, please" => "Введите адрес своей электронной почты, указанный при регистрации, чтобы получить инструкции по сбросу пароля, пожалуйста",
 ];

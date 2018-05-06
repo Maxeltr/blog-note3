@@ -26,8 +26,23 @@
 
 namespace MxmRbac;
 
-class Module
+use Zend\EventManager\EventInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use MxmRbac\Guard\RouteGuardInterface;
+
+class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
+    public function onBootstrap(EventInterface $event)
+    {
+        $application    = $event->getTarget();
+        $serviceManager = $application->getServiceManager();
+        $eventManager   = $application->getEventManager();
+
+        $guard = $serviceManager->get(RouteGuardInterface::class);
+        $guard->attach($eventManager);
+    }
+
     public function getConfig()
     {
         return include __DIR__ . '/../config/module.config.php';

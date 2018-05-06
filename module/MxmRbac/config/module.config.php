@@ -26,10 +26,6 @@
 
 namespace MxmRbac;
 
-use Zend\ServiceManager\Factory\InvokableFactory;
-
-use Zend\Router\Http\Literal;
-
 return [
     'controllers' => [
         'factories' => [
@@ -39,11 +35,13 @@ return [
     'service_manager' => [
         'aliases' => [
             Service\AuthorizationServiceInterface::class => Service\AuthorizationService::class,
+            Guard\RouteGuardInterface::class => Guard\RouteGuard::class,
         ],
         'factories' => [
             Service\AuthorizationService::class => Factory\Service\AuthorizationServiceFactory::class,
             Assertion\AssertionPluginManager::class => Factory\Assertion\AssertionPluginManagerFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
+            Guard\RouteGuard::class => Factory\Guard\RouteGuardFactory::class,
         ],
         'invokables' => [
             //Assertion\MustBeAuthorAssertion::class => Assertion\MustBeAuthorAssertion::class,
@@ -52,9 +50,11 @@ return [
     'view_helpers' => [
         'aliases' => [
             'isGranted' => View\Helper\IsGranted::class,
+            'hasRole' => View\Helper\HasRole::class,
         ],
         'factories' => [
             View\Helper\IsGranted::class => Factory\View\Helper\IsGrantedFactory::class,
+            View\Helper\HasRole::class => Factory\View\Helper\HasRoleFactory::class,
         ],
     ],
     'router' => [
@@ -163,6 +163,12 @@ return [
                     ]
                 ],
             ],
+        ],
+        'guards' => [
+            'RouteGuard' => [
+                'manage*' => 'admin',
+                'editGreeting' => 'admin',
+            ]
         ],
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmRbac.log',

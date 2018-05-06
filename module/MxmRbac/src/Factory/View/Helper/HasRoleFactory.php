@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace MxmRbac\Exception;
+namespace MxmRbac\Factory\View\Helper;
 
-class RuntimeRbacException extends \RuntimeException implements RbacExceptionInterface
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmRbac\Service\AuthorizationServiceInterface;
+use MxmRbac\View\Helper\HasRole;
+
+class HasRoleFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $authorizationService = $container->get(AuthorizationServiceInterface::class);
+
+        return new HasRole($authorizationService);
+    }
 }

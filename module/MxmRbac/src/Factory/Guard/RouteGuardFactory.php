@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,21 @@
  * THE SOFTWARE.
  */
 
-namespace MxmRbac\Exception;
+namespace MxmRbac\Factory\Guard;
 
-class RuntimeRbacException extends \RuntimeException implements RbacExceptionInterface
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use MxmRbac\Service\AuthorizationServiceInterface;
+use MxmRbac\Guard\RouteGuard;
+use Zend\Config\Config;
+
+class RouteGuardFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $authorizationService = $container->get(AuthorizationServiceInterface::class);
+        $config = new Config($container->get('config'));
+
+        return new RouteGuard($authorizationService, $config);
+    }
 }

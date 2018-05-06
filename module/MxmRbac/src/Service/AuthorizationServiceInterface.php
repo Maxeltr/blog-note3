@@ -56,4 +56,13 @@ interface AuthorizationServiceInterface
      * @return MxmUser\Model\UserInterface
      */
     public function getIdentity();
+
+    /**
+     * Check if the given role match one of the identity roles
+     *
+     * @param string|RoleInterface $objectOrName
+     *
+     * @return bool
+     */
+    public function matchIdentityRoles($objectOrName);
 }

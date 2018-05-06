@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,20 @@
  * THE SOFTWARE.
  */
 
-namespace MxmRbac\Exception;
+namespace MxmRbac\Guard;
 
-class RuntimeRbacException extends \RuntimeException implements RbacExceptionInterface
+use Zend\Mvc\MvcEvent;
+use Zend\EventManager\ListenerAggregateInterface;
+
+interface RouteGuardInterface extends ListenerAggregateInterface
 {
+
+    /**
+     * Check if the route is allowed
+     *
+     * @param MvcEvent $event
+     *
+     * @return bool
+     */
+    public function isGranted(MvcEvent $event);
 }

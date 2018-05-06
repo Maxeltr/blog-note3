@@ -35,6 +35,7 @@ use Zend\Config\Config;
 use Zend\Validator\InArray;
 use Zend\Log\Logger;
 use MxmRbac\Exception\InvalidArgumentRbacException;
+use RecursiveIteratorIterator;
 
 class AuthorizationService implements AuthorizationServiceInterface
 {
@@ -68,13 +69,6 @@ class AuthorizationService implements AuthorizationServiceInterface
      */
     protected $logger;
 
-//    protected $assertions = [
-//	'MustBeAuthorAssertion',
-//	'AssertUserIdMatches',
-//	'MustBeOwnerAssertion',
-//	'AssertClientIdMatches'
-//    ];
-
     public function __construct
     (
         Rbac $rbac,
@@ -90,6 +84,10 @@ class AuthorizationService implements AuthorizationServiceInterface
         $this->config = $config;
         $this->inArrayValidator = $inArrayValidator;
         $this->logger = $logger;
+
+        if (! $this->config->roles) {
+            throw new InvalidArgumentRbacException('There are no roles in config.');
+        }
 
         if (!$this->config->assertions) {
             throw new InvalidArgumentRbacException('There are no assertions in config.');
@@ -149,6 +147,48 @@ class AuthorizationService implements AuthorizationServiceInterface
         }
 
         return $isGranted;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function matchIdentityRoles($objectOrName)
+    {
+        if (! is_string($objectOrName) && ! $objectOrName instanceof RoleInterface) {
+            throw new InvalidArgumentRbacException(
+                'Expected string or implement \Zend\Permissions\Rbac\RoleInterface'
+            );
+        }
+
+        if (is_object($objectOrName)) {
+            $matchRole = $objectOrName->getName();
+        } else {
+            $matchRole = $objectOrName;
+        }
+
+        if (empty($this->identity)) {
+            return false;
+        }
+
+        $roleName = $this->identity->getRole();
+        if (! $this->rbac->hasRole($roleName)) {
+            return false;
+        }
+
+        $identityRole = $this->rbac->getRole($roleName);
+
+        if ($identityRole->getName() === $matchRole) {
+            return true;
+        }
+
+        $it = new RecursiveIteratorIterator($identityRole, RecursiveIteratorIterator::CHILD_FIRST); //check children roles
+        foreach ($it as $leaf) {
+            if ($leaf->getName() === $matchRole) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
