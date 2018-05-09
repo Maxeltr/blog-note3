@@ -106,7 +106,7 @@ return [
                     'route'    => '/',
                     'defaults' => [
                         'controller'    => Controller\ListController::class,
-                        'action'        => 'index',
+                        'action'        => 'listPosts',
                     ],
                 ],
                 'may_terminate' => true,

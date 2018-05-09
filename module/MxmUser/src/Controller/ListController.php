@@ -66,21 +66,7 @@ class ListController extends AbstractActionController
 
     public function listUsersAction()
     {
-        try {
-            $paginator = $this->userService->findAllUsers();
-	} catch (NotAuthenticatedUserException $e) {
-            $redirectUrl = $this->url()->fromRoute('listUsers', ['page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-	} catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $paginator = $this->userService->findAllUsers();
         $this->configurePaginator($paginator);
 
         return new ViewModel([
@@ -92,26 +78,8 @@ class ListController extends AbstractActionController
     public function detailUserAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $user = $this->userService->findUserById($id);
-        } catch (RecordNotFoundUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-	} catch (NotAuthenticatedUserException $e) {
-            $redirectUrl = $this->url()->fromRoute('detailUser', ['id' => $id]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]); //TODO использовать flashmessenger?
-        } catch (NotAuthorizedUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
-
+        $user = $this->userService->findUserById($id);
+        
         return new ViewModel(array(
             'user' => $user
         ));

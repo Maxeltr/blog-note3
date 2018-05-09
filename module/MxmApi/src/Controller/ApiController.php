@@ -99,20 +99,6 @@ class ApiController extends AbstractActionController
                         'error' => 'Client has registered alredy.'
                     ]);
 
-                } catch (NotAuthenticatedException $e) {
-                    $redirectUrl = $this->url()->fromRoute('addClient');
-
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-                } catch (NotAuthorizedException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
                 }
 
                 return $this->redirect()->toRoute('detailClient',
@@ -129,60 +115,17 @@ class ApiController extends AbstractActionController
 	public function detailClientAction()
     {
         $id = $this->params()->fromRoute('client_id');
+        $client = $this->apiService->findClientById($id);
 
-        try {
-            $client = $this->apiService->findClientById($id);
-        } catch (RecordNotFoundException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-
-    	} catch (NotAuthenticatedException $e) {
-            $redirectUrl = $this->url()->fromRoute('detailClient', ['id' => $id]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-        } catch (NotAuthorizedException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
-
-        return new ViewModel(array(
+        return new ViewModel([
             'client' => $client
-        ));
+        ]);
     }
 
     public function revokeTokenAction()
     {
         $id = $this->params()->fromRoute('client_id');
-        try {
-            $client = $this->apiService->findClientById($id);
-        } catch (RecordNotFoundException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-
-        } catch (NotAuthenticatedException $e) {
-            $redirectUrl = $this->url()->fromRoute('detailClient', ['id' => $id]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-        } catch (NotAuthorizedException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $client = $this->apiService->findClientById($id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -200,30 +143,14 @@ class ApiController extends AbstractActionController
             return $this->redirect()->toRoute('listClients');	//TODO учитывать страницу, id и т.д.
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
             'client' => $client
-        ));
+        ]);
     }
 
     public function listClientsAction()
     {
-        try {
-            $clients = $this->apiService->findAllClients();
-	} catch (NotAuthenticatedException $e) {
-            $redirectUrl = $this->url()->fromRoute('listClients', ['page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-        } catch (NotAuthorizedException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-
-	} catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $clients = $this->apiService->findAllClients();
 
         return new ViewModel([
             'clients' => $clients,
@@ -234,36 +161,9 @@ class ApiController extends AbstractActionController
     public function listClientsByUserAction()
     {
         $userId = $this->params()->fromRoute('id');
+        $user = $this->userService->findUserById($userId);
 
-        try {
-            $user = $this->userService->findUserById($userId);
-        } catch (NotAuthenticatedUserException $e) {
-            $redirectUrl = $this->url()->fromRoute('listClientsByUser', ['id' => $userId, 'page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
-
-        try {
-            $clients = $this->apiService->findClientsByUser($user);
-	} catch (NotAuthenticatedException $e) {
-            $redirectUrl = $this->url()->fromRoute('listClientsByUser', ['page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-        } catch (NotAuthorizedException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-
-	} catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $clients = $this->apiService->findClientsByUser($user);
 
         $model = new ViewModel([
             'clients' => $clients,
@@ -277,28 +177,7 @@ class ApiController extends AbstractActionController
     public function deleteClientAction()
     {
         $id = $this->params()->fromRoute('client_id');
-        try {
-            $client = $this->apiService->findClientById($id);
-        } catch (RecordNotFoundException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-
-        } catch (NotAuthenticatedException $e) {
-            $redirectUrl = $this->url()->fromRoute('detailClient', ['id' => $id]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-        } catch (NotAuthorizedException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $client = $this->apiService->findClientById($id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

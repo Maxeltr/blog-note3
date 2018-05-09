@@ -100,11 +100,7 @@ class AuthenticateController extends AbstractActionController
                     $model = new ViewModel();
                     $model->setTemplate('mxm-user/authenticate/not-confirmed');
 
-                     return $model;
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
+                    return $model;
                 }
 
                 $resultCode = $result->getCode();

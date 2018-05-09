@@ -107,19 +107,10 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->postForm->setData($request->getPost());
             if ($this->postForm->isValid()) {
-                try {
-                    $savedPost = $this->postService->insertPost($this->postForm->getData());
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    return $this->notFoundAction();
-                }
+                $savedPost = $this->postService->insertPost($this->postForm->getData());
 
                 return $this->redirect()->toRoute('detailPost',
-                    array('id' => $savedPost->getId()));
+                    ['id' => $savedPost->getId()]);
             } else {
                 $error = true;
             }
@@ -134,36 +125,23 @@ class WriteController extends AbstractActionController
     public function editPostAction()
     {
         $request = $this->getRequest();
-        try {
-            $post = $this->postService->findPostById($this->params('id'));
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $post = $this->postService->findPostById($this->params('id'));
 
         $this->postForm->bind($post);
         if ($request->isPost()) {
             $this->postForm->setData($request->getPost());
             if ($this->postForm->isValid()) {
-                try {
-                    $this->postService->updatePost($post);
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    return $this->notFoundAction();
-                }
+                $this->postService->updatePost($post);
 
                 return $this->redirect()->toRoute('detailPost',
-                    array('id' => $post->getId()));
+                    ['id' => $post->getId()]
+                );
             }
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
                 'form' => $this->postForm
-        ));
+        ]);
     }
 
     public function addTagAction()
@@ -172,19 +150,10 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->tagForm->setData($request->getPost());
             if ($this->tagForm->isValid()) {
-                try {
-                    $savedTag = $this->postService->insertTag($this->tagForm->getData());
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    return $this->notFoundAction();
-                }
+                $savedTag = $this->postService->insertTag($this->tagForm->getData());
 
                 return $this->redirect()->toRoute('detailTag',
-                    array('id' => $savedTag->getId()));
+                    ['id' => $savedTag->getId()]);
             }
         }
 
@@ -196,36 +165,23 @@ class WriteController extends AbstractActionController
     public function editTagAction()
     {
         $request = $this->getRequest();
-        try {
-            $tag = $this->postService->findTagById($this->params('id'));
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $tag = $this->postService->findTagById($this->params('id'));
 
         $this->tagForm->bind($tag);
         if ($request->isPost()) {
             $this->tagForm->setData($request->getPost());
             if ($this->tagForm->isValid()) {
-                try {
-                    $this->postService->updateTag($tag);
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    return $this->notFoundAction();
-                }
+                $this->postService->updateTag($tag);
 
                 return $this->redirect()->toRoute('detailTag',
-                    array('id' => $tag->getId()));
+                    ['id' => $tag->getId()]
+                );
             }
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
                 'form' => $this->tagForm
-        ));
+        ]);
     }
 
     public function addCategoryAction()
@@ -235,95 +191,55 @@ class WriteController extends AbstractActionController
         if ($request->isPost()) {
             $this->categoryForm->setData($request->getPost());
             if ($this->categoryForm->isValid()) {
-                try {
-                    $savedCategory = $this->postService->insertCategory($this->categoryForm->getData());
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    return $this->notFoundAction();
-                }
+                $savedCategory = $this->postService->insertCategory($this->categoryForm->getData());
 
                 return $this->redirect()->toRoute('detailCategory',
-                    array('id' => $savedCategory->getId()));
+                    ['id' => $savedCategory->getId()]
+                );
             } else {
                 $error = true;
             }
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
             'form' => $this->categoryForm,
             'error' => $error
-        ));
+        ]);
     }
 
     public function editCategoryAction()
     {
         $request = $this->getRequest();
-        try {
-            $category = $this->postService->findCategoryById($this->params('id'));
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $category = $this->postService->findCategoryById($this->params('id'));
 
         $this->categoryForm->bind($category);
         if ($request->isPost()) {
             $this->categoryForm->setData($request->getPost());
             if ($this->categoryForm->isValid()) {
-                try {
-                    $this->postService->updateCategory($category);
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-                    return $this->notFoundAction();
-                }
+                $this->postService->updateCategory($category);
 
                 return $this->redirect()->toRoute('detailCategory',
-                    array('id' => $category->getId()));
+                    ['id' => $category->getId()]
+                );
             }
         }
 
-        return new ViewModel(array(
-                'form' => $this->categoryForm
-        ));
+        return new ViewModel([
+            'form' => $this->categoryForm
+        ]);
     }
 
     public function editGreetingAction()
     {
         $error = false;
         $request = $this->getRequest();
-        try {
-            $greeting = $this->postService->getGreeting();
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $greeting = $this->postService->getGreeting();
 
         $this->greetingForm->setData($greeting['greeting']);
         if ($request->isPost()) {
             $this->greetingForm->setData($request->getPost());
             if ($this->greetingForm->isValid()) {
-                try {
-                    $this->postService->editGreeting($this->greetingForm->getData());
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (NotAuthenticatedBlogException $e) {
-                    $redirectUrl = $this->url()->fromRoute('editGreeting');
-
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
-                }
+                $this->postService->editGreeting($this->greetingForm->getData());
 
                 $url = new Request();
                 $url->setMethod(Request::METHOD_GET);
@@ -348,9 +264,9 @@ class WriteController extends AbstractActionController
             }
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
             'form' => $this->greetingForm,
             'error' => $error
-        ));
-	}
+        ]);
+    }
 }

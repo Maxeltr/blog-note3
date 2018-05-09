@@ -102,10 +102,6 @@ class WriteController extends AbstractActionController
                         'form' => $this->registerUserForm,
                         'error' => 'User has registered alredy.'
                     ]);
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
                 }
 
                 return $this->redirect()->toRoute('detailUser',    //TODO автоматически логинить юзера или перенаправить на страницу login?
@@ -137,19 +133,6 @@ class WriteController extends AbstractActionController
                         'form' => $this->editEmailForm,
                         'error' => 'Invalid password.'
                     ]);
-                } catch (NotAuthenticatedUserException $e) {
-                    $redirectUrl = $this->url()->fromRoute('editEmail');
-
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-                } catch (NotAuthorizedUserException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
                 }
 
                 return $this->redirect()->toRoute('detailUser',
@@ -157,44 +140,25 @@ class WriteController extends AbstractActionController
             }
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
             'form' => $this->editEmailForm
-        ));
+        ]);
     }
 
     public function editUserAction()
     {
         $request = $this->getRequest();
-        try {
-            $user = $this->userService->findUserById($this->params('id'));
-        } catch (NotAuthenticatedUserException $e) {
-            $redirectUrl = $this->url()->fromRoute('editUser', ['id' => $this->params('id')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $user = $this->userService->findUserById($this->params('id'));
 
         $this->editUserForm->bind($user);   //связываем форму и объект
         if ($request->isPost()) {
             $this->editUserForm->setData($request->getPost());  //данные устанавливаются и в форму и в объект, т.к. форма и объект связаны
             if ($this->editUserForm->isValid()) {
-                try {
-                    $this->userService->updateUser($user);
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
-                }
+                $this->userService->updateUser($user);
 
                 return $this->redirect()->toRoute('detailUser',
-                    ['id' => $user->getId()]);
+                    ['id' => $user->getId()]
+                );
             }
         }
 
@@ -218,23 +182,11 @@ class WriteController extends AbstractActionController
                         'form' => $this->editPasswordForm,
                         'error' => 'Invalid password'
                     ]);
-                } catch (NotAuthenticatedUserException $e) {
-                    $redirectUrl = $this->url()->fromRoute('editPassword');
-
-                    return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-
-                } catch (NotAuthorizedUserException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
                 }
 
                 return $this->redirect()->toRoute('detailUser',
-                    ['id' => $user->getId()]);     //TODO добавить flashmessenger
+                    ['id' => $user->getId()]
+                );
             }
         }
 
@@ -260,13 +212,9 @@ class WriteController extends AbstractActionController
                     $model->setTemplate('mxm-user/write/error');
 
                     return $model;
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
                 }
 
-                return $this->redirect()->toRoute('home');  //TODO приделать flashmessenger с инструкциями?
+                return $this->redirect()->toRoute('home');
             }
         }
 
@@ -300,13 +248,9 @@ class WriteController extends AbstractActionController
                     $model->setTemplate('mxm-user/write/error');
 
                     return $model;
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
                 }
 
-                return $this->redirect()->toRoute('loginUser');  //TODO приделать flashmessenger с инструкциями?
+                return $this->redirect()->toRoute('loginUser');
             }
         }
 
@@ -339,10 +283,6 @@ class WriteController extends AbstractActionController
             $model->setTemplate('mxm-user/write/error');
 
             return $model;
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
         }
 
         return $this->redirect()->toRoute('loginUser');
@@ -351,13 +291,7 @@ class WriteController extends AbstractActionController
     public function changeLanguageAction()
     {
         $lang = $this->params()->fromQuery('lang', null);
-        try {
-            $this->userService->changeLanguage($lang);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $this->userService->changeLanguage($lang);
 
         $redirect = $this->params()->fromQuery('redirect', null);
 

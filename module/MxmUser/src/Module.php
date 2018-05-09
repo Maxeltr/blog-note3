@@ -26,40 +26,53 @@
 
 namespace MxmUser;
 
-use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\MvcEvent;
 use MxmUser\Logger;
 use MxmUser\Exception\NotAuthenticatedUserException;
+use MxmUser\Exception\NotAuthorizedUserException;
+use Zend\EventManager\EventInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
-class Module
+class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
     public function getConfig()
     {
         return include __DIR__ . '/../config/module.config.php';
     }
 
-    public function init(ModuleManager $manager)
+    public function onBootstrap(EventInterface $event)
     {
-       // $eventManager = $manager->getEventManager();
-        //$sharedEventManager = $eventManager->getSharedManager();
-        //$sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], 100);
-        //$sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], 100);
+        $application = $event->getTarget();
+        $eventManager = $application->getEventManager();
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
     }
 
     public function onError(MvcEvent $event)
     {
-        //die('onError');
-        $errorMessage = $event->getError();
-        $controllerName = $event->getController();
-
         $message = '';
         if (isset($_SERVER['REQUEST_URI'])) {
             $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
         }
-        $message .= "Controller: $controllerName\n";
-        $message .= "Error message: $errorMessage\n";
+
+        $message .= "Controller: " . $event->getController() . "\n";
+        $message .= "Error message: " . $event->getError() . "\n";
 
         $ex = $event->getParam('exception');
+        if ($ex !== null) {
+            $message .= "Exception: " . get_class($ex) . "\n";
+            $message .= "Message: " . $ex->getMessage() . "\n";
+            $message .= "File: " . $ex->getFile() . "\n";
+            $message .= "Line: " . $ex->getLine() . "\n";
+            $message .= "Stack trace:\n " . $ex->getTraceAsString() . "\n";
+        } else {
+            $message .= "No exception available.\n";
+        }
+
+        $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
+        $logger->err($message);
+
         if ($ex instanceof NotAuthenticatedUserException) {
             $uri = $event->getApplication()->getRequest()->getUri();
             $uri->setScheme(null)
@@ -68,22 +81,12 @@ class Module
                 ->setUserInfo(null);
             $redirectUrl = $uri->toString();
 
-            $controller = $event->getTarget();
-
-            return $controller->redirect()->toRoute('loginUser', [], ['query' => ['redirectUrl' => $redirectUrl]]);
-
-        } elseif ($ex !== null) {
-            $message .= "Exception: " . $ex->getMessage() . "\n";
-            $message .= "File: " . $ex->getFile() . "\n";
-            $message .= "Line: " . $ex->getLine() . "\n";
-            $message .= "Stack trace:\n " . $ex->getTraceAsString() . "\n";
-
-        } else {
-            $message .= "No exception available.\n";
+            return $event->getTarget()->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
         }
 
-        $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
-        $logger->err($message);
-    }
+        if ($ex instanceof NotAuthorizedUserException) {
 
+            return $event->getTarget()->redirect()->toRoute('notAuthorized');
+        }
+    }
 }

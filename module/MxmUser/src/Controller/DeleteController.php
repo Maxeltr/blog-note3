@@ -62,25 +62,7 @@ class DeleteController extends AbstractActionController
     public function deleteUserAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $user = $this->userService->findUserById($id);
-        } catch (RecordNotFoundUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        } catch (NotAuthenticatedUserException $e) {
-            $redirectUrl = $this->url()->fromRoute('detailUser', ['id' => $id]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedUserException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $user = $this->userService->findUserById($id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -98,8 +80,8 @@ class DeleteController extends AbstractActionController
             return $this->redirect()->toRoute('listUsers');	//TODO учитывать страницу, id и т.д.
         }
 
-        return new ViewModel(array(
+        return new ViewModel([
             'user' => $user
-        ));
+        ]);
     }
 }

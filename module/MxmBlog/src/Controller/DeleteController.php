@@ -62,111 +62,63 @@ class DeleteController extends AbstractActionController
     public function deletePostAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $post = $this->postService->findPostById($id);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $post = $this->postService->findPostById($id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
             if ($del === $this->translator->translate('Yes')) {
-                try {
-                    $this->postService->deletePost($post);
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
-                }
+                $this->postService->deletePost($post);
             }
 
             return $this->redirect()->toRoute('listPosts');
         }
 
-        return new ViewModel(array(
-                'post' => $post
-        ));
+        return new ViewModel([
+            'post' => $post
+        ]);
     }
 
     public function deleteCategoryAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $category = $this->postService->findCategoryById($id);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $category = $this->postService->findCategoryById($id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
             if ($del === $this->translator->translate('Yes')) {
-                try {
-                    $this->postService->deleteCategory($category);
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
-                }
+                $this->postService->deleteCategory($category);
             }
 
             return $this->redirect()->toRoute('listCategories');
         }
 
-        return new ViewModel(array(
-                'category' => $category
-        ));
+        return new ViewModel([
+            'category' => $category
+        ]);
     }
 
      public function deleteTagAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $tag = $this->postService->findTagById($id);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $tag = $this->postService->findTagById($id);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
             if ($del === $this->translator->translate('Yes')) {
-                try {
-                    $this->postService->deleteTag($tag);
-                } catch (NotAuthorizedBlogException $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->redirect()->toRoute('notAuthorized');
-                } catch (\Exception $e) {
-                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-                    return $this->notFoundAction();
-                }
+                $this->postService->deleteTag($tag);
             }
 
             return $this->redirect()->toRoute('listTags');
         }
 
-        return new ViewModel(array(
-                'tag' => $tag
-        ));
+        return new ViewModel([
+            'tag' => $tag
+        ]);
     }
 }

@@ -26,10 +26,67 @@
 
 namespace MxmBlog;
 
-class Module
+use Zend\Mvc\MvcEvent;
+use MxmBlog\Logger;
+use MxmBlog\Exception\NotAuthenticatedBlogException;
+use MxmBlog\Exception\NotAuthorizedBlogException;
+use Zend\EventManager\EventInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
+
+class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
     public function getConfig()
     {
         return include __DIR__ . '/../config/module.config.php';
+    }
+
+    public function onBootstrap(EventInterface $event)
+    {
+        $application = $event->getTarget();
+        $eventManager = $application->getEventManager();
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
+    }
+
+    public function onError(MvcEvent $event)
+    {
+        $message = '';
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
+        }
+
+        $message .= "Controller: " . $event->getController() . "\n";
+        $message .= "Error message: " . $event->getError() . "\n";
+
+        $ex = $event->getParam('exception');
+        if ($ex !== null) {
+            $message .= "Exception: " . get_class($ex) . "\n";
+            $message .= "Message: " . $ex->getMessage() . "\n";
+            $message .= "File: " . $ex->getFile() . "\n";
+            $message .= "Line: " . $ex->getLine() . "\n";
+            $message .= "Stack trace:\n " . $ex->getTraceAsString() . "\n";
+        } else {
+            $message .= "No exception available.\n";
+        }
+
+        $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
+        $logger->err($message);
+
+        if ($ex instanceof NotAuthenticatedBlogException) {
+            $uri = $event->getApplication()->getRequest()->getUri();
+            $uri->setScheme(null)
+                ->setHost(null)
+                ->setPort(null)
+                ->setUserInfo(null);
+            $redirectUrl = $uri->toString();
+
+            return $event->getTarget()->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
+        }
+
+        if ($ex instanceof NotAuthorizedBlogException) {
+
+            return $event->getTarget()->redirect()->toRoute('notAuthorized');
+        }
     }
 }

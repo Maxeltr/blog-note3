@@ -93,54 +93,9 @@ class ListController extends AbstractActionController
         $this->userService = $userService;
     }
 
-    public function indexAction()
-    {
-        try {
-            $paginator = $this->postService->findAllPosts();
-        } catch (NotAuthenticatedBlogException $e) {
-            $redirectUrl = $this->url()->fromRoute('listPosts', ['page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedBlogException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
-
-        $this->configurePaginator($paginator);
-
-        $model = new ViewModel([
-            'posts' => $paginator,
-            'route' => 'listPosts',
-            'greeting' => $this->postService->getGreeting()
-        ]);
-        $model->setTemplate('mxm-blog/list/list-posts');
-
-        return $model;
-    }
-
     public function listPostsAction()
     {
-        try {
-            $paginator = $this->postService->findAllPosts();
-        } catch (NotAuthenticatedBlogException $e) {
-            $redirectUrl = $this->url()->fromRoute('listPosts', ['page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (NotAuthorizedBlogException $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->redirect()->toRoute('notAuthorized');
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
-
+        $paginator = $this->postService->findAllPosts();
         $this->configurePaginator($paginator);
 
         return new ViewModel([
@@ -153,13 +108,7 @@ class ListController extends AbstractActionController
     public function listPostsByCategoryAction()
     {
         $categoryId = $this->params()->fromRoute('id');
-
-        try {
-            $category = $this->postService->findCategoryById($categoryId);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $category = $this->postService->findCategoryById($categoryId);
 
         $paginator = $this->postService->findPostsByCategory($category);
         $this->configurePaginator($paginator);
@@ -177,13 +126,7 @@ class ListController extends AbstractActionController
     public function listPostsByTagAction()
     {
         $tagId = $this->params()->fromRoute('id');
-
-        try {
-            $tag = $this->postService->findTagById($tagId);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $tag = $this->postService->findTagById($tagId);
 
         $paginator = $this->postService->findPostsByTag($tag);
         $this->configurePaginator($paginator);
@@ -201,18 +144,7 @@ class ListController extends AbstractActionController
     public function listPostsByUserAction()
     {
         $userId = $this->params()->fromRoute('id');
-
-        try {
-            $user = $this->userService->findUserById($userId);
-        } catch (NotAuthenticatedUserException $e) {
-            $redirectUrl = $this->url()->fromRoute('listPostsByUser', ['id' => $userId, 'page' => (int) $this->params()->fromRoute('page', '1')]);
-
-            return $this->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-
-            return $this->notFoundAction();
-        }
+        $user = $this->userService->findUserById($userId);
 
         $paginator = $this->postService->findPostsByUser($user);
         $this->configurePaginator($paginator);
@@ -254,11 +186,11 @@ class ListController extends AbstractActionController
         $paginator = $this->postService->findPostsByPublishDate($since, $to);
         $this->configurePaginator($paginator);
 
-        $model = new ViewModel(array(
+        $model = new ViewModel([
             'posts' => $paginator,
             'route' => 'listPostsByPublished',
             'greeting' => $this->postService->getGreeting()
-        ));
+        ]);
         $model->setTemplate('mxm-blog/list/list-posts');
 
         return $model;
@@ -278,11 +210,11 @@ class ListController extends AbstractActionController
         $paginator = $this->postService->findPostsByPublishDate($period['since'], $period['to']);
         $this->configurePaginator($paginator);
 
-        $model = new ViewModel(array(
+        $model = new ViewModel([
             'posts' => $paginator,
             'route' => 'listArchivesPosts',
             'greeting' => $this->postService->getGreeting()
-        ));
+        ]);
         $model->setTemplate('mxm-blog/list/list-posts');
 
         return $model;
@@ -344,12 +276,7 @@ class ListController extends AbstractActionController
     public function detailPostAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $post = $this->postService->findPostById($id);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $post = $this->postService->findPostById($id);
 
         return new ViewModel(array(
             'post' => $post
@@ -367,12 +294,7 @@ class ListController extends AbstractActionController
     public function detailCategoryAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $category = $this->postService->findCategoryById($id);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $category = $this->postService->findCategoryById($id);
 
         return new ViewModel(array(
             'category' => $category
@@ -390,12 +312,7 @@ class ListController extends AbstractActionController
     public function detailTagAction()
     {
         $id = $this->params()->fromRoute('id');
-        try {
-            $tag = $this->postService->findTagById($id);
-        } catch (\Exception $e) {
-            $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
-            return $this->notFoundAction();
-        }
+        $tag = $this->postService->findTagById($id);
 
         return new ViewModel(array(
             'tag' => $tag
