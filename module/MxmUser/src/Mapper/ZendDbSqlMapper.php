@@ -56,7 +56,7 @@ class ZendDbSqlMapper implements MapperInterface
     protected $aggregateHydrator;
 
     /**
-     * @var \Blog\Model\PostInterface
+     * @var \MxmUser\Model\UserInterface
      */
     protected $userPrototype;
 
@@ -106,6 +106,28 @@ class ZendDbSqlMapper implements MapperInterface
         $select = $this->createUserSelectQuery($parameters);
 
         return $this->createObject($select, $this->aggregateHydrator, clone $this->userPrototype);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findUsersByRole($role)	
+    {
+        $parameters = [
+            'group' => [
+                'id'
+            ],
+            'order' => [
+                'id' => 'DESC'
+            ],
+            'where' => [
+                'role' => $role
+            ]
+        ];
+
+        $select = $this->createUserSelectQuery($parameters);
+
+        return $this->createPaginator($select, $this->aggregateHydrator, clone $this->userPrototype);
     }
 
     /**

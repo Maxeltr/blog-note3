@@ -176,6 +176,29 @@ class UserService implements UserServiceInterface
     /**
      * {@inheritDoc}
      */
+    public function findUsersByRole($role)
+    {
+        if (!$this->authService->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
+
+        if (!$this->authorizationService->isGranted('find.users')) {
+            throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
+        }
+
+        if (! is_string($role)) {
+            throw new InvalidArgumentUserException(sprintf(
+                'Role must be a string, received "%s"',
+                (is_object($role) ? get_class($role) : gettype($role))
+            ));
+        }
+
+        return $this->mapper->findUsersByRole($role);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function insertUser(UserInterface $user)
     {
         if ($this->isUserExists->isValid($user->getEmail())) {

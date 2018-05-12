@@ -185,6 +185,10 @@ return [
     'navigation' => [
         'adminSidebar' => [
             [
+                'label' => 'General',
+                'route' => 'manage',
+            ],
+            [
                 'label' => 'Files',
                 'route' => 'manageFiles',
             ],

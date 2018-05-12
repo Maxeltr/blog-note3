@@ -5,7 +5,8 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
-            <h2 class="sub-header"><?php echo $this->translate('Posts'); ?></h2>
+            <h2 class="sub-header"><?php echo $this->translate('Posts');
+            echo ' (' . $this->escapeHtml($this->posts->getTotalItemCount()) . ')'; ?></h2>
             <form action="<?php echo $this->url('managePosts', array(), true) ?>" method="post">
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -21,6 +22,7 @@
                                 <th><?php echo $this->translate('Published'); ?></th>
                                 <th><?php echo $this->translate('Published'); ?></th>
                                 <th><?php echo $this->translate('Version'); ?></th>
+                                <th><?php echo $this->translate('Edit'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,12 +39,13 @@
                                     <td><?php if ($post->getPublished() instanceof \DateTimeInterface) { echo $this->formatDateI18n($post->getPublished(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); } ?></td>
                                     <td><?php echo $this->escapeHtml($post->getIsPublished()); ?></td>
                                     <td><?php echo $this->escapeHtml($post->getVersion()); ?></td>
+                                    <td><a href="<?php echo $this->url('editPost', array('action' => 'editPost', 'id' => $post->getId())); ?>"><?php echo $this->translate('Edit'); ?></a>
+                                        <a href="<?php echo $this->url('detailPost', array('action' => 'detailPost', 'id' => $post->getId())); ?>"><?php echo $this->translate('View'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>
                         </tbody>
                     </table>
-                    <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Edit'); ?>">
                     <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Delete'); ?>">
                 </div>
             </form>

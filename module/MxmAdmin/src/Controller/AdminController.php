@@ -96,6 +96,35 @@ class AdminController  extends AbstractActionController
         $this->translator = $translator;
     }
 
+    public function indexAction()
+    {
+        $allUsersCount = $this->userService->findAllUsers()->getTotalItemCount();
+        $adminCount = $this->userService->findUsersByRole('admin')->getTotalItemCount();
+        $moderatorCount = $this->userService->findUsersByRole('moderator')->getTotalItemCount();
+        $authorCount = $this->userService->findUsersByRole('author')->getTotalItemCount();
+        $userCount = $this->userService->findUsersByRole('user')->getTotalItemCount();
+        $fileCount = $this->apiService->findAllFiles()->getTotalItemCount();
+        $clientCount = $this->apiService->findAllClients()->getTotalItemCount();
+        $postCount = $this->postService->findAllPosts(false)->getTotalItemCount();
+        $categoryCount = $this->postService->findAllCategories()->getTotalItemCount();
+        $tagCount = $this->postService->findAllTags()->getTotalItemCount();
+        $logCount = $this->adminService->findAllLogs()->getTotalItemCount();
+
+        return new ViewModel([
+            'allUsers' => $allUsersCount,
+            'admins' => $adminCount,
+            'moderators' => $moderatorCount,
+            'authors' => $authorCount,
+            'users' => $userCount,
+            'files' => $fileCount,
+            'clients' => $clientCount,
+            'posts' => $postCount,
+            'categories' => $categoryCount,
+            'tags' => $tagCount,
+            'logs' => $logCount,
+        ]);
+    }
+
     public function manageUsersAction()
     {
         $paginator = $this->userService->findAllUsers();

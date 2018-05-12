@@ -122,7 +122,7 @@ class AuthenticateController extends AbstractActionController
                         return $this->redirect()->toRoute($routeMatch->getMatchedRouteName(), $routeMatch->getParams());
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
-                    $loginError = 'Incorrect login';
+                    $loginError = 'Incorrect login and/or password';
                 } else {
                     $loginError = 'Incorrect login and/or password';
                 }

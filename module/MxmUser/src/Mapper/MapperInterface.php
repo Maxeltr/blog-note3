@@ -39,7 +39,7 @@ interface MapperInterface
      */
     public function findUserById($id);
 
-        /**
+    /**
      * @param string $email
      *
      * @return UserInterface
@@ -48,6 +48,14 @@ interface MapperInterface
      */
     public function findUserByEmail($email);
 
+    /**
+     * @param string $role
+     *
+     * @return Paginator
+     * @throw InvalidArgumentUserException
+     */
+    public function findUsersByRole($role);
+    
     /**
      *
      * throw InvalidArgumentUserException

@@ -5,7 +5,8 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
-            <h2 class="sub-header"><?php echo $this->translate('Clients'); ?></h2>
+            <h2 class="sub-header"><?php echo $this->translate('Clients');
+            echo ' (' . $this->escapeHtml($this->clients->getTotalItemCount()) . ')'; ?></h2>
             <form action="<?php echo $this->url('manageClients', array(), true) ?>" method="post">
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -17,6 +18,7 @@
                                 <th><?php echo $this->translate('Grant Types'); ?></th>
 				<th><?php echo $this->translate('Scope'); ?></th>
 				<th><?php echo $this->translate('User ID'); ?></th>
+                                <th><?php echo $this->translate('View'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,6 +31,7 @@
                                     <td><?php echo $this->escapeHtml($client->getGrantTypes()); ?></td>
                                     <td><?php echo $this->escapeHtml($client->getScope());  ?></td>
                                     <td><?php echo $this->escapeHtml($client->getUserId()); ?></td>
+                                    <td><a href="<?php echo $this->url('detailClient', array('action' => 'detailClient', 'client_id' => $client->getClientId())); ?>"><?php echo $this->translate('View'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>

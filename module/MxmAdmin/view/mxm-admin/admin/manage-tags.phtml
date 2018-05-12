@@ -5,7 +5,8 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
-            <h2 class="sub-header"><?php echo $this->translate('Tags'); ?></h2>
+            <h2 class="sub-header"><?php echo $this->translate('Tags');
+            echo ' (' . $this->escapeHtml($this->tags->getTotalItemCount()) . ')'; ?></h2>
             <form action="<?php echo $this->url('manageTags', array(), true) ?>" method="post">
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -14,7 +15,8 @@
                                 <th><?php echo $this->translate('Mark'); ?></th>
                                 <th><?php echo $this->translate('ID'); ?></th>
                                 <th><?php echo $this->translate('Title'); ?></th>
-								<th><?php echo $this->translate('Weight'); ?></th>
+                                <th><?php echo $this->translate('Weight'); ?></th>
+                                <th><?php echo $this->translate('Edit'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -25,12 +27,13 @@
                                     <td><?php echo $this->escapeHtml($tag->getId()); ?></td>
                                     <td><?php echo $this->escapeHtml($tag->getTitle()); ?></td>
                                     <td><?php echo $this->escapeHtml($tag->getWeight()); ?></td>
+                                    <td><a href="<?php echo $this->url('editTag', array('action' => 'editTag', 'id' => $tag->getId())); ?>"><?php echo $this->translate('Edit'); ?></a>
+                                        <a href="<?php echo $this->url('detailTag', array('action' => 'detailTag', 'id' => $tag->getId())); ?>"><?php echo $this->translate('View'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>
                         </tbody>
                     </table>
-                    <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Edit'); ?>">
                     <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Delete'); ?>">
                 </div>
             </form>

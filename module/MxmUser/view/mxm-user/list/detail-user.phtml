@@ -24,14 +24,13 @@
                     <?php echo $this->translate('Role'); ?>: <?php echo $this->escapeHtml($user->getRole()); ?>
                 </p>
                 <p>
-                    <?php echo $this->translate('Locale'); ?>: <?php echo $this->escapeHtml($user->getLocale()); ?>
+                    <?php echo $this->translate('Language'); ?>: <?php echo $this->escapeHtml($user->getLocale()); ?>
                 </p>
                 <p>
                     <?php echo $this->translate('Created'); ?>: <?php if ($user->getCreated() instanceof \DateTimeInterface) {
                     echo $this->formatDateI18n($user->getCreated());
                 } ?>
                 </p>
-                <hr>
                 <p>
                 <a href="<?php echo $this->url('editPassword', array('action' => 'editPassword')); ?>"><?php echo $this->translate('Change password'); ?></a>
             </p>
@@ -46,6 +45,5 @@
             </p>
             </div>
         </div>
-        <?php echo $this->partial('partial/blogSidebar.phtml'); ?>
     </div>
 </div>
