@@ -167,7 +167,7 @@ return [
         'guards' => [
             'RouteGuard' => [
                 'manage*' => 'admin',
-                'editGreeting' => 'admin',
+                //'editGreeting' => 'admin',
             ]
         ],
         'logger' => [

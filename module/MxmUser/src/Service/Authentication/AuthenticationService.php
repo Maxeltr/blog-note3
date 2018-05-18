@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Service;
+namespace MxmUser\Service\Authentication;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Session\SessionManager;
-use MxmUser\Service\Authentication\Adapter\AuthAdapter;
-use MxmUser\Service\Authentication\AuthenticationService;
-use Zend\Authentication\Storage\Session as SessionStorage;
+use Zend\Authentication\AuthenticationService as ZendAuthenticationService;
+use MxmUser\Exception\NotAuthenticatedUserException;
 
-class AuthenticationServiceFactory implements FactoryInterface
+class AuthenticationService extends ZendAuthenticationService
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    /**
+     * Returns true if an identity is available from storage. Throw exception if an identity is not available.
+     *
+     * @return bool
+     * @throws NotAuthenticatedUserException
+     */
+    public function checkIdentity()
     {
-        $sessionManager =  $container->get(SessionManager::class);
-        $authStorage = new SessionStorage('Zend_Auth', 'session', $sessionManager);
+        if (!$this->hasIdentity()) {
+            throw new NotAuthenticatedUserException('The user is not logged in');
+        }
 
-        $authAdapter = $container->get(AuthAdapter::class);
-        $authService = new AuthenticationService();
-        $authService->setStorage($authStorage);
-        $authService->setAdapter($authAdapter);
-
-        return $authService;
+        return true;
     }
+
 }

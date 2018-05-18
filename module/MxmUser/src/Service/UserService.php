@@ -35,7 +35,6 @@ use Zend\Validator\EmailAddress;
 use Zend\Validator\NotEmpty;
 use MxmUser\Exception\RuntimeUserException;
 use MxmUser\Exception\ExpiredUserException;
-use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\InvalidArgumentUserException;
 use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
@@ -48,6 +47,7 @@ use Zend\Math\Rand;
 use Zend\Session\Container as SessionContainer;
 use Zend\i18n\Translator\TranslatorInterface;
 use MxmUser\Validator\IsPropertyMatchesDb;
+use Zend\EventManager\EventManagerAwareTrait;
 
 class UserService implements UserServiceInterface
 {
@@ -106,7 +106,12 @@ class UserService implements UserServiceInterface
      */
     protected $translator;
 
+    /**
+     * @var Zend\Session\Container
+     */
     protected $sessionContainer;
+
+    use EventManagerAwareTrait;
 
     public function __construct(
         MapperInterface $mapper,
@@ -141,9 +146,7 @@ class UserService implements UserServiceInterface
      */
     public function findAllUsers()
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('find.users')) {
             throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
@@ -157,9 +160,7 @@ class UserService implements UserServiceInterface
      */
     public function findUserById($id)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         $user = $this->mapper->findUserById($id);
         if ($user instanceof UserInterface) {
@@ -178,9 +179,7 @@ class UserService implements UserServiceInterface
      */
     public function findUsersByRole($role)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('find.users')) {
             throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
@@ -232,8 +231,8 @@ class UserService implements UserServiceInterface
         $body .= $this->translator->translate("If you haven't registered, please ignore this message") . "\n";
 
 //        $this->mail->setSubject('Confirm Email')->setBody($body)
-//            ->setFrom('qwer_qwerty_2018@inbox.ru')->setSenderName('blog-note3')
-//            ->setTo($user->getEmail())->setRecipientName($user->getUsername());
+//            ->setFrom('qwer_qwerty_2018@inbox.ru', 'blog-note3')
+//            ->setTo($user->getEmail(), $user->getUsername());
 //
 //	$this->mail->send();
 
@@ -245,9 +244,7 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('edit.user', $user)) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.user" is required.');
@@ -265,15 +262,15 @@ class UserService implements UserServiceInterface
      */
     public function deleteUser(UserInterface $user)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('delete.user', $user)) {
             throw new NotAuthorizedUserException('Access denied. Permission "delete.user" is required.');
         }
 
-        return $this->mapper->deleteUser($user);    //TODO удалить все статьи, клиенты и т.д. связанные с этим юзером?
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['user' => $user]);
+
+        return $this->mapper->deleteUser($user);
     }
 
     /**
@@ -281,9 +278,7 @@ class UserService implements UserServiceInterface
      */
     public function editEmail($email, $password)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('edit.email')) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.email" is required.');
@@ -313,9 +308,7 @@ class UserService implements UserServiceInterface
      */
     public function editPassword($oldPassword, $newPassword)
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new NotAuthenticatedUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('edit.password')) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.password" is required.');
@@ -385,9 +378,7 @@ class UserService implements UserServiceInterface
      */
     public function logoutUser()
     {
-        if (!$this->authService->hasIdentity()) {
-            throw new RuntimeUserException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
         $this->authService->clearIdentity();
 
         return $this;

@@ -36,7 +36,6 @@ use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use MxmBlog\Exception\RecordNotFoundBlogException;
-use MxmBlog\Exception\NotAuthenticatedBlogException;
 use MxmUser\Model\UserInterface;
 use Zend\Validator\Db\RecordExists;
 use Zend\Tag\ItemList;
@@ -120,9 +119,7 @@ class PostService implements PostServiceInterface
     public function findAllPosts($hideUnpublished = true)
     {
         if ($hideUnpublished === false) {
-            if (! $this->authenticationService->hasIdentity()) {
-                throw new NotAuthenticatedBlogException('The user is not logged in');
-            }
+            $this->authenticationService->checkIdentity();
 
             if (! $this->authorizationService->isGranted('find.unpublished.posts')) {
                 throw new NotAuthorizedBlogException('Access denied. Permission "find.unpublished.posts" is required.');
@@ -167,8 +164,6 @@ class PostService implements PostServiceInterface
         } else {
             $posts = $this->mapper->findPostsByUser($user);
         }
-
-
 
 	return $posts;
     }
@@ -303,6 +298,42 @@ class PostService implements PostServiceInterface
         }
 
         return $this->mapper->deletePost($post);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deletePosts($posts)
+    {
+        if (!$this->authorizationService->isGranted('delete.posts')) {
+            throw new NotAuthorizedBlogException('Access denied. Permission "delete.posts" is required.');
+        }
+
+        if (! is_array($posts)) {
+            throw new InvalidArgumentBlogException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($posts) ? get_class($posts) : gettype($posts))
+            ));
+        }
+
+        if (empty($posts)) {
+            throw new InvalidArgumentBlogException('The data array is empty');
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof PostInterface) {
+                return $value->getId();
+            } else {
+                throw new InvalidArgumentBlogException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of PostInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        return $this->mapper->deletePosts(array_map($func, $posts));
     }
 
     /**
@@ -448,6 +479,42 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
+    public function deleteTags($tags)
+    {
+        if (!$this->authorizationService->isGranted('delete.tags')) {
+            throw new NotAuthorizedBlogException('Access denied. Permission "delete.tags" is required.');
+        }
+
+        if (! is_array($tags)) {
+            throw new InvalidArgumentBlogException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($tags) ? get_class($tags) : gettype($tags))
+            ));
+        }
+
+        if (empty($tags)) {
+            throw new InvalidArgumentBlogException('The data array is empty');
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof TagInterface) {
+                return $value->getId();
+            } else {
+                throw new InvalidArgumentBlogException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of TagInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        return $this->mapper->deleteTags(array_map($func, $tags));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function findPublishDates($group)
     {
         return $this->mapper->findPublishDates($group, null, true);
@@ -468,9 +535,7 @@ class PostService implements PostServiceInterface
      */
     public function editGreeting($greeting)
     {
-        if (! $this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedBlogException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (! $this->authorizationService->isGranted('edit.greeting')) {
             throw new NotAuthorizedBlogException('Access denied. Permission "edit.greeting" is required.');

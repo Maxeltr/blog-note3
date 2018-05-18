@@ -28,7 +28,8 @@ namespace MxmBlog;
 
 use Zend\Mvc\MvcEvent;
 use MxmBlog\Logger;
-use MxmBlog\Exception\NotAuthenticatedBlogException;
+use MxmBlog\Service\PostServiceInterface;
+use MxmUser\Service\UserServiceInterface;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -44,9 +45,18 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
     public function onBootstrap(EventInterface $event)
     {
         $application = $event->getTarget();
+        $serviceManager = $application->getServiceManager();
         $eventManager = $application->getEventManager();
+
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
+
+        $postService = $serviceManager->get(PostServiceInterface::class);
+        $usEventManager = $serviceManager->get(UserServiceInterface::class)->getEventManager();
+        $usEventManager->attach('deleteUser', function (EventInterface $event) use ($postService) {
+            $posts = $postService->findPostsByUser($event->getParam('user'))->setItemCountPerPage(-1);	// try catch???
+            $postService->deletePosts($posts);
+        });
     }
 
     public function onError(MvcEvent $event)
@@ -72,17 +82,6 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
 
         $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
         $logger->err($message);
-
-        if ($ex instanceof NotAuthenticatedBlogException) {
-            $uri = $event->getApplication()->getRequest()->getUri();
-            $uri->setScheme(null)
-                ->setHost(null)
-                ->setPort(null)
-                ->setUserInfo(null);
-            $redirectUrl = $uri->toString();
-
-            return $event->getTarget()->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        }
 
         if ($ex instanceof NotAuthorizedBlogException) {
 

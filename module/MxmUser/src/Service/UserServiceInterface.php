@@ -27,8 +27,9 @@
 namespace MxmUser\Service;
 
 use MxmUser\Model\UserInterface;
+use Zend\EventManager\EventManagerAwareInterface;
 
-interface UserServiceInterface
+interface UserServiceInterface extends EventManagerAwareInterface
 {
     /**
      * Должен вернуть Paginator

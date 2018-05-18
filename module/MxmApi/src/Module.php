@@ -68,17 +68,6 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
         $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
         $logger->err($message);
 
-        if ($ex instanceof NotAuthenticatedException) {
-            $uri = $event->getApplication()->getRequest()->getUri();
-            $uri->setScheme(null)
-                ->setHost(null)
-                ->setPort(null)
-                ->setUserInfo(null);
-            $redirectUrl = $uri->toString();
-
-            return $event->getTarget()->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        }
-
         if ($ex instanceof NotAuthorizedException) {
 
             return $event->getTarget()->redirect()->toRoute('notAuthorized');
