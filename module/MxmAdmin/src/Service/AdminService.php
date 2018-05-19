@@ -31,7 +31,6 @@ use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
-use MxmAdmin\Exception\NotAuthenticatedException;
 use MxmAdmin\Exception\NotAuthorizedException;
 use MxmAdmin\Exception\RuntimeException;
 use Zend\Http\Response;
@@ -84,9 +83,7 @@ class AdminService implements AdminServiceInterface
      */
     public function findAllLogs()
     {
-        if (! $this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (! $this->authorizationService->isGranted('find.logs')) {
             throw new NotAuthorizedException('Access denied. Permission "find.logs" is required.');
@@ -130,9 +127,7 @@ class AdminService implements AdminServiceInterface
 
     public function downloadLogFile($file)
     {
-        if (! $this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (! $this->authorizationService->isGranted('download.log')) {
             throw new NotAuthorizedException('Access denied. Permission "download.log" is required.');
@@ -152,7 +147,7 @@ class AdminService implements AdminServiceInterface
         }
 
         if (! is_file($path)) {
-            throw new RuntimeException('File does not exist.');
+            throw new RuntimeException('File "' . $path . '" does not exist.');
         }
 
         $headers = $this->response->getHeaders();
@@ -169,5 +164,41 @@ class AdminService implements AdminServiceInterface
         }
 
         return $this->response;
+    }
+
+    public function deleteLogs($files)
+    {
+        $this->authenticationService->checkIdentity();
+
+        if (! $this->authorizationService->isGranted('delete.logs')) {
+            throw new NotAuthorizedException('Access denied. Permission "delete.logs" is required.');
+        }
+
+        if (! is_string($files) && ! is_array($files)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be string or array; received "%s"',
+                (is_object($files) ? get_class($files) : gettype($files))
+            ));
+        }
+
+        if (is_string($files)) {
+            $files = explode(' ', $files);
+        }
+
+        foreach ($files as $file) {
+            $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'BaseName');
+
+            if (!is_readable($path)) {
+                throw new RuntimeException('Path "' . $path . '" is not readable.');
+            }
+
+            if (! is_file($path)) {
+                throw new RuntimeException('File "' . $path . '" does not exist.');
+            }
+
+            unlink($path);
+        }
+
+        return;
     }
 }

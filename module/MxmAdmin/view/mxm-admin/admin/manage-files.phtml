@@ -12,7 +12,6 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th><?php echo $this->translate('Mark'); ?></th>
                                 <th><?php echo $this->translate('Filename'); ?></th>
                                 <th><?php echo $this->translate('Path'); ?></th>
                                 <th><?php echo $this->translate('Description'); ?></th>
@@ -25,7 +24,6 @@
                             <?php $i = 0;
                             foreach ($this->files as $file): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="checkbox[<?php echo $i; ?>]" value='<?php echo $this->escapeHtml($file->getId()); ?>'></td>
                                     <td><?php echo $this->escapeHtml($file->getFilename()); ?></td>
                                     <td><?php echo $this->escapeHtml($file->getPath()); ?></td>
                                     <td><?php echo $this->escapeHtml($file->getDescription()); ?></td>
@@ -37,7 +35,6 @@
                             endforeach; ?>
                         </tbody>
                     </table>
-                    <input type="submit" class='btn btn-default' name="action" value="<?php echo $this->translate('Delete'); ?>">
                 </div>
             </form>
         </div>

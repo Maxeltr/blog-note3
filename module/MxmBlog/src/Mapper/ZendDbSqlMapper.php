@@ -321,6 +321,21 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
+    public function deletePosts($posts)
+    {
+        $action = new Delete('articles');
+        $action->where->in('id', $posts);
+
+        $sql = new Sql($this->dbAdapter);
+        $stmt = $sql->prepareStatementForSqlObject($action);
+        $result = $stmt->execute();
+
+        return (bool)$result->getAffectedRows();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function findPostsByCategory(CategoryInterface $category, $hideUnpublished = true)
     {
         $parameters = array(
@@ -857,6 +872,26 @@ class ZendDbSqlMapper implements MapperInterface
         $this->deleteTagAssociationWithPosts($tag);
 
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteTags($tags)
+    {
+        $sql = new Sql($this->dbAdapter);
+
+        $action = new Delete('articles_tags');
+        $action->where->in('tag_id', $tags);
+        $statement = $sql->prepareStatementForSqlObject($action);
+        $statement->execute();
+
+        $action = new Delete('tags');
+        $action->where->in('id', $tags);
+        $stmt = $sql->prepareStatementForSqlObject($action);
+        $result = $stmt->execute();
+
+        return (bool)$result->getAffectedRows();
     }
 
     /**

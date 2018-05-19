@@ -10,57 +10,68 @@
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Total users'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($allUsers); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of users: ');
+                    echo $this->escapeHtml($allUsers->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Admins'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($admins); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of administrators: ');
+                    echo $this->escapeHtml($admins->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Moderators'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($moderators); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of moderators: ');
+                    echo $this->escapeHtml($moderators->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Authors'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($authors); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of authors: ');
+                    echo $this->escapeHtml($authors->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Users'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($users); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of users: ');
+                    echo $this->escapeHtml($users->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Files'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($files); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of files: ');
+                    echo $this->escapeHtml($files->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Clients'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($clients); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of clients: ');
+                    echo $this->escapeHtml($clients->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Posts'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($posts); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of posts: ');
+                    echo $this->escapeHtml($posts->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Categories'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($categories); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of categories: ');
+                    echo $this->escapeHtml($categories->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Tags'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($tags); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of tags: ');
+                    echo $this->escapeHtml($tags->getTotalItemCount()); ?></span>
                 </div>
                 <div class="col-xs-6 col-sm-3 placeholder">
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
                     <h4><?php echo $this->translate('Logs'); ?></h4>
-                    <span class="text-muted"><?php echo $this->escapeHtml($logs); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of logs: ');
+                    echo $this->escapeHtml($logs->getTotalItemCount()); ?></span>
                 </div>
           </div>
         </div>

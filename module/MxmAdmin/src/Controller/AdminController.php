@@ -98,17 +98,17 @@ class AdminController  extends AbstractActionController
 
     public function indexAction()
     {
-        $allUsersCount = $this->userService->findAllUsers()->getTotalItemCount();
-        $adminCount = $this->userService->findUsersByRole('admin')->getTotalItemCount();
-        $moderatorCount = $this->userService->findUsersByRole('moderator')->getTotalItemCount();
-        $authorCount = $this->userService->findUsersByRole('author')->getTotalItemCount();
-        $userCount = $this->userService->findUsersByRole('user')->getTotalItemCount();
-        $fileCount = $this->apiService->findAllFiles()->getTotalItemCount();
-        $clientCount = $this->apiService->findAllClients()->getTotalItemCount();
-        $postCount = $this->postService->findAllPosts(false)->getTotalItemCount();
-        $categoryCount = $this->postService->findAllCategories()->getTotalItemCount();
-        $tagCount = $this->postService->findAllTags()->getTotalItemCount();
-        $logCount = $this->adminService->findAllLogs()->getTotalItemCount();
+        $allUsersCount = $this->userService->findAllUsers();
+        $adminCount = $this->userService->findUsersByRole('admin');
+        $moderatorCount = $this->userService->findUsersByRole('moderator');
+        $authorCount = $this->userService->findUsersByRole('author');
+        $userCount = $this->userService->findUsersByRole('user');
+        $fileCount = $this->apiService->findAllFiles();
+        $clientCount = $this->apiService->findAllClients();
+        $postCount = $this->postService->findAllPosts(false);
+        $categoryCount = $this->postService->findAllCategories();
+        $tagCount = $this->postService->findAllTags();
+        $logCount = $this->adminService->findAllLogs();
 
         return new ViewModel([
             'allUsers' => $allUsersCount,
@@ -149,6 +149,25 @@ class AdminController  extends AbstractActionController
 
     public function manageClientsAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $action = $request->getPost('action', $this->translator->translate('No'));
+            if ($action === $this->translator->translate('Delete')) {
+                try {
+                    $this->apiService->deleteClients($request->getPost('checkbox', []));
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel([
+                        'errorMessage' => 'Cannot delete clients.',
+                        'route' => 'manageClients'
+                    ]);
+                    $model->setTemplate('mxm-admin/admin/error');
+
+                    return $model;
+                }
+            }
+        }
+
         $paginator = $this->apiService->findAllClients();
         $this->configurePaginator($paginator);
 
@@ -160,6 +179,25 @@ class AdminController  extends AbstractActionController
 
     public function managePostsAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $action = $request->getPost('action', $this->translator->translate('No'));
+            if ($action === $this->translator->translate('Delete')) {
+                try {
+                    $this->postService->deletePosts($request->getPost('checkbox', []));
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel([
+                        'errorMessage' => 'Cannot delete posts.',
+                        'route' => 'managePosts'
+                    ]);
+                    $model->setTemplate('mxm-admin/admin/error');
+
+                    return $model;
+                }
+            }
+        }
+
         $paginator = $this->postService->findAllPosts(false);
         $this->configurePaginator($paginator);
 
@@ -201,6 +239,25 @@ class AdminController  extends AbstractActionController
 
     public function manageTagsAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $action = $request->getPost('action', $this->translator->translate('No'));
+            if ($action === $this->translator->translate('Delete')) {
+                try {
+                    $this->postService->deleteTags($request->getPost('checkbox', []));
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel([
+                        'errorMessage' => 'Cannot delete tags.',
+                        'route' => 'manageTags'
+                    ]);
+                    $model->setTemplate('mxm-admin/admin/error');
+
+                    return $model;
+                }
+            }
+        }
+
         $paginator = $this->postService->findAllTags();
         $this->configurePaginator($paginator);
 
@@ -212,6 +269,25 @@ class AdminController  extends AbstractActionController
 
     public function manageLogsAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $action = $request->getPost('action', $this->translator->translate('No'));
+            if ($action === $this->translator->translate('Delete')) {
+                try {
+                    $this->adminService->deleteLogs($request->getPost('checkbox', []));
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel([
+                        'errorMessage' => 'Cannot delete logs.',
+                        'route' => 'manageLogs'
+                    ]);
+                    $model->setTemplate('mxm-admin/admin/error');
+
+                    return $model;
+                }
+            }
+        }
+
         $paginator = $this->adminService->findAllLogs();
         $this->configurePaginator($paginator);
 

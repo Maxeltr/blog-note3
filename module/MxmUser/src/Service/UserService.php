@@ -146,7 +146,7 @@ class UserService implements UserServiceInterface
      */
     public function findAllUsers()
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('find.users')) {
             throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
@@ -160,7 +160,7 @@ class UserService implements UserServiceInterface
      */
     public function findUserById($id)
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         $user = $this->mapper->findUserById($id);
         if ($user instanceof UserInterface) {
@@ -179,7 +179,7 @@ class UserService implements UserServiceInterface
      */
     public function findUsersByRole($role)
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('find.users')) {
             throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
@@ -244,7 +244,7 @@ class UserService implements UserServiceInterface
      */
     public function updateUser(UserInterface $user)
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('edit.user', $user)) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.user" is required.');
@@ -262,7 +262,7 @@ class UserService implements UserServiceInterface
      */
     public function deleteUser(UserInterface $user)
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('delete.user', $user)) {
             throw new NotAuthorizedUserException('Access denied. Permission "delete.user" is required.');
@@ -278,7 +278,7 @@ class UserService implements UserServiceInterface
      */
     public function editEmail($email, $password)
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('edit.email')) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.email" is required.');
@@ -308,7 +308,7 @@ class UserService implements UserServiceInterface
      */
     public function editPassword($oldPassword, $newPassword)
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('edit.password')) {
             throw new NotAuthorizedUserException('Access denied. Permission "edit.password" is required.');
@@ -378,7 +378,7 @@ class UserService implements UserServiceInterface
      */
     public function logoutUser()
     {
-        $this->authenticationService->checkIdentity();
+        $this->authService->checkIdentity();
         $this->authService->clearIdentity();
 
         return $this;

@@ -31,7 +31,6 @@ use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
 use MxmApi\Logger;
-use MxmApi\Exception\NotAuthenticatedException;
 use MxmApi\Exception\NotAuthorizedException;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface

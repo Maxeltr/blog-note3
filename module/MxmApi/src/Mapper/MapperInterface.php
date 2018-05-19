@@ -60,11 +60,25 @@ interface MapperInterface
     public function deleteToken(ClientInterface $client);
 
     /**
+     * @param array $clientIds
+     *
+     * @return int
+     */
+    public function deleteTokens($clientIds);
+
+    /**
      * @param ClientInterface $client
      *
      * @return int
      */
     public function deleteClient(ClientInterface $client);
+
+    /**
+     * @param array client ids $clients
+     *
+     * @return int
+     */
+    public function deleteClients($clients);
 
     /**
      * @return Zend\Paginator\Paginator

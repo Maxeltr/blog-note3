@@ -41,6 +41,7 @@ use Zend\Hydrator\HydratorInterface;
 use MxmApi\Model\Client;
 use Zend\Paginator\Adapter\DbTableGateway;
 use MxmApi\Model\ClientInterface;
+use Zend\Db\Sql\Where;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
@@ -143,9 +144,31 @@ class ZendTableGatewayMapper implements MapperInterface
         return $this->oauthAccessTokensTableGateway->delete(['client_id' => $client->getClientId()]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteTokens($clientIds)
+    {
+        $where = new Where();
+        $where->in('client_id', $clientIds);
+
+        return $this->oauthAccessTokensTableGateway->delete($where);
+    }
+
     public function deleteClient(ClientInterface $client)
     {
         return $this->oauthClientsTableGateway->delete(['client_id' => $client->getClientId()]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteClients($clients)
+    {
+        $where = new Where();
+        $where->in('client_id', $clients);
+
+        return $this->oauthClientsTableGateway->delete($where);
     }
 
     /**

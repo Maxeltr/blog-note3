@@ -40,7 +40,6 @@ use Zend\Db\Adapter\Driver\ResultInterface;
 use MxmRbac\Service\AuthorizationService;
 use MxmApi\Exception\RuntimeException;
 use MxmApi\Exception\ExpiredException;
-use MxmApi\Exception\NotAuthenticatedException;
 use MxmApi\Exception\InvalidArgumentException;
 use MxmApi\Exception\RecordNotFoundException;
 use MxmApi\Exception\AlreadyExistsException;
@@ -137,9 +136,7 @@ class ApiService implements ApiServiceInterface
             ));
         }
 
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('add.client.rest')) {
             throw new NotAuthorizedException('Access denied. Permission "add.client.rest" is required.');
@@ -162,9 +159,7 @@ class ApiService implements ApiServiceInterface
             throw new InvalidArgumentException('The client_id cannot be empty.');
         }
 
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         $client = $this->apiMapper->findClientById($clientId);
 
@@ -183,9 +178,7 @@ class ApiService implements ApiServiceInterface
             throw new InvalidArgumentException('The client cannot be empty.');
         }
 
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         $user = $this->userMapper->findUserById($client->getUserId());
 
@@ -196,11 +189,46 @@ class ApiService implements ApiServiceInterface
         return $this->apiMapper->deleteToken($client);
     }
 
+    public function revokeTokens($clients)
+    {
+        $this->authenticationService->checkIdentity();
+
+        if (!$this->authorizationService->isGranted('revoke.tokens.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "revoke.tokens.rest" is required.');
+        }
+
+        if (! is_array($clients)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($clients) ? get_class($clients) : gettype($clients))
+            ));
+        }
+
+        if (empty($clients)) {
+            throw new InvalidArgumentException('The data array is empty');
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof ClientInterface) {
+                return $value->getClientId();
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of ClientInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        $clientIdArray = array_map($func, $clients);
+
+        return $this->apiMapper->deleteTokens($clientIdArray);
+    }
+
     public function findAllClients()
     {
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('find.clients.rest')) {
             throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
@@ -211,9 +239,7 @@ class ApiService implements ApiServiceInterface
 
     public function findClientsByUser($user)
     {
-        if (! $this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (! $this->authorizationService->isGranted('find.clients.rest', $user)) {
             throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
@@ -222,15 +248,9 @@ class ApiService implements ApiServiceInterface
         return $this->apiMapper->findClientsByUser($user);
     }
 
-    public function deleteClient($client)
+    public function deleteClient(ClientInterface $client)
     {
-        if (empty($client)) {
-            throw new InvalidArgumentException('Client is requried');
-        }
-
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         $user = $this->userMapper->findUserById($client->getUserId());
 
@@ -243,11 +263,49 @@ class ApiService implements ApiServiceInterface
         return $this->apiMapper->deleteClient($client);
     }
 
+    public function deleteClients($clients)
+    {
+        $this->authenticationService->checkIdentity();
+
+        if (!$this->authorizationService->isGranted('delete.clients.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "delete.clients.rest" is required.');
+        }
+
+        if (! is_array($clients)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($clients) ? get_class($clients) : gettype($clients))
+            ));
+        }
+
+        if (empty($clients)) {
+            throw new InvalidArgumentException('The data array is empty');
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof ClientInterface) {
+                return $value->getClientId();
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of ClientInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        $clientIdArray = array_map($func, $clients);
+
+        $this->apiMapper->deleteTokens($clientIdArray);
+        $this->apiMapper->deleteClients($clientIdArray);
+
+        return;
+    }
+
     public function findAllFiles()
     {
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('fetch.files.rest')) {
             throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
@@ -258,9 +316,7 @@ class ApiService implements ApiServiceInterface
 
     public function findAllFilesByUser(UserInterface $user = null)
     {
-        if (!$this->authenticationService->hasIdentity()) {
-            throw new NotAuthenticatedException('The user is not logged in');
-        }
+        $this->authenticationService->checkIdentity();
 
         if (!$this->authorizationService->isGranted('fetch.files.rest', $user)) {
             throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');

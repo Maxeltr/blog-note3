@@ -87,6 +87,13 @@ interface MapperInterface
     public function deletePost(PostInterface $post);
 
     /**
+     * @param array $posts Массив id постов
+     *
+     * @return bool
+     */
+    public function deletePosts($posts);
+
+    /**
      * @param CategoryInterface $category
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
@@ -258,4 +265,13 @@ interface MapperInterface
      * @return bool
      */
     public function deleteTag(TagInterface $tag);
+
+    /**
+     * Удалить теги и их связи со статьями.
+     *
+     * @param array $tags Массив id тегов
+     *
+     * @return bool
+     */
+    public function deleteTags($tags);
 }

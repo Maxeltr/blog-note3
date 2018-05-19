@@ -26,7 +26,7 @@
 
 namespace MxmApi\Service;
 
-use MxmApi\Model\ApiInterface;
+use MxmApi\Model\ClientInterface;
 
 interface ApiServiceInterface
 {
@@ -66,6 +66,17 @@ interface ApiServiceInterface
     public function revokeToken($client);
 
     /**
+     * Отозвать токены клиентов
+     *
+     * @param  array of ClientInterface|string $clients
+     * @return int
+     * @throws InvalidArgumentException
+     * @throws NotAuthenticatedException
+     * @throws NotAuthorizedException
+     */
+    public function revokeTokens($clients);
+
+    /**
      * Извлечь данные клиентов (приложение, сайт) из базы данных.
      *
      * @return Zend\Paginator\Paginator
@@ -84,5 +95,16 @@ interface ApiServiceInterface
      * @throws NotAuthenticatedException
      * @throws NotAuthorizedException
      */
-    public function deleteClient($client);
+    public function deleteClient(ClientInterface $client);
+
+    /**
+     * Удалить данные клиентов (приложение, сайт) из базы данных.
+     *
+     * @param  array of ClientInterface|string $clients
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws NotAuthenticatedException
+     * @throws NotAuthorizedException
+     */
+    public function deleteClients($clients);
 }

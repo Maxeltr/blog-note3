@@ -37,4 +37,18 @@ interface AdminServiceInterface
      * @throws NotAuthorizedException
      */
     public function findAllLogs();
+
+    /**
+     * Удалить файлы в папке указанной в module.config.php
+     *
+     * @param string|array $files
+     *
+     * @return void
+     *
+     * @throws NotAuthenticatedException
+     * @throws NotAuthorizedException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
+    public function deleteLogs($files);
 }

@@ -124,6 +124,17 @@ interface PostServiceInterface
     public function deletePost(PostInterface $post);
 
     /**
+     * Удалить несколько статей.
+     *
+     * @param array $posts Массив постов
+     *
+     * @return bool
+     * @throw NotAuthorizedBlogException
+     * @throws InvalidArgumentBlogException
+     */
+    public function deletePosts($posts);
+    
+    /**
      * Должен вернуть массив объектов, реализующих CategoryInterface или Paginator
      *
      * @return Paginator
