@@ -43,6 +43,9 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmApi.log',
         ],
+        'download' => [
+            'path' => __DIR__ . '/../../../data/files/'
+        ],
     ],
     'controllers' => [
         'factories' => [
@@ -528,7 +531,7 @@ return [
                         'name' => \Zend\Filter\File\RenameUpload::class,
                         'options' => [
                             'randomize' => true,
-                            'target' => 'data/files/file.txt',
+                            'target' => __DIR__ . '/../../../data/files/file.txt',
                         ],
                     ],
                 ],

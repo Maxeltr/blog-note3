@@ -53,6 +53,13 @@ interface MapperInterface
     public function findAllClients();
 
     /**
+     * @param UserInterface $user
+     *
+     * @return Zend\Paginator\Paginator
+     */
+    public function findClientsByUser(UserInterface $user);
+
+    /**
      * @param ClientInterface $client
      *
      * @return int

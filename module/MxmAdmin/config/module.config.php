@@ -158,20 +158,33 @@ return [
                     ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'manageLogs',
+                        'action' => 'manageLogs',
                     ],
                 ],
             ],
             'downloadLogFile' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route'    => '/download/log[/:file]',
+                    'route'    => '/download/log/:file',
                     'constraints' => [
-                        'file' => '[a-zA-Z][a-zA-Z0-9._-]*',
+                        'file' => '[a-zA-Z0-9._-]*',
                     ],
                     'defaults' => [
                         'controller' => Controller\AdminController::class,
-                        'action'     => 'downloadLogFile',
+                        'action' => 'downloadLogFile',
+                    ],
+                ],
+            ],
+            'downloadFile' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/download/file/:id',
+                    'constraints' => [
+                        'id' => '[a-zA-Z0-9._-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\AdminController::class,
+                        'action' => 'downloadFile',
                     ],
                 ],
             ],

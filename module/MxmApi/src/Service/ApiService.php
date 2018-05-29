@@ -26,34 +26,25 @@
 
 namespace MxmApi\Service;
 
-use Zend\Paginator\Adapter;
-use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Crypt\Password\Bcrypt;
-use Zend\Db\TableGateway\TableGateway;
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
-use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Db\ResultSet\ResultSetInterface;
-use Zend\Db\Adapter\Driver\ResultInterface;
 use MxmRbac\Service\AuthorizationService;
-use MxmApi\Exception\RuntimeException;
-use MxmApi\Exception\ExpiredException;
 use MxmApi\Exception\InvalidArgumentException;
-use MxmApi\Exception\RecordNotFoundException;
 use MxmApi\Exception\AlreadyExistsException;
-use MxmApi\Exception\InvalidPasswordException;
 use MxmApi\Exception\NotAuthorizedException;
-use MxmApi\Exception\DataBaseErrorException;
 use Zend\Validator\Db\RecordExists;
-use Zend\Paginator\Adapter\DbTableGateway;
-use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
-use MxmApi\Model\Client;
 use MxmApi\Mapper\ZendTableGatewayMapper;
 use MxmApi\Model\ClientInterface;
 use Zend\Log\Logger;
+use Zend\Paginator\Paginator;
+use Zend\Stdlib\ArrayUtils;
+use MxmApi\V1\Rest\File\FileEntity;
+use MxmApi\Exception\RuntimeException;
+use Zend\Http\Response;
 
 class ApiService implements ApiServiceInterface
 {
@@ -102,6 +93,11 @@ class ApiService implements ApiServiceInterface
      */
     protected $logger;
 
+    /**
+     * @var Zend\Http\Response
+     */
+    protected $response;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
@@ -111,7 +107,8 @@ class ApiService implements ApiServiceInterface
         UserMapperInterface $userMapper,
         ZendTableGatewayMapper $apiMapper,
         Config $grantTypes,
-        Logger $logger
+        Logger $logger,
+        Response $response
     ) {
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
@@ -122,6 +119,7 @@ class ApiService implements ApiServiceInterface
         $this->apiMapper = $apiMapper;
         $this->grantTypes = $grantTypes;
         $this->logger = $logger;
+        $this->response = $response;
     }
 
     /**
@@ -271,6 +269,10 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "delete.clients.rest" is required.');
         }
 
+        if ($clients instanceof Paginator) {
+            $clients = iterator_to_array($clients);
+        }
+
         if (! is_array($clients)) {
             throw new InvalidArgumentException(sprintf(
                 'The data must be array; received "%s"',
@@ -295,10 +297,10 @@ class ApiService implements ApiServiceInterface
             }
         };
 
-        $clientIdArray = array_map($func, $clients);
+        $clientId = array_map($func, $clients);
 
-        $this->apiMapper->deleteTokens($clientIdArray);
-        $this->apiMapper->deleteClients($clientIdArray);
+        $this->apiMapper->deleteTokens($clientId);
+        $this->apiMapper->deleteClients($clientId);
 
         return;
     }
@@ -323,5 +325,76 @@ class ApiService implements ApiServiceInterface
         }
 
         return $this->apiMapper->findAllFiles($user);
+    }
+
+    public function deleteFiles($files)
+    {
+        $this->authenticationService->checkIdentity();
+
+        if (!$this->authorizationService->isGranted('delete.files.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "delete.files.rest" is required.');
+        }
+
+        if ($files instanceof Paginator) {
+            $files = ArrayUtils::iteratorToArray($files->setItemCountPerPage(-1));
+        }
+
+        if (! is_array($files)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($files) ? get_class($files) : gettype($files))
+            ));
+        }
+
+        if (empty($files)) {
+            throw new InvalidArgumentException('The data array is empty');
+        }
+
+        $this->apiMapper->deleteFiles($files);
+
+        return;
+    }
+
+    public function downloadFile($fileId)
+    {
+         $this->authenticationService->checkIdentity();
+
+        if (! $this->authorizationService->isGranted('download.file.rest')) {
+            throw new NotAuthorizedException('Access denied. Permission "download.file.rest" is required.');
+        }
+
+        if (! is_string($fileId)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be string; received "%s"',
+                (is_object($fileId) ? get_class($fileId) : gettype($fileId))
+            ));
+        }
+
+        $file = $this->apiMapper->findFileById($fileId);
+
+        $path = $file->getPath();
+
+        if (!is_readable($path)) {
+            throw new RuntimeException('Path "' . $path . '" is not readable.');
+        }
+
+        if (! is_file($path)) {
+            throw new RuntimeException('File "' . $path . '" does not exist.');
+        }
+
+        $headers = $this->response->getHeaders();
+        $headers->addHeaderLine("Content-type: application/octet-stream");
+        $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . $file->getFilename() . "\"");
+        $headers->addHeaderLine("Content-length: " . filesize($path));
+//        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
+
+        $fileContent = file_get_contents($path);
+        if ($fileContent !== false) {
+            $this->response->setContent($fileContent);
+        } else {
+            throw new RuntimeException("Can't read file");
+        }
+
+        return $this->response;
     }
 }

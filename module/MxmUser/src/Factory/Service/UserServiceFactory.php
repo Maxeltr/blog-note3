@@ -40,6 +40,7 @@ use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
 use Zend\i18n\Translator\TranslatorInterface;
 use MxmUser\Validator\IsPropertyMatchesDb;
+use Zend\Http\PhpEnvironment\Request;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -67,6 +68,7 @@ class UserServiceFactory implements FactoryInterface
         $mail = $container->get(MailService::class);
         $sessionContainer = $container->get('MxmUserSessionContainer');
         $translator = $container->get(TranslatorInterface::class);
+        $request = new Request();
 
         return new UserService(
             $mapper,
@@ -80,7 +82,8 @@ class UserServiceFactory implements FactoryInterface
             $bcrypt,
             $mail,
             $sessionContainer,
-            $translator
+            $translator,
+            $request
         );
     }
 }

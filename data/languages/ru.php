@@ -133,5 +133,7 @@ return [
     "Enter your email, specified during registration, to get reset password instructions, please" => "Введите адрес своей электронной почты, указанный при регистрации, чтобы получить инструкции по сбросу пароля, пожалуйста",
     "General information" => "Общая информация",
     "General" => "Общий",
-    
-    ];
+    "Category content" => "Контент категории",
+    "Tag content" => "Контент тега",
+
+];

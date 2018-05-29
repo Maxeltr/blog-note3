@@ -41,6 +41,7 @@ use Zend\Validator\Db\RecordExists;
 use Zend\Tag\ItemList;
 use MxmBlog\Exception\InvalidArgumentBlogException;
 use Zend\Config\Config;
+use Zend\Paginator\Paginator;
 
 class PostService implements PostServiceInterface
 {
@@ -309,6 +310,10 @@ class PostService implements PostServiceInterface
             throw new NotAuthorizedBlogException('Access denied. Permission "delete.posts" is required.');
         }
 
+        if ($posts instanceof Paginator) {
+            $posts = iterator_to_array($posts->setItemCountPerPage(-1));
+        }
+
         if (! is_array($posts)) {
             throw new InvalidArgumentBlogException(sprintf(
                 'The data must be array; received "%s"',
@@ -397,6 +402,10 @@ class PostService implements PostServiceInterface
             throw new NotAuthorizedBlogException('Access denied. Permission "delete.categories" is required.');
         }
 
+        if ($categories instanceof Paginator) {
+            $categories = iterator_to_array($categories->setItemCountPerPage(-1));
+        }
+
         if (! is_array($categories)) {
             throw new InvalidArgumentBlogException(sprintf(
                 'The data must be array; received "%s"',
@@ -483,6 +492,10 @@ class PostService implements PostServiceInterface
     {
         if (!$this->authorizationService->isGranted('delete.tags')) {
             throw new NotAuthorizedBlogException('Access denied. Permission "delete.tags" is required.');
+        }
+
+        if ($tags instanceof Paginator) {
+            $tags = iterator_to_array($tags->setItemCountPerPage(-1));
         }
 
         if (! is_array($tags)) {

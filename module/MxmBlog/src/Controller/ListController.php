@@ -288,7 +288,10 @@ class ListController extends AbstractActionController
         $paginator = $this->postService->findAllCategories();
         $this->configurePaginator($paginator);
 
-        return new ViewModel(['categories' => $paginator]);
+        return new ViewModel([
+            'categories' => $paginator,
+            'route' => 'listCategories',
+        ]);
     }
 
     public function detailCategoryAction()
@@ -306,7 +309,10 @@ class ListController extends AbstractActionController
         $paginator = $this->postService->findAllTags();
         $this->configurePaginator($paginator);
 
-        return new ViewModel(['tags' => $paginator]);
+        return new ViewModel([
+            'tags' => $paginator,
+            'route' => 'listTags',
+        ]);
     }
 
     public function detailTagAction()

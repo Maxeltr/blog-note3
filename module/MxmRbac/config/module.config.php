@@ -83,16 +83,21 @@ return [
                         'add.client.rest',
                         //'find.client.rest',
                         'delete.client.rest',
+                        'delete.clients.rest',
                         'revoke.token.rest',
                         //'find.clients.rest',
                         'fetch.file.rest',
                         'fetch.files.rest',
                         'delete.file.rest',
                         'create.file.rest',
+                        'delete.files.rest',
+                        'download.file.rest',
                         'find.logs',
                         'download.log',
                         'edit.greeting',
                         'delete.categories',
+                        'delete.posts',
+                        'delete.logs',
                     ]
                 ],
                 'moderator' => [
@@ -154,12 +159,6 @@ return [
                     'permissions' => [
                         'fetch.file.rest',
                         'delete.file.rest',
-                    ]
-                ],
-                'AssertClientIdMatches' => [
-                    'permissions' => [
-                        //'fetch.file.rest',
-
                     ]
                 ],
             ],

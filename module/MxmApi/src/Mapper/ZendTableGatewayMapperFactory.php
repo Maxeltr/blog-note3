@@ -39,12 +39,14 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use MxmApi\Model\Client;
 use Zend\Db\TableGateway\TableGateway;
 use MxmApi\Hydrator\ClientMapperHydrator;
+use MxmApi\Logger;
 
 class ZendTableGatewayMapperFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $dbAdapter = $container->get(Adapter::class);
+        $logger = $container->get(Logger::class);
 
         $fileHydrator = new ReflectionHydrator();
         $fileResultSet = new HydratingResultSet($fileHydrator, new FileEntity());
@@ -63,7 +65,8 @@ class ZendTableGatewayMapperFactory implements FactoryInterface
             $oauthAccessTokensTableGateway,
             $fileTableGateway,
             $clientHydrator,
-            $config
+            $config,
+            $logger
         );
     }
 }

@@ -11,6 +11,7 @@ use MxmRbac\Service\AuthorizationService;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
+use MxmApi\Logger;
 
 class FileResourceFactory implements FactoryInterface
 {
@@ -31,6 +32,8 @@ class FileResourceFactory implements FactoryInterface
         $authorizationService = $container->get(AuthorizationService::class);
         $mapper = $container->get(UserMapperInterface::class);
 
-        return new FileResource($tableGateway, $datetime, $config, $response, $authorizationService, $mapper);
+        $logger = $container->get(Logger::class);
+
+        return new FileResource($tableGateway, $datetime, $config, $response, $authorizationService, $mapper, $logger);
     }
 }

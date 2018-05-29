@@ -30,48 +30,32 @@ use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
-use MxmApi\Logger;
-use MxmApi\Exception\NotAuthorizedException;
+use MxmUser\Service\UserServiceInterface;
+use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
+use MxmApi\Service\ApiServiceInterface;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
     public function onBootstrap(EventInterface $event)
     {
         $application = $event->getTarget();
-        $eventManager = $application->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
+        $serviceManager = $application->getServiceManager();
+
+        $apiMapper = $serviceManager->get(ApiMapperInterface::class);
+        $apiService = $serviceManager->get(ApiServiceInterface::class);
+        $usEventManager = $serviceManager->get(UserServiceInterface::class)->getEventManager();
+        $usEventManager->attach('deleteUser',
+            function (EventInterface $event) use ($apiMapper, $apiService) {
+                $user = $event->getParam('user');
+                $clients = $apiMapper->findClientsByUser($user)->setItemCountPerPage(-1);
+                $apiMapper->deleteClients($clients);
+                $files = $apiMapper->findAllFilesByUser($user)->setItemCountPerPage(-1);
+                $apiService->deleteFiles($files);
+            }
+        );
+
     }
 
-    public function onError(MvcEvent $event)
-    {
-        $message = '';
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
-        }
-
-        $message .= "Controller: " . $event->getController() . "\n";
-        $message .= "Error message: " . $event->getError() . "\n";
-
-        $ex = $event->getParam('exception');
-        if ($ex !== null) {
-            $message .= "Exception: " . get_class($ex) . "\n";
-            $message .= "Message: " . $ex->getMessage() . "\n";
-            $message .= "File: " . $ex->getFile() . "\n";
-            $message .= "Line: " . $ex->getLine() . "\n";
-            $message .= "Stack trace:\n " . $ex->getTraceAsString() . "\n";
-        } else {
-            $message .= "No exception available.\n";
-        }
-
-        $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
-        $logger->err($message);
-
-        if ($ex instanceof NotAuthorizedException) {
-
-            return $event->getTarget()->redirect()->toRoute('notAuthorized');
-        }
-    }
 
     public function getConfig()
     {

@@ -138,6 +138,25 @@ class AdminController  extends AbstractActionController
 
     public function manageFilesAction()
     {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $action = $request->getPost('action', $this->translator->translate('No'));
+            if ($action === $this->translator->translate('Delete')) {
+                try {
+                    $this->apiService->deleteFiles($request->getPost('checkbox', []));
+                } catch (\Exception $e) {
+                    $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
+                    $model = new ViewModel([
+                        'errorMessage' => 'Cannot delete files.',
+                        'route' => 'manageFiles'
+                    ]);
+                    $model->setTemplate('mxm-admin/admin/error');
+
+                    return $model;
+                }
+            }
+        }
+
         $paginator = $this->apiService->findAllFiles();
         $this->configurePaginator($paginator);
 
@@ -301,6 +320,14 @@ class AdminController  extends AbstractActionController
     {
         $file = $this->params()->fromRoute('file', '');
         $response = $this->adminService->downloadLogFile($file);
+
+        return $response;
+    }
+
+    public function downloadFileAction()
+    {
+        $file = $this->params()->fromRoute('id', '');
+        $response = $this->apiService->downloadFile($file);
 
         return $response;
     }

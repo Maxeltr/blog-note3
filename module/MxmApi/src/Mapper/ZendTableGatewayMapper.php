@@ -26,22 +26,20 @@
 
 namespace MxmApi\Mapper;
 
-use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Config\Config;
-use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
-use Zend\Db\Sql\PreparableSqlInterface;
 use MxmApi\Exception\RecordNotFoundException;
 use MxmApi\Exception\InvalidArgumentException;
 use MxmApi\Exception\DataBaseErrorException;
 use MxmUser\Model\UserInterface;
 use Zend\Hydrator\HydratorInterface;
-use MxmApi\Model\Client;
 use Zend\Paginator\Adapter\DbTableGateway;
 use MxmApi\Model\ClientInterface;
 use Zend\Db\Sql\Where;
+use MxmApi\V1\Rest\File\FileEntity;
+use Zend\Stdlib\ErrorHandler;
+use Zend\Log\Logger;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
@@ -70,18 +68,25 @@ class ZendTableGatewayMapper implements MapperInterface
      */
     protected $clientHydrator;
 
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
     public function __construct(
         TableGateway $oauthClientsTableGateway,
         TableGateway $oauthAccessTokensTableGateway,
         TableGateway $fileTableGateway,
         HydratorInterface $clientHydrator,
-        Config $config
+        Config $config,
+        Logger $logger
     ) {
         $this->oauthClientsTableGateway = $oauthClientsTableGateway;
         $this->oauthAccessTokensTableGateway = $oauthAccessTokensTableGateway;
         $this->fileTableGateway = $fileTableGateway;
         $this->clientHydrator = $clientHydrator;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -128,7 +133,7 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findClientsByUser($user)
+    public function findClientsByUser(UserInterface $user)
     {
         $paginatorAdapter = new DbTableGateway($this->oauthClientsTableGateway, ['user_id' => $user->getId()]);
         $paginator = new Paginator($paginatorAdapter);
@@ -189,5 +194,66 @@ class ZendTableGatewayMapper implements MapperInterface
         $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $user->getId()], ['uploaded' => 'DESC']));
 
         return $paginator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findFileById($fileId)
+    {
+        $resultSet = $this->fileTableGateway->select(['id' => $fileId]);
+        if (0 === count($resultSet)) {
+            throw new RecordNotFoundException('File ' . $fileId . 'not found.');
+        }
+
+        return $resultSet->current();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteFiles($files)
+    {
+        $filePaths = [];
+
+        $func = function ($value) use (&$filePaths) {
+            if (is_string($value)) {
+                try {
+                    $file = $this->findFileById($value);
+                } catch (\Exception $ex) {
+                    $this->logger->err('File not found. Id - ' . $value . '. ' . $ex->getMessage() . ' ' . $ex->getFile() . ' ' . $ex->getLine());
+
+                    return;
+                }
+                $filePaths[] = $file->getPath();
+
+                return $value;
+            } elseif ($value instanceof FileEntity) {
+                $filePaths[] = $value->getPath();
+
+                return $value->getId();
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of FileEntity, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        $fileIds = array_map($func, $files);
+
+        foreach($filePaths as $filePath) {
+            ErrorHandler::start();
+            $test = unlink($filePath);
+            $error = ErrorHandler::stop();
+            if (! $test) {
+                $this->logger->err('Cannot remove file ' . $filePath . '. ' . $error);
+            }
+        }
+
+        $where = new Where();
+        $where->in('id', $fileIds);
+
+        return $this->fileTableGateway->delete($where);
     }
 }

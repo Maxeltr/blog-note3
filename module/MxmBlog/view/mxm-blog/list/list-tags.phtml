@@ -1,55 +1,56 @@
 <div class="container">
     <div class="row row-offcanvas row-offcanvas-right">
         <div class="page-header">
-          <h1>Example page header <small>Subtext for header</small></h1>
+            <h1><?php echo $this->translate('Tags') ?></h1>
         </div>
         <div class="col-xs-12 col-sm-9">
             <p class="pull-right visible-xs">
                 <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
             </p>
-            <div class="row">
-                <?php if (count($this->tags)): ?>
-                    <?php foreach ($this->tags as $tag): ?>
-                        <div class="col-xs-6 col-lg-4">
-                            <div class="div-1">
-                            <h3><a href="<?php echo $this->url('detailTag',
-                                array('action' => 'detailTag', 'id' => $tag->getId())); ?>">
-                                <?php echo $this->escapeHtml($tag->getTitle()); ?></a></h3>
-
-                            <p>
-                               Tag id: <?php echo $this->escapeHtml($tag->getId()); ?>
-                            </p>
-                            <p>
-                               Tag weight: <?php echo $this->escapeHtml($tag->getWeight()); ?>
-                            </p>
-                            <p>
-                               Просмотреть статьи с этим тегом: <a href="<?php echo $this->url('listPostsByTag',
-                                array('action' => 'listPostsByTag', 'id' => $tag->getId())); ?>">
-                                тыц</a>
-                            </p>
-                            </div>
-                        </div><!--/.col-xs-6.col-lg-4-->
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div><!--/row-->
-        </div><!--/.col-xs-12.col-sm-9-->
-
+            <?php $countColumns = 3;
+            $countTags = $this->tags->getCurrentItemCount();
+            $iterator = $this->tags->getIterator();
+            if ($countTags):
+                for ($i = 0; $i < $countTags; $i = $i + $countColumns ): ?>
+                    <div class="row">
+                        <?php for ($j = 0; $j < $countColumns; $j++):
+                            if ($iterator->valid()): ?>
+                                <div class="col-xs-12 col-md-4">
+                                    <div class="div-1">
+                                        <?php $tag = $iterator->current();
+                                        $iterator->next(); ?>
+                                        <h1><a href="<?php echo $this->url('detailTag',
+                                            array('action' => 'detailTag', 'id' => $tag->getId())); ?>">
+                                            <?php echo $this->escapeHtml($tag->getTitle()); ?></a>
+                                        </h1>
+                                        <p>
+                                            <?php echo $this->translate('Tag weight') ?>: <?php echo $this->escapeHtml($tag->getWeight()); ?>
+                                        </p>
+                                    </div>
+                                    <p><a role="button" href="<?php echo $this->url('listPostsByTag',
+                                        array('action' => 'listPostsByTag', 'id' => $tag->getId())); ?>" class="btn btn-default"><?php echo $this->translate('Tag content') ?></a>
+                                    </p>
+                                </div>
+                            <?php endif;
+                        endfor; ?>
+                    </div>
+                <?php endfor;
+            endif; ?>
+        </div>
         <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
             <div class="list-group">
-                <a class="list-group-item" href="<?php echo $this->url('listPosts',
-                    array('action' => 'listPosts')); ?>"><?php echo $this->translate('Articles') ?></a>
                 <a class="list-group-item" href="<?php echo $this->url('listCategories',
                     array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
-                <a class="list-group-item" href="#"><?php echo $this->translate('Archives') ?></a>
                 <a class="list-group-item" href="<?php echo $this->url('listTags',
                     array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
             </div>
-            <?php //echo $this->partial('partial/contentManagerPanel.phtml'); ?>
-        </div><!--/.sidebar-offcanvas-->
-    </div><!--/row-->
-
+            <div class="sidebar-module">
+                <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+            </div>
+        </div>
+    </div>
     <?php echo $this->paginationControl($this->tags,
-            'Sliding',
-            'partial/paginator.phtml',
-            array('route' => 'listTags')); ?>
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $route)); ?>
 </div>

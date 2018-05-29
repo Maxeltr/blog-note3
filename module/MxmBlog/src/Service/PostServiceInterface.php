@@ -126,14 +126,14 @@ interface PostServiceInterface
     /**
      * Удалить несколько статей.
      *
-     * @param array $posts Массив постов
+     * @param array|Paginator $posts Массив постов
      *
      * @return bool
      * @throw NotAuthorizedBlogException
      * @throws InvalidArgumentBlogException
      */
     public function deletePosts($posts);
-    
+
     /**
      * Должен вернуть массив объектов, реализующих CategoryInterface или Paginator
      *
@@ -181,7 +181,7 @@ interface PostServiceInterface
     /**
      * Удалить несколько категорий.
      *
-     * @param array $categories
+     * @param array|Paginator $categories
      *
      * @return bool
      * @throw NotAuthorizedBlogException
@@ -234,6 +234,17 @@ interface PostServiceInterface
      * @throw NotAuthorizedBlogException
      */
     public function deleteTag(TagInterface $tag);
+
+    /**
+     * Удалить несколько тегов.
+     *
+     * @param array|Paginator $tags
+     *
+     * @return bool
+     * @throw NotAuthorizedBlogException
+     * @throws InvalidArgumentBlogException
+     */
+    public function deleteTags($tags);
 
     /**
      * Найти статьи за определенный период времени.

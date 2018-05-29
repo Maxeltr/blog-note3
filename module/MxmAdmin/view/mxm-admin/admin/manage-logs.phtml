@@ -17,7 +17,6 @@
                                 <th><?php echo $this->translate('Size'); ?></th>
                                 <th><?php echo $this->translate('Date'); ?></th>
                                 <th><?php echo $this->translate('Type'); ?></th>
-                                <th><?php echo $this->translate('Path'); ?></th>
                                 <th><?php echo $this->translate('Download'); ?></th>
                             </tr>
                         </thead>
@@ -30,7 +29,6 @@
                                     <td><?php echo $this->escapeHtml($log['size']); ?></td>
                                     <td><?php echo $this->escapeHtml($log['date']); ?></td>
                                     <td><?php echo $this->escapeHtml($log['type']); ?></td>
-                                    <td><?php echo $this->escapeHtml($log['path']); ?></td>
                                     <td><a href="<?php echo $this->url('downloadLogFile', ['action' => 'downloadLogFile', 'file' => $this->escapeHtml($log['file'])]); ?>"><?php echo $this->translate('Download'); ?></a></td>
                                 </tr>
                             <?php $i++;

@@ -29,13 +29,9 @@ namespace MxmAdmin\Service;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmApi\Service\DateTimeInterface;
-use MxmApi\Service\ApiService;
 use Zend\Authentication\AuthenticationService;
-use Zend\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Db\Adapter\Adapter;
 use Zend\Config\Config;
-use Zend\Validator\Db\RecordExists;
 use Zend\Http\Response;
 
 class AdminServiceFactory implements FactoryInterface

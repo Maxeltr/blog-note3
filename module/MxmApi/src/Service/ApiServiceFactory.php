@@ -39,6 +39,7 @@ use Zend\Validator\Db\RecordExists;
 use MxmApi\Logger;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
+use Zend\Http\Response;
 
 class ApiServiceFactory implements FactoryInterface
 {
@@ -63,7 +64,7 @@ class ApiServiceFactory implements FactoryInterface
 
         $apiMapper = $container->get(ApiMapperInterface::class);
         $logger = $container->get(Logger::class);
-
+        $response = new Response();
 
         return new ApiService(
             $dateTime,
@@ -74,7 +75,8 @@ class ApiServiceFactory implements FactoryInterface
             $userMapper,
             $apiMapper,
             $grantTypes,
-            $logger
+            $logger,
+            $response
         );
     }
 }

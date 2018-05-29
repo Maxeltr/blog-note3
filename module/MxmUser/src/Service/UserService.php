@@ -48,6 +48,7 @@ use Zend\Session\Container as SessionContainer;
 use Zend\i18n\Translator\TranslatorInterface;
 use MxmUser\Validator\IsPropertyMatchesDb;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\Http\PhpEnvironment\Request;
 
 class UserService implements UserServiceInterface
 {
@@ -111,6 +112,11 @@ class UserService implements UserServiceInterface
      */
     protected $sessionContainer;
 
+    /**
+     * @var use Zend\Stdlib\RequestInterface;
+     */
+    protected $request;
+
     use EventManagerAwareTrait;
 
     public function __construct(
@@ -125,7 +131,8 @@ class UserService implements UserServiceInterface
         Bcrypt $bcrypt,
         MailService $mail,
         SessionContainer $sessionContainer,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        Request $request
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -139,6 +146,7 @@ class UserService implements UserServiceInterface
         $this->mail = $mail;
         $this->sessionContainer = $sessionContainer;
         $this->translator = $translator;
+        $this->request = $request;
     }
 
     /**
@@ -221,7 +229,10 @@ class UserService implements UserServiceInterface
         $user->setDateEmailToken($this->datetime->modify('now'));
 	$user->setEmailVerification(false);
 
-	$httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+//	$httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+
+        $host = $this->request->getServer('HTTP_HOST', null);
+	$httpHost = isset($host) ? $host : 'localhost';
 
         $confirmEmailUrl = '<a href="' . 'http://' . $httpHost . '/confirm/email/' . $token . '">Confirm Email</a>';
 
@@ -407,13 +418,22 @@ class UserService implements UserServiceInterface
 
         $subject = $this->translator->translate('Password Reset');
 
-        $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+//        $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+
+        $host = $this->request->getServer('HTTP_HOST', null);
+	$httpHost = isset($host) ? $host : 'localhost';
 
         $passwordResetUrl = '<a href="' . 'http://' . $httpHost . '/set/password/' . $token . '">' . $this->translator->translate('Reset password') . '</a>';
 
         $body = $this->translator->translate("Please follow the link below to reset your password") . ":\n";
         $body .= " $passwordResetUrl\n";
         $body .= $this->translator->translate("If you haven't asked to reset your password, please ignore this message") . "\n";
+
+//        $this->mail->setSubject('Confirm Email')->setBody($body)
+//            ->setFrom('qwer_qwerty_2018@inbox.ru', 'blog-note3')
+//            ->setTo($user->getEmail(), $user->getUsername());
+//
+//	$this->mail->send();
 
         $this->mail->sendEmail($subject, $body, 'birisinsk@mail.ru', 'blog-note3', $user->getEmail(), $user->getUsername());
 

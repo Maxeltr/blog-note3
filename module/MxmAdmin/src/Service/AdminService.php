@@ -36,6 +36,7 @@ use MxmAdmin\Exception\RuntimeException;
 use Zend\Http\Response;
 use MxmAdmin\Exception\InvalidArgumentException;
 use Zend\Filter\StaticFilter;
+use Zend\Stdlib\ErrorHandler;
 
 class AdminService implements AdminServiceInterface
 {
@@ -140,7 +141,7 @@ class AdminService implements AdminServiceInterface
             ));
         }
 
-        $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'BaseName');
+        $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
 
         if (!is_readable($path)) {
             throw new RuntimeException('Path "' . $path . '" is not readable.');
@@ -154,7 +155,7 @@ class AdminService implements AdminServiceInterface
         $headers->addHeaderLine("Content-type: application/octet-stream");
         $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . basename($path) . "\"");
         $headers->addHeaderLine("Content-length: " . filesize($path));
-        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
+//        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
 
         $fileContent = file_get_contents($path);
         if ($fileContent !== false) {
@@ -184,9 +185,11 @@ class AdminService implements AdminServiceInterface
         if (is_string($files)) {
             $files = explode(' ', $files);
         }
-
+//        \Zend\Debug\Debug::dump($files);
         foreach ($files as $file) {
-            $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'BaseName');
+            $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
+//\Zend\Debug\Debug::dump($path);
+//            $path = 'C:\xampp\htdocs\blog-note3\data\logs\MxmRbac.log';
 
             if (!is_readable($path)) {
                 throw new RuntimeException('Path "' . $path . '" is not readable.');
@@ -195,8 +198,11 @@ class AdminService implements AdminServiceInterface
             if (! is_file($path)) {
                 throw new RuntimeException('File "' . $path . '" does not exist.');
             }
-
+//chmod($path, 0777);
+//            \Zend\Debug\Debug::dump($path);
+            //ErrorHandler::start(E_WARNING);
             unlink($path);
+            //ErrorHandler::stop();
         }
 
         return;

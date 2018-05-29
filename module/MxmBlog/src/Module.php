@@ -34,6 +34,8 @@ use MxmBlog\Exception\NotAuthorizedBlogException;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use MxmBlog\Mapper\MapperInterface;
+use Zend\Http\PhpEnvironment\Request;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
@@ -51,19 +53,22 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
 
-        $postService = $serviceManager->get(PostServiceInterface::class);
+        $postMapper = $serviceManager->get(MapperInterface::class);
         $usEventManager = $serviceManager->get(UserServiceInterface::class)->getEventManager();
-        $usEventManager->attach('deleteUser', function (EventInterface $event) use ($postService) {
-            $posts = $postService->findPostsByUser($event->getParam('user'))->setItemCountPerPage(-1);	// try catch???
-            $postService->deletePosts($posts);
+        $usEventManager->attach('deleteUser', function (EventInterface $event) use ($postMapper) {
+            $posts = $postMapper->findPostsByUser($event->getParam('user'))->setItemCountPerPage(-1);
+            $postMapper->deletePosts($posts);
         });
     }
 
     public function onError(MvcEvent $event)
     {
         $message = '';
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
+
+        $request = new Request();
+            $uri = $request->getServer('REQUEST_URI', null);
+        if (isset($uri)) {
+            $message = "Request URI: " . $uri . "\n";
         }
 
         $message .= "Controller: " . $event->getController() . "\n";

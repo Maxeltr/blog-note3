@@ -28,7 +28,6 @@ namespace MxmAdmin;
 
 use Zend\Mvc\MvcEvent;
 use MxmAdmin\Logger;
-use MxmAdmin\Exception\NotAuthenticatedException;
 use MxmAdmin\Exception\NotAuthorizedException;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
