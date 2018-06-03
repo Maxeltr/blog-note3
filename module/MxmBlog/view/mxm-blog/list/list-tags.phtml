@@ -23,9 +23,6 @@
                                             array('action' => 'detailTag', 'id' => $tag->getId())); ?>">
                                             <?php echo $this->escapeHtml($tag->getTitle()); ?></a>
                                         </h1>
-                                        <p>
-                                            <?php echo $this->translate('Tag weight') ?>: <?php echo $this->escapeHtml($tag->getWeight()); ?>
-                                        </p>
                                     </div>
                                     <p><a role="button" href="<?php echo $this->url('listPostsByTag',
                                         array('action' => 'listPostsByTag', 'id' => $tag->getId())); ?>" class="btn btn-default"><?php echo $this->translate('Tag content') ?></a>
@@ -44,13 +41,10 @@
                 <a class="list-group-item" href="<?php echo $this->url('listTags',
                     array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
             </div>
-            <div class="sidebar-module">
-                <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
-            </div>
         </div>
     </div>
     <?php echo $this->paginationControl($this->tags,
         'Sliding',
         'partial/paginator.phtml',
-        array('route' => $route)); ?>
+        array('route' => $this->route)); ?>
 </div>

@@ -37,6 +37,7 @@ use Zend\Http\Response;
 use MxmAdmin\Exception\InvalidArgumentException;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ErrorHandler;
+use Zend\Log\Logger;
 
 class AdminService implements AdminServiceInterface
 {
@@ -65,18 +66,25 @@ class AdminService implements AdminServiceInterface
      */
     protected $response;
 
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $logger;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
         Response $response,
-        Config $config
+        Config $config,
+        Logger $logger
     ) {
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->response = $response;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -185,11 +193,9 @@ class AdminService implements AdminServiceInterface
         if (is_string($files)) {
             $files = explode(' ', $files);
         }
-//        \Zend\Debug\Debug::dump($files);
+
         foreach ($files as $file) {
             $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
-//\Zend\Debug\Debug::dump($path);
-//            $path = 'C:\xampp\htdocs\blog-note3\data\logs\MxmRbac.log';
 
             if (!is_readable($path)) {
                 throw new RuntimeException('Path "' . $path . '" is not readable.');
@@ -198,11 +204,16 @@ class AdminService implements AdminServiceInterface
             if (! is_file($path)) {
                 throw new RuntimeException('File "' . $path . '" does not exist.');
             }
-//chmod($path, 0777);
-//            \Zend\Debug\Debug::dump($path);
-            //ErrorHandler::start(E_WARNING);
-            unlink($path);
-            //ErrorHandler::stop();
+
+            ErrorHandler::start();
+            $test = unlink($path);
+            $error = ErrorHandler::stop();
+            if (! $test) {
+                $fp = fopen($path, "r+");
+                ftruncate($fp, 0);
+                fclose($fp);
+                $this->logger->err('Cannot remove file ' . $path . '. ' . $error);
+            }
         }
 
         return;

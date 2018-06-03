@@ -323,8 +323,39 @@ class ZendDbSqlMapper implements MapperInterface
      */
     public function deletePosts($posts)
     {
+        if ($posts instanceof Paginator) {
+            $posts = iterator_to_array($posts->setItemCountPerPage(-1));
+        }
+
+        if (! is_array($posts)) {
+            throw new InvalidArgumentBlogException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($posts) ? get_class($posts) : gettype($posts))
+            ));
+        }
+
+        if (empty($posts)) {
+            
+            return false;
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof PostInterface) {
+                return $value->getId();
+            } else {
+                throw new InvalidArgumentBlogException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of PostInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        $postIds = array_map($func, $posts);
+
         $action = new Delete('articles');
-        $action->where->in('id', $posts);
+        $action->where->in('id', $postIds);
 
         $sql = new Sql($this->dbAdapter);
         $stmt = $sql->prepareStatementForSqlObject($action);

@@ -67,11 +67,11 @@ interface MapperInterface
     public function deleteToken(ClientInterface $client);
 
     /**
-     * @param array $clientIds
+     * @param array|Paginator $clients
      *
      * @return int
      */
-    public function deleteTokens($clientIds);
+    public function deleteTokens($clients);
 
     /**
      * @param ClientInterface $client
@@ -81,7 +81,7 @@ interface MapperInterface
     public function deleteClient(ClientInterface $client);
 
     /**
-     * @param array client ids $clients
+     * @param array|Paginator $clients
      *
      * @return int
      */

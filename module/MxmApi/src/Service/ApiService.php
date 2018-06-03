@@ -269,38 +269,8 @@ class ApiService implements ApiServiceInterface
             throw new NotAuthorizedException('Access denied. Permission "delete.clients.rest" is required.');
         }
 
-        if ($clients instanceof Paginator) {
-            $clients = iterator_to_array($clients);
-        }
-
-        if (! is_array($clients)) {
-            throw new InvalidArgumentException(sprintf(
-                'The data must be array; received "%s"',
-                (is_object($clients) ? get_class($clients) : gettype($clients))
-            ));
-        }
-
-        if (empty($clients)) {
-            throw new InvalidArgumentException('The data array is empty');
-        }
-
-        $func = function ($value) {
-            if (is_string($value)) {
-                return $value;
-            } elseif ($value instanceof ClientInterface) {
-                return $value->getClientId();
-            } else {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid value in data array detected, value must be a string or instance of ClientInterface, %s given.',
-                    (is_object($value) ? get_class($value) : gettype($value))
-                ));
-            }
-        };
-
-        $clientId = array_map($func, $clients);
-
-        $this->apiMapper->deleteTokens($clientId);
-        $this->apiMapper->deleteClients($clientId);
+        $this->apiMapper->deleteTokens($clients);
+        $this->apiMapper->deleteClients($clients);
 
         return;
     }
@@ -333,21 +303,6 @@ class ApiService implements ApiServiceInterface
 
         if (!$this->authorizationService->isGranted('delete.files.rest')) {
             throw new NotAuthorizedException('Access denied. Permission "delete.files.rest" is required.');
-        }
-
-        if ($files instanceof Paginator) {
-            $files = ArrayUtils::iteratorToArray($files->setItemCountPerPage(-1));
-        }
-
-        if (! is_array($files)) {
-            throw new InvalidArgumentException(sprintf(
-                'The data must be array; received "%s"',
-                (is_object($files) ? get_class($files) : gettype($files))
-            ));
-        }
-
-        if (empty($files)) {
-            throw new InvalidArgumentException('The data array is empty');
         }
 
         $this->apiMapper->deleteFiles($files);

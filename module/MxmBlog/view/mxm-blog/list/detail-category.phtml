@@ -1,17 +1,15 @@
 <div class="container">
     <div class="page-header">
-        <h1 class="blog-title">The Bootstrap Blog</h1>
+        <h1><?php echo $this->translate('Category decription'); ?></h1>
     </div>
-
     <div class="row">
         <div class="col-sm-8">
             <div>
                 <h2><?php echo $this->escapeHtml($category->getTitle()); ?></h2>
                 <p>
-                    <?php echo $this->translate('Category decription'); ?>: <?php echo $this->escapeHtml($category->getDescription()); ?>
+                    <?php echo $this->escapeHtml($category->getDescription()); ?>
                 </p>
-            </div><!-- /.blog-post -->
-        </div><!-- /.blog-main -->
-        <?php echo $this->partial('partial/blogSidebar.phtml'); ?>
+            </div>
+        </div>
     </div>
 </div>

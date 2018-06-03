@@ -33,6 +33,7 @@ use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Config\Config;
 use Zend\Http\Response;
+use MxmAdmin\Logger;
 
 class AdminServiceFactory implements FactoryInterface
 {
@@ -43,13 +44,15 @@ class AdminServiceFactory implements FactoryInterface
         $authService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
         $response = new Response();
+        $logger = $container->get(Logger::class);
 
         return new AdminService(
             $dateTime,
             $authService,
             $authorizationService,
             $response,
-            $config
+            $config,
+            $logger
         );
     }
 }

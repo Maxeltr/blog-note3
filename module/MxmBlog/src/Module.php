@@ -56,7 +56,7 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
         $postMapper = $serviceManager->get(MapperInterface::class);
         $usEventManager = $serviceManager->get(UserServiceInterface::class)->getEventManager();
         $usEventManager->attach('deleteUser', function (EventInterface $event) use ($postMapper) {
-            $posts = $postMapper->findPostsByUser($event->getParam('user'))->setItemCountPerPage(-1);
+            $posts = $postMapper->findPostsByUser($event->getParam('user'), false)->setItemCountPerPage(-1);
             $postMapper->deletePosts($posts);
         });
     }

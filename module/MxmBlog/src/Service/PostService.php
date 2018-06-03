@@ -310,35 +310,7 @@ class PostService implements PostServiceInterface
             throw new NotAuthorizedBlogException('Access denied. Permission "delete.posts" is required.');
         }
 
-        if ($posts instanceof Paginator) {
-            $posts = iterator_to_array($posts->setItemCountPerPage(-1));
-        }
-
-        if (! is_array($posts)) {
-            throw new InvalidArgumentBlogException(sprintf(
-                'The data must be array; received "%s"',
-                (is_object($posts) ? get_class($posts) : gettype($posts))
-            ));
-        }
-
-        if (empty($posts)) {
-            throw new InvalidArgumentBlogException('The data array is empty');
-        }
-
-        $func = function ($value) {
-            if (is_string($value)) {
-                return $value;
-            } elseif ($value instanceof PostInterface) {
-                return $value->getId();
-            } else {
-                throw new InvalidArgumentBlogException(sprintf(
-                    'Invalid value in data array detected, value must be a string or instance of PostInterface, %s given.',
-                    (is_object($value) ? get_class($value) : gettype($value))
-                ));
-            }
-        };
-
-        return $this->mapper->deletePosts(array_map($func, $posts));
+        return $this->mapper->deletePosts($posts);
     }
 
     /**

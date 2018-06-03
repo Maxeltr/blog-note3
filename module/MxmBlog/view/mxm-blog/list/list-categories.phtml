@@ -44,13 +44,10 @@
                 <a class="list-group-item" href="<?php echo $this->url('listTags',
                     array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
             </div>
-                <div class="sidebar-module">
-                <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
-            </div>
         </div>
     </div>
     <?php echo $this->paginationControl($this->categories,
         'Sliding',
         'partial/paginator.phtml',
-        array('route' => $route)); ?>
+        array('route' => $this->route)); ?>
 </div>

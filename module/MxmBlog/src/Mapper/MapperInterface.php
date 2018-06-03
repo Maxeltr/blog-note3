@@ -87,7 +87,7 @@ interface MapperInterface
     public function deletePost(PostInterface $post);
 
     /**
-     * @param array $posts Массив id постов
+     * @param array|Paginator $posts
      *
      * @return bool
      */

@@ -40,6 +40,7 @@ use Zend\Db\Sql\Where;
 use MxmApi\V1\Rest\File\FileEntity;
 use Zend\Stdlib\ErrorHandler;
 use Zend\Log\Logger;
+use Zend\Stdlib\ArrayUtils;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
@@ -152,12 +153,53 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function deleteTokens($clientIds)
+    public function deleteTokens($clients)
     {
+        $clientIds = $this->getClientIds($clients);
+        if (empty($clientIds)) {
+
+            return false;
+        }
+
         $where = new Where();
         $where->in('client_id', $clientIds);
 
         return $this->oauthAccessTokensTableGateway->delete($where);
+    }
+
+    private function getClientIds($clients)
+    {
+        if ($clients instanceof Paginator) {
+            $clients = iterator_to_array($clients);
+        }
+
+        if (! is_array($clients)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($clients) ? get_class($clients) : gettype($clients))
+            ));
+        }
+
+        if (empty($clients)) {
+            return [];
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof ClientInterface) {
+                return $value->getClientId();
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid value in data array detected, value must be a string or instance of ClientInterface, %s given.',
+                    (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        $clientIds = array_map($func, $clients);
+
+        return $clientIds;
     }
 
     public function deleteClient(ClientInterface $client)
@@ -170,8 +212,14 @@ class ZendTableGatewayMapper implements MapperInterface
      */
     public function deleteClients($clients)
     {
+        $clientIds = $this->getClientIds($clients);
+        if (empty($clientIds)) {
+
+            return false;
+        }
+
         $where = new Where();
-        $where->in('client_id', $clients);
+        $where->in('client_id', $clientIds);
 
         return $this->oauthClientsTableGateway->delete($where);
     }
@@ -214,8 +262,22 @@ class ZendTableGatewayMapper implements MapperInterface
      */
     public function deleteFiles($files)
     {
-        $filePaths = [];
+        if ($files instanceof Paginator) {
+            $files = ArrayUtils::iteratorToArray($files->setItemCountPerPage(-1));
+        }
 
+        if (! is_array($files)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be array; received "%s"',
+                (is_object($files) ? get_class($files) : gettype($files))
+            ));
+        }
+
+        if (empty($files)) {
+            return false;
+        }
+
+        $filePaths = [];
         $func = function ($value) use (&$filePaths) {
             if (is_string($value)) {
                 try {
