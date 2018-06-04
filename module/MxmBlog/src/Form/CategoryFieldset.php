@@ -70,6 +70,17 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => $this->translator->translate('Category')
             )
         ));
+
+        $this->add([
+            'type' => 'text',
+            'name' => 'description',
+            'attributes' => [
+                'class' => 'form-control',
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Description')
+            ]
+        ]);
     }
 
     /**
@@ -80,39 +91,64 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification()
     {
-        return array(
-            'id' => array(
-                'filters'=>array(
-                    array(
+        return [
+            'id' => [
+                'filters' => [
+                    [
                         'name' => 'Int'
-                    ),
-                ),
-            ),
-            'title' => array(
+                    ],
+                ],
+            ],
+            'title' => [
                 'required' => false,
-                'filters'=>array(
-                    array(
+                'filters' => [
+                    [
                         'name' => 'StripTags'
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'StringTrim'
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'StripNewlines'
-                    ),
-                ),
-                'validators' => array(
-                    array(
-                        'name'=>'StringLength',
-                        'options'=>array(
-                            'encoding'=>'UTF-8',
-                            'min'=>1,
-                            'max'=>50,
+                    ],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 50,
                             'translator' => $this->validatorTranslator
-                        )
-                    ),
-                )
-            ),
-        );
+                        ]
+                    ],
+                ]
+            ],
+            'description' => [
+                'required' => false,
+                'filters' => [
+                    [
+                        'name' => 'StripTags'
+                    ],
+                    [
+                        'name' => 'StringTrim'
+                    ],
+                    [
+                        'name' => 'StripNewlines'
+                    ],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 255,
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ],
+                ]
+            ],
+        ];
     }
 }

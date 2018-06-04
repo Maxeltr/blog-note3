@@ -34,9 +34,14 @@
                     <?php echo $this->formRow($category->get('id')); ?>
                 </div>
                 <div class="form-group <?php echo empty($form->get('category')->get('title')->getMessages()) ? '' : 'has-error'; ?>">
-                   <?php echo $this->formLabel($form->get('category')->get('title'));
+                    <?php echo $this->formLabel($form->get('category')->get('title'));
                     echo $this->formElement($form->get('category')->get('title'));
-                     ?>
+                    ?>
+                </div>
+                <div class="form-group <?php echo empty($form->get('category')->get('description')->getMessages()) ? '' : 'has-error'; ?>">
+                    <?php echo $this->formLabel($form->get('category')->get('description'));
+                    echo $this->formElement($form->get('category')->get('description'));
+                    ?>
                 </div>
                 <div class="form-group">
                     <?php echo $this->formElement($form->get('submit')); ?>

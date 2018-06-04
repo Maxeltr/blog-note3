@@ -1,6 +1,6 @@
 <div class="container">
     <div class="page-header">
-        <h1>The Bootstrap Blog</h1>
+        <h1><?php echo $this->translate('The Blog') ?></h1>
     </div>
     <p class="lead"><?php if ($post->getAuthor() instanceof \MxmUser\Model\UserInterface) {
             ?><a href="<?php echo $this->url('listPostsByUser',
@@ -39,8 +39,24 @@
                         <?php echo $this->escapeHtml($tag->getTitle());?>
                     <?php endforeach; } ?>
                 </p>
-            </div><!-- /.blog-post -->
-        </div><!-- /.blog-main -->
-        <?php echo $this->partial('partial/blogSidebar.phtml'); ?>
+            </div>
+            <?php if ($this->isGranted('edit.post', $post)): ?>
+                <a role="button" class="btn btn-default" href="<?php echo $this->url('editPost', ['action' => 'editPost', 'id' => $post->getId()]); ?>"><?php echo $this->translate('Edit') ?></a>
+            <?php endif; ?>
+            <?php if ($this->isGranted('delete.post', $post)): ?>
+                <a role="button" class="btn btn-default" href="<?php echo $this->url('deletePost', ['action' => 'deletePost', 'id' => $post->getId()]); ?>"><?php echo $this->translate('Delete') ?></a>
+            <?php endif; ?>
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+            <div class="list-group">
+                <a class="list-group-item" href="<?php echo $this->url('listCategories',
+                    array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
+                <a class="list-group-item" href="<?php echo $this->url('listTags',
+                    array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
+            </div>
+            <div class="sidebar-module">
+                <?php echo $this->partial('partial/listArchivePanel.phtml'); ?>
+            </div>
+        </div>
     </div>
 </div>
