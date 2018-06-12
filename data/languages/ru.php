@@ -4,7 +4,6 @@
  */
 
 return [
-    //
     "Change Email" => "Изменить электронную почту",
     "Send" => "Отправить",
     "Login" => "Вход",
@@ -135,5 +134,19 @@ return [
     "General" => "Общий",
     "Category content" => "Контент категории",
     "Tag content" => "Контент тега",
+    "Password reset" => "Сброс пароля",
+    "Please follow the link below to reset your password" => "Для сброса пароля перейдите по ссылке ниже",
+    "If you haven't asked to reset your password, please ignore this message" => "Если вы не попросили сбросить пароль, пожалуйста, проигнорируйте это сообщение",
+    "If you haven't registered, please ignore this message" => "Если вы еще не зарегистрированы, пожалуйста, проигнорируйте это сообщение",
+    "Please follow the link below to confirm your email" => "Пожалуйста, перейдите по ссылке ниже, чтобы подтвердить свою электронную почту",
+    "Confirmed" => "Подтвержден",
+    "Old password" => "Старый пароль",
+    "Edit password, please" => "Изменить пароль, пожалуйста",
+    "Edit email, please" => "Редактирование электронной почты, пожалуйста",
+    "New email" => "Новая электронная почта",
+    "Client decription" => "Описание клиента",
+    "Grant types" => "Типы разрешений",
+    "Revoke token" => "Отозвать токен",
+    "Delete client" => "Удалить клиент",
 
 ];

@@ -71,6 +71,9 @@ class ResetPasswordForm extends Form implements InputFilterProviderInterface
                 'label' => $this->translator->translate('Please verify you are human'),
                 'captcha' => new \Zend\Captcha\Figlet(),
             ],
+            'attributes' => [
+                'class' => 'form-control',
+            ],
         ]);
 
         $this->add([

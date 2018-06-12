@@ -95,27 +95,27 @@ class MailService
         $this->translator = $translator;
     }
 
-    public function sendEmail($subject, $body, $from, $senderName, $to, $recipientName)
-    {
-        $mimePart = new MimePart($body);
-        $mimePart->type = 'text/html';
-
-        $mimeMess = new MimeMessage();
-        $mimeMess->setParts(array($mimePart));
-
-        $message = new MailMessage();
-        $message->setEncoding('UTF-8');
-        $message->setBody($mimeMess);
-        $message->setSubject($subject);
-        $message->addFrom($from, $senderName);
-        $message->setTo($to, $recipientName);
-
-        $transport = new SendMailTransport();
-        $transport->send($message);
-        $this->logger->info('Message was sent to ' . $to . ' with subject ' . $subject . '.');
-
-        return $this;
-    }
+//    public function sendEmail($subject, $body, $from, $senderName, $to, $recipientName)
+//    {
+//        $mimePart = new MimePart($body);
+//        $mimePart->type = 'text/html';
+//
+//        $mimeMess = new MimeMessage();
+//        $mimeMess->setParts(array($mimePart));
+//
+//        $message = new MailMessage();
+//        $message->setEncoding('UTF-8');
+//        $message->setBody($mimeMess);
+//        $message->setSubject($subject);
+//        $message->addFrom($from, $senderName);
+//        $message->setTo($to, $recipientName);
+//
+//        $transport = new SendMailTransport();
+//        $transport->send($message);
+//        $this->logger->info('Message was sent to ' . $to . ' with subject ' . $subject . '.');
+//
+//        return $this;
+//    }
 
     public function send()
     {
@@ -127,8 +127,8 @@ class MailService
 
         $this->transport->send($this->mailMessage);
 
-        $this->logger->info($this->translator->translate('Message was sent to') . ' ' . $to . ' '
-            . $this->translator->translate('with subject') . ' ' . $subject . '.'
+        $this->logger->info($this->translator->translate('Message was sent to') . ' ' . $this->mailMessage->getTo()->current()->toString() . ' '
+            . $this->translator->translate('with subject') . ' ' . $this->subject . '.'
         );
 
         return $this;
@@ -139,6 +139,8 @@ class MailService
         $mimePart = new MimePart($message);
         if ($type !== null) {
             $mimePart->setType($type);
+        } else {
+            $mimePart->setType('text/plain');
         }
 
         $this->body->setParts([$mimePart]);

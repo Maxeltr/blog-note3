@@ -229,23 +229,23 @@ class UserService implements UserServiceInterface
         $user->setDateEmailToken($this->datetime->modify('now'));
 	$user->setEmailVerification(false);
 
-//	$httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+        $subject = $this->translator->translate('Confirm Email');
 
         $host = $this->request->getServer('HTTP_HOST', null);
 	$httpHost = isset($host) ? $host : 'localhost';
 
-        $confirmEmailUrl = '<a href="' . 'http://' . $httpHost . '/confirm/email/' . $token . '">Confirm Email</a>';
+        $confirmEmailUrl = '<a href="' . 'http://' . $httpHost . '/confirm/email/' . $token . '">' . $this->translator->translate("Confirm Email") . '</a>';
 
-        $body = $this->translator->translate("Please follow the link below to confirm your email") . ":\n";
+        $body = $this->translator->translate("Please follow the link below to confirm your email") . ":" . "<br>";
 
-        $body .= " $confirmEmailUrl\n";
-        $body .= $this->translator->translate("If you haven't registered, please ignore this message") . "\n";
+        $body .= $confirmEmailUrl . "<br>";
+        $body .= $this->translator->translate("If you haven't registered, please ignore this message") . "<br>";
 
-//        $this->mail->setSubject('Confirm Email')->setBody($body)
-//            ->setFrom('qwer_qwerty_2018@inbox.ru', 'blog-note3')
-//            ->setTo($user->getEmail(), $user->getUsername());
-//
-//	$this->mail->send();
+        $this->mail->setSubject($subject)->setBody($body, 'text/html')
+            ->setFrom('birisinsk@mail.ru', 'blog-note3')
+            ->setTo($user->getEmail(), $user->getUsername());
+
+	$this->mail->send();
 
         return $this->mapper->insertUser($user);
     }
@@ -416,26 +416,22 @@ class UserService implements UserServiceInterface
 
         $this->mapper->updateUser($user);
 
-        $subject = $this->translator->translate('Password Reset');
-
-//        $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+        $subject = $this->translator->translate('Password reset');
 
         $host = $this->request->getServer('HTTP_HOST', null);
 	$httpHost = isset($host) ? $host : 'localhost';
 
         $passwordResetUrl = '<a href="' . 'http://' . $httpHost . '/set/password/' . $token . '">' . $this->translator->translate('Reset password') . '</a>';
 
-        $body = $this->translator->translate("Please follow the link below to reset your password") . ":\n";
-        $body .= " $passwordResetUrl\n";
-        $body .= $this->translator->translate("If you haven't asked to reset your password, please ignore this message") . "\n";
+        $body = $this->translator->translate("Please follow the link below to reset your password") . ":" . "<br>";
+        $body .= $passwordResetUrl . "<br>";
+        $body .= $this->translator->translate("If you haven't asked to reset your password, please ignore this message") . "<br>";
 
-//        $this->mail->setSubject('Confirm Email')->setBody($body)
-//            ->setFrom('qwer_qwerty_2018@inbox.ru', 'blog-note3')
-//            ->setTo($user->getEmail(), $user->getUsername());
-//
-//	$this->mail->send();
+        $this->mail->setSubject($subject)->setBody($body, 'text/html')
+            ->setFrom('birisinsk@mail.ru', 'blog-note3')
+            ->setTo($user->getEmail(), $user->getUsername());
 
-        $this->mail->sendEmail($subject, $body, 'birisinsk@mail.ru', 'blog-note3', $user->getEmail(), $user->getUsername());
+	$this->mail->send();
 
         return $this;
     }

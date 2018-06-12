@@ -15,6 +15,7 @@
                                 <th><?php echo $this->translate('Mark'); ?></th>
                                 <th><?php echo $this->translate('ID'); ?></th>
                                 <th><?php echo $this->translate('Username'); ?></th>
+                                <th><?php echo $this->translate('Email'); ?></th>
                                 <th><?php echo $this->translate('Timezone'); ?></th>
                                 <th><?php echo $this->translate('Language'); ?></th>
 				<th><?php echo $this->translate('Role'); ?></th>
@@ -29,6 +30,7 @@
                                     <td><input type="checkbox" name="checkbox[<?php echo $i; ?>]" value='<?php echo $this->escapeHtml($user->getId()); ?>'></td>
                                     <td><?php echo $this->escapeHtml($user->getId()); ?></td>
                                     <td><?php echo $this->escapeHtml($user->getUsername()); ?></td>
+                                    <td><?php echo $this->escapeHtml($user->getEmail()); ?></td>
                                     <td><?php if ($user->getTimebelt() instanceof \DateTimeZone) { echo $this->escapeHtml($user->getTimebelt()->getName()); } ?></td>
                                     <td><?php echo $this->escapeHtml($user->getLocale()); ?></td>
                                     <td><?php echo $this->escapeHtml($user->getRole()); ?></td>

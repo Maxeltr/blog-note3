@@ -1,46 +1,56 @@
-<div class="row row-offcanvas row-offcanvas-right">
-    <div class="page-header">
-      <h1>Example page header <small>Subtext for header</small></h1>
-    </div>
-    <div class="col-xs-12 col-sm-9">
-        <p class="pull-right visible-xs">
-            <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
-        </p>
-        <div class="row">
-            <?php if (count($this->clients)): ?>
-                <?php foreach ($this->clients as $client): ?>
-                    <div class="col-xs-6 col-lg-4">
-                        <div class="div-1">
-                        <h3><a href="<?php echo $this->url('detailClient',
-                            array('action' => 'detailClient', 'client_id' => $client->getClientId())); ?>">
-                            <?php echo $this->escapeHtml($client->getClientId()); ?></a></h3>
-
-<!--                        <p>
-                           Tag id: <?php //echo $this->escapeHtml($tag->getId()); ?>
-                        </p>-->
-
-                        </div>
-                    </div><!--/.col-xs-6.col-lg-4-->
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div><!--/row-->
-    </div><!--/.col-xs-12.col-sm-9-->
-
-    <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
-        <div class="list-group">
-            <a class="list-group-item" href="<?php echo $this->url('listPosts',
-                array('action' => 'listPosts')); ?>">Articles</a>
-            <a class="list-group-item" href="<?php echo $this->url('listCategories',
-                array('action' => 'listCategories')); ?>">Categories</a>
-            <a class="list-group-item" href="#">Archives</a>
-            <a class="list-group-item" href="<?php echo $this->url('listTags',
-                array('action' => 'listTags')); ?>">Tags</a>
+<div class="container">
+    <div class="row row-offcanvas row-offcanvas-right">
+        <div class="page-header">
+            <h1><?php echo $this->translate('Clients') ?></h1>
         </div>
-        <?php echo $this->partial('partial/contentManagerPanel.phtml'); ?>
-    </div><!--/.sidebar-offcanvas-->
-</div><!--/row-->
-
-<?php echo $this->paginationControl($this->clients,
+        <div class="col-xs-12 col-sm-9">
+            <p class="pull-right visible-xs">
+                <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
+            </p>
+            <?php $countColumns = 3;
+            $countClients = $this->clients->getCurrentItemCount();
+            $iterator = $this->clients->getIterator();
+            if ($countClients):
+                for ($i = 0; $i < $countClients; $i = $i + $countColumns ): ?>
+                    <div class="row">
+                        <?php for ($j = 0; $j < $countColumns; $j++):
+                            if ($iterator->valid()): ?>
+                                <div class="col-xs-12 col-md-4">
+                                    <div class="div-1">
+                                        <?php $client = $iterator->current();
+                                        $iterator->next(); ?>
+                                        <h1><a href="<?php echo $this->url('detailClient',
+                                            array('action' => 'detailClient', 'client_id' => $client->getClientId())); ?>">
+                                            <?php echo $this->escapeHtml($client->getClientId()); ?></a>
+                                        </h1>
+                                        <p>
+                                            <?php echo $this->escapeHtml($client->getGrantTypes()); ?>
+                                        </p>
+                                        <p>
+                                            <?php echo $this->escapeHtml($client->getScope()); ?>
+                                        </p>
+                                    </div>
+                                    <p><a role="button" href="<?php echo $this->url('detailClient',
+                                        array('action' => 'detailClient', 'client_id' => $client->getClientId())); ?>" class="btn btn-default"><?php echo $this->translate('View details') ?></a>
+                                    </p>
+                                </div>
+                            <?php endif;
+                        endfor; ?>
+                    </div>
+                <?php endfor;
+            endif; ?>
+        </div>
+        <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
+            <div class="list-group">
+                <a class="list-group-item" href="<?php echo $this->url('listCategories',
+                    array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
+                <a class="list-group-item" href="<?php echo $this->url('listTags',
+                    array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
+            </div>
+        </div>
+    </div>
+    <?php echo $this->paginationControl($this->clients,
         'Sliding',
         'partial/paginator.phtml',
-        array('route' => 'listClients')); ?>
+        array('route' => $this->route)); ?>
+</div>

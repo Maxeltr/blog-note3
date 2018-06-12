@@ -18,7 +18,8 @@
                     echo $this->escapeHtml($timezone->getName()); } ?>
                 </p>
                 <p>
-                    <?php echo $this->translate('Email'); ?>: <?php echo $this->escapeHtml($user->getEmail()); ?>
+                    <?php echo $this->translate('Email'); ?>: <?php echo $this->escapeHtml($user->getEmail());
+                    if ($user->getEmailVerification()) { echo " (" . $this->translate('Confirmed') . ")"; } ?>
                 </p>
                 <p>
                     <?php echo $this->translate('Role'); ?>: <?php echo $this->escapeHtml($user->getRole()); ?>
@@ -32,17 +33,17 @@
                 } ?>
                 </p>
                 <p>
-                <a href="<?php echo $this->url('editPassword', array('action' => 'editPassword')); ?>"><?php echo $this->translate('Change password'); ?></a>
-            </p>
-            <p>
-                <a href="<?php echo $this->url('editEmail', array('action' => 'editEmail')); ?>"><?php echo $this->translate('Change email'); ?></a>
-            </p>
-            <p>
-                <a href="<?php echo $this->url('editUser', array('action' => 'editUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('Edit user'); ?></a>
-            </p>
-            <p>
-                <a href="<?php echo $this->url('deleteUser', array('action' => 'deleteUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('Delete user'); ?></a>
-            </p>
+                    <a href="<?php echo $this->url('editPassword', array('action' => 'editPassword')); ?>"><?php echo $this->translate('Change password'); ?></a>
+                </p>
+                <p>
+                    <a href="<?php echo $this->url('editEmail', array('action' => 'editEmail')); ?>"><?php echo $this->translate('Change email'); ?></a>
+                </p>
+                <p>
+                    <a href="<?php echo $this->url('editUser', array('action' => 'editUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('Edit user'); ?></a>
+                </p>
+                <p>
+                    <a href="<?php echo $this->url('deleteUser', array('action' => 'deleteUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('Delete user'); ?></a>
+                </p>
             </div>
         </div>
     </div>
