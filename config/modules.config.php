@@ -44,5 +44,6 @@ return [
     'MxmRbac',
     'MxmMail',
     'MxmApi',
-    'MxmAdmin'
+    'MxmAdmin',
+    'MxmHelpers'
 ];

@@ -2,7 +2,6 @@
 namespace MxmBlog;
 
 use Zend\ServiceManager\Factory\InvokableFactory;
-
 use Zend\Router\Http\Literal;
 
 return [
@@ -10,11 +9,6 @@ return [
         'listController' => [
             'ItemCountPerPage' => 9,
         ],
-//        'dateTime' => [
-//            'timezone' => 'Europe/Moscow',  //зона по умолчанию для создания дефолтных DateTime
-//            'locale' => 'ru',
-//            'dateTimeFormat' => 'Y-m-d H:i:s', //TODO По моему эта херня жестко закодена в контроллере. Если здесь изменить то не будет работать?
-//        ],
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmBlog.log',
         ],
@@ -63,14 +57,12 @@ return [
     'view_helpers' => [
         'aliases' => [
             'archiveDates' => View\Helper\ArchiveDates::class,
-            'formatDateI18n' => View\Helper\FormatDateI18n::class,
         ],
         'factories' => [
             View\Helper\ArchiveDates::class => Factory\View\Helper\ArchiveDatesFactory::class,
-            View\Helper\FormatDateI18n::class => Factory\View\Helper\FormatDateI18nFactory::class,
         ],
         'invokables' => [
-            'translate' => \Zend\I18n\View\Helper\Translate::class
+            //'translate' => \Zend\I18n\View\Helper\Translate::class
         ]
     ],
     'filters' => [

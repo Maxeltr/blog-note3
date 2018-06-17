@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\View\Helper;
+namespace MxmHelpers\View\Helper;
 
 use Zend\I18n\View\Helper\DateFormat;
 use Zend\Config\Config;
-use MxmBlog\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmUser\Model\UserInterface;
 use Zend\Session\Container as SessionContainer;
+use MxmHelpers\Exception\InvalidArgumentException;
 
 class FormatDateI18n extends DateFormat
 {
@@ -51,13 +51,19 @@ class FormatDateI18n extends DateFormat
     }
 
     public function __invoke(
-       // \DateTimeInterface $datetime,
         $datetime,
         $dateType = \IntlDateFormatter::LONG,
         $timeType = \IntlDateFormatter::MEDIUM,
         $locale = null,
         $pattern = null
     ) {
+        if (! $datetime instanceof \DateTimeInterface) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be instance of DateTimeInterface; received "%s"',
+                (is_object($datetime) ? get_class($datetime) : gettype($datetime))
+            ));
+        }
+
         $timezone = null;
         $lang = null;
 

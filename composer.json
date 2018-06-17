@@ -47,7 +47,8 @@
             "MxmRbac\\": "module/MxmRbac/src/",
             "MxmMail\\": "module/MxmMail/src/",
             "MxmApi\\": "module/MxmApi/src/",
-            "MxmAdmin\\": "module/MxmAdmin/src/"
+            "MxmAdmin\\": "module/MxmAdmin/src/",
+            "MxmHelpers\\": "module/MxmHelpers/src/"
         }
     },
     "autoload-dev": {
