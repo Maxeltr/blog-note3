@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Maxim Eltratov <maxim.eltratov@yandex.ru>.
+ * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,6 @@
 
 namespace MxmRbac\Exception;
 
-class NotAuthorizedRbacException extends RuntimeRbacException implements RbacExceptionInterface
+class RuntimeException extends \RuntimeException implements ExceptionInterface
 {
 }

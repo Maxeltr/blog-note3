@@ -83,7 +83,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
             ]
         ]);
 
-        if ($this->authorizationService->isGranted('change.roles')) {
+        if ($this->authorizationService->isGranted('change.role')) {
             $this->add([
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'role',
@@ -165,7 +165,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
             ],
         ];
 
-        if ($this->authorizationService->isGranted('change.roles')) {
+        if ($this->authorizationService->isGranted('change.role')) {
             $filters['role'] = [
                 'filters' => [
                     ['name' => 'Int'],

@@ -34,15 +34,11 @@ use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmApi\Exception\InvalidArgumentException;
 use MxmApi\Exception\AlreadyExistsException;
-use MxmApi\Exception\NotAuthorizedException;
 use Zend\Validator\Db\RecordExists;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Mapper\ZendTableGatewayMapper;
 use MxmApi\Model\ClientInterface;
 use Zend\Log\Logger;
-use Zend\Paginator\Paginator;
-use Zend\Stdlib\ArrayUtils;
-use MxmApi\V1\Rest\File\FileEntity;
 use MxmApi\Exception\RuntimeException;
 use Zend\Http\Response;
 
@@ -136,9 +132,7 @@ class ApiService implements ApiServiceInterface
 
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('add.client.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "add.client.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('add.client.rest');
 
         if ($this->clientExistsValidator->isValid($data->getClientId())) {
             throw new AlreadyExistsException("Client with " . $data->getClientId() . " already exists");
@@ -163,9 +157,7 @@ class ApiService implements ApiServiceInterface
 
         $user = $this->userMapper->findUserById($client->getUserId());
 
-        if (!$this->authorizationService->isGranted('find.client.rest', $user)) {
-            throw new NotAuthorizedException('Access denied. Permission "find.client.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('find.client.rest', $user);
 
 	return $client;
     }
@@ -180,9 +172,7 @@ class ApiService implements ApiServiceInterface
 
         $user = $this->userMapper->findUserById($client->getUserId());
 
-        if (!$this->authorizationService->isGranted('revoke.token.rest', $user)) {
-            throw new NotAuthorizedException('Access denied. Permission "revoke.token.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('revoke.token.rest', $user);
 
         return $this->apiMapper->deleteToken($client);
     }
@@ -191,9 +181,7 @@ class ApiService implements ApiServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('revoke.tokens.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "revoke.tokens.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('revoke.tokens.rest');
 
         if (! is_array($clients)) {
             throw new InvalidArgumentException(sprintf(
@@ -228,20 +216,16 @@ class ApiService implements ApiServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('find.clients.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('find.clients.rest');
 
         return $this->apiMapper->findAllClients();;
     }
 
-    public function findClientsByUser($user)
+    public function findClientsByUser(UserInterface $user)
     {
         $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('find.clients.rest', $user)) {
-            throw new NotAuthorizedException('Access denied. Permission "find.clients.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('find.clients.rest', $user);
 
         return $this->apiMapper->findClientsByUser($user);
     }
@@ -252,9 +236,7 @@ class ApiService implements ApiServiceInterface
 
         $user = $this->userMapper->findUserById($client->getUserId());
 
-        if (!$this->authorizationService->isGranted('delete.client.rest', $user)) {
-            throw new NotAuthorizedException('Access denied. Permission "delete.client.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.client.rest', $user);
 
         $this->revokeToken($client);
 
@@ -265,9 +247,7 @@ class ApiService implements ApiServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('delete.clients.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "delete.clients.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.clients.rest');
 
         $this->apiMapper->deleteTokens($clients);
         $this->apiMapper->deleteClients($clients);
@@ -279,9 +259,7 @@ class ApiService implements ApiServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('fetch.files.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('fetch.files.rest');
 
         return $this->apiMapper->findAllFiles();
     }
@@ -290,9 +268,7 @@ class ApiService implements ApiServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('fetch.files.rest', $user)) {
-            throw new NotAuthorizedException('Access denied. Permission "fetch.files.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('fetch.files.rest', $user);
 
         return $this->apiMapper->findAllFiles($user);
     }
@@ -301,9 +277,7 @@ class ApiService implements ApiServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('delete.files.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "delete.files.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.files.rest');
 
         $this->apiMapper->deleteFiles($files);
 
@@ -314,9 +288,7 @@ class ApiService implements ApiServiceInterface
     {
          $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('download.file.rest')) {
-            throw new NotAuthorizedException('Access denied. Permission "download.file.rest" is required.');
-        }
+        $this->authorizationService->checkPermission('download.file.rest');
 
         if (! is_string($fileId)) {
             throw new InvalidArgumentException(sprintf(

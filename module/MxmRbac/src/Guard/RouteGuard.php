@@ -29,9 +29,9 @@ namespace MxmRbac\Guard;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\ListenerAggregateTrait;
 use Zend\EventManager\EventManagerInterface;
-use MxmRbac\Exception\NotAuthorizedRbacException;
+use MxmRbac\Exception\NotAuthorizedException;
 use MxmRbac\Service\AuthorizationServiceInterface;
-use MxmRbac\Exception\InvalidArgumentRbacException;
+use MxmRbac\Exception\InvalidArgumentException;
 use Zend\Config\Config;
 
 class RouteGuard implements RouteGuardInterface
@@ -59,7 +59,7 @@ class RouteGuard implements RouteGuardInterface
         $this->config = $config;
 
         if (! isset($this->config->rbac_module->guards->RouteGuard)) {
-            throw new InvalidArgumentRbacException('No RouteGuard options in module config');
+            throw new InvalidArgumentException('No RouteGuard options in module config');
         }
     }
 
@@ -76,7 +76,7 @@ class RouteGuard implements RouteGuardInterface
         }
 
         $event->setError(self::GUARD_UNAUTHORIZED);
-        $event->setParam('exception', new NotAuthorizedRbacException(
+        $event->setParam('exception', new NotAuthorizedException(
             'You are not authorized to access this resource',
             403
         ));

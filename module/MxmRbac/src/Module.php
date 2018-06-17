@@ -31,7 +31,7 @@ use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use MxmRbac\Guard\RouteGuardInterface;
-use MxmRbac\Logger;
+use MxmRbac\Exception\NotAuthorizedException;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
@@ -44,33 +44,17 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
         $guard = $serviceManager->get(RouteGuardInterface::class);
         $guard->attach($eventManager);
 
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], -1000);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], -1000);
     }
 
     public function onError(MvcEvent $event)
     {
-        $message = '';
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
-        }
-
-        $message .= "Controller: " . $event->getController() . "\n";
-        $message .= "Error message: " . $event->getError() . "\n";
-
         $ex = $event->getParam('exception');
-        if ($ex !== null) {
-            $message .= "Exception: " . get_class($ex) . "\n";
-            $message .= "Message: " . $ex->getMessage() . "\n";
-            $message .= "File: " . $ex->getFile() . "\n";
-            $message .= "Line: " . $ex->getLine() . "\n";
-            $message .= "Stack trace:\n " . $ex->getTraceAsString() . "\n";
-        } else {
-            $message .= "No exception available.\n";
-        }
+        if ($ex instanceof NotAuthorizedException) {
 
-        $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
-        $logger->err($message);
+            return $event->getTarget()->redirect()->toRoute('notAuthorized');
+        }
     }
 
     public function getConfig()

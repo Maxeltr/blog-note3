@@ -27,6 +27,7 @@
 namespace MxmApi\Service;
 
 use MxmApi\Model\ClientInterface;
+use MxmUser\Model\UserInterface;
 
 interface ApiServiceInterface
 {
@@ -85,6 +86,17 @@ interface ApiServiceInterface
      * @throws DataBaseErrorException
      */
     public function findAllClients();
+
+    /**
+     * Извлечь данные клиентов (приложение, сайт) определенного юзера.
+     *
+     * @param  UserInterface $user
+     * @return Paginator
+     *
+     * @throws NotAuthenticatedException
+     * @throws NotAuthorizedException
+     */
+    public function findClientsByUser(UserInterface $user);
 
     /**
      * Удалить данные клиента (приложение, сайт) из базы данных.

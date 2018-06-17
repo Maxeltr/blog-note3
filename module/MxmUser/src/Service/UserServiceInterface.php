@@ -36,7 +36,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      *
      * @return Zend\Paginator\Paginator
      * @throws NotAuthenticatedUserException
-     * @throw NotAuthorizedUserException
+     * @throw NotAuthorizedException
      */
     public function findAllUsers();
 
@@ -47,7 +47,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      * @return UserInterface
      * @throws NotAuthenticatedUserException
      * @throw RecordNotFoundUserException
-     * @throw NotAuthorizedUserException
+     * @throw NotAuthorizedException
      */
     public function findUserById($id);
 
@@ -67,7 +67,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      * @return UserInterface
      *
      * @throws NotAuthenticatedUserException
-     * @throw NotAuthorizedUserException
+     * @throw NotAuthorizedException
      */
     public function updateUser(UserInterface $user);
 
@@ -79,7 +79,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      *
      * @return bool
      * @throw NotAuthenticatedUserException
-     * @throw NotAuthorizedUserException
+     * @throw NotAuthorizedException
      */
     public function deleteUser(UserInterface $user);
 
@@ -93,7 +93,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      *
      * @throws NotAuthenticatedUserException
      * @throws InvalidArgumentUserException
-     * @throw NotAuthorizedUserException
+     * @throw NotAuthorizedException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
     public function editPassword($oldPassword, $newPassword);
@@ -122,7 +122,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      *
      * @throws NotAuthenticatedUserException
      * @throws InvalidArgumentUserException
-     * @throw NotAuthorizedUserException
+     * @throw NotAuthorizedException
      * @throws InvalidPasswordUserException Если текущий пароль введенный пользователем не совпадает с текущим паролем в БД.
      */
     public function editEmail($email, $password);

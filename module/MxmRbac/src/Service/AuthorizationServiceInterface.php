@@ -42,6 +42,14 @@ interface AuthorizationServiceInterface
     public function isGranted($permission, $content = null);
 
     /**
+     * Returns true if the permission is granted to the current identity. Throw exception if it is not granted.
+     *
+     * @return bool
+     * @throws NotAuthorizedException
+     */
+    public function checkPermission($permission, $content = null);
+
+    /**
      * Set current identity
      *
      * @param MxmUser\Model\UserInterface $identity

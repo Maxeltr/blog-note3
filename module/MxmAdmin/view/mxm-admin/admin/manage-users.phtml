@@ -34,7 +34,7 @@
                                     <td><?php if ($user->getTimebelt() instanceof \DateTimeZone) { echo $this->escapeHtml($user->getTimebelt()->getName()); } ?></td>
                                     <td><?php echo $this->escapeHtml($user->getLocale()); ?></td>
                                     <td><?php echo $this->escapeHtml($user->getRole()); ?></td>
-                                    <td><?php if ($user->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($user->getCreated()); } ?></td>
+                                    <td><?php if ($user->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($user->getCreated(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); } ?></td>
                                     <td><a href="<?php echo $this->url('editUser', array('action' => 'editUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('Edit'); ?></a>
                                         <a href="<?php echo $this->url('detailUser', array('action' => 'detailUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('View'); ?></a></td>
                                 </tr>

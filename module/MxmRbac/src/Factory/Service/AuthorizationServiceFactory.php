@@ -36,7 +36,7 @@ use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmRbac\Assertion\AssertionPluginManager;
-use MxmRbac\Exception\InvalidArgumentRbacException;
+use MxmRbac\Exception\InvalidArgumentException;
 use MxmRbac\Logger;
 
 class AuthorizationServiceFactory implements FactoryInterface
@@ -49,7 +49,7 @@ class AuthorizationServiceFactory implements FactoryInterface
 
         $config = new Config($container->get('config'));
         if (!isset($config->rbac_module->rbac_config->assertions)) {
-            throw new InvalidArgumentRbacException("Invalid options. No assertions in config file.");
+            throw new InvalidArgumentException("Invalid options. No assertions in config file.");
         }
 
         $rbac = new Rbac();

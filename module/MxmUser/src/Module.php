@@ -27,9 +27,7 @@
 namespace MxmUser;
 
 use Zend\Mvc\MvcEvent;
-use MxmUser\Logger;
 use MxmUser\Exception\NotAuthenticatedUserException;
-use MxmUser\Exception\NotAuthorizedUserException;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -45,34 +43,13 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
     {
         $application = $event->getTarget();
         $eventManager = $application->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError']);
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError']);
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], -1000);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], -1000);
     }
 
     public function onError(MvcEvent $event)
     {
-        $message = '';
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
-        }
-
-        $message .= "Controller: " . $event->getController() . "\n";
-        $message .= "Error message: " . $event->getError() . "\n";
-
         $ex = $event->getParam('exception');
-        if ($ex !== null) {
-            $message .= "Exception: " . get_class($ex) . "\n";
-            $message .= "Message: " . $ex->getMessage() . "\n";
-            $message .= "File: " . $ex->getFile() . "\n";
-            $message .= "Line: " . $ex->getLine() . "\n";
-            $message .= "Stack trace:\n " . $ex->getTraceAsString() . "\n";
-        } else {
-            $message .= "No exception available.\n";
-        }
-
-        $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
-        $logger->err($message);
-
         if ($ex instanceof NotAuthenticatedUserException) {
             $uri = $event->getApplication()->getRequest()->getUri();
             $uri->setScheme(null)
@@ -82,11 +59,6 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
             $redirectUrl = $uri->toString();
 
             return $event->getTarget()->redirect()->toRoute('loginUser', [], ['query' => ['redirect' => $redirectUrl]]);
-        }
-
-        if ($ex instanceof NotAuthorizedUserException) {
-
-            return $event->getTarget()->redirect()->toRoute('notAuthorized');
         }
     }
 }

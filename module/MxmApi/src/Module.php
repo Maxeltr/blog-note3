@@ -29,7 +29,6 @@ namespace MxmApi;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use Zend\Mvc\MvcEvent;
 use MxmUser\Service\UserServiceInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 use MxmApi\Service\ApiServiceInterface;
@@ -55,7 +54,6 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
         );
 
     }
-
 
     public function getConfig()
     {

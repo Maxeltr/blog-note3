@@ -79,13 +79,11 @@ return [
                     'no_assertion' => true,
                     'permissions' => [
                         'edit.options',
-                        'change.roles',
+                        'change.role',
                         'add.client.rest',
-                        //'find.client.rest',
                         'delete.client.rest',
                         'delete.clients.rest',
                         'revoke.token.rest',
-                        //'find.clients.rest',
                         'fetch.file.rest',
                         'fetch.files.rest',
                         'delete.file.rest',
@@ -137,7 +135,7 @@ return [
                     ]
                 ],
             ],
-            'assertions' => [       //TODO проверить все модули как себя ведут если удалить настройки
+            'assertions' => [
                 'MustBeAuthorAssertion' => [
                     'permissions' => [
                         'edit.post',
@@ -164,7 +162,7 @@ return [
             ],
         ],
         'guards' => [
-            'RouteGuard' => [
+            'RouteGuard' => [               //deny => exception
                 'manage*' => 'admin',
                 'editGreeting' => 'admin',
             ]

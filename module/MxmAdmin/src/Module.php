@@ -28,7 +28,6 @@ namespace MxmAdmin;
 
 use Zend\Mvc\MvcEvent;
 use MxmAdmin\Logger;
-use MxmAdmin\Exception\NotAuthorizedException;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -71,10 +70,5 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
 
         $logger = $event->getApplication()->getServiceManager()->get(Logger::class);
         $logger->err($message);
-
-        if ($ex instanceof NotAuthorizedException) {
-
-            return $event->getTarget()->redirect()->toRoute('notAuthorized');
-        }
     }
 }

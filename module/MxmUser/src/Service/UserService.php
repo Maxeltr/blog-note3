@@ -156,9 +156,7 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('find.users')) {
-            throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
-        }
+        $this->authorizationService->checkPermission('find.users');
 
         return $this->mapper->findAllUsers();
     }
@@ -170,14 +168,9 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
+        $this->authorizationService->checkPermission('find.user');
+
         $user = $this->mapper->findUserById($id);
-        if ($user instanceof UserInterface) {
-            if (!$this->authorizationService->isGranted('find.user')) {
-                throw new NotAuthorizedUserException('Access denied. Permission "find.user" is required.');
-            }
-        } else {
-            throw new Exception\RuntimeException('mapper->findUserById returns value which does not implement UserInterface');
-        }
 
 	return $user;
     }
@@ -189,9 +182,7 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('find.users')) {
-            throw new NotAuthorizedUserException('Access denied. Permission "find.users" is required.');
-        }
+        $this->authorizationService->checkPermission('find.users');
 
         if (! is_string($role)) {
             throw new InvalidArgumentUserException(sprintf(
@@ -257,12 +248,10 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('edit.user', $user)) {
-            throw new NotAuthorizedUserException('Access denied. Permission "edit.user" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.user', $user);
 
-        if (!$this->isRoleMatchesDb->isValid($user) && !$this->authorizationService->isGranted('change.roles')) {
-            throw new NotAuthorizedUserException('Access denied. Permission "change.roles" is required.');
+        if (! $this->isRoleMatchesDb->isValid($user)) {
+            $this->authorizationService->checkPermission('change.role');
         }
 
         return $this->mapper->updateUser($user);
@@ -275,9 +264,7 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('delete.user', $user)) {
-            throw new NotAuthorizedUserException('Access denied. Permission "delete.user" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.user', $user);
 
         $this->getEventManager()->trigger(__FUNCTION__, $this, ['user' => $user]);
 
@@ -291,9 +278,7 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('edit.email')) {
-            throw new NotAuthorizedUserException('Access denied. Permission "edit.email" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.email');
 
         if (!$this->notEmptyValidator->isValid($password)) {
             throw new InvalidArgumentUserException("No params given: password.");
@@ -321,9 +306,7 @@ class UserService implements UserServiceInterface
     {
         $this->authService->checkIdentity();
 
-        if (!$this->authorizationService->isGranted('edit.password')) {
-            throw new NotAuthorizedUserException('Access denied. Permission "edit.password" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.password');
 
         if (!$this->notEmptyValidator->isValid($oldPassword) or !$this->notEmptyValidator->isValid($newPassword)) {
             throw new InvalidArgumentUserException("No params given: oldPassword or newPassword.");

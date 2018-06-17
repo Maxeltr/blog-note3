@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -26,6 +26,6 @@
 
 namespace MxmRbac\Exception;
 
-interface RbacExceptionInterface
+interface ExceptionInterface
 {
 }

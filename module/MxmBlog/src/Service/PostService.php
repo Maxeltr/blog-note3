@@ -34,8 +34,6 @@ use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
-use MxmBlog\Exception\NotAuthorizedBlogException;
-use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmUser\Model\UserInterface;
 use Zend\Validator\Db\RecordExists;
 use Zend\Tag\ItemList;
@@ -122,9 +120,7 @@ class PostService implements PostServiceInterface
         if ($hideUnpublished === false) {
             $this->authenticationService->checkIdentity();
 
-            if (! $this->authorizationService->isGranted('find.unpublished.posts')) {
-                throw new NotAuthorizedBlogException('Access denied. Permission "find.unpublished.posts" is required.');
-            }
+            $this->authorizationService->checkPermission('find.unpublished.posts');
         }
 
         return $this->mapper->findAllPosts($hideUnpublished);
@@ -148,9 +144,7 @@ class PostService implements PostServiceInterface
             return $post;
         }
 
-        if (!$this->authorizationService->isGranted('find.unpublished.post', $post)) {      //TODO сделать остальные методы аналогично
-            throw new RecordNotFoundBlogException("Post with id " . $id . " not found");
-        }
+        $this->authorizationService->checkPermission('find.unpublished.post', $post);
 
 	return $post;
     }
@@ -174,9 +168,8 @@ class PostService implements PostServiceInterface
      */
     public function findUnPublishedPostsByUser(UserInterface $user)
     {
-        if ($this->authorizationService->isGranted('find.unpublished.posts', $user)) {      //если пользователь ищет свои статьи, то показывать неопубликованные
-            throw new NotAuthorizedBlogException('Access denied. Permission "find.unpublished.posts" is required.');
-        }
+        $this->authorizationService->checkPermission('find.unpublished.posts');
+
 	$posts = $this->mapper->findPostsByUser($user, false);
 
 	return $posts;
@@ -187,9 +180,7 @@ class PostService implements PostServiceInterface
      */
     public function insertPost(PostInterface $post)
     {
-        if (!$this->authorizationService->isGranted('add.post')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "add.post" is required.');
-        }
+        $this->authorizationService->checkPermission('add.post');
 
         $post->setCreated($this->datetime->modify('now'));
         if ($post->getIsPublished() === true) {
@@ -212,9 +203,7 @@ class PostService implements PostServiceInterface
      */
     public function updatePost(PostInterface $post)
     {
-        if (!$this->authorizationService->isGranted('edit.post', $post)) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "edit.post" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.post', $post);
 
         $post->setUpdated($this->datetime->modify('now'));
 
@@ -294,9 +283,7 @@ class PostService implements PostServiceInterface
      */
     public function deletePost(PostInterface $post)
     {
-        if (!$this->authorizationService->isGranted('delete.post', $post)) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "delete.post" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.post', $post);
 
         return $this->mapper->deletePost($post);
     }
@@ -306,9 +293,7 @@ class PostService implements PostServiceInterface
      */
     public function deletePosts($posts)
     {
-        if (!$this->authorizationService->isGranted('delete.posts')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "delete.posts" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.posts');
 
         return $this->mapper->deletePosts($posts);
     }
@@ -334,9 +319,7 @@ class PostService implements PostServiceInterface
      */
     public function insertCategory(CategoryInterface $category)
     {
-        if (!$this->authorizationService->isGranted('add.category')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "add.category" is required.');
-        }
+        $this->authorizationService->checkPermission('add.category');
 
         return $this->mapper->insertCategory($category);
     }
@@ -346,9 +329,7 @@ class PostService implements PostServiceInterface
      */
     public function updateCategory(CategoryInterface $category)
     {
-        if (!$this->authorizationService->isGranted('edit.category')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "edit.category" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.category');
 
         return $this->mapper->updateCategory($category);
     }
@@ -358,9 +339,7 @@ class PostService implements PostServiceInterface
      */
     public function deleteCategory(CategoryInterface $category)
     {
-        if (!$this->authorizationService->isGranted('delete.category')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "delete.category" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.category');
 
         return $this->mapper->deleteCategory($category);
     }
@@ -370,9 +349,7 @@ class PostService implements PostServiceInterface
      */
     public function deleteCategories($categories)
     {
-        if (!$this->authorizationService->isGranted('delete.categories')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "delete.categories" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.categories');
 
         if ($categories instanceof Paginator) {
             $categories = iterator_to_array($categories->setItemCountPerPage(-1));
@@ -426,9 +403,7 @@ class PostService implements PostServiceInterface
      */
     public function insertTag(TagInterface $tag)
     {
-        if (!$this->authorizationService->isGranted('add.tag')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "add.tag" is required.');
-        }
+        $this->authorizationService->checkPermission('add.tag');
 
         return $this->mapper->insertTag($tag);
     }
@@ -438,9 +413,7 @@ class PostService implements PostServiceInterface
      */
     public function updateTag(TagInterface $tag)
     {
-        if (!$this->authorizationService->isGranted('edit.tag')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "edit.tag" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.tag');
 
         return $this->mapper->updateTag($tag);
     }
@@ -450,9 +423,7 @@ class PostService implements PostServiceInterface
      */
     public function deleteTag(TagInterface $tag)
     {
-        if (!$this->authorizationService->isGranted('delete.tag')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "delete.tag" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.tag');
 
         return $this->mapper->deleteTag($tag);
     }
@@ -462,9 +433,7 @@ class PostService implements PostServiceInterface
      */
     public function deleteTags($tags)
     {
-        if (!$this->authorizationService->isGranted('delete.tags')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "delete.tags" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.tags');
 
         if ($tags instanceof Paginator) {
             $tags = iterator_to_array($tags->setItemCountPerPage(-1));
@@ -522,9 +491,7 @@ class PostService implements PostServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('edit.greeting')) {
-            throw new NotAuthorizedBlogException('Access denied. Permission "edit.greeting" is required.');
-        }
+        $this->authorizationService->checkPermission('edit.greeting');
 
         if (! is_array($greeting)) {
             throw new InvalidArgumentBlogException(sprintf(

@@ -34,8 +34,9 @@ use MxmRbac\Assertion\AssertionPluginManager;
 use Zend\Config\Config;
 use Zend\Validator\InArray;
 use Zend\Log\Logger;
-use MxmRbac\Exception\InvalidArgumentRbacException;
+use MxmRbac\Exception\InvalidArgumentException;
 use RecursiveIteratorIterator;
+use MxmRbac\Exception\NotAuthorizedException;
 
 class AuthorizationService implements AuthorizationServiceInterface
 {
@@ -86,12 +87,27 @@ class AuthorizationService implements AuthorizationServiceInterface
         $this->logger = $logger;
 
         if (! $this->config->roles) {
-            throw new InvalidArgumentRbacException('There are no roles in config.');
+            throw new InvalidArgumentException('There are no roles in config.');
         }
 
         if (!$this->config->assertions) {
-            throw new InvalidArgumentRbacException('There are no assertions in config.');
+            throw new InvalidArgumentException('There are no assertions in config.');
         }
+    }
+
+    /**
+     * Returns true if the permission is granted to the current identity. Throw exception if it is not granted.
+     *
+     * @return bool
+     * @throws NotAuthorizedException
+     */
+    public function checkPermission($permission, $content = null)
+    {
+        if (! $this->isGranted($permission, $content = null)) {
+            throw new NotAuthorizedException('Access denied. Permission ' . $permission . ' is required.');
+        }
+
+        return true;
     }
 
     /**
@@ -123,7 +139,7 @@ class AuthorizationService implements AuthorizationServiceInterface
 
         if (count($assertionNames) < 1) {                                           //assertions for given permission is absent?
             if ($content !== null) {
-                throw new InvalidArgumentRbacException("There are no assertions for the permission $permission.");
+                throw new InvalidArgumentException("There are no assertions for the permission $permission.");
             }
 
             $isGranted = $this->checkIsGranted($role, $permission);
@@ -155,7 +171,7 @@ class AuthorizationService implements AuthorizationServiceInterface
     public function matchIdentityRoles($objectOrName)
     {
         if (! is_string($objectOrName) && ! $objectOrName instanceof RoleInterface) {
-            throw new InvalidArgumentRbacException(
+            throw new InvalidArgumentException(
                 'Expected string or implement \Zend\Permissions\Rbac\RoleInterface'
             );
         }

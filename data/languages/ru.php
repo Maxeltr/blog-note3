@@ -148,5 +148,5 @@ return [
     "Grant types" => "Типы разрешений",
     "Revoke token" => "Отозвать токен",
     "Delete client" => "Удалить клиент",
-
+    "Date of change" => "Дата изменения",
 ];

@@ -31,7 +31,6 @@ use Zend\Paginator\Paginator;
 use Zend\Config\Config;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
-use MxmAdmin\Exception\NotAuthorizedException;
 use MxmAdmin\Exception\RuntimeException;
 use Zend\Http\Response;
 use MxmAdmin\Exception\InvalidArgumentException;
@@ -94,9 +93,7 @@ class AdminService implements AdminServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('find.logs')) {
-            throw new NotAuthorizedException('Access denied. Permission "find.logs" is required.');
-        }
+        $this->authorizationService->checkPermission('find.logs');
 
         //$dir = __DIR__ . '/../../../../data/logs/';
         $dir = $this->config->mxm_admin->logs->path;
@@ -138,9 +135,7 @@ class AdminService implements AdminServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('download.log')) {
-            throw new NotAuthorizedException('Access denied. Permission "download.log" is required.');
-        }
+        $this->authorizationService->checkPermission('download.log');
 
         if (! is_string($file)) {
             throw new InvalidArgumentException(sprintf(
@@ -179,9 +174,7 @@ class AdminService implements AdminServiceInterface
     {
         $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('delete.logs')) {
-            throw new NotAuthorizedException('Access denied. Permission "delete.logs" is required.');
-        }
+        $this->authorizationService->checkPermission('delete.logs');
 
         if (! is_string($files) && ! is_array($files)) {
             throw new InvalidArgumentException(sprintf(
