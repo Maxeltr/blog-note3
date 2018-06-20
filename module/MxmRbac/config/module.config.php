@@ -96,6 +96,7 @@ return [
                         'delete.categories',
                         'delete.posts',
                         'delete.logs',
+                        'find.all.files'
                     ]
                 ],
                 'moderator' => [

@@ -36,6 +36,9 @@ use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmFile\Logger;
+use MxmFile\Service\DateTimeInterface;
+use MxmFile\Hydrator\FileMapperHydrator\FileMapperHydrator;
+use MxmFile\Model\File;
 
 class FileMapperFactory implements FactoryInterface
 {

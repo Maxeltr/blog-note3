@@ -38,6 +38,7 @@ use MxmFile\Exception\RuntimeException;
 use MxmFile\Exception\NotAuthorizedException;
 use MxmFile\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
+use MxmFile\Mapper\FileMapper;
 
 class FileService implements FileServiceInterface
 {
@@ -71,10 +72,16 @@ class FileService implements FileServiceInterface
      */
     protected $logger;
 
+    /**
+     * @var Zend\Log\Logger
+     */
+    protected $fileMapper;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
+        FileMapper $fileMapper,
         Response $response,
         Config $config,
         Logger $logger
@@ -82,6 +89,7 @@ class FileService implements FileServiceInterface
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
+        $this->fileMapper = $fileMapper;
         $this->response = $response;
         $this->config = $config;
         $this->logger = $logger;
@@ -90,42 +98,33 @@ class FileService implements FileServiceInterface
 	/**
      * {@inheritDoc}
      */
-    public function findAllFiles($dir)
+    public function findAllFiles()
     {
-        die("$dir");
         $this->authenticationService->checkIdentity();
 
-//        if ($dir === 'logs') {
-//            $this->authorizationService->checkPermission('find.logs');
-//            $dir = $this->config->mxm_admin->logs->path;
-//
-//        } elseif () {
-//            $this->authorizationService->checkPermission('find.all.files');
-//            $this->apiMapper->findAllFiles();
-//
-//        } else {
-//            throw new InvalidArgumentException("There are no permissions to find files in the directory: $dir.");
-//        }
+        $this->authorizationService->checkPermission('find.all.files');
 
+        $this->fileMapper->findAllFiles();
+
+        $dir = $this->config->mxm_file->allowedFolders->files;
         if (! is_dir($dir)) {
             throw new RuntimeException($dir . ' is not directory.');
         }
 
-        if (! $dirHandle = opendir($dir)) {
-            throw new RuntimeException('Can not open directory ' . $dir . '.');
-        }
-
-        $files = $this->findAllFilesInDir(dirHandle);
-
-        closedir($dirHandle);
-
-        $paginator = new Paginator(new ArrayAdapter($files));
-
-        return $paginator;
+//        $files = $this->findAllFilesInDir($dir);
+//
+//        $paginator = new Paginator(new ArrayAdapter($files));
+//
+//        return $paginator;
+        return $files = $this->fileMapper->findAllFiles();
     }
 
     private function findAllFilesInDir($dir)
     {
+        if (! $dirHandle = opendir($dir)) {
+            throw new RuntimeException('Can not open directory ' . $dir . '.');
+        }
+
         $files = [];
 
         while (false !== ($file = readdir($dirHandle))) {
@@ -144,7 +143,9 @@ class FileService implements FileServiceInterface
             ];
         }
 
-		return $files;
+        closedir($dirHandle);
+
+        return $files;
     }
 
     /**

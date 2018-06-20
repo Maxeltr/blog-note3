@@ -28,12 +28,12 @@ namespace MxmFile\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmApi\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Config\Config;
 use Zend\Http\Response;
 use MxmAdmin\Logger;
+use MxmFile\Mapper\FileMapper;
 
 class FileServiceFactory implements FactoryInterface
 {
@@ -45,11 +45,13 @@ class FileServiceFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $response = new Response();
         $logger = $container->get(Logger::class);
+        $fileMapper = $container->get(FileMapper::class);
 
         return new FileService(
             $dateTime,
             $authService,
             $authorizationService,
+            $fileMapper,
             $response,
             $config,
             $logger

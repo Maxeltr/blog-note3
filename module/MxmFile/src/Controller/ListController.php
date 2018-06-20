@@ -70,8 +70,7 @@ class ListController extends AbstractActionController
 
     public function listFilesAction()
     {
-		$dir = $this->params()->fromRoute('dir', '');
-        $paginator = $this->fileService->findAllFiles($dir);
+        $paginator = $this->fileService->findAllFiles();
         $this->configurePaginator($paginator);
 
         return new ViewModel([

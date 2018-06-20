@@ -37,7 +37,9 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmFile.log',
         ],
-        'optionFilePath' => __DIR__ . '/options.php',
+        'allowedFolders' => [
+            'files' => __DIR__ . '/../../../data/files/',
+        ],
     ],
     'defaults' => [
         'locale' => 'ru',
@@ -52,10 +54,13 @@ return [
     ],
     'service_manager' => [
         'aliases' => [
+            Service\DateTimeInterface::class => Service\DateTime::class,
             Service\FileServiceInterface::class => Service\FileService::class,
             Service\DownloadServiceInterface::class => Service\DownloadService::class,
         ],
         'factories' => [
+            Service\DateTime::class => Service\DateTimeFactory::class,
+            Mapper\FileMapper::class => Mapper\FileMapperFactory::class,
             Service\FileService::class => Service\FileServiceFactory::class,
             Service\DownloadService::class => Service\DownloadServiceFactory::class,
             Logger::class => Logger\LoggerFactory::class,
@@ -72,9 +77,8 @@ return [
             'listFiles' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/list/files[/:dir[/:page]]',
+                    'route'    => '/list/files[/:page]',
                     'constraints' => [
-						'dir' => '[a-zA-Z0-9._-]*',
                         'page' => '[1-9]\d*',
                     ],
                     'defaults' => [

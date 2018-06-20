@@ -100,7 +100,7 @@ class FileMapper
      */
     public function findAllFiles()
     {
-        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['uploaded' => 'DESC']));
+        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['upload_date' => 'DESC']));
 
         return $paginator;
     }
@@ -110,7 +110,7 @@ class FileMapper
      */
     public function findAllFilesByOwner(UserInterface $owner = null)
     {
-        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $owner->getId()], ['uploaded' => 'DESC']));
+        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $owner->getId()], ['upload_date' => 'DESC']));
 
         return $paginator;
     }
