@@ -24,27 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace MxmFile\Hydrator\FileMapperHydrator;
+namespace MxmFile\Hydrator\Strategy;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
-use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
-use MxmFile\Hydrator\Strategy\DateTimeFormatterStrategy;
-use MxmFile\Hydrator\Strategy\OwnerStrategy;
-use MxmFile\Hydrator\Strategy\ClientStrategy;
+use MxmUser\Mapper\MapperInterface;
 
-class FileMapperHydratorFactory implements FactoryInterface
+class OwnerStrategyFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $fileHydrator = new ReflectionHydrator();
-        $fileHydrator->setNamingStrategy(new UnderscoreNamingStrategy());
-        $fileHydrator->addStrategy('uploadDate', $container->get(DateTimeFormatterStrategy::class));
-        $fileHydrator->addStrategy('changeDate', $container->get(DateTimeFormatterStrategy::class));
-        $fileHydrator->addStrategy('owner', $container->get(OwnerStrategy::class));
-        $fileHydrator->addStrategy('client', $container->get(ClientStrategy::class));
+        $userMapper = $container->get(MapperInterface::class);
 
-        return $fileHydrator;
+        return new OwnerStrategy($userMapper);
     }
 }

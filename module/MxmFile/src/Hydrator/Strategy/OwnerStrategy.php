@@ -24,27 +24,62 @@
  * THE SOFTWARE.
  */
 
-namespace MxmFile\Hydrator\FileMapperHydrator;
+namespace MxmFile\Hydrator\Strategy;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
-use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
-use MxmFile\Hydrator\Strategy\DateTimeFormatterStrategy;
-use MxmFile\Hydrator\Strategy\OwnerStrategy;
-use MxmFile\Hydrator\Strategy\ClientStrategy;
+use Zend\Hydrator\Strategy\StrategyInterface;
+use MxmUser\Mapper\MapperInterface;
+use MxmUser\Model\UserInterface;
 
-class FileMapperHydratorFactory implements FactoryInterface
+class OwnerStrategy implements StrategyInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $fileHydrator = new ReflectionHydrator();
-        $fileHydrator->setNamingStrategy(new UnderscoreNamingStrategy());
-        $fileHydrator->addStrategy('uploadDate', $container->get(DateTimeFormatterStrategy::class));
-        $fileHydrator->addStrategy('changeDate', $container->get(DateTimeFormatterStrategy::class));
-        $fileHydrator->addStrategy('owner', $container->get(OwnerStrategy::class));
-        $fileHydrator->addStrategy('client', $container->get(ClientStrategy::class));
+    /**
+     * @var
+     */
+    private $userMapper;
 
-        return $fileHydrator;
+    /**
+     * @param UserMapperInterface $userMapper
+     */
+    public function __construct(MapperInterface $userMapper)
+    {
+        $this->userMapper = $userMapper;
+    }
+
+    /**
+     * Converts UserInterface to id string
+     *
+     * @param UserInterface $value
+     *
+     * @return mixed|string
+     */
+    public function extract($value)
+    {
+        if ($value instanceof UserInterface) {
+            return $value->getId();
+        }
+
+        return $value;
+    }
+
+    /**
+     * Converts id string to UserInterface instance for injecting to object
+     *
+     * @param mixed|string $value
+     *
+     * @return mixed|UserInterface
+     */
+    public function hydrate($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        try {
+            $user = $this->userMapper->findUserById($value);
+        } catch (\Exception $ex) {
+            return $value;
+        }
+
+        return $user;
     }
 }

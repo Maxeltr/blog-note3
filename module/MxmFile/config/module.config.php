@@ -67,6 +67,8 @@ return [
             Hydrator\FileMapperHydrator\FileMapperHydrator::class => Hydrator\FileMapperHydrator\FileMapperHydratorFactory::class,
             Hydrator\Strategy\DateTimeFormatterStrategy::class => Hydrator\Strategy\DateTimeFormatterStrategyFactory::class,
             Service\DateTime::class => Service\DateTimeFactory::class,
+            Hydrator\Strategy\OwnerStrategy::class => Hydrator\Strategy\OwnerStrategyFactory::class,
+            Hydrator\Strategy\ClientStrategy::class => Hydrator\Strategy\ClientStrategyFactory::class,
         ],
         'invokables' => [
 
