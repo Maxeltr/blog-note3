@@ -36,11 +36,12 @@ use MxmApi\Exception\InvalidArgumentException;
 use MxmApi\Exception\AlreadyExistsException;
 use Zend\Validator\Db\RecordExists;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
-use MxmApi\Mapper\ZendTableGatewayMapper;
+use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 use MxmApi\Model\ClientInterface;
 use Zend\Log\Logger;
 use MxmApi\Exception\RuntimeException;
 use Zend\Http\Response;
+use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 
 class ApiService implements ApiServiceInterface
 {
@@ -80,9 +81,14 @@ class ApiService implements ApiServiceInterface
     protected $userMapper;
 
     /**
-     * @var MxmApi\Mapper\ZendTableGatewayMapper
+     * @var MxmApi\Mapper\MapperInterface
      */
     protected $apiMapper;
+
+    /**
+     * @var MxmFile\Mapper\MapperInterface
+     */
+    protected $fileMapper;
 
     /**
      * @var Zend\Log\Logger
@@ -101,7 +107,8 @@ class ApiService implements ApiServiceInterface
         Bcrypt $bcrypt,
         RecordExists $clientExistsValidator,
         UserMapperInterface $userMapper,
-        ZendTableGatewayMapper $apiMapper,
+        ApiMapperInterface $apiMapper,
+        FileMapperInterface $fileMapper,
         Config $grantTypes,
         Logger $logger,
         Response $response
@@ -113,6 +120,7 @@ class ApiService implements ApiServiceInterface
         $this->clientExistsValidator = $clientExistsValidator;
         $this->userMapper = $userMapper;
         $this->apiMapper = $apiMapper;
+        $this->fileMapper = $fileMapper;
         $this->grantTypes = $grantTypes;
         $this->logger = $logger;
         $this->response = $response;
@@ -297,7 +305,7 @@ class ApiService implements ApiServiceInterface
             ));
         }
 
-        $file = $this->apiMapper->findFileById($fileId);
+        $file = $this->fileMapper->findFileById($fileId);
 
         $path = $file->getPath();
 

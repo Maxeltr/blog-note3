@@ -43,6 +43,7 @@ use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\DataBaseErrorException;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Service\UserServiceInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class ApiController extends AbstractActionController
 {
@@ -72,16 +73,23 @@ class ApiController extends AbstractActionController
      */
     protected $userService;
 
+    /**
+     * @var Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
+
     public function __construct(
         ApiServiceInterface $apiService,
         FormInterface $addClientForm,
         UserServiceInterface $userService,
-        Logger $logger
+        Logger $logger,
+        TranslatorInterface $translator
     ) {
         $this->apiService = $apiService;
         $this->addClientForm = $addClientForm;
         $this->userService = $userService;
         $this->logger = $logger;
+        $this->translator = $translator;
     }
 
     public function addClientAction()
@@ -129,9 +137,9 @@ class ApiController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $del = $request->getPost('delete_confirmation', 'no');
+            $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
-            if ($del === 'yes') {
+            if ($del === $this->translator->translate('Yes')) {
                 $result = $this->apiService->revokeToken($client);
                 if ($result === false) {
                     $this->logger->err('ApiController. Client (' . $client->getClientId() . ')' . $token . ' not revoked');
@@ -181,9 +189,9 @@ class ApiController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $del = $request->getPost('delete_confirmation', 'no');
+            $del = $request->getPost('delete_confirmation', $this->translator->translate('No'));
 
-            if ($del === 'yes') {
+            if ($del === $this->translator->translate('Yes')) {
                 $result = $this->apiService->deleteClient($client);
                 if ($result === false) {
                     $this->logger->err('Client ' . $client->getClientId() . ' not deleted');

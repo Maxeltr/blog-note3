@@ -35,6 +35,7 @@ use MxmBlog\Service\PostServiceInterface;
 use MxmApi\Service\ApiServiceInterface;
 use MxmAdmin\Service\AdminServiceInterface;
 use Zend\i18n\Translator\TranslatorInterface;
+use MxmFile\Service\FileServiceInterface;
 
 class AdminControllerFactory implements FactoryInterface
 {
@@ -47,7 +48,8 @@ class AdminControllerFactory implements FactoryInterface
         $apiService = $container->get(ApiServiceInterface::class);
         $adminService = $container->get(AdminServiceInterface::class);
         $translator = $container->get(TranslatorInterface::class);
+        $fileService = $container->get(FileServiceInterface::class);
 
-        return new AdminController($userService, $apiService, $postService, $adminService, $config, $logger, $translator);
+        return new AdminController($userService, $apiService, $postService, $adminService, $fileService, $config, $logger, $translator);
     }
 }

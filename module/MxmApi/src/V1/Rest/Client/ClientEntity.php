@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\V1\Rest\File;
+namespace MxmApi\V1\Rest\Client;
 
-use MxmFile\Model\File;
+use MxmApi\Model\Client;
 
-class FileEntity extends File
+class ClientEntity extends Client
 {
 }

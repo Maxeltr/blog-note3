@@ -67,8 +67,8 @@ return [
             Service\ApiService::class => Service\ApiServiceFactory::class,
             Service\DateTime::class => Service\DateTimeFactory::class,
             Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
-            Hydrator\ClientFormHydrator::class =>Hydrator\ClientFormHydrator\ClientFormHydratorFactory::class,
-            Hydrator\ClientMapperHydrator::class =>Hydrator\ClientMapperHydrator\ClientMapperHydratorFactory::class,
+            Hydrator\ClientFormHydrator::class => Hydrator\ClientFormHydrator\ClientFormHydratorFactory::class,
+            Hydrator\ClientMapperHydrator::class => Hydrator\ClientMapperHydrator\ClientMapperHydratorFactory::class,
             Logger::class => Logger\LoggerFactory::class,
         ],
     ],
@@ -80,6 +80,7 @@ return [
     'hydrators' => [
         'factories' => [
             \MxmApi\V1\Rest\User\UserHydrator::class => \MxmApi\V1\Rest\User\UserHydratorFactory::class,
+            \MxmApi\V1\Rest\Client\ClientHydrator::class => \MxmApi\V1\Rest\Client\ClientHydratorFactory::class,
         ],
     ],
     'view_manager' => [
@@ -203,6 +204,15 @@ return [
                     ],
                 ],
             ],
+            'mxm-api.rest.client' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/api/client[/:client_id]',
+                    'defaults' => [
+                        'controller' => 'MxmApi\\V1\\Rest\\Client\\Controller',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-oauth2' => array(
@@ -220,7 +230,7 @@ return [
 //            "jwt" => true
         ],
 //        'allow_implicit' => true,
-//        'access_lifetime' => 3600,
+        'access_lifetime' => 60*60*24*1,  //a value in seconds for access tokens lifetime (s*m*h*d)
 //        'enforce_state'  => true,
 //        'storage_settings' => array(
 //           'user_table' => 'users',
@@ -382,9 +392,31 @@ return [
             'collection_query_whitelist' => ['user'],
             'page_size' => 25,
             'page_size_param' => null,
-            'entity_class' => \MxmApi\V1\Rest\File\FileEntity::class,
+            'entity_class' => \MxmFile\Model\File::class,
             'collection_class' => \MxmApi\V1\Rest\File\FileCollection::class,
             'service_name' => 'file',
+        ],
+        'MxmApi\\V1\\Rest\\Client\\Controller' => [
+            'listener' => \MxmApi\V1\Rest\Client\ClientResource::class,
+            'route_name' => 'mxm-api.rest.client',
+            'route_identifier_name' => 'client_id',
+            'collection_name' => 'client',
+            'entity_http_methods' => [
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ],
+            'collection_http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'collection_query_whitelist' => [],
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => \MxmApi\Model\Client::class,
+            'collection_class' => \MxmApi\V1\Rest\Client\ClientCollection::class,
+            'service_name' => 'client',
         ],
     ],
     'zf-content-negotiation' => [
@@ -394,6 +426,7 @@ return [
             'MxmApi\\V1\\Rest\\Tag\\Controller' => 'HalJson',
             'MxmApi\\V1\\Rest\\User\\Controller' => 'HalJson',
             'MxmApi\\V1\\Rest\\File\\Controller' => 'HalJson',
+            'MxmApi\\V1\\Rest\\Client\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'MxmApi\\V1\\Rest\\Post\\Controller' => [
@@ -421,6 +454,11 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'MxmApi\\V1\\Rest\\Client\\Controller' => [
+                0 => 'application/vnd.mxm-api.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ],
         ],
         'content_type_whitelist' => [
             'MxmApi\\V1\\Rest\\Post\\Controller' => [
@@ -444,6 +482,11 @@ return [
                 1 => 'application/json',
                 2 => 'multipart/form-data',
             ],
+            'MxmApi\\V1\\Rest\\Client\\Controller' => [
+                0 => 'application/vnd.mxm-api.v1+json',
+                1 => 'application/json',
+                2 => 'multipart/form-data',
+            ],
         ],
     ],
     'zf-hal' => [
@@ -458,7 +501,7 @@ return [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'mxm-api.rest.user',
                 'route_identifier_name' => 'user_id',
-                'hydrator' =>  \MxmApi\V1\Rest\User\UserHydrator::class,
+                'hydrator' => \MxmApi\V1\Rest\User\UserHydrator::class,
             ],
             \MxmBlog\Model\Category::class => [
                 'entity_identifier_name' => 'id',
@@ -485,17 +528,23 @@ return [
                 'route_identifier_name' => 'post_id',
                 'is_collection' => true,
             ],
-            \MxmApi\V1\Rest\File\FileEntity::class => [
-                'entity_identifier_name' => 'id',
+            \MxmFile\Model\File::class => [
+                'entity_identifier_name' => 'file_id',
                 'route_name' => 'mxm-api.rest.file',
                 'route_identifier_name' => 'file_id',
                 'hydrator' => \Zend\Hydrator\ClassMethods::class,
             ],
             \MxmApi\V1\Rest\File\FileCollection::class => [
-                'entity_identifier_name' => 'id',
+                'entity_identifier_name' => 'file_id',
                 'route_name' => 'mxm-api.rest.file',
                 'route_identifier_name' => 'file_id',
                 'is_collection' => true,
+            ],
+            \MxmApi\Model\Client::class => [
+                'entity_identifier_name' => 'client_id',
+                'route_name' => 'mxm-api.rest.client',
+                'route_identifier_name' => 'client_id',
+                'hydrator' => \MxmApi\V1\Rest\Client\ClientHydrator::class,
             ],
         ],
     ],

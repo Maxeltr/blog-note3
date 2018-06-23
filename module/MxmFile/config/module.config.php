@@ -57,6 +57,7 @@ return [
             Service\DateTimeInterface::class => Service\DateTime::class,
             Service\FileServiceInterface::class => Service\FileService::class,
             Service\DownloadServiceInterface::class => Service\DownloadService::class,
+            Mapper\MapperInterface::class => Mapper\FileMapper::class,
         ],
         'factories' => [
             Service\DateTime::class => Service\DateTimeFactory::class,

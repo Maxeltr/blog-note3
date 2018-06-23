@@ -40,6 +40,7 @@ use MxmApi\Logger;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 use Zend\Http\Response;
+use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 
 class ApiServiceFactory implements FactoryInterface
 {
@@ -61,7 +62,7 @@ class ApiServiceFactory implements FactoryInterface
         ]);
 
         $userMapper = $container->get(UserMapperInterface::class);
-
+        $fileMapper = $container->get(FileMapperInterface::class);
         $apiMapper = $container->get(ApiMapperInterface::class);
         $logger = $container->get(Logger::class);
         $response = new Response();
@@ -74,6 +75,7 @@ class ApiServiceFactory implements FactoryInterface
             $recordExistsValidator,
             $userMapper,
             $apiMapper,
+            $fileMapper,
             $grantTypes,
             $logger,
             $response

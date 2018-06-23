@@ -24,34 +24,30 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\V1\Rest\User;
+namespace MxmFile\Mapper;
 
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\Filter\MethodMatchFilter;
-use Zend\Hydrator\Filter\FilterComposite;
+use MxmUser\Model\UserInterface;
 
-class UserHydratorFactory
+interface MapperInterface
 {
-    public function __invoke($services)
-    {
-        $hydrator = new ClassMethods(false);
 
-        $filters = [
-            'password' => new MethodMatchFilter('getPassword'),
-            'email' => new MethodMatchFilter('getEmail'),
-            'emailVerification' => new MethodMatchFilter('getEmailVerification'),
-            'emailToken' => new MethodMatchFilter('getEmailToken'),
-            'dateEmailToken' => new MethodMatchFilter('getDateEmailToken'),
-            'passwordToken' => new MethodMatchFilter('getPasswordToken'),
-            'dateToken' => new MethodMatchFilter('getDateToken'),
-            'locale' => new MethodMatchFilter('getLocale'),
-            'role' => new MethodMatchFilter('getRole'),
-        ];
 
-        $composite = new FilterComposite([], $filters);
+    /**
+     * @return Zend\Paginator\Paginator
+     */
+    public function findAllFiles();
 
-        $hydrator->addFilter('excludes', $composite, FilterComposite::CONDITION_AND);
+    /**
+     * @param UserInterface $user
+     *
+     * @return Zend\Paginator\Paginator
+     */
+    public function findAllFilesByOwner(UserInterface $user = null);
 
-        return $hydrator;
-    }
+    /**
+     * @param String $fileId
+     *
+     * @return MxmFile\Model\File
+     */
+    public function findFileById($fileId);
 }

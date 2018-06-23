@@ -12,6 +12,7 @@ use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmApi\Logger;
+use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 
 class FileResourceFactory implements FactoryInterface
 {
@@ -24,16 +25,12 @@ class FileResourceFactory implements FactoryInterface
 
         $response = new Response();
 
-        $table = 'files';
-        $adapter = $container->get(Adapter::class);
-        $resultSet = new HydratingResultSet(new ClassMethods(false), new FileEntity());
-        $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
-
         $authorizationService = $container->get(AuthorizationService::class);
         $mapper = $container->get(UserMapperInterface::class);
+        $fileMapper = $container->get(FileMapperInterface::class);
 
         $logger = $container->get(Logger::class);
 
-        return new FileResource($tableGateway, $datetime, $config, $response, $authorizationService, $mapper, $logger);
+        return new FileResource($datetime, $config, $response, $authorizationService, $mapper, $fileMapper, $logger);
     }
 }

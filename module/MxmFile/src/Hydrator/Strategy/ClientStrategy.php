@@ -55,7 +55,7 @@ class ClientStrategy implements StrategyInterface
     public function extract($value)
     {
         if ($value instanceof ClientInterface) {
-            return $value->getId();
+            return $value->getClientId();
         }
 
         return $value;

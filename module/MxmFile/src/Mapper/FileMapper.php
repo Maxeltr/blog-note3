@@ -32,15 +32,16 @@ use Rhumsaa\Uuid\Uuid;
 use Zend\Config\Config;
 use Zend\Http\Response;
 use MxmRbac\Service\AuthorizationService;
-use MxmUser\Mapper\MapperInterface;
+use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use Zend\Log\Logger;
 use Zend\Stdlib\ErrorHandler;
 use MxmFile\Exception\RecordNotFoundException;
 use MxmFile\Exception\InvalidArgumentException;
 use Zend\Stdlib\ArrayUtils;
 use MxmFile\Model\FileInterface;
+use MxmUser\Model\UserInterface;
 
-class FileMapper
+class FileMapper implements MapperInterface
 {
     /**
      * @var Zend\Db\TableGateway\TableGateway
@@ -83,7 +84,7 @@ class FileMapper
         Config $config,
         Response $response,
         AuthorizationService $authorizationService,
-        MapperInterface $mapper,
+        UserMapperInterface $mapper,
         Logger $logger
     ){
         $this->fileTableGateway = $fileTableGateway;
@@ -93,6 +94,20 @@ class FileMapper
         $this->authorizationService = $authorizationService;
         $this->userMapper = $mapper;
         $this->logger = $logger;
+    }
+
+    /*
+     * {@inheritDoc}
+     */
+    public function insertFile($file)
+    {
+        $this->fileTableGateway->insert($file);
+        $resultSet = $this->fileTableGateway->select(['file_id' => $file['file_id']]);
+        if (0 === count($resultSet)) {
+            throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
+        }
+
+        return $resultSet->current();
     }
 
     /**
@@ -145,8 +160,8 @@ class FileMapper
             $this->logger->err("Cannot delete file record. Id: " . $file->getFileId() . ".");
         }
 
-            return $result;
-	}
+        return $result;
+    }
 
     /**
      * {@inheritDoc}
@@ -159,13 +174,29 @@ class FileMapper
 
         if (! is_array($files) or empty($files)) {
             throw new InvalidArgumentException(sprintf(
-                'The data must be array; received "%s"',
+                'The data must be array or instanceof Paginator; received "%s"',
                 (is_object($files) ? get_class($files) : gettype($files))
             ));
         }
 
-        $filePaths = [];
-        $func = function ($value) use (&$filePaths) {
+        $filePathsAndIds = $this->getIdsAndPathsOfFiles($files);
+
+        foreach($filePathsAndIds as $fileId => $filePath) {
+            if (! $this->unlinkFile($filePath)) {
+                unset($filePathsAndIds[$fileId]);
+            }
+        }
+
+        $where = new Where();
+        $where->in('file_id', array_keys($filePathsAndIds));
+
+        return $this->fileTableGateway->delete($where);
+    }
+
+    private function getIdsAndPathsOfFiles($files)
+    {
+        $filePathsAndIds = [];
+        $func = function ($value) use (&$filePathsAndIds) {
             if (is_string($value)) {
                 try {
                     $file = $this->findFileById($value);
@@ -179,13 +210,13 @@ class FileMapper
 
                     return;
                 }
-                $filePaths[] = $file->getPath();
+                $filePathsAndIds[$value] = $file->getPath();
 
-                return $value;
+                return;
             } elseif ($value instanceof FileInterface) {
-                $filePaths[] = $value->getPath();
+                $filePathsAndIds[$value->getId] = $value->getPath();
 
-                return $value->getId();
+                return;
             } else {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid value in data array detected, value must be a string or instance of FileInterface, %s given.',
@@ -194,16 +225,9 @@ class FileMapper
             }
         };
 
-        $fileIds = array_map($func, $files);
+        array_map($func, $files);
 
-        foreach($filePaths as $filePath) {
-            $this->unlinkFile($filePath);
-        }
-
-        $where = new Where();
-        $where->in('file_id', $fileIds);
-
-        return $this->fileTableGateway->delete($where);
+        return $filePathsAndIds;
     }
 
     private function unlinkFile($filePath)

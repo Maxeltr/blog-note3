@@ -24,28 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\V1\Rest\User;
+namespace MxmApi\V1\Rest\Client;
 
 use Zend\Hydrator\ClassMethods;
 use Zend\Hydrator\Filter\MethodMatchFilter;
 use Zend\Hydrator\Filter\FilterComposite;
+use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 
-class UserHydratorFactory
+class ClientHydratorFactory
 {
     public function __invoke($services)
     {
         $hydrator = new ClassMethods(false);
-
+        $hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
         $filters = [
-            'password' => new MethodMatchFilter('getPassword'),
-            'email' => new MethodMatchFilter('getEmail'),
-            'emailVerification' => new MethodMatchFilter('getEmailVerification'),
-            'emailToken' => new MethodMatchFilter('getEmailToken'),
-            'dateEmailToken' => new MethodMatchFilter('getDateEmailToken'),
-            'passwordToken' => new MethodMatchFilter('getPasswordToken'),
-            'dateToken' => new MethodMatchFilter('getDateToken'),
-            'locale' => new MethodMatchFilter('getLocale'),
-            'role' => new MethodMatchFilter('getRole'),
+            'clientSecret' => new MethodMatchFilter('getClientSecret'),
+            'grantTypes' => new MethodMatchFilter('getGrantTypes'),
+            'scope' => new MethodMatchFilter('getScope'),
+            'userId' => new MethodMatchFilter('getUserId'),
         ];
 
         $composite = new FilterComposite([], $filters);

@@ -34,6 +34,7 @@ use Zend\Log\Logger;
 use Zend\Config\Config;
 use Zend\Log\Writer\Stream;
 use MxmUser\Service\UserServiceInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class ApiControllerFactory implements FactoryInterface
 {
@@ -49,7 +50,8 @@ class ApiControllerFactory implements FactoryInterface
         $writer = new Stream($config->mxm_api->logger->path);
         $logger = new Logger();
         $logger->addWriter($writer);
+        $translator = $container->get(TranslatorInterface::class);
 
-        return new ApiController($apiService, $addClientForm, $userService, $logger);
+        return new ApiController($apiService, $addClientForm, $userService, $logger, $translator);
     }
 }

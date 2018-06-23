@@ -45,6 +45,7 @@ use MxmAdmin\Service\AdminServiceInterface;
 use MxmAdmin\Exception\NotAuthenticatedException as NotAuthenticatedAdminException;
 use MxmAdmin\Exception\NotAuthorizedException as NotAuthorizedAdminException;
 use Zend\i18n\Translator\TranslatorInterface;
+use MxmFile\Service\FileServiceInterface;
 
 class AdminController  extends AbstractActionController
 {
@@ -74,6 +75,11 @@ class AdminController  extends AbstractActionController
     protected $adminService;
 
     /**
+     * @var \MxmFile\Service\FileServiceInterface
+     */
+    protected $fileService;
+
+    /**
      * @var Zend\i18n\Translator\TranslatorInterface
      */
     protected $translator;
@@ -83,6 +89,7 @@ class AdminController  extends AbstractActionController
         ApiServiceInterface $apiService,
         PostServiceInterface $postService,
         AdminServiceInterface $adminService,
+        FileServiceInterface $fileService,
         Config $config,
         Logger $logger,
         TranslatorInterface $translator
@@ -91,6 +98,7 @@ class AdminController  extends AbstractActionController
         $this->apiService = $apiService;
         $this->postService = $postService;
         $this->adminService = $adminService;
+        $this->fileService = $fileService;
         $this->config = $config;
         $this->logger = $logger;
         $this->translator = $translator;
@@ -143,7 +151,7 @@ class AdminController  extends AbstractActionController
             $action = $request->getPost('action', $this->translator->translate('No'));
             if ($action === $this->translator->translate('Delete')) {
                 try {
-                    $this->apiService->deleteFiles($request->getPost('checkbox', []));
+                    $this->fileService->deleteFiles($request->getPost('checkbox', []));
                 } catch (\Exception $e) {
                     $this->logger->err($e->getFile() . ' ' . $e->getLine() . ' ' . $e->getMessage());
                     $model = new ViewModel([
@@ -157,7 +165,7 @@ class AdminController  extends AbstractActionController
             }
         }
 
-        $paginator = $this->apiService->findAllFiles();
+        $paginator = $this->fileService->findAllFiles();
         $this->configurePaginator($paginator);
 
         return new ViewModel([
