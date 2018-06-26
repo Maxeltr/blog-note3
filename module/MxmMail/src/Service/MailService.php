@@ -127,8 +127,15 @@ class MailService
 
         $this->transport->send($this->mailMessage);
 
-        $this->logger->info($this->translator->translate('Message was sent to') . ' ' . $this->mailMessage->getTo()->current()->toString() . ' '
-            . $this->translator->translate('with subject') . ' ' . $this->subject . '.'
+        $adressesTo = '';
+        $adresses = $this->mailMessage->getTo();
+        $adresses->rewind();
+        while($adresses->valid()) {
+            $adressesTo .= $adresses->current()->toString();
+            $adresses->next();
+        }
+        $this->logger->info($this->translator->translate('Message was sent to') . ' ' . $adressesTo . ' '
+            . $this->translator->translate('with subject') . ' "' . $this->subject . '".'
         );
 
         return $this;

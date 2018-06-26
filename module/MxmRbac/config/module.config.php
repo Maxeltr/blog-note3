@@ -80,16 +80,9 @@ return [
                     'permissions' => [
                         'edit.options',
                         'change.role',
-                        'add.client.rest',
-                        'delete.client.rest',
                         'delete.clients.rest',
-                        'revoke.token.rest',
-                        'fetch.file.rest',
-                        'fetch.files.rest',
-                        'delete.file.rest',
-                        'create.file.rest',
+                        'fetch.all.files.rest',
                         'delete.files.rest',
-                        'download.file.rest',
                         'find.logs',
                         'download.log',
                         'edit.greeting',
@@ -133,6 +126,15 @@ return [
 			'edit.email',
                         'find.clients.rest',
                         'find.client.rest',
+                        'add.client.rest',
+                        'delete.client.rest',
+                        'revoke.token.rest',
+                        'fetch.file.rest',
+                        'fetch.files.by.user.rest',
+                        'delete.file.rest',
+                        'create.file.rest',
+                        'download.file.rest',
+
                     ]
                 ],
             ],
@@ -149,15 +151,20 @@ return [
                         'edit.user',
                         'delete.user',
                         'find.unpublished.posts',
-                        'fetch.files.rest',
+                        'fetch.files.by.user.rest',
                         'find.clients.rest',
-                        'find.client.rest'
+                        'find.client.rest',
+                        'fetch.files.by.user.rest',
+                        'delete.client.rest',
+                        'revoke.token.rest',
+                        'fetch.file.rest',
                     ]
                 ],
                 'MustBeOwnerAssertion' => [
                     'permissions' => [
                         'fetch.file.rest',
                         'delete.file.rest',
+                        'download.file.rest',
                     ]
                 ],
             ],

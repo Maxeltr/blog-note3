@@ -103,7 +103,7 @@ class AuthorizationService implements AuthorizationServiceInterface
      */
     public function checkPermission($permission, $content = null)
     {
-        if (! $this->isGranted($permission, $content = null)) {
+        if (! $this->isGranted($permission, $content)) {
             throw new NotAuthorizedException('Access denied. Permission ' . $permission . ' is required.');
         }
 

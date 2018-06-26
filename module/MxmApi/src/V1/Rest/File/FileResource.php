@@ -250,15 +250,6 @@ class FileResource extends AbstractResourceListener
             return new ApiProblem(404, 'Invalid identifier provided');
         }
 
-//        $identity = $this->getIdentity();
-//        if ($identity instanceof AuthenticatedIdentity) {
-//            $authenticatedIdentity = $identity->getAuthenticationIdentity();
-//            if (! $authenticatedIdentity) {
-//                return new ApiProblem(401, 'Unauthorized');
-//            }
-//        } else {
-//            return new ApiProblem(401, 'Can not get identity');
-//        }
         $identity = $this->getMvcAuthIdentity();
         if (! $identity) {
             $this->logger->err(sprintf('Unauthenticated attempt to delete file: %s.', $id));
@@ -266,29 +257,12 @@ class FileResource extends AbstractResourceListener
             return new ApiProblem(401, 'Unauthenticated.');
         }
 
-//        try {
-//            $fileEntity = $this->fileMapper->findFileById($id);
-//        } catch (\Exception $e) {
-//            return new ApiProblem(404, 'File record not found.');
-//        }
-
         $fileEntity = $this->findFileById($id);
         if (! $fileEntity) {
             $this->logger->err(sprintf('Cannot delete file: %s. Record not found.', $id));
 
             return new ApiProblem(401, 'Cannot delete file. Record not found.');
         }
-
-//        try {
-//            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-//        } catch (RecordNotFoundUserException $e) {
-//            return new ApiProblem(401, 'Unauthorized. Identity not found.');
-//        }
-//
-//        $this->authorizationService->setIdentity($currentUser);
-//        if (! $this->authorizationService->isGranted('delete.file.rest', $fileEntity)) {
-//            return new ApiProblem(403, 'Forbidden. Permission delete.file.rest is required.');
-//        }
 
         if (! $this->checkPermissionForIdentity($identity, 'delete.file.rest', $fileEntity)) {
 
@@ -355,34 +329,26 @@ class FileResource extends AbstractResourceListener
      */
     public function fetch($id)
     {
-        $identity = $this->getIdentity();
-        if ($identity instanceof AuthenticatedIdentity) {
-            $authenticatedIdentity = $identity->getAuthenticationIdentity();
-            if (! $authenticatedIdentity) {
-                return new ApiProblem(401, 'Unauthorized');
-            }
-        } else {
-            return new ApiProblem(401, 'Can not get identity');
-        }
-
-        try {
-            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        } catch (RecordNotFoundUserException $e) {
-            return new ApiProblem(401, 'Unauthorized. Identity not found.');
-        }
-
         if (! Uuid::isValid($id)) {
             return new ApiProblem(404, 'Invalid identifier provided');
         }
 
-        try {
-            $fileEntity = $this->fileMapper->findFileById($id);
-        } catch (\Exception $e) {
-            return new ApiProblem(404, 'File record not found.');
+        $identity = $this->getMvcAuthIdentity();
+        if (! $identity) {
+            $this->logger->err(sprintf('Unauthenticated attempt to fetch file: %s.', $id));
+
+            return new ApiProblem(401, 'Unauthenticated.');
         }
 
-        $this->authorizationService->setIdentity($currentUser);
-        if (! $this->authorizationService->isGranted('fetch.file.rest', $fileEntity)) {
+        $fileEntity = $this->findFileById($id);
+        if (! $fileEntity) {
+            $this->logger->err(sprintf('Cannot fetch file: %s. Record not found.', $id));
+
+            return new ApiProblem(401, 'Cannot fetch file. Record not found.');
+        }
+
+        if (! $this->checkPermissionForIdentity($identity, 'fetch.file.rest', $fileEntity)) {
+
             return new ApiProblem(403, 'Forbidden. Permission fetch.file.rest is required.');
         }
 
@@ -422,37 +388,40 @@ class FileResource extends AbstractResourceListener
      */
     public function fetchAll($params = [])
     {
-        $identity = $this->getIdentity();
-        if ($identity instanceof AuthenticatedIdentity) {
-            $authenticatedIdentity = $identity->getAuthenticationIdentity();
-            if (! $authenticatedIdentity) {
-                return new ApiProblem(401, 'Unauthorized');
-            }
-        } else {
-            return new ApiProblem(401, 'Can not get identity');
+        $identity = $this->getMvcAuthIdentity();
+        if (! $identity) {
+            $this->logger->err('Unauthenticated attempt to fetch all files.');
+
+            return new ApiProblem(401, 'Unauthenticated.');
         }
 
-        $user = null;
+        $currentUser = $this->findUserById($identity['user_id']);
+        if (! $currentUser) {
+            $this->logger->err(sprintf('Cannot fetch all files. Authenticated user %s not found.', $identity['user_id']));
+
+            return new ApiProblem(404, 'Cannot fetch all files. Authenticated user not found.');
+        }
+
         if (array_key_exists('user', $params)) {
             $userId = (string) $params['user'];
-            try {
-                $user = $this->userMapper->findUserById($userId);
-            } catch (RecordNotFoundUserException $e) {
-                return new ApiProblem(404, 'User not found.');
+            $user = $this->findUserById($userId);
+            if (! $user) {
+                $this->logger->err(sprintf('Cannot fetch all files by user %s. User not found.', $userId));
+
+                return new ApiProblem(404, 'Cannot fetch all files by user. User not found.');
             }
+
+            if (! $this->checkPermissionForIdentity($identity, 'fetch.files.by.user.rest', $user)) {
+
+                return new ApiProblem(403, 'Forbidden. Permission fetch.files.by.user.rest is required.');
+            }
+
+            return $this->fileMapper->findAllFilesByOwner($user);
         }
 
-        try {
-            $currentUser = $this->userMapper->findUserById($authenticatedIdentity['user_id']);
-        } catch (RecordNotFoundUserException $e) {
-            return new ApiProblem(401, 'Unauthorized. Identity not found.');
-        }
+        if (! $this->checkPermissionForIdentity($identity, 'fetch.all.files.rest')) {
 
-        $owner = $user !== null ? $user : $currentUser;
-
-        $this->authorizationService->setIdentity($currentUser);
-        if (! $this->authorizationService->isGranted('fetch.files.rest', $owner)) {
-            return new ApiProblem(403, 'Forbidden. Permission fetch.files.rest is required.');
+            return new ApiProblem(403, 'Forbidden. Permission fetch.all.files.rest is required.');
         }
 
         return $this->fileMapper->findAllFiles();
