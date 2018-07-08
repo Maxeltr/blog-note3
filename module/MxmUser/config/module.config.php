@@ -20,9 +20,7 @@ return [
         ]
     ],
     'defaults' => [
-	'locale' => 'ru',
-	'timezone' => 'Europe/Moscow',
-	'dateTimeFormat' => 'Y-m-d H:i:s',
+
     ],
     'translator' => array(
         'locale' => 'ru',
@@ -45,7 +43,6 @@ return [
     'service_manager' => [
         'aliases' => [
             Service\UserServiceInterface::class => Service\UserService::class,
-            Service\DateTimeInterface::class => Service\DateTime::class,
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
             \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
@@ -56,7 +53,6 @@ return [
         ],
         'factories' => [
             Service\UserService::class => Factory\Service\UserServiceFactory::class,
-            Service\DateTime::class => Factory\Service\DateTimeFactory::class,
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
             \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,

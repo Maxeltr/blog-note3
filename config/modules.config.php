@@ -38,6 +38,7 @@ return [
     'ZF\\OAuth2',
     'ZF\\MvcAuth',
     'Application',
+    'MxmDateTime',
     'MxmBlog',
     'Soflomo\Purifier',
     'MxmUser',
@@ -45,6 +46,5 @@ return [
     'MxmMail',
     'MxmApi',
     'MxmAdmin',
-    'MxmHelpers',
     'MxmFile',
 ];

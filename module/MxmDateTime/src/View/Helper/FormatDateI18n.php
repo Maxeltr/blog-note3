@@ -24,14 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace MxmHelpers\View\Helper;
+namespace MxmDateTime\View\Helper;
 
 use Zend\I18n\View\Helper\DateFormat;
 use Zend\Config\Config;
 use Zend\Authentication\AuthenticationService;
 use MxmUser\Model\UserInterface;
 use Zend\Session\Container as SessionContainer;
-use MxmHelpers\Exception\InvalidArgumentException;
+use MxmDateTime\Exception\InvalidArgumentException;
 
 class FormatDateI18n extends DateFormat
 {

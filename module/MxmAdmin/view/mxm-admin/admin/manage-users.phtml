@@ -36,7 +36,8 @@
                                     <td><?php echo $this->escapeHtml($user->getRole()); ?></td>
                                     <td><?php if ($user->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($user->getCreated(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); } ?></td>
                                     <td><a href="<?php echo $this->url('editUser', array('action' => 'editUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('Edit'); ?></a>
-                                        <a href="<?php echo $this->url('detailUser', array('action' => 'detailUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('View'); ?></a></td>
+                                        <a href="<?php echo $this->url('detailUser', array('action' => 'detailUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('View'); ?></a>
+                                    <a href="<?php echo $this->url('listClientsByUser', array('action' => 'listClientsByUser', 'id' => $user->getId())); ?>"><?php echo $this->translate('View user clients'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>

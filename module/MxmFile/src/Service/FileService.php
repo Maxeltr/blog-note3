@@ -27,18 +27,12 @@
 namespace MxmFile\Service;
 
 use Zend\Log\Logger;
-use Zend\Http\Response;
 use Zend\Config\Config;
-use Zend\Stdlib\ErrorHandler;
-use Zend\Filter\StaticFilter;
 use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Authentication\AuthenticationService;
-use MxmFile\Exception\RuntimeException;
-use MxmFile\Exception\NotAuthorizedException;
 use MxmFile\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
-use MxmFile\Mapper\FileMapper;
+use MxmFile\Mapper\MapperInterface;
 
 class FileService implements FileServiceInterface
 {
@@ -63,11 +57,6 @@ class FileService implements FileServiceInterface
     protected $config;
 
     /**
-     * @var Zend\Http\Response
-     */
-    protected $response;
-
-    /**
      * @var Zend\Log\Logger
      */
     protected $logger;
@@ -81,8 +70,7 @@ class FileService implements FileServiceInterface
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
-        FileMapper $fileMapper,
-        Response $response,
+        MapperInterface $fileMapper,
         Config $config,
         Logger $logger
     ) {
@@ -90,7 +78,6 @@ class FileService implements FileServiceInterface
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->fileMapper = $fileMapper;
-        $this->response = $response;
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -104,179 +91,60 @@ class FileService implements FileServiceInterface
 
         $this->authorizationService->checkPermission('find.all.files');
 
-        $this->fileMapper->findAllFiles();
-
-        $dir = $this->config->mxm_file->allowedFolders->files;
-        if (! is_dir($dir)) {
-            throw new RuntimeException($dir . ' is not directory.');
-        }
-
-//        $files = $this->findAllFilesInDir($dir);
-//
-//        $paginator = new Paginator(new ArrayAdapter($files));
-//
-//        return $paginator;
-        return $files = $this->fileMapper->findAllFiles();
+        return $this->fileMapper->findAllFiles();
     }
 
-    private function findAllFilesInDir($dir)
+    public function downloadFile($fileId)
     {
-        if (! $dirHandle = opendir($dir)) {
-            throw new RuntimeException('Can not open directory ' . $dir . '.');
-        }
-
-        $files = [];
-
-        while (false !== ($file = readdir($dirHandle))) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-
-            $filePath = $dir . $file;
-
-            $files[] = [
-                'file' => $file,
-                'size' => filesize($filePath),
-                'date' => filemtime($filePath),
-                'type' => filetype($filePath),
-                'path' => $filePath
-            ];
-        }
-
-        closedir($dirHandle);
-
-        return $files;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findAllLogs()
-    {
-        $this->authenticationService->checkIdentity();
-
-        if (! $this->authorizationService->isGranted('find.logs')) {
-            throw new NotAuthorizedException('Access denied. Permission "find.logs" is required.');
-        }
-
-        //$dir = __DIR__ . '/../../../../data/logs/';
-        $dir = $this->config->mxm_admin->logs->path;
-
-        if (! is_dir($dir)) {
-            throw new RuntimeException($dir . ' is not directory.');
-        }
-
-        if (! $dirHandle = opendir($dir)) {
-            throw new RuntimeException('Can not open directory ' . $dir . '.');
-        }
-
-        $files = [];
-
-        while (false !== ($file = readdir($dirHandle))) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-
-            $filePath = $dir . $file;
-
-            $files[] = [
-                'file' => $file,
-                'size' => filesize($filePath),
-                'date' => filemtime($filePath),
-                'type' => filetype($filePath),
-                'path' => $filePath
-            ];
-        }
-
-        closedir($dirHandle);
-
-        $paginator = new Paginator(new ArrayAdapter($files));
-
-        return $paginator;
-    }
-
-    public function downloadLogFile($file)
-    {
-        $this->authenticationService->checkIdentity();
-
-        if (! $this->authorizationService->isGranted('download.log')) {
-            throw new NotAuthorizedException('Access denied. Permission "download.log" is required.');
-        }
-
-        if (! is_string($file)) {
+        if (! is_string($fileId)) {
             throw new InvalidArgumentException(sprintf(
                 'The data must be string; received "%s"',
-                (is_object($file) ? get_class($file) : gettype($file))
+                (is_object($fileId) ? get_class($fileId) : gettype($fileId))
             ));
         }
 
-        $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
-
-        if (!is_readable($path)) {
-            throw new RuntimeException('Path "' . $path . '" is not readable.');
-        }
-
-        if (! is_file($path)) {
-            throw new RuntimeException('File "' . $path . '" does not exist.');
-        }
-
-        $headers = $this->response->getHeaders();
-        $headers->addHeaderLine("Content-type: application/octet-stream");
-        $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . basename($path) . "\"");
-        $headers->addHeaderLine("Content-length: " . filesize($path));
-//        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
-
-        $fileContent = file_get_contents($path);
-        if ($fileContent !== false) {
-            $this->response->setContent($fileContent);
-        } else {
-            throw new RuntimeException("Can't read file");
-        }
-
-        return $this->response;
-    }
-
-    public function deleteLogs($files)
-    {
         $this->authenticationService->checkIdentity();
 
-        if (! $this->authorizationService->isGranted('delete.logs')) {
-            throw new NotAuthorizedException('Access denied. Permission "delete.logs" is required.');
+        $file = $this->fileMapper->findFileById($fileId);
+
+        $this->authorizationService->checkPermission('download.file', $file);
+
+        $path = $file->getPath();
+
+        return $this->fileMapper->downloadFile($path);
+    }
+
+    public function deleteFile($fileId)
+    {
+        if (! is_string($fileId)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be string; received "%s"',
+                (is_object($fileId) ? get_class($fileId) : gettype($fileId))
+            ));
         }
 
-        if (! is_string($files) && ! is_array($files)) {
+        $this->authenticationService->checkIdentity();
+
+        $file = $this->fileMapper->findFileById($fileId);
+
+        $this->authorizationService->checkPermission('delete.file', $file);
+
+        return $this->fileMapper->deleteFile($file);
+    }
+
+    public function deleteFiles($files)
+    {
+        if (! is_string($files) && ! is_array($files) && ! ($files instanceof Paginator)) {
             throw new InvalidArgumentException(sprintf(
-                'The data must be string or array; received "%s"',
+                'The data must be string or array or instance of Paginator; received "%s"',
                 (is_object($files) ? get_class($files) : gettype($files))
             ));
         }
 
-        if (is_string($files)) {
-            $files = explode(' ', $files);
-        }
+        $this->authenticationService->checkIdentity();
 
-        foreach ($files as $file) {
-            $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
+        $this->authorizationService->checkPermission('delete.files');
 
-            if (!is_readable($path)) {
-                throw new RuntimeException('Path "' . $path . '" is not readable.');
-            }
-
-            if (! is_file($path)) {
-                throw new RuntimeException('File "' . $path . '" does not exist.');
-            }
-
-            ErrorHandler::start();
-            $test = unlink($path);
-            $error = ErrorHandler::stop();
-            if (! $test) {
-                $fp = fopen($path, "r+");
-                ftruncate($fp, 0);
-                fclose($fp);
-                $this->logger->err('Cannot remove file ' . $path . '. ' . $error);
-            }
-        }
-
-        return;
+        return $this->fileMapper->deleteFiles($files);
     }
 }

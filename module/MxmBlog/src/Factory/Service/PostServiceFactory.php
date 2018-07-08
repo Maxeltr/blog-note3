@@ -29,7 +29,6 @@ namespace MxmBlog\Factory\Service;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
-use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use MxmBlog\Service\PostService;
 use MxmRbac\Service\AuthorizationService;
@@ -42,7 +41,7 @@ class PostServiceFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $mapper = $container->get(MapperInterface::class);
-        $dateTime = $container->get(DateTimeInterface::class);
+        $dateTime = $container->get('datetime');
         $isPublishedRecordExistsValidator = $container->get(IsPublishedRecordExistsValidatorInterface::class);
         $authorizationService = $container->get(AuthorizationService::class);
         $authenticationService = $container->get(AuthenticationService::class);

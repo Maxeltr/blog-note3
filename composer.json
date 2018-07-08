@@ -48,7 +48,7 @@
             "MxmMail\\": "module/MxmMail/src/",
             "MxmApi\\": "module/MxmApi/src/",
             "MxmAdmin\\": "module/MxmAdmin/src/",
-            "MxmHelpers\\": "module/MxmHelpers/src/",
+            "MxmDateTime\\": "module/MxmDateTime/src/",
             "MxmFile\\": "module/MxmFile/src/"
         }
     },

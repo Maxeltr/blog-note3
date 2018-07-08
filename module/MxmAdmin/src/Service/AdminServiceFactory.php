@@ -28,23 +28,24 @@ namespace MxmAdmin\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmApi\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Config\Config;
 use Zend\Http\Response;
 use MxmAdmin\Logger;
+use MxmFile\Mapper\DirectoryMapper;
 
 class AdminServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $authorizationService = $container->get(AuthorizationService::class);
-        $dateTime = $container->get(DateTimeInterface::class);
+        $dateTime = $container->get('datetime');
         $authService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
         $response = new Response();
         $logger = $container->get(Logger::class);
+        $mapper = $container->get(DirectoryMapper::class);
 
         return new AdminService(
             $dateTime,
@@ -52,7 +53,8 @@ class AdminServiceFactory implements FactoryInterface
             $authorizationService,
             $response,
             $config,
-            $logger
+            $logger,
+            $mapper
         );
     }
 }

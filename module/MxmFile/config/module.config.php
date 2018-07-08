@@ -42,9 +42,7 @@ return [
         ],
     ],
     'defaults' => [
-        'locale' => 'ru',
-        'timezone' => 'Europe/Moscow',
-        'dateTimeFormat' => 'Y-m-d H:i:s',
+
     ],
     'controllers' => [
         'factories' => [
@@ -57,11 +55,12 @@ return [
             Service\DateTimeInterface::class => Service\DateTime::class,
             Service\FileServiceInterface::class => Service\FileService::class,
             Service\DownloadServiceInterface::class => Service\DownloadService::class,
-            Mapper\MapperInterface::class => Mapper\FileMapper::class,
+            Mapper\MapperInterface::class => Mapper\ZendTableGatewayMapper::class,
         ],
         'factories' => [
             Service\DateTime::class => Service\DateTimeFactory::class,
-            Mapper\FileMapper::class => Mapper\FileMapperFactory::class,
+            Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
+            Mapper\DirectoryMapper::class => Mapper\DirectoryMapperFactory::class,
             Service\FileService::class => Service\FileServiceFactory::class,
             Service\DownloadService::class => Service\DownloadServiceFactory::class,
             Logger::class => Logger\LoggerFactory::class,

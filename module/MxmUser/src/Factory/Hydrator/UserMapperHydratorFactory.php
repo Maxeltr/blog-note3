@@ -34,7 +34,6 @@ use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
 use MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator;
 use Zend\Config\Config;
 use MxmUser\Date;
-use MxmUser\Service\DateTimeInterface;
 
 class UserMapperHydratorFactory implements FactoryInterface
 {
@@ -44,7 +43,7 @@ class UserMapperHydratorFactory implements FactoryInterface
 
         $userHydrator = new UserHydrator();
 
-        $datetime = $container->get(DateTimeInterface::class);
+        $datetime = $container->get('datetime');
         $dateValidator = $container->get(Date::class);
         $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config);
 

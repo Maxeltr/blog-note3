@@ -33,6 +33,12 @@ use MxmApi\Model\ClientInterface;
 interface FileInterface
 {
     /**
+     * Принудительно копируем this->object, иначе
+     * он будет указывать на один и тот же объект.
+     */
+    public function __clone();
+    
+    /**
      * Get file ID
      *
      * @return String

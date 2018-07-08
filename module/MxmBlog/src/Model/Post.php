@@ -244,7 +244,7 @@ class Post extends AbstractModel implements PostInterface
     /**
      * {@inheritDoc}
      */
-    public function setCreated(DateTimeInterface $created)
+    public function setCreated(\DateTimeInterface $created)
     {
         $this->created = $created;
 
@@ -263,7 +263,7 @@ class Post extends AbstractModel implements PostInterface
     /**
      * {@inheritDoc}
      */
-    public function setUpdated(DateTimeInterface $updated)
+    public function setUpdated(\DateTimeInterface $updated)
     {
         $this->updated = $updated;
 
@@ -282,7 +282,7 @@ class Post extends AbstractModel implements PostInterface
     /**
      * {@inheritDoc}
      */
-    public function setPublished(DateTimeInterface $published)
+    public function setPublished(\DateTimeInterface $published)
     {
         $this->published = $published;
 

@@ -28,7 +28,6 @@ namespace MxmApi\Service;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmApi\Service\DateTimeInterface;
 use MxmApi\Service\ApiService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Crypt\Password\Bcrypt;
@@ -47,7 +46,7 @@ class ApiServiceFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $authorizationService = $container->get(AuthorizationService::class);
-        $dateTime = $container->get(DateTimeInterface::class);
+        $dateTime = $container->get('datetime');
         $authService = $container->get(AuthenticationService::class);
         $dbAdapter = $container->get(Adapter::class);
         $bcrypt = new Bcrypt();

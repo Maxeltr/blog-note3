@@ -31,28 +31,25 @@ use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Config\Config;
-use Zend\Http\Response;
 use MxmAdmin\Logger;
-use MxmFile\Mapper\FileMapper;
+use MxmFile\Mapper\MapperInterface;
 
 class FileServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $authorizationService = $container->get(AuthorizationService::class);
-        $dateTime = $container->get(DateTimeInterface::class);
+        $dateTime = $container->get('datetime');
         $authService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
-        $response = new Response();
         $logger = $container->get(Logger::class);
-        $fileMapper = $container->get(FileMapper::class);
+        $fileMapper = $container->get(MapperInterface::class);
 
         return new FileService(
             $dateTime,
             $authService,
             $authorizationService,
             $fileMapper,
-            $response,
             $config,
             $logger
         );

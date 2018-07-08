@@ -27,7 +27,6 @@
 namespace MxmBlog\Hydrator\PostMapperHydrator;
 
 use MxmBlog\Model\PostInterface;
-use MxmBlog\Service\DateTimeInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Validator\Date;
 use Zend\Config\Config;
@@ -40,7 +39,7 @@ class DatesHydrator implements HydratorInterface
 
     private $config;
 
-    public function __construct(DateTimeInterface $datetime, Date $dateValidator, Config $config)
+    public function __construct(\DateTimeInterface $datetime, Date $dateValidator, Config $config)
     {
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;

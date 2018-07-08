@@ -149,4 +149,6 @@ return [
     "Revoke token" => "Отозвать токен",
     "Delete client" => "Удалить клиент",
     "Date of change" => "Дата изменения",
+    "View" => "Просмотр",
+    "View user clients" => "Просмотр клиентов пользователя",
 ];

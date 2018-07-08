@@ -28,27 +28,5 @@ namespace MxmFile\Service;
 
 interface FileServiceInterface
 {
-    /**
-     * Найти все файлы в папке указанной в module.config.php
-     *
-     * @return Zend\Paginator\Paginator
-     *
-     * @throws NotAuthenticatedException
-     * @throws NotAuthorizedException
-     */
-    public function findAllLogs();
 
-    /**
-     * Удалить файлы в папке указанной в module.config.php
-     *
-     * @param string|array $files
-     *
-     * @return void
-     *
-     * @throws NotAuthenticatedException
-     * @throws NotAuthorizedException
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     */
-    public function deleteLogs($files);
 }

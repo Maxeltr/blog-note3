@@ -28,9 +28,7 @@ namespace MxmApi;
 
 return [
     'defaults' => [
-        'locale' => 'ru',
-        'timezone' => 'Europe/Moscow',
-        'dateTimeFormat' => 'Y-m-d H:i:s',
+
     ],
     'mxm_api' => [
         'grant_types' => [
@@ -54,7 +52,6 @@ return [
     ],
     'service_manager' => [
         'aliases' => [
-            Service\DateTimeInterface::class => Service\DateTime::class,
             Service\ApiServiceInterface::class => Service\ApiService::class,
             Mapper\MapperInterface::class => Mapper\ZendTableGatewayMapper::class,
         ],
@@ -65,7 +62,6 @@ return [
             \MxmApi\V1\Rest\User\UserResource::class => \MxmApi\V1\Rest\User\UserResourceFactory::class,
             \MxmApi\V1\Rest\File\FileResource::class => \MxmApi\V1\Rest\File\FileResourceFactory::class,
             Service\ApiService::class => Service\ApiServiceFactory::class,
-            Service\DateTime::class => Service\DateTimeFactory::class,
             Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
             Hydrator\ClientFormHydrator::class => Hydrator\ClientFormHydrator\ClientFormHydratorFactory::class,
             Hydrator\ClientMapperHydrator::class => Hydrator\ClientMapperHydrator\ClientMapperHydratorFactory::class,

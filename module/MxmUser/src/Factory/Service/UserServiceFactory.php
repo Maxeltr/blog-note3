@@ -32,7 +32,6 @@ use Zend\Validator\Db\RecordExists;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\NotEmpty;
 use MxmUser\Mapper\MapperInterface;
-use MxmUser\Service\DateTimeInterface;
 use MxmUser\Service\UserService;
 use Zend\Authentication\AuthenticationService;
 use Zend\Crypt\Password\Bcrypt;
@@ -48,7 +47,7 @@ class UserServiceFactory implements FactoryInterface
     {
         $mapper = $container->get(MapperInterface::class);
         $authorizationService = $container->get(AuthorizationService::class);
-        $dateTime = $container->get(DateTimeInterface::class);
+        $dateTime = $container->get('datetime');
         $authService = $container->get(AuthenticationService::class);
         $emailValidator = new EmailAddress();
         $notEmptyValidator = new NotEmpty();

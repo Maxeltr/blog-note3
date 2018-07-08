@@ -31,21 +31,18 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Config\Config;
 use Zend\Http\Response;
-use MxmRbac\Service\AuthorizationService;
-use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmFile\Logger;
-use MxmFile\Service\DateTimeInterface;
+
 use MxmFile\Hydrator\FileMapperHydrator\FileMapperHydrator;
 use MxmFile\Model\File;
 
-class FileMapperFactory implements FactoryInterface
+class ZendTableGatewayMapperFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = new Config($container->get('config'));
-        $datetime = $container->get(DateTimeInterface::class);
         $response = new Response();
 
         $table = 'files';
@@ -53,12 +50,8 @@ class FileMapperFactory implements FactoryInterface
         $hydrator = $container->get(FileMapperHydrator::class);
         $resultSet = new HydratingResultSet($hydrator, new File());
         $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
-
-        $authorizationService = $container->get(AuthorizationService::class);
-        $userMapper = $container->get(UserMapperInterface::class);
-
         $logger = $container->get(Logger::class);
 
-        return new FileMapper($tableGateway, $datetime, $config, $response, $authorizationService, $userMapper, $logger);
+        return new ZendTableGatewayMapper($tableGateway, $config, $response, $logger);
     }
 }

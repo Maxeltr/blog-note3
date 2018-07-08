@@ -27,10 +27,18 @@
 namespace MxmFile\Mapper;
 
 use MxmUser\Model\UserInterface;
+use MxmFile\Model\FileInterface;
 
 interface MapperInterface
 {
-
+    /**
+     * @param MxmFile\Model\File $file
+     *
+     * @return Array
+     *
+     * @throw DataBaseErrorException
+     */
+    public function insertFile($file);
 
     /**
      * @return Zend\Paginator\Paginator
@@ -48,6 +56,32 @@ interface MapperInterface
      * @param String $fileId
      *
      * @return MxmFile\Model\File
+     * @throw RecordNotFoundException
      */
     public function findFileById($fileId);
+
+    /**
+     * @param String $path
+     *
+     * @return Zend\Http\Response
+     *
+     * @throw RuntimeException
+     */
+    public function downloadFile($path);
+
+    /**
+     * @param MxmFile\Model\FileInterface $file
+     *
+     * @return bool
+     */
+    public function deleteFile(FileInterface $file);
+
+    /**
+     * @param Paginator|Array $files
+     *
+     * @return void
+     *
+     *@throw InvalidArgumentException
+     */
+    public function deleteFiles($files);
 }

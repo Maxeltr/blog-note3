@@ -20,8 +20,7 @@ class FileResourceFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
 
-        $timezone = new \DateTimeZone($config->defaults->timezone);
-        $datetime = new \DateTimeImmutable('now', $timezone);
+        $datetime = $container->get('datetime');
 
         $response = new Response();
 

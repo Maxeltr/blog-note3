@@ -37,6 +37,7 @@ use MxmAdmin\Exception\InvalidArgumentException;
 use Zend\Filter\StaticFilter;
 use Zend\Stdlib\ErrorHandler;
 use Zend\Log\Logger;
+use MxmFile\Mapper\DirectoryMapper;
 
 class AdminService implements AdminServiceInterface
 {
@@ -70,13 +71,19 @@ class AdminService implements AdminServiceInterface
      */
     protected $logger;
 
+    /**
+     * @var MapperInterface
+     */
+    protected $mapper;
+
     public function __construct(
         \DateTimeInterface $datetime,
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
         Response $response,
         Config $config,
-        Logger $logger
+        Logger $logger,
+        DirectoryMapper $mapper
     ) {
         $this->datetime = $datetime;
         $this->authenticationService = $authenticationService;
@@ -84,6 +91,7 @@ class AdminService implements AdminServiceInterface
         $this->response = $response;
         $this->config = $config;
         $this->logger = $logger;
+        $this->mapper = $mapper;
     }
 
     /**
@@ -95,40 +103,13 @@ class AdminService implements AdminServiceInterface
 
         $this->authorizationService->checkPermission('find.logs');
 
-        //$dir = __DIR__ . '/../../../../data/logs/';
         $dir = $this->config->mxm_admin->logs->path;
 
         if (! is_dir($dir)) {
             throw new RuntimeException($dir . ' is not directory.');
         }
 
-        if (! $dirHandle = opendir($dir)) {
-            throw new RuntimeException('Can not open directory ' . $dir . '.');
-        }
-
-        $files = [];
-
-        while (false !== ($file = readdir($dirHandle))) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-
-            $filePath = $dir . $file;
-
-            $files[] = [
-                'file' => $file,
-                'size' => filesize($filePath),
-                'date' => filemtime($filePath),
-                'type' => filetype($filePath),
-                'path' => $filePath
-            ];
-        }
-
-        closedir($dirHandle);
-
-        $paginator = new Paginator(new ArrayAdapter($files));
-
-        return $paginator;
+        return $this->mapper->findAllFiles($dir);
     }
 
     public function downloadLogFile($file)
@@ -172,10 +153,6 @@ class AdminService implements AdminServiceInterface
 
     public function deleteLogs($files)
     {
-        $this->authenticationService->checkIdentity();
-
-        $this->authorizationService->checkPermission('delete.logs');
-
         if (! is_string($files) && ! is_array($files)) {
             throw new InvalidArgumentException(sprintf(
                 'The data must be string or array; received "%s"',
@@ -183,32 +160,10 @@ class AdminService implements AdminServiceInterface
             ));
         }
 
-        if (is_string($files)) {
-            $files = explode(' ', $files);
-        }
+        $this->authenticationService->checkIdentity();
 
-        foreach ($files as $file) {
-            $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
+        $this->authorizationService->checkPermission('delete.logs');
 
-            if (!is_readable($path)) {
-                throw new RuntimeException('Path "' . $path . '" is not readable.');
-            }
-
-            if (! is_file($path)) {
-                throw new RuntimeException('File "' . $path . '" does not exist.');
-            }
-
-            ErrorHandler::start();
-            $test = unlink($path);
-            $error = ErrorHandler::stop();
-            if (! $test) {
-                $fp = fopen($path, "r+");
-                ftruncate($fp, 0);
-                fclose($fp);
-                $this->logger->err('Cannot remove file ' . $path . '. ' . $error);
-            }
-        }
-
-        return;
+        $this->mapper->deleteFiles($files, $this->config->mxm_admin->logs->path);
     }
 }

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Service;
+namespace MxmDateTime\Exception;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
-use MxmUser\Service\DateTimeImmutable;
-
-class DateTimeFactory implements FactoryInterface
+class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $config = new Config($container->get('config'));
-
-        $timezone = new \DateTimeZone($config->defaults->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
-        $datetime = new DateTimeImmutable('now', $timezone);
-
-        return $datetime;
-    }
 }

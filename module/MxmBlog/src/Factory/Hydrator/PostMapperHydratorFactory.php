@@ -37,7 +37,6 @@ use MxmBlog\Hydrator\PostMapperHydrator\UserHydrator;
 use MxmBlog\Model\CategoryInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Config\Config;
-use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Model\TagInterface;
 use Zend\Tag\ItemList;
 use MxmBlog\Date;
@@ -58,7 +57,7 @@ class PostMapperHydratorFactory implements FactoryInterface
         $itemList = new ItemList();
         $tagsHydrator = new TagsHydrator($item, $itemList);
 
-        $datetime = $container->get(DateTimeInterface::class);
+        $datetime = $container->get('datetime');
         $dateValidator = $container->get(Date::class);
         $datesHydrator = new DatesHydrator($datetime, $dateValidator, $config);
 

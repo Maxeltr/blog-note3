@@ -31,8 +31,6 @@ use Zend\Db\TableGateway\TableGateway;
 use Rhumsaa\Uuid\Uuid;
 use Zend\Config\Config;
 use Zend\Http\Response;
-use MxmRbac\Service\AuthorizationService;
-use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use Zend\Log\Logger;
 use Zend\Stdlib\ErrorHandler;
 use MxmFile\Exception\RecordNotFoundException;
@@ -41,17 +39,12 @@ use Zend\Stdlib\ArrayUtils;
 use MxmFile\Model\FileInterface;
 use MxmUser\Model\UserInterface;
 
-class FileMapper implements MapperInterface
+class ZendTableGatewayMapper implements MapperInterface
 {
     /**
      * @var Zend\Db\TableGateway\TableGateway
      */
     protected $fileTableGateway;
-
-    /**
-     * @var DateTimeInterface
-     */
-    protected $datetime;
 
     /**
      * @var Zend\Config\Config
@@ -64,35 +57,19 @@ class FileMapper implements MapperInterface
     protected $response;
 
     /**
-     * @var MxmRbac\Service\AuthorizationService
-     */
-    protected $authorizationService;
-
-    /**
-     * @var MxmUser\Mapper\MapperInterface
-     */
-    protected $userMapper;
-
-    /**
      * @var Zend\Log\Logger
      */
     protected $logger;
 
     public function __construct(
         TableGateway $fileTableGateway,
-        \DateTimeInterface $datetime,
         Config $config,
         Response $response,
-        AuthorizationService $authorizationService,
-        UserMapperInterface $mapper,
         Logger $logger
     ){
         $this->fileTableGateway = $fileTableGateway;
-        $this->datetime = $datetime;
         $this->config = $config;
         $this->response = $response;
-        $this->authorizationService = $authorizationService;
-        $this->userMapper = $mapper;
         $this->logger = $logger;
     }
 
@@ -143,10 +120,36 @@ class FileMapper implements MapperInterface
         return $resultSet->current();
     }
 
+    public function downLoadFile($path)
+    {
+        if (! is_readable($path)) {
+            throw new RuntimeException('Path "' . $path . '" is not readable.');
+        }
+
+        if (! is_file($path)) {
+            throw new RuntimeException('File "' . $path . '" does not exist.');
+        }
+
+        $headers = $this->response->getHeaders();
+        $headers->addHeaderLine("Content-type: application/octet-stream");
+        $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . basename($path) . "\"");
+        $headers->addHeaderLine("Content-length: " . filesize($path));
+//        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
+
+        $fileContent = file_get_contents($path);
+        if ($fileContent !== false) {
+            $this->response->setContent($fileContent);
+        } else {
+            throw new RuntimeException("Can't read file");
+        }
+
+        return $this->response;
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function deleteFile($file)
+    public function deleteFile(FileInterface $file)
     {
         $result = $this->unlinkFile($file->getPath());
         if (! $result) {

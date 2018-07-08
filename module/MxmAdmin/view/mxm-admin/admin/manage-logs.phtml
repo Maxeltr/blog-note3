@@ -24,14 +24,12 @@
                             <?php $i = 0;
                             foreach ($this->logs as $log): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="checkbox[<?php echo $i; ?>]" value='<?php echo $this->escapeHtml($log['file']); ?>'></td>
-                                    <td><?php echo $this->escapeHtml($log['file']); ?></td>
-                                    <td><?php echo $this->escapeHtml($log['size']); ?></td>
-                                    <td><?php $dt = new \DateTimeImmutable();
-                                    $dt->setTimestamp($log['date']);
-                                    echo $this->formatDateI18n($dt, \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); ?></td>
-                                    <td><?php echo $this->escapeHtml($log['type']); ?></td>
-                                    <td><a href="<?php echo $this->url('downloadLogFile', ['action' => 'downloadLogFile', 'file' => $this->escapeHtml($log['file'])]); ?>"><?php echo $this->translate('Download'); ?></a></td>
+                                    <td><input type="checkbox" name="checkbox[<?php echo $i; ?>]" value='<?php echo $this->escapeHtml($log->getFilename()); ?>'></td>
+                                    <td><?php echo $this->escapeHtml($log->getFilename()); ?></td>
+                                    <td><?php echo $this->escapeHtml($log->getSize()); ?></td>
+                                    <td><?php echo $this->formatDateI18n($log->getChangeDate(), \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT); ?></td>
+                                    <td><?php echo $this->escapeHtml($log->getType()); ?></td>
+                                    <td><a href="<?php echo $this->url('downloadLogFile', ['action' => 'downloadLogFile', 'file' => $this->escapeHtml($log->getFilename())]); ?>"><?php echo $this->translate('Download'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>

@@ -48,6 +48,6 @@ class MustBeOwnerAssertion implements AssertionInterface
 
     public function assert(Rbac $rbac)
     {
-        return $this->identity->getId() === $this->content->getOwner();
+        return $this->identity->getId() === $this->content->getOwner()->getId();
     }
 }

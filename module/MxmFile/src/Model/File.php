@@ -82,6 +82,25 @@ class File implements FileInterface
      */
     protected $client;
 
+    public function __clone()
+    {
+        if ($this->uploadDate instanceof \DateTimeInterface) {
+            $this->uploadDate = clone $this->uploadDate;
+        }
+
+        if ($this->owner instanceof UserInterface) {
+            $this->owner = clone $this->owner;
+        }
+
+        if ($this->changeDate instanceof \DateTimeInterface) {
+            $this->changeDate = clone $this->changeDate;
+        }
+
+        if ($this->client instanceof ClientInterface) {
+            $this->client = clone $this->client;
+        }
+    }
+
     /**
      *  {@inheritDoc}
      */

@@ -28,7 +28,6 @@ namespace MxmUser\Service;
 
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Model\UserInterface;
-use MxmUser\Service\DateTimeInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\Validator\Db\RecordExists;
 use Zend\Validator\EmailAddress;
@@ -40,7 +39,6 @@ use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
-use MxmUser\Exception\NotAuthorizedUserException;
 use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
 use Zend\Math\Rand;

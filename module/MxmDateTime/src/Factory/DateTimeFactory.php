@@ -24,11 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace MxmApi\Service;
+namespace MxmDateTime\Factory;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zend\Config\Config;
+use MxmDatetime\Exception\InvalidArgumentException;
 
 class DateTimeFactory implements FactoryInterface
 {
@@ -36,7 +37,15 @@ class DateTimeFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
 
-        $timezone = new \DateTimeZone($config->defaults->timezone);    //зона по умолчанию для дефолтных DateTime, берется из global.php
+        if (! isset($config->defaults->timezone)) {
+            throw new InvalidArgumentException('There are no timezone option in module config');
+        }
+
+        if (! isset($config->defaults->dateTimeFormat)) {
+            throw new InvalidArgumentException('There are no dateTimeFormat option in module config');
+        }
+
+        $timezone = new \DateTimeZone($config->defaults->timezone);
         $datetime = new \DateTimeImmutable('now', $timezone);
 
         return $datetime;

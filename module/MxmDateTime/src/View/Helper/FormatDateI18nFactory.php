@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace MxmHelpers\Exception;
+namespace MxmDateTime\View\Helper;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\Config\Config;
+use Zend\Authentication\AuthenticationService;
+
+class FormatDateI18nFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = new Config($container->get('config'));
+
+        $timezone = new \DateTimeZone($config->defaults->timezone);
+        $datetime = new \DateTimeImmutable('now', $timezone);
+
+        $authenticationService = $container->get(AuthenticationService::class);
+        $sessionContainer = $container->get('MxmUserSessionContainer');
+
+        return new FormatDateI18n($config, $datetime, $authenticationService, $sessionContainer);
+    }
 }

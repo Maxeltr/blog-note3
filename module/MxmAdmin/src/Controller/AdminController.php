@@ -111,7 +111,7 @@ class AdminController  extends AbstractActionController
         $moderatorCount = $this->userService->findUsersByRole('moderator');
         $authorCount = $this->userService->findUsersByRole('author');
         $userCount = $this->userService->findUsersByRole('user');
-        $fileCount = $this->apiService->findAllFiles();
+        $fileCount = $this->fileService->findAllFiles();
         $clientCount = $this->apiService->findAllClients();
         $postCount = $this->postService->findAllPosts(false);
         $categoryCount = $this->postService->findAllCategories();

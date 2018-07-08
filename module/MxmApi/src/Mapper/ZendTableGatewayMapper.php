@@ -37,10 +37,7 @@ use Zend\Hydrator\HydratorInterface;
 use Zend\Paginator\Adapter\DbTableGateway;
 use MxmApi\Model\ClientInterface;
 use Zend\Db\Sql\Where;
-use MxmApi\V1\Rest\File\FileEntity;
-use Zend\Stdlib\ErrorHandler;
 use Zend\Log\Logger;
-use Zend\Stdlib\ArrayUtils;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
@@ -60,11 +57,6 @@ class ZendTableGatewayMapper implements MapperInterface
     protected $oauthAccessTokensTableGateway;
 
     /**
-     * @var Zend\Db\TableGateway\TableGateway
-     */
-    protected $fileTableGateway;
-
-    /**
      * @var Zend\Hydrator\HydratorInterface
      */
     protected $clientHydrator;
@@ -77,14 +69,12 @@ class ZendTableGatewayMapper implements MapperInterface
     public function __construct(
         TableGateway $oauthClientsTableGateway,
         TableGateway $oauthAccessTokensTableGateway,
-        TableGateway $fileTableGateway,
         HydratorInterface $clientHydrator,
         Config $config,
         Logger $logger
     ) {
         $this->oauthClientsTableGateway = $oauthClientsTableGateway;
         $this->oauthAccessTokensTableGateway = $oauthAccessTokensTableGateway;
-        $this->fileTableGateway = $fileTableGateway;
         $this->clientHydrator = $clientHydrator;
         $this->config = $config;
         $this->logger = $logger;
@@ -222,100 +212,5 @@ class ZendTableGatewayMapper implements MapperInterface
         $where->in('client_id', $clientIds);
 
         return $this->oauthClientsTableGateway->delete($where);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findAllFiles()
-    {
-        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, null, ['uploaded' => 'DESC']));
-
-        return $paginator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findAllFilesByUser(UserInterface $user = null)
-    {
-        $paginator = new Paginator(new DbTableGateway($this->fileTableGateway, ['owner' => $user->getId()], ['uploaded' => 'DESC']));
-
-        return $paginator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findFileById($fileId)
-    {
-        $resultSet = $this->fileTableGateway->select(['id' => $fileId]);
-        if (0 === count($resultSet)) {
-            throw new RecordNotFoundException('File ' . $fileId . 'not found.');
-        }
-
-        return $resultSet->current();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function deleteFiles($files)
-    {
-        if ($files instanceof Paginator) {
-            $files = ArrayUtils::iteratorToArray($files->setItemCountPerPage(-1));
-        }
-
-        if (! is_array($files)) {
-            throw new InvalidArgumentException(sprintf(
-                'The data must be array; received "%s"',
-                (is_object($files) ? get_class($files) : gettype($files))
-            ));
-        }
-
-        if (empty($files)) {
-            return false;
-        }
-
-        $filePaths = [];
-        $func = function ($value) use (&$filePaths) {
-            if (is_string($value)) {
-                try {
-                    $file = $this->findFileById($value);
-                } catch (\Exception $ex) {
-                    $this->logger->err('File not found. Id - ' . $value . '. ' . $ex->getMessage() . ' ' . $ex->getFile() . ' ' . $ex->getLine());
-
-                    return;
-                }
-                $filePaths[] = $file->getPath();
-
-                return $value;
-            } elseif ($value instanceof FileEntity) {
-                $filePaths[] = $value->getPath();
-
-                return $value->getId();
-            } else {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid value in data array detected, value must be a string or instance of FileEntity, %s given.',
-                    (is_object($value) ? get_class($value) : gettype($value))
-                ));
-            }
-        };
-
-        $fileIds = array_map($func, $files);
-
-        foreach($filePaths as $filePath) {
-            ErrorHandler::start();
-            $test = unlink($filePath);
-            $error = ErrorHandler::stop();
-            if (! $test) {
-                $this->logger->err('Cannot remove file ' . $filePath . '. ' . $error);
-            }
-        }
-
-        $where = new Where();
-        $where->in('id', $fileIds);
-
-        return $this->fileTableGateway->delete($where);
     }
 }

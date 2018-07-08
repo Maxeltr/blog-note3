@@ -26,12 +26,7 @@
 
 namespace MxmBlog\Controller;
 
-use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Service\PostServiceInterface;
-use MxmBlog\Exception\RecordNotFoundBlogException;
-use MxmUser\Exception\NotAuthenticatedUserException;
-use MxmBlog\Exception\NotAuthenticatedBlogException;
-use MxmBlog\Exception\NotAuthorizedBlogException;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Paginator\Paginator;
@@ -77,7 +72,7 @@ class ListController extends AbstractActionController
     public function __construct(
         PostServiceInterface $postService,
         Date $dateValidator,
-        DateTimeInterface $datetime,
+        \DateTimeInterface $datetime,
         Config $config,
         NotEmpty $notEmptyValidator,
         Logger $logger,

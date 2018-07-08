@@ -29,8 +29,6 @@ namespace MxmBlog\Mapper;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
-use Zend\Db\ResultSet\ResultSetInterface;
-use MxmBlog\Service\DateTimeInterface;
 
 interface MapperInterface
 {
@@ -128,7 +126,7 @@ interface MapperInterface
      *
      * @return Paginator
      */
-    public function findPostsByCreateDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished = true);
+    public function findPostsByCreateDate(\DateTimeInterface $since, \DateTimeInterface $to, $hideUnpublished = true);
 
     /**
      * Найти статьи по дате редактирования.
@@ -139,7 +137,7 @@ interface MapperInterface
      *
      * @return Paginator
      */
-    public function findPostsByUpdateDate(DateTimeInterface $since, DateTimeInterface $to, $hideUnpublished = true);
+    public function findPostsByUpdateDate(\DateTimeInterface $since, \DateTimeInterface $to, $hideUnpublished = true);
 
     /**
      * Найти статьи по дате публикации.

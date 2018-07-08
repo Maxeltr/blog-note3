@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Service;
+namespace MxmFile\Mapper;
 
-interface DateTimeInterface extends \DateTimeInterface
+use Zend\Http\Response;
+use Zend\Config\Config;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use MxmFile\Logger;
+use MxmFile\Hydrator\FileMapperHydrator\FileMapperHydrator;
+
+class DirectoryMapperFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = new Config($container->get('config'));
+        $datetime = $container->get('datetime');
+        $hydrator = $container->get(FileMapperHydrator::class);
+        $logger = $container->get(Logger::class);
+        $response = new Response();
+
+        return new DirectoryMapper($datetime, $config, $logger, $hydrator, $response);
+    }
 }

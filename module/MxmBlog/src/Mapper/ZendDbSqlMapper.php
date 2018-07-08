@@ -335,7 +335,7 @@ class ZendDbSqlMapper implements MapperInterface
         }
 
         if (empty($posts)) {
-            
+
             return false;
         }
 
@@ -482,7 +482,7 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findPostsByCreateDate(DateTimeInterface $since = null, DateTimeInterface $to = null, $hideUnpublished = true)
+    public function findPostsByCreateDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null, $hideUnpublished = true)
     {
         $parameters = array(
             'group' => array(
@@ -517,7 +517,7 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findPostsByUpdateDate(DateTimeInterface $since = null, DateTimeInterface $to = null, $hideUnpublished = true)
+    public function findPostsByUpdateDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null, $hideUnpublished = true)
     {
         $parameters = array(
             'group' => array(

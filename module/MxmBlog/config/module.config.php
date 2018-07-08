@@ -15,9 +15,7 @@ return [
         'optionFilePath' => __DIR__ . '/options.php',
     ],
     'defaults' => [
-        'locale' => 'ru',
-        'timezone' => 'Europe/Moscow',
-        'dateTimeFormat' => 'Y-m-d H:i:s',
+
     ],
     'controllers' => [
         'factories' => [
@@ -29,7 +27,6 @@ return [
     'service_manager' => [
         'aliases' => [
             Service\PostServiceInterface::class => Service\PostService::class,
-            Service\DateTimeInterface::class => Service\DateTime::class,
             Validator\IsPublishedRecordExistsValidatorInterface::class => Validator\IsPublishedRecordExistsValidator::class,
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\PostInterface::class => Model\Post::class,
@@ -38,7 +35,6 @@ return [
         ],
         'factories' => [
             Service\PostService::class => Factory\Service\PostServiceFactory::class,
-            Service\DateTime::class => Factory\Service\DateTimeFactory::class,
             Validator\IsPublishedRecordExistsValidator::class => Factory\Validator\IsPublishedRecordExistsValidatorFactory::class,
             Hydrator\PostMapperHydrator\PostMapperHydrator::class => Factory\Hydrator\PostMapperHydratorFactory::class,
             Hydrator\PostFormHydrator\PostFormHydrator::class => Factory\Hydrator\PostFormHydratorFactory::class,

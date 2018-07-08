@@ -177,7 +177,7 @@ interface PostInterface
      *
      * @return $this
      */
-    public function setCreated(DateTimeInterface $created);
+    public function setCreated(\DateTimeInterface $created);
 
     /**
      * Устанавливает дату и время изменения записи
@@ -185,7 +185,7 @@ interface PostInterface
      *
      * @return $this
      */
-    public function setUpdated(DateTimeInterface $updated);
+    public function setUpdated(\DateTimeInterface $updated);
 
     /**
      * Устанавливает дату и время публикации записи
@@ -193,7 +193,7 @@ interface PostInterface
      *
      * @return $this
      */
-    public function setPublished(DateTimeInterface $published);
+    public function setPublished(\DateTimeInterface $published);
 
     /**
      * Устанавливает флаг публикации (true - опубликовано, false - не опубликовано)

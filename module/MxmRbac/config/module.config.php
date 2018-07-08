@@ -116,14 +116,9 @@ return [
 
                     ],
                 ],
-                'user' => [
+                'advancedUser' => [
                     'parent' => 'author',
                     'permissions' => [
-                        'find.user',
-                        'edit.user',
-                        'delete.user',
-			'edit.password',
-			'edit.email',
                         'find.clients.rest',
                         'find.client.rest',
                         'add.client.rest',
@@ -135,6 +130,16 @@ return [
                         'create.file.rest',
                         'download.file.rest',
 
+                    ]
+                ],
+                'user' => [
+                    'parent' => 'author',
+                    'permissions' => [
+                        'find.user',
+                        'edit.user',
+                        'delete.user',
+			'edit.password',
+			'edit.email',
                     ]
                 ],
             ],
@@ -154,10 +159,8 @@ return [
                         'fetch.files.by.user.rest',
                         'find.clients.rest',
                         'find.client.rest',
-                        'fetch.files.by.user.rest',
                         'delete.client.rest',
                         'revoke.token.rest',
-                        'fetch.file.rest',
                     ]
                 ],
                 'MustBeOwnerAssertion' => [

@@ -29,19 +29,9 @@ namespace MxmApi\Controller;
 use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\Authentication\AuthenticationService;
 use MxmApi\Service\ApiServiceInterface;
 use Zend\Form\FormInterface;
-use MxmApi\Exception\RuntimeException;
-use MxmApi\Exception\ExpiredException;
-use MxmApi\Exception\NotAuthenticatedException;
-use MxmApi\Exception\InvalidArgumentException;
-use MxmApi\Exception\RecordNotFoundException;
 use MxmApi\Exception\AlreadyExistsException;
-use MxmApi\Exception\InvalidPasswordException;
-use MxmApi\Exception\NotAuthorizedException;
-use MxmApi\Exception\DataBaseErrorException;
-use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Service\UserServiceInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 
@@ -101,6 +91,7 @@ class ApiController extends AbstractActionController
                 try {
                     $savedClient = $this->apiService->addClient($this->addClientForm->getData());
                 } catch (AlreadyExistsException $e) {
+                    $this->logger->err('ApiController. Client already exists. ' . $e->getMessage());
 
                     return new ViewModel([
                         'form' => $this->addClientForm,
@@ -142,13 +133,13 @@ class ApiController extends AbstractActionController
             if ($del === $this->translator->translate('Yes')) {
                 $result = $this->apiService->revokeToken($client);
                 if ($result === false) {
-                    $this->logger->err('ApiController. Client (' . $client->getClientId() . ')' . $token . ' not revoked');
+                    $this->logger->err('ApiController. Client (' . $client->getClientId() . ') token not revoked');
 
                     return $this->notFoundAction();
                 }
             }
 
-            return $this->redirect()->toRoute('listClients');	//TODO учитывать страницу, id и т.д.
+            return $this->redirect()->toRoute('listClients');
         }
 
         return new ViewModel([

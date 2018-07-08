@@ -86,16 +86,4 @@ interface MapperInterface
      * @return int
      */
     public function deleteClients($clients);
-
-    /**
-     * @return Zend\Paginator\Paginator
-     */
-    public function findAllFiles();
-
-    /**
-     * @param UserInterface $user
-     *
-     * @return Zend\Paginator\Paginator
-     */
-    public function findAllFilesByUser(UserInterface $user = null);
 }

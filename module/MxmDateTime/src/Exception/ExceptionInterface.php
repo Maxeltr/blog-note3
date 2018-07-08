@@ -1,9 +1,9 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
- * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Service;
+namespace MxmDateTime\Exception;
 
-class DateTimeImmutable extends \DateTimeImmutable implements DateTimeInterface
+interface ExceptionInterface
 {
 }

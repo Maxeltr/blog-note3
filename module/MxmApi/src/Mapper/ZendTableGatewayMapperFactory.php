@@ -28,13 +28,8 @@ namespace MxmApi\Mapper;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
-use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 use Zend\Config\Config;
 use Zend\Db\Adapter\Adapter;
-use MxmApi\Model\ClientInterface;
-use MxmApi\V1\Rest\File\FileEntity;
 use Zend\Db\ResultSet\HydratingResultSet;
 use MxmApi\Model\Client;
 use Zend\Db\TableGateway\TableGateway;
@@ -48,10 +43,6 @@ class ZendTableGatewayMapperFactory implements FactoryInterface
         $dbAdapter = $container->get(Adapter::class);
         $logger = $container->get(Logger::class);
 
-        $fileHydrator = new ReflectionHydrator();
-        $fileResultSet = new HydratingResultSet($fileHydrator, new FileEntity());
-        $fileTableGateway = new TableGateway('files', $dbAdapter, null, $fileResultSet);
-
         $clientHydrator = $container->get(ClientMapperHydrator::class);
         $clientResultSet = new HydratingResultSet($clientHydrator, new Client());
         $oauthClientsTableGateway = new TableGateway('oauth_clients', $dbAdapter, null, $clientResultSet);
@@ -63,7 +54,6 @@ class ZendTableGatewayMapperFactory implements FactoryInterface
         return new ZendTableGatewayMapper(
             $oauthClientsTableGateway,
             $oauthAccessTokensTableGateway,
-            $fileTableGateway,
             $clientHydrator,
             $config,
             $logger
