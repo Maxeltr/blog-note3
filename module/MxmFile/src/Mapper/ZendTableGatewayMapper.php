@@ -120,8 +120,10 @@ class ZendTableGatewayMapper implements MapperInterface
         return $resultSet->current();
     }
 
-    public function downLoadFile($path)
+    public function downLoadFile(FileInterface $file)
     {
+        $path = $file->getPath();
+
         if (! is_readable($path)) {
             throw new RuntimeException('Path "' . $path . '" is not readable.');
         }

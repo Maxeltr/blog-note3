@@ -75,11 +75,27 @@ class ListController extends AbstractActionController
         ]);
     }
 
+    public function listUsersByRoleAction()
+    {
+        $role = $this->params()->fromRoute('role');
+        $paginator = $this->userService->findUsersByRole($role);
+        $this->configurePaginator($paginator);
+
+        $viewModel = new ViewModel([
+            'users' => $paginator,
+            'route' => 'listUsers'
+        ]);
+
+        $viewModel->setTemplate('mxm-user/list/list-users');
+
+        return $viewModel;
+    }
+
     public function detailUserAction()
     {
         $id = $this->params()->fromRoute('id');
         $user = $this->userService->findUserById($id);
-        
+
         return new ViewModel(array(
             'user' => $user
         ));

@@ -324,22 +324,6 @@ class AdminController  extends AbstractActionController
         ]);
     }
 
-    public function downloadLogFileAction()
-    {
-        $file = $this->params()->fromRoute('file', '');
-        $response = $this->adminService->downloadLogFile($file);
-
-        return $response;
-    }
-
-    public function downloadFileAction()
-    {
-        $file = $this->params()->fromRoute('id', '');
-        $response = $this->apiService->downloadFile($file);
-
-        return $response;
-    }
-
     private function configurePaginator(Paginator $paginator)
     {
         $page = (int) $this->params()->fromRoute('page');

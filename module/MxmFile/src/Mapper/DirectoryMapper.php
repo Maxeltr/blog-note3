@@ -144,9 +144,16 @@ class DirectoryMapper
             $result = $this->unlinkFile($path);
             if (! $result) {
                 $fp = fopen($path, "r+");
-                ftruncate($fp, 0);
-                fclose($fp);
-                $this->logger->err('File: ' . $path . ' was truncated.');
+                if ($fp) {
+                    $ft = ftruncate($fp, 0);
+                    if (! $ft) {
+                        $this->logger->err('File: ' . $path . ' was not truncated.');
+                    }
+                    fclose($fp);
+                    $this->logger->err('File: ' . $path . ' was truncated.');
+                } else {
+                    $this->logger->err('File: ' . $path . ' Can not open.');
+                }
             }
         }
 

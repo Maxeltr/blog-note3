@@ -28,14 +28,17 @@ namespace MxmFile\Service;
 
 use Zend\Log\Logger;
 use Zend\Config\Config;
-use Zend\Paginator\Paginator;
 use Zend\Authentication\AuthenticationService;
-use MxmFile\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
 use MxmFile\Mapper\MapperInterface;
+use MxmFile\Mapper\DirectoryMapper;
+use MxmFile\Exception\RuntimeException;
+use MxmFile\Exception\InvalidArgumentException;
+use Zend\Filter\StaticFilter;
 
-class FileService implements FileServiceInterface
+class DownloadService implements DownloadServiceInterface
 {
+
     /**
      * @var Zend\Authentication\AuthenticationService
      */
@@ -57,67 +60,77 @@ class FileService implements FileServiceInterface
     protected $logger;
 
     /**
-     * @var MapperInterface
+     * @var MxmFile\Mapper\MapperInterface
      */
     protected $fileMapper;
+
+    /**
+     * @var MxmFile\Mapper\DirectoryMapper
+     */
+    protected $dirMapper;
 
     public function __construct(
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
         MapperInterface $fileMapper,
+        DirectoryMapper $dirMapper,
         Config $config,
         Logger $logger
     ) {
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->fileMapper = $fileMapper;
+        $this->dirMapper = $dirMapper;
         $this->config = $config;
         $this->logger = $logger;
     }
 
-	/**
-     * {@inheritDoc}
-     */
-    public function findAllFiles()
+    public function downloadFileById($id)
     {
-        $this->authenticationService->checkIdentity();
-
-        $this->authorizationService->checkPermission('find.all.files');
-
-        return $this->fileMapper->findAllFiles();
-    }
-
-    public function deleteFile($fileId)
-    {
-        if (! is_string($fileId)) {
+        if (! is_string($id)) {
             throw new InvalidArgumentException(sprintf(
                 'The data must be string; received "%s"',
-                (is_object($fileId) ? get_class($fileId) : gettype($fileId))
+                (is_object($id) ? get_class($id) : gettype($id))
             ));
         }
 
         $this->authenticationService->checkIdentity();
 
-        $file = $this->fileMapper->findFileById($fileId);
+        $file = $this->fileMapper->findFileById($id);
 
-        $this->authorizationService->checkPermission('delete.file', $file);
+        $this->authorizationService->checkPermission('download.file', $file);
 
-        return $this->fileMapper->deleteFile($file);
+        return $this->fileMapper->downloadFile($file);
     }
 
-    public function deleteFiles($files)
+    public function downloadFileFromDir($name, $dir)
     {
-        if (! is_string($files) && ! is_array($files) && ! ($files instanceof Paginator)) {
+        if (! is_string($name)) {
             throw new InvalidArgumentException(sprintf(
-                'The data must be string or array or instance of Paginator; received "%s"',
-                (is_object($files) ? get_class($files) : gettype($files))
+                'The data must be string; received "%s"',
+                (is_object($name) ? get_class($name) : gettype($name))
             ));
         }
+        $name = StaticFilter::execute($name, 'Zend\Filter\BaseName');
+
+        if (! is_string($dir)) {
+            throw new InvalidArgumentException(sprintf(
+                'The data must be string; received "%s"',
+                (is_object($dir) ? get_class($dir) : gettype($dir))
+            ));
+        }
+        $dir = StaticFilter::execute($dir, 'Zend\Filter\BaseName');
 
         $this->authenticationService->checkIdentity();
 
-        $this->authorizationService->checkPermission('delete.files');
+        $this->authorizationService->checkPermission('download.file');
 
-        return $this->fileMapper->deleteFiles($files);
+        $path = $this->config->mxm_file->allowedFolders->$dir;
+
+        if (! $path) {
+            throw new RuntimeException('Directory "' . $dir . '" is not allowed for downloading files.');
+        }
+
+        return $this->dirMapper->downloadFile($path . $name);
     }
 }

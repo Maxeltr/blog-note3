@@ -89,7 +89,8 @@ return [
                         'delete.categories',
                         'delete.posts',
                         'delete.logs',
-                        'find.all.files'
+                        'find.all.files',
+                        'download.file'
                     ]
                 ],
                 'moderator' => [
@@ -116,7 +117,7 @@ return [
 
                     ],
                 ],
-                'advancedUser' => [
+                'restUser' => [
                     'parent' => 'author',
                     'permissions' => [
                         'find.clients.rest',
@@ -133,7 +134,7 @@ return [
                     ]
                 ],
                 'user' => [
-                    'parent' => 'author',
+                    'parent' => 'restUser',
                     'permissions' => [
                         'find.user',
                         'edit.user',
@@ -168,6 +169,7 @@ return [
                         'fetch.file.rest',
                         'delete.file.rest',
                         'download.file.rest',
+                        'download.file',
                     ]
                 ],
             ],

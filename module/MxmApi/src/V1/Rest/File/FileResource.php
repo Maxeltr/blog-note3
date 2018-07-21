@@ -19,6 +19,7 @@ use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 use Zend\Log\Logger;
 use Zend\Stdlib\ErrorHandler;
+use Zend\Filter\StaticFilter;
 
 class FileResource extends AbstractResourceListener
 {
@@ -89,17 +90,19 @@ class FileResource extends AbstractResourceListener
             return new ApiProblem(500, 'Create operation failed. No data received.');
         }
 
+        $filePathName = StaticFilter::execute($file['tmp_name'], 'Zend\Filter\RealPath');
+
         $identity = $this->getMvcAuthIdentity();
         if (! $identity) {
-            $this->unlinkFile($file['tmp_name']);
-            $this->logger->err(sprintf('Unauthenticated attempt to create file. Temp file was removed: %s.', $file['tmp_name']));
+            $this->unlinkFile($filePathName);
+            $this->logger->err(sprintf('Unauthenticated attempt to create file. Temp file was removed: %s.', $filePathName));
 
             return new ApiProblem(401, 'Unauthenticated.');
         }
 
         if (! $this->checkPermissionForIdentity($identity, 'create.file.rest')) {
-            $this->unlinkFile($file['tmp_name']);
-            $this->logger->err(sprintf('Temp file was removed: %s.', $file['tmp_name']));
+            $this->unlinkFile($filePathName);
+            $this->logger->err(sprintf('Temp file was removed: %s.', $filePathName));
 
             return new ApiProblem(403, 'Forbidden. Permission create.file.rest is required.');
         }
@@ -109,20 +112,20 @@ class FileResource extends AbstractResourceListener
         $this->fileMapper->insertFile([
             'file_id' => $id,
             'filename' => $file['name'],
-            'path' => $file['tmp_name'],
+            'path' => $filePathName,
             'description' => $inputFilter->getValue('description'),
             'upload_date' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat),
             'change_date' => $this->datetime->modify('now')->format($this->config->defaults->dateTimeFormat),
             'owner' => $identity['user_id'],
             'client' => $identity['client_id'],
-            'size' => filesize($file['tmp_name']),
-            'type' => filetype($file['tmp_name']),
+            'size' => filesize($filePathName),
+            'type' => filetype($filePathName),
         ]);
 
         $fileEntity = $this->findFileById($id);
         if (! $fileEntity) {
-            $this->unlinkFile($file['tmp_name']);
-            $this->logger->err(sprintf('Insert operation failed or did not result in new row. Temp file was removed: %s.', $file['tmp_name']));
+            $this->unlinkFile($filePathName);
+            $this->logger->err(sprintf('Insert operation failed or did not result in new row. Temp file was removed: %s.', $filePathName));
 
             return new ApiProblem(401, 'Insert operation failed or did not result in new row.');
         }

@@ -6,14 +6,12 @@ return [
     'view_helpers' => [
         'aliases' => [
             'formatDateI18n' => View\Helper\FormatDateI18n::class,
-
         ],
         'factories' => [
             View\Helper\FormatDateI18n::class => View\Helper\FormatDateI18nFactory::class,
-            DateTime::class => Factory\DateTimeFactory::class,
         ],
         'invokables' => [
-            //'translate' => \Zend\I18n\View\Helper\Translate::class
+
         ]
     ],
     'service_manager' => [

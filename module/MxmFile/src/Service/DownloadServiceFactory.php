@@ -33,8 +33,9 @@ use MxmRbac\Service\AuthorizationService;
 use Zend\Config\Config;
 use MxmAdmin\Logger;
 use MxmFile\Mapper\MapperInterface;
+use MxmFile\Mapper\DirectoryMapper;
 
-class FileServiceFactory implements FactoryInterface
+class DownloadServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -43,11 +44,13 @@ class FileServiceFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $logger = $container->get(Logger::class);
         $fileMapper = $container->get(MapperInterface::class);
+        $dirMapper = $container->get(DirectoryMapper::class);
 
-        return new FileService(
+        return new DownloadService(
             $authService,
             $authorizationService,
             $fileMapper,
+            $dirMapper,
             $config,
             $logger
         );

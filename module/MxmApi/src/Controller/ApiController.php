@@ -191,7 +191,7 @@ class ApiController extends AbstractActionController
                 }
             }
 
-            return $this->redirect()->toRoute('listClients');
+            return $this->redirect()->toRoute('listClientsByUser',['id' => $client->getUserId()]);
         }
 
         return new ViewModel([

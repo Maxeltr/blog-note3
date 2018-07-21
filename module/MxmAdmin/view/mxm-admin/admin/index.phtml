@@ -8,24 +8,29 @@
             <h2 class="sub-header"><?php echo $this->translate('General information'); ?></h2>
             <div class="row placeholders">
                 <p>
-                    <span class="text-muted"><?php echo $this->translate('The total number of users: ');
-                    echo $this->escapeHtml($allUsers->getTotalItemCount()); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of users: '); ?>
+                    <a href="<?php echo $this->url('listUsers', ['action' => 'listUsers']); ?>"><?php echo $this->escapeHtml($allUsers->getTotalItemCount()); ?></a>
+                    </span>
                 </p>
                 <p>
-                    <span class="text-muted"><?php echo $this->translate('The total number of administrators: ');
-                    echo $this->escapeHtml($admins->getTotalItemCount()); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of administrators: '); ?>
+                        <a href="<?php echo $this->url('listUsersByRole', ['action' => 'listUsersByRole', 'role' => 'admin']); ?>"><?php echo $this->escapeHtml($admins->getTotalItemCount()); ?></a>
+                    </span>
                 </p>
                 <p>
-                    <span class="text-muted"><?php echo $this->translate('The total number of moderators: ');
-                    echo $this->escapeHtml($moderators->getTotalItemCount()); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of moderators: '); ?>
+                        <a href="<?php echo $this->url('listUsersByRole', ['action' => 'listUsersByRole', 'role' => 'moderator']); ?>"><?php echo $this->escapeHtml($moderators->getTotalItemCount()); ?></a>
+                    </span>
                 </p>
                 <p>
-                    <span class="text-muted"><?php echo $this->translate('The total number of authors: ');
-                    echo $this->escapeHtml($authors->getTotalItemCount()); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of authors: '); ?>
+                        <a href="<?php echo $this->url('listUsersByRole', ['action' => 'listUsersByRole', 'role' => 'author']); ?>"><?php echo $this->escapeHtml($authors->getTotalItemCount()); ?></a>
+                    </span>
                 </p>
                 <p>
-                    <span class="text-muted"><?php echo $this->translate('The total number of users: ');
-                    echo $this->escapeHtml($users->getTotalItemCount()); ?></span>
+                    <span class="text-muted"><?php echo $this->translate('The total number of users: '); ?>
+                        <a href="<?php echo $this->url('listUsersByRole', ['action' => 'listUsersByRole', 'role' => 'user']); ?>"><?php echo $this->escapeHtml($users->getTotalItemCount()); ?></a>
+                    </span>
                 </p>
                 <p>
                     <span class="text-muted"><?php echo $this->translate('The total number of files: ');

@@ -34,7 +34,7 @@
                                         echo $this->escapeHtml($file->getOwner()->getUsername());} ?></td>
                                      <td><?php if ($file->getClient() instanceof \MxmApi\Model\ClientInterface) {
                                         echo $this->escapeHtml($file->getClient()->getClientId()) ;} ?></td>
-                                    <td><a href="<?php echo $this->url('downloadFile', ['action' => 'downloadFile', 'id' => $this->escapeHtml($file->getFileId())]); ?>"><?php echo $this->translate('Download'); ?></a></td>
+                                    <td><a href="<?php echo $this->url('downloadFileById', ['action' => 'downloadFileById', 'id' => $this->escapeHtml($file->getFileId())]); ?>"><?php echo $this->translate('Download'); ?></a></td>
                                 </tr>
                             <?php $i++;
                             endforeach; ?>

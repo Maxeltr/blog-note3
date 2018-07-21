@@ -66,10 +66,12 @@ class DownloadController  extends AbstractActionController
         $this->translator = $translator;
     }
 
-    public function downloadFileByNameAction()
+    public function downloadFileFromDirAction()
     {
-        $file = $this->params()->fromRoute('file', '');
-        $response = $this->downloadService->downloadFileByName($file);
+        $file = $this->params()->fromRoute('filename', '');
+        $dir = $this->params()->fromRoute('dir', '');
+        
+        $response = $this->downloadService->downloadFileFromDir($file, $dir);
 
         return $response;
     }

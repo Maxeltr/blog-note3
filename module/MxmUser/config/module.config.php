@@ -107,6 +107,20 @@ return [
                     ],
                 ],
             ],
+            'listUsersByRole' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/list/users/role/:role[/:page]',
+                    'constraints' => [
+                        'role' => '[a-zA-Z0-9_-]*',
+                        'page' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller'    => Controller\ListController::class,
+                        'action' => 'listUsersByRole'
+                    ],
+                ],
+            ],
             'detailUser' => [
                 'type'    => 'Segment',
                 'options' => [

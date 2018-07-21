@@ -26,30 +26,24 @@
 
 namespace MxmFile\Service;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
-use MxmRbac\Service\AuthorizationService;
-use Zend\Config\Config;
-use MxmAdmin\Logger;
-use MxmFile\Mapper\MapperInterface;
-
-class FileServiceFactory implements FactoryInterface
+interface DownloadServiceInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $authorizationService = $container->get(AuthorizationService::class);
-        $authService = $container->get(AuthenticationService::class);
-        $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $fileMapper = $container->get(MapperInterface::class);
+    /**
+     * Download file by id
+     *
+     * @param String $id
+     *
+     * @return Zend\Http\Response
+     */
+    public function downloadFileById($id);
 
-        return new FileService(
-            $authService,
-            $authorizationService,
-            $fileMapper,
-            $config,
-            $logger
-        );
-    }
+    /**
+     * Download file by name from directory
+     *
+     * @param String $name
+     * @param String $dir
+     *
+     * @return Zend\Http\Response
+     */
+    public function downloadFileFromDir($name, $dir);
 }

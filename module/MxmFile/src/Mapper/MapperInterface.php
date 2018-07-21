@@ -61,13 +61,13 @@ interface MapperInterface
     public function findFileById($fileId);
 
     /**
-     * @param String $path
+     * @param MxmFile\Model\FileInterface $file
      *
      * @return Zend\Http\Response
      *
      * @throw RuntimeException
      */
-    public function downloadFile($path);
+    public function downloadFile(FileInterface $file);
 
     /**
      * @param MxmFile\Model\FileInterface $file

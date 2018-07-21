@@ -38,7 +38,7 @@ return [
             'path' => __DIR__ . '/../../../data/logs/MxmFile.log',
         ],
         'allowedFolders' => [
-            'files' => __DIR__ . '/../../../data/files/',
+            'logs' => __DIR__ . '/../../../data/logs/',
         ],
     ],
     'defaults' => [
@@ -52,13 +52,11 @@ return [
     ],
     'service_manager' => [
         'aliases' => [
-            Service\DateTimeInterface::class => Service\DateTime::class,
             Service\FileServiceInterface::class => Service\FileService::class,
             Service\DownloadServiceInterface::class => Service\DownloadService::class,
             Mapper\MapperInterface::class => Mapper\ZendTableGatewayMapper::class,
         ],
         'factories' => [
-            Service\DateTime::class => Service\DateTimeFactory::class,
             Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
             Mapper\DirectoryMapper::class => Mapper\DirectoryMapperFactory::class,
             Service\FileService::class => Service\FileServiceFactory::class,
@@ -66,7 +64,6 @@ return [
             Logger::class => Logger\LoggerFactory::class,
             Hydrator\FileMapperHydrator\FileMapperHydrator::class => Hydrator\FileMapperHydrator\FileMapperHydratorFactory::class,
             Hydrator\Strategy\DateTimeFormatterStrategy::class => Hydrator\Strategy\DateTimeFormatterStrategyFactory::class,
-            Service\DateTime::class => Service\DateTimeFactory::class,
             Hydrator\Strategy\OwnerStrategy::class => Hydrator\Strategy\OwnerStrategyFactory::class,
             Hydrator\Strategy\ClientStrategy::class => Hydrator\Strategy\ClientStrategyFactory::class,
         ],
@@ -89,16 +86,17 @@ return [
                     ],
                 ],
             ],
-            'downloadFileByName' => [
+            'downloadFileFromDir' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/download/file/:name',
+                    'route'    => '/download/file/:dir/:filename',
                     'constraints' => [
-                        'name' => '[a-zA-Z0-9._-]*',
+                        'filename' => '[a-zA-Z0-9._-]*',
+                        'dir' => '[a-zA-Z0-9._-]*',
                     ],
                     'defaults' => [
                         'controller'    => Controller\DownloadController::class,
-                        'action' => 'downloadFileByName'
+                        'action' => 'downloadFileFromDir'
                     ],
                 ],
             ],

@@ -112,45 +112,6 @@ class AdminService implements AdminServiceInterface
         return $this->mapper->findAllFiles($dir);
     }
 
-    public function downloadLogFile($file)
-    {
-        $this->authenticationService->checkIdentity();
-
-        $this->authorizationService->checkPermission('download.log');
-
-        if (! is_string($file)) {
-            throw new InvalidArgumentException(sprintf(
-                'The data must be string; received "%s"',
-                (is_object($file) ? get_class($file) : gettype($file))
-            ));
-        }
-
-        $path = $this->config->mxm_admin->logs->path . StaticFilter::execute($file, 'Zend\Filter\BaseName');
-
-        if (!is_readable($path)) {
-            throw new RuntimeException('Path "' . $path . '" is not readable.');
-        }
-
-        if (! is_file($path)) {
-            throw new RuntimeException('File "' . $path . '" does not exist.');
-        }
-
-        $headers = $this->response->getHeaders();
-        $headers->addHeaderLine("Content-type: application/octet-stream");
-        $headers->addHeaderLine("Content-Disposition: attachment; filename=\"" . basename($path) . "\"");
-        $headers->addHeaderLine("Content-length: " . filesize($path));
-//        $headers->addHeaderLine("Cache-control: private"); //use this to open files directly
-
-        $fileContent = file_get_contents($path);
-        if ($fileContent !== false) {
-            $this->response->setContent($fileContent);
-        } else {
-            throw new RuntimeException("Can't read file");
-        }
-
-        return $this->response;
-    }
-
     public function deleteLogs($files)
     {
         if (! is_string($files) && ! is_array($files)) {
