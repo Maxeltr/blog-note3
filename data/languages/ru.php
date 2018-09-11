@@ -151,4 +151,8 @@ return [
     "Date of change" => "Дата изменения",
     "View" => "Просмотр",
     "View user clients" => "Просмотр клиентов пользователя",
+    "was registered at" => "был зарегистрирован",
+    "and has" => "и имеет",
+    "role" => "роль",
+    "User's content" => "Контент пользователя",
 ];

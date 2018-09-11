@@ -1,50 +1,63 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li class="active"><a href="<?php //echo $this->url('listFiles', ['action' => 'listFiles']); ?>"><?php echo $this->translate('Files'); ?><span class="sr-only">(current)</span></a></li>
-                <li><a href="<?php echo $this->url('listUsers', ['action' => 'listUsers']); ?>"><?php echo $this->translate('Users'); ?></a></li>
-                <li><a href="<?php echo $this->url('listClients', ['action' => 'listClients']); ?>"><?php echo $this->translate('Clients'); ?></a></li>
-                <li><a href="<?php echo $this->url('listPosts', ['action' => 'listPosts']); ?>"><?php echo $this->translate('Posts'); ?></a></li>
-		<li><a href="<?php echo $this->url('listCategories', ['action' => 'listCategories']); ?>"><?php echo $this->translate('Categories'); ?></a></li>
-		<li><a href="<?php echo $this->url('listTags', ['action' => 'listTags']); ?>"><?php echo $this->translate('Tags'); ?></a></li>
-            </ul>
+<div class="container">
+    <div class="row row-offcanvas row-offcanvas-right">
+        <div class="page-header">
+            <h1><?php echo $this->translate('Users') ?></h1>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header"><?php echo $this->translate('Dashboard'); ?></h1>
-            <h2 class="sub-header"><?php echo $this->translate('Users'); ?></h2>
-            <form action="<?php //echo $this->url('processUsers', array(), true) ?>" method="post">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th><?php echo $this->translate('Mark'); ?></th>
-                                <th><?php echo $this->translate('Username'); ?></th>
-                                <th><?php echo $this->translate('Timezone'); ?></th>
-                                <th><?php echo $this->translate('Language'); ?></th>
-				<th><?php echo $this->translate('Role'); ?></th>
-				<th><?php echo $this->translate('Created'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $i = 0;
-                            foreach ($this->users as $user): ?>
-                                <tr>
-                                    <td><input type="checkbox" name="checkbox['<?php echo $i; ?>']" value='<?php echo $this->escapeHtml($user->getId()); ?>'></td>
-                                    <td><?php echo $this->escapeHtml($user->getUsername()); ?></td>
-                                    <td><?php if ($user->getTimebelt() instanceof \DateTimeZone) { echo $this->escapeHtml($user->getTimebelt()->getName()); } ?></td>
-                                    <td><?php echo $this->escapeHtml($user->getLocale()); ?></td>
-                                    <td><?php echo $this->escapeHtml($user->getRole()); ?></td>
-                                    <td><?php if ($user->getCreated() instanceof \DateTimeInterface) { echo $this->formatDateI18n($user->getCreated()); } ?></td>
-                                </tr>
-                            <?php $i++;
-                            endforeach; ?>
-                        </tbody>
-                    </table>
-                    <input type="submit" class='btn btn-default' name="edit_users" value="editUsers">
-                    <input type="submit" class='btn btn-default' name="delete_users" value="deleteUsers">
-                </div>
-            </form>
+        <div class="col-xs-12 col-sm-9">
+            <p class="pull-right visible-xs">
+                <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button">Toggle nav</button>
+            </p>
+            <?php $countColumns = 3;
+            $count = $this->users->getCurrentItemCount();
+            $iterator = $this->users->getIterator();
+            if ($count):
+                for ($i = 0; $i < $count; $i = $i + $countColumns ): ?>
+                    <div class="row">
+                        <?php for ($j = 0; $j < $countColumns; $j++):
+                            if ($iterator->valid()): ?>
+                                <div class="col-xs-12 col-md-4">
+                                    <div class="div-1">
+                                        <?php $user = $iterator->current();
+                                        $iterator->next(); ?>
+                                        <h1><a href="<?php echo $this->url('detailUser',
+                                            array('action' => 'detailUser', 'id' => $user->getId())); ?>">
+                                            <?php echo $this->escapeHtml($user->getUsername()); ?></a>
+                                        </h1>
+                                        <p>
+                                            <?php $createdDate = '00.00.0000';
+                                                if ($user->getCreated() instanceof \DateTimeInterface) {
+                                                    $createdDate = $this->formatDateI18n($user->getCreated());
+                                                    echo $this->escapeHtml($user->getUsername())
+                                                    . ' ' . $this->translate('was registered at')
+                                                    . ' ' . $createdDate
+                                                    . ' ' . $this->translate('and has')
+                                                    . ' ' . $this->escapeHtml($user->getRole())
+                                                    . ' ' . $this->translate('role');
+                                                }
+                                            ?>
+                                        </p>
+                                    </div>
+                                    <p><a role="button" href="<?php echo $this->url('listPostsByUser',
+                                        array('action' => 'listPostsByUser', 'id' => $user->getId())); ?>" class="btn btn-default"><?php echo $this->translate('User\'s content') ?></a>
+                                    </p>
+                                </div>
+                            <?php endif;
+                        endfor; ?>
+                    </div>
+                <?php endfor;
+            endif; ?>
+        </div>
+        <div id="sidebar" class="col-xs-6 col-sm-3 sidebar-offcanvas">
+            <div class="list-group">
+                <a class="list-group-item" href="<?php echo $this->url('listCategories',
+                    array('action' => 'listCategories')); ?>"><?php echo $this->translate('Categories') ?></a>
+                <a class="list-group-item" href="<?php echo $this->url('listTags',
+                    array('action' => 'listTags')); ?>"><?php echo $this->translate('Tags') ?></a>
+            </div>
         </div>
     </div>
+    <?php echo $this->paginationControl($this->users,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $this->route)); ?>
 </div>
