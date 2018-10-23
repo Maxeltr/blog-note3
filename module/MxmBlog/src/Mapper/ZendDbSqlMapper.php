@@ -336,7 +336,7 @@ class ZendDbSqlMapper implements MapperInterface
 
         if (empty($posts)) {
 
-            return false;
+            return 0;
         }
 
         $func = function ($value) {
@@ -361,7 +361,7 @@ class ZendDbSqlMapper implements MapperInterface
         $stmt = $sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
 
-        return (bool)$result->getAffectedRows();
+        return $result->getAffectedRows();
     }
 
     /**
@@ -756,7 +756,7 @@ class ZendDbSqlMapper implements MapperInterface
         $stmt = $sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
 
-        return (bool)$result->getAffectedRows();
+        return $result->getAffectedRows();
     }
 
     /**
@@ -922,7 +922,7 @@ class ZendDbSqlMapper implements MapperInterface
         $stmt = $sql->prepareStatementForSqlObject($action);
         $result = $stmt->execute();
 
-        return (bool)$result->getAffectedRows();
+        return $result->getAffectedRows();
     }
 
     /**

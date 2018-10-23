@@ -73,4 +73,13 @@ interface AuthorizationServiceInterface
      * @return bool
      */
     public function matchIdentityRoles($objectOrName);
+
+    /**
+     * Check if the given UserInterface object match the identity
+     *
+     * @param UserInterface $object
+     *
+     * @return bool
+     */
+    public function matchUserIds($object);
 }

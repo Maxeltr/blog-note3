@@ -32,6 +32,7 @@ use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 use MxmApi\Service\ApiServiceInterface;
+use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
@@ -41,15 +42,16 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
         $serviceManager = $application->getServiceManager();
 
         $apiMapper = $serviceManager->get(ApiMapperInterface::class);
+        $fileMapper = $serviceManager->get(FileMapperInterface::class);
         $apiService = $serviceManager->get(ApiServiceInterface::class);
         $usEventManager = $serviceManager->get(UserServiceInterface::class)->getEventManager();
         $usEventManager->attach('deleteUser',
-            function (EventInterface $event) use ($apiMapper, $apiService) {
+            function (EventInterface $event) use ($apiMapper, $apiService, $fileMapper) {
                 $user = $event->getParam('user');
                 $clients = $apiMapper->findClientsByUser($user)->setItemCountPerPage(-1);
                 $apiMapper->deleteClients($clients);
-                $files = $apiMapper->findAllFilesByUser($user)->setItemCountPerPage(-1);
-                $apiService->deleteFiles($files);
+                $files = $fileMapper->findAllFilesByOwner($user)->setItemCountPerPage(-1);      //TODO перенести в MxmFile
+                $fileMapper->deleteFiles($files);
             }
         );
 

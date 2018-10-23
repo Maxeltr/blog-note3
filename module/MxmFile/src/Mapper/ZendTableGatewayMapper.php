@@ -38,6 +38,7 @@ use MxmFile\Exception\InvalidArgumentException;
 use Zend\Stdlib\ArrayUtils;
 use MxmFile\Model\FileInterface;
 use MxmUser\Model\UserInterface;
+use Zend\Db\Sql\Where;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
@@ -177,11 +178,15 @@ class ZendTableGatewayMapper implements MapperInterface
             $files = ArrayUtils::iteratorToArray($files->setItemCountPerPage(-1));
         }
 
-        if (! is_array($files) or empty($files)) {
+        if (! is_array($files)) {
             throw new InvalidArgumentException(sprintf(
                 'The data must be array or instanceof Paginator; received "%s"',
                 (is_object($files) ? get_class($files) : gettype($files))
             ));
+        }
+
+        if (empty($files)) {
+            return 0;
         }
 
         $filePathsAndIds = $this->getIdsAndPathsOfFiles($files);
@@ -219,7 +224,7 @@ class ZendTableGatewayMapper implements MapperInterface
 
                 return;
             } elseif ($value instanceof FileInterface) {
-                $filePathsAndIds[$value->getId] = $value->getPath();
+                $filePathsAndIds[$value->getFileId()] = $value->getPath();
 
                 return;
             } else {

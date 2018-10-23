@@ -87,7 +87,7 @@ interface MapperInterface
     /**
      * @param array|Paginator $posts
      *
-     * @return bool
+     * @return int
      */
     public function deletePosts($posts);
 
@@ -210,7 +210,7 @@ interface MapperInterface
     /**
      * @param array $categories Массив id категорий
      *
-     * @return bool
+     * @return int
      */
     public function deleteCategories($categories);
 
@@ -269,7 +269,7 @@ interface MapperInterface
      *
      * @param array $tags Массив id тегов
      *
-     * @return bool
+     * @return int
      */
     public function deleteTags($tags);
 }

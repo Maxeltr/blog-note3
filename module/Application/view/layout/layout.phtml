@@ -21,7 +21,7 @@
 
         <!-- Scripts -->
         <?php echo $this->headScript()
-
+            ->prependFile($this->basePath('js/ajax.js'))
             ->prependFile($this->basePath('js/386.js'))
             ->prependFile($this->basePath('js/offcanvas.js'))
             ->prependFile($this->basePath('js/bootstrap.js'))

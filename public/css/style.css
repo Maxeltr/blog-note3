@@ -153,8 +153,82 @@ hr {
   border-color: #aa5500;
 }
 
-
+/*ajax*/
 li.active {
   background-color: #bbbbbb;
   border-color: #bbbbbb;
 }
+
+
+#blockscreen, #modalwindow {
+    position: fixed;
+}
+#blockscreen {
+/*    background: rgba(0, 0, 0, .5);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;*/
+    z-index: 10;
+
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0,0, .5);
+    display: none;
+}
+
+#modalwindow {
+    z-index: 11;
+    background: #000084;
+/*    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #a1a1a1;
+    box-shadow: 0 0 10px #444;*/
+    
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

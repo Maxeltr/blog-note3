@@ -210,6 +210,14 @@ class AuthorizationService implements AuthorizationServiceInterface
     /**
      * {@inheritDoc}
      */
+    public function matchUserIds($object)
+    {
+        return $this->identity->getId() === $object->getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setIdentity(UserInterface $identity)
     {
         $this->identity = $identity;

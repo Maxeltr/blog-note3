@@ -79,7 +79,7 @@ interface MapperInterface
     /**
      * @param Paginator|Array $files
      *
-     * @return void
+     * @return int
      *
      *@throw InvalidArgumentException
      */

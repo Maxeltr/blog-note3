@@ -148,7 +148,7 @@ class ZendTableGatewayMapper implements MapperInterface
         $clientIds = $this->getClientIds($clients);
         if (empty($clientIds)) {
 
-            return false;
+            return 0;
         }
 
         $where = new Where();
@@ -205,7 +205,7 @@ class ZendTableGatewayMapper implements MapperInterface
         $clientIds = $this->getClientIds($clients);
         if (empty($clientIds)) {
 
-            return false;
+            return 0;
         }
 
         $where = new Where();

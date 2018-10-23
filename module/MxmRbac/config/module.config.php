@@ -51,10 +51,12 @@ return [
         'aliases' => [
             'isGranted' => View\Helper\IsGranted::class,
             'hasRole' => View\Helper\HasRole::class,
+            'matchUserIds' => View\Helper\MatchUserIds::class,
         ],
         'factories' => [
             View\Helper\IsGranted::class => Factory\View\Helper\IsGrantedFactory::class,
             View\Helper\HasRole::class => Factory\View\Helper\HasRoleFactory::class,
+            View\Helper\MatchUserIds::class => Factory\View\Helper\MatchUserIdsFactory::class,
         ],
     ],
     'router' => [
@@ -101,7 +103,7 @@ return [
                         'delete.category',
                         'edit.tag',
                         'delete.tag',
-                        'find.users'
+
                     ]
                 ],
                 'author' => [
@@ -141,6 +143,7 @@ return [
                         'delete.user',
 			'edit.password',
 			'edit.email',
+                        'find.users'
                     ]
                 ],
             ],

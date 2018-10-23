@@ -98,7 +98,10 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
 
         $this->add([
             'type'  => 'hidden',
-            'name' => 'redirect'
+            'name' => 'redirect',
+            'attributes' => [
+                'id' => 'redirect',
+            ]
         ]);
 
         $this->add([
@@ -106,6 +109,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             'name' => 'submit',
             'attributes' => [
                 'class' => 'btn btn-default',
+                'id' => 'login',
                 'value' => $this->translator->translate('Send')
             ]
         ]);
