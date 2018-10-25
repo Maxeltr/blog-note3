@@ -10,9 +10,11 @@
                 echo $this->translate('Hello') . ', ' . $this->escapeHtml($user->getUsername()); ?>
             </li>
             <li class="divider" role="separator"></li>
-            <li>
-                <a href="<?php echo $this->url('listPostsByUser', ['action' => 'listPostsByUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('My posts') ?></a>
-            </li>
+            <?php if ($this->hasRole('author')): ?>
+                <li>
+                    <a href="<?php echo $this->url('listPostsByUser', ['action' => 'listPostsByUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('My posts') ?></a>
+                </li>
+            <?php endif; ?>
             <li>
                 <a href="<?php echo $this->url('listCategories', ['action' => 'listCategories']); ?>"><?php echo $this->translate('Categories') ?></a>
             </li>

@@ -98,7 +98,7 @@ class AuthorizationService implements AuthorizationServiceInterface
     /**
      * Returns true if the permission is granted to the current identity. Throw exception if it is not granted.
      *
-     * @return bool
+     * @return true
      * @throws NotAuthorizedException
      */
     public function checkPermission($permission, $content = null)
@@ -171,9 +171,10 @@ class AuthorizationService implements AuthorizationServiceInterface
     public function matchIdentityRoles($objectOrName)
     {
         if (! is_string($objectOrName) && ! $objectOrName instanceof RoleInterface) {
-            throw new InvalidArgumentException(
-                'Expected string or implement \Zend\Permissions\Rbac\RoleInterface'
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Expected string or implement \Zend\Permissions\Rbac\RoleInterface; received "%s"',
+                (is_object($objectOrName) ? get_class($objectOrName) : gettype($objectOrName))
+            ));
         }
 
         if (is_object($objectOrName)) {
@@ -212,6 +213,17 @@ class AuthorizationService implements AuthorizationServiceInterface
      */
     public function matchUserIds($object)
     {
+        if (! $object instanceof UserInterface) {
+            throw new InvalidArgumentException(sprintf(
+                'Expected MxmUser\Model\UserInterface; received "%s"',
+                (is_object($object) ? get_class($object) : gettype($object))
+            ));
+        }
+
+        if (empty($this->identity)) {
+            return false;
+        }
+
         return $this->identity->getId() === $object->getId();
     }
 
