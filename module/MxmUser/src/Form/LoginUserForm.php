@@ -61,6 +61,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'class' => 'form-control',
                 'placeholder' => 'Email',
                 'required' => 'required',
+                'id' => 'login-email',
             ],
             'options' => [
                 'label' => $this->translator->translate('Email'),
@@ -77,6 +78,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
                 'class' => 'form-control',
                 'placeholder' => 'Password',
                 'required' => 'required',
+                'id' => 'login-password',
             ],
             'options' => [
                 'label' => $this->translator->translate('Password'),
@@ -89,6 +91,9 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
         $this->add([
             'type' => 'csrf',
             'name' => 'login_csrf',
+            'attributes' => [
+                'id' => 'login_csrf',
+            ],
             'options' => [
                 'csrf_options' => [
                 'timeout' => 600
@@ -109,7 +114,7 @@ class LoginUserForm extends Form implements InputFilterProviderInterface
             'name' => 'submit',
             'attributes' => [
                 'class' => 'btn btn-default',
-                'id' => 'login',
+                'id' => 'login-button',
                 'value' => $this->translator->translate('Send')
             ]
         ]);

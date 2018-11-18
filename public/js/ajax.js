@@ -10,16 +10,70 @@ if (document.readyState !== 'loading') {
 }
 
 function onload() {
-    document.getElementById('loginLink').onclick = function (event) {
-        event.preventDefault();
+    var loginLink = document.getElementById('loginLink');
+        if (loginLink && window.location.href !== 'http://blog-note3/login') {
+            loginLink.onclick = function (event) {
+            event.preventDefault();
 
-        var popup = new PopupWindow();
-        popup.initOverlay();
-        //window.location.href = "http://stackoverflow.com";
+            let popup = new PopupWindow();
+            popup.showOverlay();
 
-        var form = new LoginForm(new Ajax());
-        form.getLoginForm(popup.initWindow);
-        
+            var form = new LoginForm(new Ajax());
+            form.getLoginForm(function (loginForm) {
+                if (loginForm) {
+                    popup.showWindow(loginForm);
+                    document.getElementById('login-button').onclick = function (event) {
+                        event.preventDefault();
+                        form.postLoginForm(function (data) {
+                            if (data.error === false) {
+                                var wrapper = document.createElement('html');
+                                wrapper.innerHTML = data.data;
+                                var signoutMenu = wrapper.querySelector('#sign-out-menu');
+                                if (signoutMenu) {
+                                    var signinMenu = document.getElementById('sign-in-menu');
+                                    signinMenu.parentNode.replaceChild(signoutMenu, signinMenu);
+                                }
+                                popup.close();
+                            } else {
+                                var wrapper = document.createElement('html');
+                                wrapper.innerHTML = data.data;
+                                var describeError = wrapper.querySelector('#error-login');
+                                if (! describeError) {
+                                    describeError = document.createElement('div');
+                                    describeError.className = 'container';
+                                    describeError.id = 'error-login';
+                                    describeError.innerHTML = '<div class="alert alert-danger alert-dismissible fade in" role="alert">'
+                                        + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">X</span></button>'
+                                        + 'Unknown error.</div>';
+                                }
+                                describeError.style.marginTop = '35px';
+                                var overlay = document.getElementById('overlay');
+                                if (overlay) {
+                                    overlay.appendChild(describeError);
+                                }
+                                let modalWindow = document.getElementById('login_user');
+                                if (modalWindow) {
+                                    let email = modalWindow.querySelector('#login-email').parentNode;
+                                    let newEmail = wrapper.querySelector('#login-email').parentNode;
+                                    if (email && newEmail && (email.className !== newEmail.className)) {
+                                        email.className = newEmail.className;
+                                    }
+                                    let password = modalWindow.querySelector('#login-password').parentNode;
+                                    let newPassword = wrapper.querySelector('#login-password').parentNode;
+                                    if (password && newPassword && (password.className !== newPassword.className)) {
+                                        password.className = newPassword.className;
+                                    }
+                                }
+                                
+                                //popup.close();
+                            }
+                        });
+                    };
+                } else {
+                    window.location.href = '/login';
+                }
+            });
+        };
 
     };
 }
@@ -28,47 +82,133 @@ function LoginForm(ajax) {
     if (typeof this.getLoginForm !== 'function') {
         LoginForm.prototype.getLoginForm = function (callback) {
             ajax.makeRequest(
-                'GET', 
-                '/login', 
-                {
-                    'success': function (xhr) {
-                        var wrapper = document.createElement('html');
-                        wrapper.innerHTML = xhr.responseText;
-                        callback(wrapper.getElementsByClassName('site-wrapper')[0].innerHTML);
+                    'GET',
+                    '/login',
+                    {
+                        'success': function (xhr) {
+                            let wrapper = document.createElement('html');
+                            wrapper.innerHTML = xhr.responseText;
+                            let form = wrapper.getElementsByClassName('site-wrapper');
+                            if (form.length !== 0) {
+                                callback(form[0].innerHTML);
+                            } else {
+                                callback(null);
+                            }
+                        },
+                        'error': function () {
+                            callback(null);
+                        }
                     },
-                    'error': function(xhr) {
-                        alert('not implemented');
+                    {},
+                    {
+                        'async': true
                     }
-                }
             );
         };
     }
 
+    if (typeof this.postLoginForm !== 'function') {
+        LoginForm.prototype.postLoginForm = function (callback) {
+            ajax.makeRequest(
+                'POST',
+                '/login',
+                {
+                    'success': function (xhr) {
+                        var wrapper = document.createElement('html');
+                        wrapper.innerHTML = xhr.responseText;
+                        let result = wrapper.querySelector('#sign-out-menu ');
+                        if (!result) {
+//                            var error = wrapper.querySelector('#error-login');
+//                            if (error) {	//if invalid email/password
+//                                var invalidCredentials = wrapper.querySelector('#error-message');
+//                                var invalidEmail = wrapper.querySelector('#error-email');
+//                                var invalidPassword = wrapper.querySelector('#error-password');
+//                                callback(
+//                                        {
+//                                            'error': true,
+//                                            'messages': {
+//                                                'status': xhr.statusText,
+//                                                'invalidCredentials': invalidCredentials ? invalidCredentials.innerText : null,
+//                                                'invalidEmail': invalidEmail ? invalidEmail.innerText : null,
+//                                                'invalidPassword': invalidPassword ? invalidPassword.innerText : null
+//                                            },
+//                                            'data': xhr.responseText
+//                                        }
+//                                );
+
+//                                return;
+//                            }
+                            callback(
+                                {
+                                    'error': true,
+                                    'messages': {
+                                        'status': xhr.statusText,
+                                        //'invalidCredentials': invalidCredentials ? invalidCredentials.innerText : null,
+                                        //'invalidEmail': invalidEmail ? invalidEmail.innerText : null,
+                                        //'invalidPassword': invalidPassword ? invalidPassword.innerText : null
+                                    },
+                                    'data': xhr.responseText
+                                }
+                            );
+                    
+                            return;
+                        }
+                        
+                        callback({'error': false, 'messages': {'status': xhr.statusText}, 'data': xhr.responseText});
+                    },
+                    'error': function (xhr) {
+                        callback({'error': true, 'messages': {'status': xhr.statusText}, 'data': xhr.responseText});
+                    }
+                },
+                {
+                    'email': document.querySelector('#login-email').value, 
+                    'password': document.querySelector('#login-password').value,
+                    'redirect': window.location.href,
+                    'login_csrf': document.querySelector('#login_csrf').value
+                },
+                {
+                    'async': true
+                }
+            );
+        };
+    }
 }
 
 function Ajax() {
     if (typeof this.makeRequest !== 'function') {
-        Ajax.prototype.makeRequest = function (method, url, callback, data, config) {
-            callback = callback || {};
+        Ajax.prototype.makeRequest = function (method, url, callbacks, data, config) {
+            callbacks = callbacks || {};
             config = config || {};
+            config.async = !!config.async;
+            config.headers = config.headers || {};		//add test it
             method = method || 'GET';
 
             var xhr = new XMLHttpRequest();
 
+            if (method === 'GET') {
+                url = this.urlEncode(url, data);
+            }
+
             if (xhr) {
-                xhr.open(method, url, true);
+                xhr.open(method, url, config.async);
+
+                config.headers["Accept"] = config.headers["Accept"] || "text/html";
+                config.headers["X-Requested-With"] = config.headers["X-Requested-With"] || "XMLHttpRequest";
+                for (var header in config.headers) {																	//add
+                    xhr.setRequestHeader(header, config.headers[header]);
+                }
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState !== 4) {
                         return;
                     }
 
-                    if (xhr.status === 200) {
-                        callback.success(this);
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        callbacks.success(this);
                     } else {
-                        callback.error(this);
+                        callbacks.error(this);
                     }
-                    
+
                 };
 
                 if (method === 'GET') {
@@ -84,11 +224,43 @@ function Ajax() {
             }
         };
     }
+
+    if (typeof this.urlEncodeParams !== 'function') {
+        Ajax.prototype.urlEncodeParams = function (data, prefix) {
+            prefix = prefix || "";
+            if (data) {
+                var encodedParams = [];
+                for (var k in data) {
+                    if (typeof data[k] !== 'undefined' && data[k] !== null) {
+                        if (typeof data[k] === "object") {
+                            var encodedObject = this.urlEncodeParams(data[k], prefix + encodeURIComponent(k) + ".");
+                            encodedParams = encodedParams.concat(encodedObject.split("&"));
+                        } else {
+                            encodedParams.push(prefix + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]));
+                        }
+                    }
+                }
+                return encodedParams.join("&");
+            }
+            return null;
+        };
+    }
+
+    if (typeof this.urlEncode !== 'function') {
+        Ajax.prototype.urlEncode = function (url, data) {
+            var encodedParams = this.urlEncodeParams(data);
+            if ((encodedParams === null || url.indexOf(encodedParams)) >= 0 || (/(\&$)/).test(url)) {
+                return url;
+            }
+            url += ((/(\?)/).test(url) ? "&" : "?") + encodedParams;
+            return url;
+        };
+    }
 }
 
 function PopupWindow() {
-    if (typeof this.initOverlay !== 'function') {
-        PopupWindow.prototype.initOverlay = function () {
+    if (typeof this.showOverlay !== 'function') {
+        PopupWindow.prototype.showOverlay = function () {
             var overlay = document.getElementById('overlay');
 
             if (!overlay) {
@@ -98,7 +270,7 @@ function PopupWindow() {
                 overlay.id = 'overlay';                                 //Присваиваем ему наш ID
                 parent.insertBefore(overlay, element);                  //Вставляем в начало
                 overlay.onclick = function (event) {
-                    this.close(event);                                  //Добавим обработчик события по нажатию на блокирующий экран - закрыть модальное окно.
+                    this.closeByEvent(event);                                  //Добавим обработчик события по нажатию на блокирующий экран - закрыть модальное окно.
                 }.bind(this);
             }
 
@@ -106,8 +278,8 @@ function PopupWindow() {
         };
     }
 
-    if (typeof this.initWindow !== 'function') {
-        PopupWindow.prototype.initWindow = function (html) {
+    if (typeof this.showWindow !== 'function') {
+        PopupWindow.prototype.showWindow = function (html) {
             var dialogWindow = document.getElementById('modalwindow');
 
             if (!dialogWindow) {
@@ -123,15 +295,28 @@ function PopupWindow() {
         };
     }
 
-    if (typeof this.close !== 'function') {
-        PopupWindow.prototype.close = function (event) {
+    if (typeof this.closeByEvent !== 'function') {
+        PopupWindow.prototype.closeByEvent = function (event) {
             var dialogWindow = document.getElementById('modalwindow');
-            var overlay = document.getElementById('overlay');
+            //var overlay = document.getElementById('overlay');
 
             if (event.target.firstChild === dialogWindow) {
-                overlay.style.display = 'none';
-                dialogWindow.style.display = 'none';
+                //overlay.style.display = 'none';
+                //dialogWindow.style.display = 'none';
+                this.close();
             }
+        };
+    }
+    
+    if (typeof this.close !== 'function') {
+        PopupWindow.prototype.close = function () {
+            let overlayWindow = document.getElementById("overlay");
+            let errors = overlayWindow.querySelectorAll('#error-login');
+            for (let i = 0; i < errors.length; i++) {
+                errors[i].remove();
+            }
+            document.getElementById('modalwindow').style.display = 'none';
+            overlayWindow.style.display = 'none';
         };
     }
 }
