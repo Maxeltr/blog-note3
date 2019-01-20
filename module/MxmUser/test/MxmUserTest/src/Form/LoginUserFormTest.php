@@ -29,7 +29,7 @@ namespace MxmUserTest\Form;
 use MxmUser\Form\LoginUserForm;
 use Zend\InputFilter\InputFilter;
 
-class LoginUserFormTest extends \PHPUnit_Framework_TestCase
+class LoginUserFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;

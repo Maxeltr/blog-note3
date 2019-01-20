@@ -35,7 +35,7 @@ use Zend\Validator\Date;
 use Zend\Config\Config;
 use MxmUser\Exception\InvalidArgumentUserException;
 
-class DatesHydratorTest extends \PHPUnit_Framework_TestCase
+class DatesHydratorTest extends \PHPUnit\Framework\TestCase
 {
     protected $traceError = true;
 

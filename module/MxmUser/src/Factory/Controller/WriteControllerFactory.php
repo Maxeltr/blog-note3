@@ -37,6 +37,7 @@ use MxmUser\Form\EditEmailForm;
 use MxmUser\Form\ResetPasswordForm;
 use MxmUser\Form\SetPasswordForm;
 use MxmUser\Logger;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class WriteControllerFactory implements FactoryInterface
 {
@@ -53,6 +54,7 @@ class WriteControllerFactory implements FactoryInterface
         $editEmailForm = $formManager->get(EditEmailForm::class);
         $resetPasswordForm = $formManager->get(ResetPasswordForm::class);
         $setPasswordForm = $formManager->get(SetPasswordForm::class);
+        $translator = $container->get(TranslatorInterface::class);
 
         return new WriteController(
             $logger,
@@ -63,7 +65,8 @@ class WriteControllerFactory implements FactoryInterface
             $editEmailForm,
             $resetPasswordForm,
             $setPasswordForm,
-            $sessionContainer
+            $sessionContainer,
+            $translator
         );
     }
 }

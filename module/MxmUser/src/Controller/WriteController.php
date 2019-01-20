@@ -40,6 +40,7 @@ use Zend\Log\Logger;
 use Zend\Http\Request;
 use Zend\Router\RouteInterface;
 use Zend\Session\Container;
+use Zend\i18n\Translator\TranslatorInterface;
 
 class WriteController extends AbstractActionController
 {
@@ -65,6 +66,11 @@ class WriteController extends AbstractActionController
     protected $setPasswordForm;
     protected $sessionContainer;
 
+    /**
+     * @var Zend\i18n\Translator\TranslatorInterface
+     */
+    protected $translator;
+
     public function __construct(
         Logger $logger,
         UserServiceInterface $userService,
@@ -74,7 +80,8 @@ class WriteController extends AbstractActionController
         FormInterface $editEmailForm,
         FormInterface $resetPasswordForm,
         FormInterface $setPasswordForm,
-        Container $sessionContainer
+        Container $sessionContainer,
+        TranslatorInterface $translator
     ) {
         $this->logger = $logger;
         $this->userService = $userService;
@@ -85,6 +92,7 @@ class WriteController extends AbstractActionController
         $this->resetPasswordForm = $resetPasswordForm;
         $this->setPasswordForm = $setPasswordForm;
         $this->sessionContainer = $sessionContainer;
+        $this->translator = $translator;
     }
 
     public function addUserAction()
@@ -96,11 +104,20 @@ class WriteController extends AbstractActionController
             if ($this->registerUserForm->isValid()) {
                 try {
                     $savedUser = $this->userService->insertUser($this->registerUserForm->getData());
-                } catch (AlreadyExistsUserException $e) {
+                } catch (AlreadyExistsUserException $ex) {
+                    $this->logger->err($ex->getFile() . ' ' . $ex->getLine() . ' ' . $ex->getMessage());
 
                     return new ViewModel([
                         'form' => $this->registerUserForm,
-                        'error' => 'User has registered alredy.'
+                        'error' => $this->translator->translate('User has registered alredy')
+                    ]);
+                } catch (\Zend\Mail\Transport\Exception\RuntimeException $ex) {
+                    $this->logger->err($ex->getFile() . ' ' . $ex->getLine() . ' ' . $ex->getMessage());
+
+                    return new ViewModel([
+                        'form' => $this->registerUserForm,
+                        'error' => $this->translator->translate('An error occurred while sending the email'). '. '
+                            . $this->translator->translate('Check that your email address is correct')
                     ]);
                 }
 

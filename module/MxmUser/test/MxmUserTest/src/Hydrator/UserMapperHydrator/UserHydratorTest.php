@@ -30,7 +30,7 @@ use MxmUser\Model\User;
 use MxmUser\Hydrator\UserMapperHydrator\UserHydrator;
 use \DateTimeZone;
 
-class UserHydratorTest extends \PHPUnit_Framework_TestCase
+class UserHydratorTest extends \PHPUnit\Framework\TestCase
 {
     protected $traceError = true;
 

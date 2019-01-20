@@ -29,7 +29,7 @@ namespace MxmUserTest\Form;
 use MxmUser\Form\EditEmailForm;
 use Zend\InputFilter\InputFilter;
 
-class EditEmailFormTest extends \PHPUnit_Framework_TestCase
+class EditEmailFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;

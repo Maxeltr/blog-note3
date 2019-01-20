@@ -29,7 +29,7 @@ namespace MxmUserTest\Form;
 use MxmUser\Form\EditPasswordForm;
 use Zend\InputFilter\InputFilter;
 
-class EditPasswordFormTest extends \PHPUnit_Framework_TestCase
+class EditPasswordFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;

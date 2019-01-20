@@ -111,7 +111,22 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
             'name' => 'captcha',
             'options' => [
                 'label' => $this->translator->translate('Please verify you are human'),
-                'captcha' => new \Zend\Captcha\Figlet(),
+                //'captcha' => new \Zend\Captcha\Figlet(),
+                'captcha' => [
+                    'class' => 'Image',
+                    'imgDir' => 'public/img/captcha',
+                    'suffix' => '.png',
+                    'imgUrl' => '/img/captcha/',
+                    'imgAlt' => 'CAPTCHA Image',
+                    //'font'   => './data/font/thorne_shaded.ttf',
+                    'font'   => './public/css/fonts/Fixedsys500c.ttf',
+                    'fsize'  => 24,
+//                    'width'  => 350,
+//                    'height' => 100,
+                    'expiration' => 600,
+                    'dotNoiseLevel' => 20,
+                    'lineNoiseLevel' => 2
+                ],
             ],
             'attributes' => [
                 'class' => 'form-control',

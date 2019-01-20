@@ -32,7 +32,7 @@ use \DateTimeZone;
 use Zend\Config\Config;
 use MxmUser\Model\User;
 
-class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
+class TimebeltHydratorTest extends \PHPUnit\Framework\TestCase
 {
     protected $traceError = true;
 

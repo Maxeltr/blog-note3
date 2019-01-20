@@ -46,7 +46,7 @@ use Zend\Paginator\Paginator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use MxmUser\Exception\DataBaseErrorUserException;
 
-class ZendDbSqlMapperTest extends \PHPUnit_Framework_TestCase
+class ZendDbSqlMapperTest extends \PHPUnit\Framework\TestCase
 {
 	protected $traceError = true;
 

@@ -49,7 +49,7 @@ use MxmUser\Service\Authentication\Adapter\AuthAdapter;
 use Zend\Authentication\Result;
 use MxmMail\Service\MailService;
 
-class UserServiceTest extends \PHPUnit_Framework_TestCase
+class UserServiceTest extends \PHPUnit\Framework\TestCase
 {
     protected $userService;
     protected $paginator;
@@ -682,7 +682,7 @@ class UserServiceTest extends \PHPUnit_Framework_TestCase
      * @covers MxmUser\Service\UserService::confirmEmail
      *
      */
-    public function testconfirmEmail()	
+    public function testconfirmEmail()
     {
         $token = 'dsg4tfsgf5gs';
         $this->notEmptyValidator->isValid($token)->willReturn(true);

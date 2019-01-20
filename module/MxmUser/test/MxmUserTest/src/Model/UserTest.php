@@ -28,7 +28,7 @@ namespace MxmUserTest\Model;
 
 use MxmUser\Model\User;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends \PHPUnit\Framework\TestCase
 {
     protected $traceError = true;
 

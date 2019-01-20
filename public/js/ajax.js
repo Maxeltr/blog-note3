@@ -1,8 +1,5 @@
 
 
-
-
-
 if (document.readyState !== 'loading') {
     onload();
 } else {
@@ -10,74 +7,100 @@ if (document.readyState !== 'loading') {
 }
 
 function onload() {
-    var loginLink = document.getElementById('loginLink');
-        if (loginLink && window.location.href !== 'http://blog-note3/login') {
-            loginLink.onclick = function (event) {
-            event.preventDefault();
-
-            let popup = new PopupWindow();
-            popup.showOverlay();
-
-            var form = new LoginForm(new Ajax());
-            form.getLoginForm(function (loginForm) {
-                if (loginForm) {
-                    popup.showWindow(loginForm);
-                    document.getElementById('login-button').onclick = function (event) {
-                        event.preventDefault();
-                        form.postLoginForm(function (data) {
-                            if (data.error === false) {
-                                var wrapper = document.createElement('html');
-                                wrapper.innerHTML = data.data;
-                                var signoutMenu = wrapper.querySelector('#sign-out-menu');
-                                if (signoutMenu) {
-                                    var signinMenu = document.getElementById('sign-in-menu');
-                                    signinMenu.parentNode.replaceChild(signoutMenu, signinMenu);
-                                }
-                                popup.close();
-                            } else {
-                                var wrapper = document.createElement('html');
-                                wrapper.innerHTML = data.data;
-                                var describeError = wrapper.querySelector('#error-login');
-                                if (! describeError) {
-                                    describeError = document.createElement('div');
-                                    describeError.className = 'container';
-                                    describeError.id = 'error-login';
-                                    describeError.innerHTML = '<div class="alert alert-danger alert-dismissible fade in" role="alert">'
-                                        + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">X</span></button>'
-                                        + 'Unknown error.</div>';
-                                }
-                                describeError.style.marginTop = '35px';
-                                var overlay = document.getElementById('overlay');
-                                if (overlay) {
-                                    overlay.appendChild(describeError);
-                                }
-                                let modalWindow = document.getElementById('login_user');
-                                if (modalWindow) {
-                                    let email = modalWindow.querySelector('#login-email').parentNode;
-                                    let newEmail = wrapper.querySelector('#login-email').parentNode;
-                                    if (email && newEmail && (email.className !== newEmail.className)) {
-                                        email.className = newEmail.className;
-                                    }
-                                    let password = modalWindow.querySelector('#login-password').parentNode;
-                                    let newPassword = wrapper.querySelector('#login-password').parentNode;
-                                    if (password && newPassword && (password.className !== newPassword.className)) {
-                                        password.className = newPassword.className;
-                                    }
-                                }
-                                
-                                //popup.close();
-                            }
-                        });
-                    };
-                } else {
-                    window.location.href = '/login';
-                }
-            });
-        };
-
-    };
+    let loginLink = document.getElementById('loginLink');
+    if (loginLink && window.location.href !== 'http://blog-note3/login') {
+        loginLink.onclick = loginProcess;
+    }
 }
 
+let form = new LoginForm(new Ajax());
+let popup = new PopupWindow();
+
+function loginProcess(event) {
+    event.preventDefault();
+
+//    let popup = new PopupWindow();
+    popup.showOverlay();
+
+//    let form = new LoginForm(new Ajax());
+    form.getLoginForm(showForm);
+    
+    
+}
+
+function showForm(loginForm) {
+    if (loginForm) {
+        popup.showWindow(loginForm);
+        
+        let loginButton = document.getElementById('login-button');
+        if (loginButton) {
+            loginButton.onclick = postLoginForm;
+        } else {
+            window.location.href = '/login';
+        }
+    
+    }
+    
+    
+}
+
+function postLoginForm(event) {
+    event.preventDefault();
+    form.postLoginForm(handleLoginResponse);
+}
+
+function handleLoginResponse(data) {
+    if (data.error === false) {
+        let wrapper = document.createElement('html');
+        wrapper.innerHTML = data.data;
+        let signoutMenu = wrapper.querySelector('#sign-out-menu');
+        if (signoutMenu) {
+            let signinMenu = document.getElementById('sign-in-menu');
+            signinMenu.parentNode.replaceChild(signoutMenu, signinMenu);
+        }
+        popup.close();
+    } else {
+        let wrapper = document.createElement('html');
+        wrapper.innerHTML = data.data;
+        let overlay = document.getElementById('overlay');
+        if (overlay) {
+            overlay.appendChild(getLoginErrorMessages(wrapper));
+        }
+        updateClassNameOfLoginInputs(wrapper);
+    }
+}
+
+function getLoginErrorMessages(wrapper) {
+    let describeError = wrapper.querySelector('#error-login');
+    if (! describeError) {
+        describeError = document.createElement('div');
+        describeError.className = 'container';
+        describeError.id = 'error-login';
+        describeError.innerHTML = '<div class="alert alert-danger alert-dismissible fade in" role="alert">'
+            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">X</span></button>'
+            + 'Unknown error.</div>';
+    }
+    describeError.style.marginTop = '35px';
+    
+    return describeError;
+}
+
+function updateClassNameOfLoginInputs(wrapper) {
+    let modalWindow = document.getElementById('login_user');
+    if (modalWindow) {
+        let email = modalWindow.querySelector('#login-email').parentNode;
+        let newEmail = wrapper.querySelector('#login-email').parentNode;
+        if (email && newEmail && (email.className !== newEmail.className)) {
+            email.className = newEmail.className;
+        }
+        let password = modalWindow.querySelector('#login-password').parentNode;
+        let newPassword = wrapper.querySelector('#login-password').parentNode;
+        if (password && newPassword && (password.className !== newPassword.className)) {
+            password.className = newPassword.className;
+        }
+    }
+}
+    
 function LoginForm(ajax) {
     if (typeof this.getLoginForm !== 'function') {
         LoginForm.prototype.getLoginForm = function (callback) {

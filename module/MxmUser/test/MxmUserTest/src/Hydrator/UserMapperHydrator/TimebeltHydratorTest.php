@@ -35,7 +35,7 @@ use \DateTimeZone;
 use Zend\Validator\Date;
 use Zend\Config\Config;
 
-class TimebeltHydratorTest extends \PHPUnit_Framework_TestCase
+class TimebeltHydratorTest extends \PHPUnit\Framework\TestCase
 {
     protected $traceError = true;
 

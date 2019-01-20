@@ -31,7 +31,7 @@ use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
 use \DateTimeZone;
 use Zend\Config\Config;
 
-class TimezoneFormHydratorTest extends \PHPUnit_Framework_TestCase
+class TimezoneFormHydratorTest extends \PHPUnit\Framework\TestCase
 {
     protected $traceError = true;
 

@@ -143,10 +143,10 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
         $this->currentUser->setRole('user');
 
         $this->assertUserIdMatches = new AssertUserIdMatches();
-        $this->assertUserIdMatches->setCurrentUser($this->currentUser);
+        $this->assertUserIdMatches->setIdentity($this->currentUser);
 
         $this->mustBeAuthorAssertion = new MustBeAuthorAssertion();
-        $this->mustBeAuthorAssertion->setCurrentUser($this->currentUser);
+        $this->mustBeAuthorAssertion->setIdentity($this->currentUser);
 
         $this->authorizationService = new AuthorizationService(
             $this->rbac,

@@ -31,6 +31,7 @@ use MxmAdmin\Logger;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\Http\PhpEnvironment\Request;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface
 {
@@ -50,8 +51,10 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
     public function onError(MvcEvent $event)
     {
         $message = '';
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $message = "Request URI: " . $_SERVER['REQUEST_URI'] . "\n";
+        $request = new Request();
+        $requestUri = $request->getServer('REQUEST_URI', null);
+        if (isset($requestUri)) {
+            $message = "Request URI: " . $requestUri . "\n";
         }
 
         $message .= "Controller: " . $event->getController() . "\n";
