@@ -28,13 +28,17 @@ namespace MxmUserTest\Form;
 
 use MxmUser\Form\LoginUserForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class LoginUserFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;
     private $csrfValidator;
-
+    private $translator;
+    private $validatorTranslator;
+    
     public function setUp()
     {
         $this->data = array(
@@ -44,7 +48,10 @@ class LoginUserFormTest extends \PHPUnit\Framework\TestCase
             'login_csrf' => ''
         );
 
-        $this->form = new LoginUserForm(new InputFilter());
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->validatorTranslator = $this->prophesize(ValidatorTranslatorInterface::class);
+
+        $this->form = new LoginUserForm(new InputFilter(), $this->translator->reveal(), $this->validatorTranslator->reveal());
         $csrf = $this->form->get('login_csrf')->getValue();
         $this->data['login_csrf'] = $csrf;
 

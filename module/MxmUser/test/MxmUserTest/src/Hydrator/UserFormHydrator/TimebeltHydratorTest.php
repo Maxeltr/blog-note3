@@ -94,7 +94,7 @@ class TimebeltHydratorTest extends \PHPUnit\Framework\TestCase
     public function testExtract()
     {
         $result = $this->hydrator->extract($this->user);
-        $this->assertSame($this->timezoneName, $result['timebelt']);
+        $this->assertSame(['timezoneId' => 1], $result['timebelt']);
     }
 
     /**

@@ -191,7 +191,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                            'max' => 3,
+                            'max' => 35,
                             'translator' => $this->validatorTranslator
                         ]
                     ]

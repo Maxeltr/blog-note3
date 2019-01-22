@@ -28,11 +28,15 @@ namespace MxmUserTest\Form;
 
 use MxmUser\Form\SetPasswordForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class SetPasswordFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;
+    private $translator;
+    private $validatorTranslator;
 
     public function setUp()
     {
@@ -41,7 +45,10 @@ class SetPasswordFormTest extends \PHPUnit\Framework\TestCase
             'password' => ''
         );
 
-        $this->form = new SetPasswordForm(new InputFilter);
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->validatorTranslator = $this->prophesize(ValidatorTranslatorInterface::class);
+
+        $this->form = new SetPasswordForm(new InputFilter(), $this->translator->reveal(), $this->validatorTranslator->reveal());
         $csrf = $this->form->get('setPassword_csrf')->getValue();
         $this->data['setPassword_csrf'] = $csrf;
 

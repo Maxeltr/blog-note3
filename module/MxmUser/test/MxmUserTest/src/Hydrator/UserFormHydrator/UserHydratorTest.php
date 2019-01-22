@@ -72,11 +72,11 @@ class UserHydratorTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($this->data['username'], $result->getUsername());
         $this->assertSame($this->data['email'], $result->getEmail());
         $this->assertSame($this->data['password'], $result->getPassword());
-        $this->assertSame($this->data['role'], $result->getRole());
+        $this->assertSame(null, $result->getRole());
         $this->assertSame($this->data['passwordToken'], $result->getPasswordToken());
         $this->assertSame($this->data['emailToken'], $result->getEmailToken());
         $this->assertSame($this->data['emailVerification'], $result->getEmailVerification());
-        $this->assertSame($this->data['locale'], $result->getLocale());
+        $this->assertSame(null, $result->getLocale());
         $this->assertSame(null, $result->getCreated());
         $this->assertSame(null, $result->getDateToken());
         $this->assertSame(null, $result->getTimebelt());
@@ -133,6 +133,8 @@ class UserHydratorTest extends \PHPUnit\Framework\TestCase
         unset($data['dateToken']);
         unset($data['timebelt']);
         unset($data['dateEmailToken']);
+        unset($data['role']);
+        unset($data['locale']);
         $this->assertSame($data, $result);
     }
 

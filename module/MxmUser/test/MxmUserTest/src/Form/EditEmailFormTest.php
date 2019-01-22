@@ -28,22 +28,29 @@ namespace MxmUserTest\Form;
 
 use MxmUser\Form\EditEmailForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditEmailFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;
+    private $translator;
+    protected $validatorTranslator;
 
     public function setUp()
     {
         $this->data = array(
-            'id' => '',
+            //'id' => '',
             'newEmail' => '',
             'confirmEmail' => '',
             'password' => ''
         );
 
-        $this->form = new EditEmailForm(new InputFilter());
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->validatorTranslator = $this->prophesize(ValidatorTranslatorInterface::class);
+
+        $this->form = new EditEmailForm(new InputFilter(),$this->translator->reveal(), $this->validatorTranslator->reveal());
         $csrf = $this->form->get('editEmail_csrf')->getValue();
         $this->data['editEmail_csrf'] = $csrf;
 
@@ -59,8 +66,8 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($form->setData($data)->isValid());
 
-        $data['id'] = 1;
-        $this->assertFalse($form->setData($data)->isValid());
+        //$data['id'] = 1;
+        //$this->assertFalse($form->setData($data)->isValid());
 
         $data['newEmail'] = 'Email@testmail.ru';
         $this->assertFalse($form->setData($data)->isValid());
@@ -76,7 +83,7 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
     {
         $form = $this->form;
         $data = $this->data;
-        $data['id'] = 1;
+        //$data['id'] = 1;
         $data['confirmEmail'] = 'Email@testmail.ru';
 	$data['password'] = 'password';
 
@@ -91,7 +98,7 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
     {
         $form = $this->form;
         $data = $this->data;
-        $data['id'] = 1;
+        //$data['id'] = 1;
         $data['newEmail'] = 'Email@testmail.ru';
 	$data['password'] = 'password';
 
@@ -106,7 +113,7 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
     {
         $form = $this->form;
         $data = $this->data;
-        $data['id'] = 1;
+        //$data['id'] = 1;
 	$data['password'] = 'password';
 
         $data['confirmEmail'] = 'Email@testmail.ru';
@@ -121,7 +128,7 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
     {
         $form = $this->form;
         $data = $this->data;
-        $data['id'] = 1;
+        //$data['id'] = 1;
         $data['newEmail'] = 'Email@testmail.ru';
 	$data['confirmEmail'] = 'Email@testmail.ru';
 
@@ -139,7 +146,7 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
     {
         $form = $this->form;
         $data = $this->data;
-        $data['id'] = 1;
+        //$data['id'] = 1;
 	$data['newEmail'] = ' Email@testmail.ru ';
         $data['confirmEmail'] = ' Email@testmail.ru ';
 	$data['password'] = ' password ';

@@ -28,6 +28,8 @@ namespace MxmUserTest\Form;
 
 use MxmUser\Form\EditPasswordForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class EditPasswordFormTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,6 +37,8 @@ class EditPasswordFormTest extends \PHPUnit\Framework\TestCase
     private $data;
     private $data36;
     private $data35;
+    private $translator;
+    private $validatorTranslator;
 
     public function setUp()
     {
@@ -47,7 +51,10 @@ class EditPasswordFormTest extends \PHPUnit\Framework\TestCase
         $this->data36 = '123456789012345678901234567890123456';
         $this->data35 = '12345678901234567890123456789012345';
 
-        $this->form = new EditPasswordForm(new InputFilter());
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->validatorTranslator = $this->prophesize(ValidatorTranslatorInterface::class);
+
+        $this->form = new EditPasswordForm(new InputFilter(), $this->translator->reveal(), $this->validatorTranslator->reveal());
         $csrf = $this->form->get('editPassword_csrf')->getValue();
         $this->data['editPassword_csrf'] = $csrf;
 

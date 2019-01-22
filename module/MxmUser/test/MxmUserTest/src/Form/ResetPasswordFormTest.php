@@ -28,11 +28,15 @@ namespace MxmUserTest\Form;
 
 use MxmUser\Form\ResetPasswordForm;
 use Zend\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class ResetPasswordFormTest extends \PHPUnit\Framework\TestCase
 {
     private $form;
     private $data;
+    private $translator;
+    private $validatorTranslator;
 
     public function setUp()
     {
@@ -41,7 +45,10 @@ class ResetPasswordFormTest extends \PHPUnit\Framework\TestCase
             'resetPassword_csrf' => ''
         );
 
-        $this->form = new ResetPasswordForm(new InputFilter());
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->validatorTranslator = $this->prophesize(ValidatorTranslatorInterface::class);
+
+        $this->form = new ResetPasswordForm(new InputFilter(), $this->translator->reveal(), $this->validatorTranslator->reveal());
         $csrf = $this->form->get('resetPassword_csrf')->getValue();
         $this->data['resetPassword_csrf'] = $csrf;
 

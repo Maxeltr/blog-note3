@@ -153,7 +153,7 @@ class ZendDbSqlMapperTest extends \PHPUnit\Framework\TestCase
     public function testNoResultInstanceReturned()
     {
         $this->stmt->execute()->willReturn([]);
-        $this->setExpectedException(RecordNotFoundUserException::class, "ZendDbSqlMapper. createObject. Record with given ID not found.");
+        $this->expectException(RecordNotFoundUserException::class);
         $this->mapper->findUserById('1');
     }
 
@@ -164,7 +164,7 @@ class ZendDbSqlMapperTest extends \PHPUnit\Framework\TestCase
     public function testNoQueryResultReturned()
     {
         $this->result->isQueryResult()->willReturn(false);
-        $this->setExpectedException(RecordNotFoundUserException::class, "ZendDbSqlMapper. createObject. Record with given ID not found.");
+        $this->expectException(RecordNotFoundUserException::class);
         $this->mapper->findUserById('1');
     }
 
@@ -175,7 +175,7 @@ class ZendDbSqlMapperTest extends \PHPUnit\Framework\TestCase
     public function testNoAffectedRows()
     {
         $this->result->getAffectedRows()->willReturn(0);
-        $this->setExpectedException(RecordNotFoundUserException::class, "ZendDbSqlMapper. createObject. Record with given ID not found.");
+        $this->expectException(RecordNotFoundUserException::class);
         $this->mapper->findUserById('1');
     }
 
@@ -206,7 +206,7 @@ class ZendDbSqlMapperTest extends \PHPUnit\Framework\TestCase
     public function testNoResultInstanceReturnedAfterInsertUserInDb()
     {
         $this->stmt->execute()->willReturn([]);
-        $this->setExpectedException(DataBaseErrorUserException::class, "Database error. ZendDbSqlMapper. saveInDb. No ResultInterface returned.");
+        $this->expectException(DataBaseErrorUserException::class);
         $this->mapper->insertUser($this->user);
     }
 

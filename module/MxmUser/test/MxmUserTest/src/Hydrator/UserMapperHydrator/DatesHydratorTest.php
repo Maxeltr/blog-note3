@@ -61,7 +61,12 @@ class DatesHydratorTest extends \PHPUnit\Framework\TestCase
             'dateTime' => [
                 'dateTimeFormat' => 'Y-m-d H:i:s',
                 'defaultDate' => '1900-01-01 00:00:00'
-            ]
+            ],
+            'defaults' => [
+                'locale' => 'ru',
+                'timezone' => 'Europe/Moscow',
+                'dateTimeFormat' => 'Y-m-d H:i:s',
+            ],
         ];
         $config = new Config($configArray);
 

@@ -27,7 +27,8 @@
 namespace MxmUserTest\Service;
 
 use MxmUser\Mapper\MapperInterface;
-use Zend\Authentication\AuthenticationService;
+//use Zend\Authentication\AuthenticationService;
+use MxmUser\Service\Authentication\AuthenticationService;
 use Zend\Validator\Db\RecordExists;
 use Zend\Validator\EmailAddress;
 use Zend\Validator\NotEmpty;
@@ -39,7 +40,6 @@ use Zend\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
-use MxmUser\Exception\NotAuthorizedUserException;
 use MxmRbac\Service\AuthorizationService;
 use Prophecy\Argument;
 use MxmUser\Service\UserService;
@@ -48,6 +48,11 @@ use Zend\Authentication\Storage\StorageInterface;
 use MxmUser\Service\Authentication\Adapter\AuthAdapter;
 use Zend\Authentication\Result;
 use MxmMail\Service\MailService;
+use Zend\Session\Container as SessionContainer;
+use MxmUser\Validator\IsPropertyMatchesDb;
+use Zend\Http\PhpEnvironment\Request;
+use Zend\i18n\Translator\TranslatorInterface;
+use MxmRbac\Exception\NotAuthorizedException;
 
 class UserServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -68,6 +73,11 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     protected $storageMock;
     protected $mail;
     protected $token;
+    protected $sessionContainer;
+    protected $translator;
+    protected $request;
+    protected $isRoleMatchesDb;
+    protected $passwordHash;
 
     protected $traceError = true;
 
@@ -86,8 +96,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->user->setEmail('test@test.ru');
         $bcrypt = new Bcrypt();
         $this->password = 'testPassword';
-        $passwordHash = $bcrypt->create($this->password);
-        $this->user->setPassword($passwordHash);
+        $this->passwordHash = $bcrypt->create($this->password);
+        $this->user->setPassword($this->passwordHash);
         $this->token = 'dsg4tfsgf5gs';
 
         $this->mapper = $this->prophesize(MapperInterface::class);
@@ -102,6 +112,11 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->storageMock = $this->prophesize(StorageInterface::class);
         $this->mail = $this->prophesize(MailService::class);
 
+        $this->isRoleMatchesDb = $this->prophesize(IsPropertyMatchesDb::class);
+        $this->request = $this->prophesize(Request::class);
+        $this->translator = $this->prophesize(TranslatorInterface::class);
+        $this->sessionContainer = $this->prophesize(SessionContainer::class);
+
         $this->userService = new UserService(
             $this->mapper->reveal(),
             $this->datetime->reveal(),
@@ -109,9 +124,13 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
             $this->emailValidator->reveal(),
             $this->notEmptyValidator->reveal(),
             $this->isUserExists->reveal(),
+            $this->isRoleMatchesDb->reveal(),
             $this->authorizationService->reveal(),
             $this->bcrypt->reveal(),
-            $this->mail->reveal()
+            $this->mail->reveal(),
+            $this->sessionContainer->reveal(),
+            $this->translator->reveal(),
+            $this->request->reveal()
         );
 
         parent::setUp();
@@ -131,8 +150,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindAllUsers()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('find.users')->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('find.users')->willReturn(true);
 
         $this->mapper->findAllUsers()->willReturn($this->paginator);
         $this->assertSame($this->paginator, $this->userService->findAllUsers());
@@ -144,11 +163,11 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindAllUsersByNotAuthenticatedUser()
     {
-        $this->authService->hasIdentity()->willReturn(false);
-        $this->authorizationService->isGranted('find.users')->willReturn(true);
+        $this->authService->checkIdentity()->willThrow(NotAuthenticatedUserException::class);
+        $this->authorizationService->checkPermission('find.users')->willReturn(true);
 
         $this->mapper->findAllUsers()->willReturn($this->paginator);
-        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->expectException(NotAuthenticatedUserException::class);
         $this->userService->findAllUsers();
     }
 
@@ -158,11 +177,11 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindAllUsersByNotAuthorizationUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('find.users')->willReturn(false);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('find.users')->willThrow(NotAuthorizedException::class);
 
         $this->mapper->findAllUsers()->willReturn($this->paginator);
-        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->expectException(NotAuthorizedException::class);
         $this->userService->findAllUsers();
     }
 
@@ -172,10 +191,11 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindUserById()
     {
-        $this->authService->hasIdentity()->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
         $this->mapper->findUserById('1')->willReturn($this->user);
-        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(true);
-        $this->assertSame($this->user, $this->userService->findUserById('1'));
+        $this->authorizationService->checkPermission('find.user')->willReturn(true);
+        $user = clone $this->user;
+        $this->assertSame($user, $this->userService->findUserById('1'));
     }
 
     /**
@@ -184,10 +204,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindUserByIdByNotAuthenticatedUser()
     {
-        $this->authService->hasIdentity()->willReturn(false);
+        $this->authService->checkIdentity()->willThrow(NotAuthenticatedUserException::class);
         $this->mapper->findUserById('1')->willReturn($this->user);
-        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(true);
-        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->authorizationService->checkPermission('find.user', $this->user)->willReturn(true);
+        $this->expectException(NotAuthenticatedUserException::class);
         $this->userService->findUserById('1');
     }
 
@@ -197,10 +217,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindUserByIdThrowsRecordNotFoundUserException()
     {
-        $this->authService->hasIdentity()->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
         $this->mapper->findUserById('1')->willThrow(RecordNotFoundUserException::class);
-        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(true);
-        $this->setExpectedException(RecordNotFoundUserException::class);
+        $this->authorizationService->checkPermission('find.user', $this->user)->willReturn(true);
+        $this->expectException(RecordNotFoundUserException::class);
         $this->userService->findUserById('1');
     }
 
@@ -210,10 +230,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testFindUserByIdByNotAuthorizationUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
         $this->mapper->findUserById('1')->willReturn($this->user);
-        $this->authorizationService->isGranted('find.user', $this->user)->willReturn(false);
-        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->authorizationService->checkPermission('find.user', $this->user)->willThrow(NotAuthorizedException::class);
+        $this->expectException(NotAuthorizedException::class);
         $this->userService->findUserById('1');
     }
 
@@ -224,9 +244,19 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     public function testInsertUser()
     {
         $this->isUserExists->isValid($this->user->getEmail())->willReturn(false);
+
+        $this->bcrypt->create($this->passwordHash)->willReturn($this->passwordHash);
+        $this->mapper->findAllUsers()->willReturn($this->paginator);
+        $this->mail->send()->willReturn($this->mail);
+        $this->mail->setSubject(Argument::any())->willReturn($this->mail);
+        $this->mail->setBody(Argument::any(), Argument::any())->willReturn($this->mail);
+        $this->mail->setFrom(Argument::any(), Argument::any())->willReturn($this->mail);
+        $this->mail->setTo(Argument::any(), Argument::any())->willReturn($this->mail);
+
         $this->mapper->insertUser($this->user)->willReturn($this->user);
         $this->datetime->modify('now')->willReturn($this->datetime);
-        $this->assertSame($this->user, $this->userService->insertUser($this->user));
+        $user = clone $this->user;
+        $this->assertSame($user, $this->userService->insertUser($this->user));
     }
 
     /**
@@ -236,7 +266,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     public function testInsertUserAlreadyExsist()
     {
         $this->isUserExists->isValid($this->user->getEmail())->willReturn(true);
-        $this->setExpectedException(AlreadyExistsUserException::class, 'User with email address ' . $this->user->getEmail() . ' already exists');
+        $this->expectException(AlreadyExistsUserException::class);
         $this->userService->insertUser($this->user);
     }
 
@@ -246,8 +276,9 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testUpdateUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.user', $this->user)->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.user', $this->user)->willReturn(true);
+        $this->authorizationService->checkPermission('change.role')->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
         $this->assertSame($this->user, $this->userService->updateUser($this->user));
     }
@@ -258,10 +289,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testUpdateUserByIdByNotAuthenticatedUser()
     {
-        $this->authService->hasIdentity()->willReturn(false);
-        $this->authorizationService->isGranted('edit.user', $this->user)->willReturn(true);
+        $this->authService->checkIdentity()->willThrow(NotAuthenticatedUserException::class);
+        $this->authorizationService->checkPermission('edit.user', $this->user)->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->expectException(NotAuthenticatedUserException::class);
         $this->userService->updateUser($this->user);
     }
 
@@ -271,10 +302,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testUpdateUserByIdByNotAuthorizationUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.user', $this->user)->willReturn(false);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.user', $this->user)->willThrow(NotAuthorizedException::class);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->expectException(NotAuthorizedException::class);
         $this->userService->updateUser($this->user);
     }
 
@@ -284,8 +315,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('delete.user', $this->user)->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('delete.user', $this->user)->willReturn(true);
         $this->mapper->deleteUser($this->user)->willReturn(true);
         $this->assertSame(true, $this->userService->deleteUser($this->user));
     }
@@ -296,10 +327,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteUserByNotAuthenticatedUser()
     {
-        $this->authService->hasIdentity()->willReturn(false);
-        $this->authorizationService->isGranted('delete.user', $this->user)->willReturn(true);
+        $this->authService->checkIdentity()->willThrow(NotAuthenticatedUserException::class);
+        $this->authorizationService->checkPermission('delete.user', $this->user)->willReturn(true);
         $this->mapper->deleteUser($this->user)->willReturn(true);
-        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->expectException(NotAuthenticatedUserException::class);
         $this->userService->deleteUser($this->user);
     }
 
@@ -309,10 +340,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testDeleteUserByNotAuthorizationUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('delete.user', $this->user)->willReturn(false);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('delete.user', $this->user)->willThrow(NotAuthorizedException::class);
         $this->mapper->deleteUser($this->user)->willReturn(true);
-        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->expectException(NotAuthorizedException::class);
         $this->userService->deleteUser($this->user);
     }
 
@@ -322,8 +353,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditEmail()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.email')->willReturn(true);
         $this->notEmptyValidator->isValid($this->password)->willReturn(true);
         $this->emailValidator->isValid($this->email)->willReturn(true);
         $this->authService->getIdentity()->willReturn($this->user);
@@ -339,14 +370,14 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditEmailByNotAuthenticatedUser()
     {
-        $this->authService->hasIdentity()->willReturn(false);
-        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->authService->checkIdentity()->willThrow(NotAuthenticatedUserException::class);
+        $this->authorizationService->checkPermission('edit.email')->willReturn(true);
         $this->notEmptyValidator->isValid($this->password)->willReturn(true);
         $this->emailValidator->isValid($this->email)->willReturn(true);
         $this->authService->getIdentity()->willReturn($this->user);
         $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(NotAuthenticatedUserException::class, 'The user is not logged in');
+        $this->expectException(NotAuthenticatedUserException::class);
         $this->userService->editEmail($this->email, $this->password);
     }
 
@@ -356,14 +387,14 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditEmailByNotAuthorizationUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.email')->willReturn(false);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.email')->willThrow(NotAuthorizedException::class);
         $this->notEmptyValidator->isValid($this->password)->willReturn(true);
         $this->emailValidator->isValid($this->email)->willReturn(true);
         $this->authService->getIdentity()->willReturn($this->user);
         $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(NotAuthorizedUserException::class, 'Access denied');
+        $this->expectException(NotAuthorizedException::class);
         $this->userService->editEmail($this->email, $this->password);
     }
 
@@ -373,14 +404,14 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditEmailEmptyPassword()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.email')->willReturn(true);
         $this->notEmptyValidator->isValid($this->password)->willReturn(false);
         $this->emailValidator->isValid($this->email)->willReturn(true);
         $this->authService->getIdentity()->willReturn($this->user);
         $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: password.');
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->editEmail($this->email, $this->password);
     }
 
@@ -390,14 +421,14 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditEmailInvalidEmail()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.email')->willReturn(true);
         $this->notEmptyValidator->isValid($this->password)->willReturn(true);
         $this->emailValidator->isValid($this->email)->willReturn(false);
         $this->authService->getIdentity()->willReturn($this->user);
         $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: email.');
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->editEmail($this->email, $this->password);
     }
 
@@ -407,14 +438,14 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditEmailInvalidPassword()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.email')->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.email')->willReturn(true);
         $this->notEmptyValidator->isValid($this->password)->willReturn(true);
         $this->emailValidator->isValid($this->email)->willReturn(true);
         $this->authService->getIdentity()->willReturn($this->user);
         $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(false);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->setExpectedException(InvalidPasswordUserException::class, 'Incorrect password.');
+        $this->expectException(InvalidPasswordUserException::class);
         $this->userService->editEmail($this->email, $this->password);
     }
 
@@ -424,8 +455,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testEditPassword()
     {
-        $this->authService->hasIdentity()->willReturn(true);
-        $this->authorizationService->isGranted('edit.password')->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
+        $this->authorizationService->checkPermission('edit.password')->willReturn(true);
         $this->notEmptyValidator->isValid($this->password)->willReturn(true);
         $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
         $this->authService->getIdentity()->willReturn($this->user);
@@ -477,7 +508,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->authService->authenticate()->willReturn($result);
         $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
         $this->authService->getStorage()->willReturn($this->storageMock->reveal());
-        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: password.');
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->loginUser($this->email, $this->password);
     }
 
@@ -496,7 +527,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->authService->authenticate()->willReturn($result);
         $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
         $this->authService->getStorage()->willReturn($this->storageMock->reveal());
-        $this->setExpectedException(InvalidArgumentUserException::class, "No params given: email.");
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->loginUser($this->email, $this->password);
     }
 
@@ -515,7 +546,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->authService->authenticate()->willReturn($result);
         $this->mapper->findUserByEmail($this->email)->willReturn($this->user);
         $this->authService->getStorage()->willReturn($this->storageMock->reveal());
-        $this->setExpectedException(RuntimeUserException::class, 'The user already logged in');
+        $this->expectException(RuntimeUserException::class);
         $this->userService->loginUser($this->email, $this->password);
     }
 
@@ -544,7 +575,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testLogoutUser()
     {
-        $this->authService->hasIdentity()->willReturn(true);
+        $this->authService->checkIdentity()->willReturn(true);
         $this->authService->clearIdentity()->shouldBeCalled();
         $this->userService->logoutUser();
     }
@@ -555,8 +586,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     public function testLogoutUserNotLoggedIn()
     {
-        $this->authService->hasIdentity()->willReturn(false);
-        $this->setExpectedException(RuntimeUserException::class, 'The user is not logged in');
+        $this->authService->checkIdentity()->willThrow(RuntimeUserException::class);;
+        $this->expectException(RuntimeUserException::class);
         $this->userService->logoutUser();
     }
 
@@ -571,7 +602,12 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $datetime = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
         $this->datetime->modify('now')->willReturn($datetime);
         $this->mapper->updateUser($this->user)->shouldBeCalled();
-        $this->mail->sendEmail('Password Reset', Argument::any(), 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $this->user->getEmail(), $this->user->getUsername())->shouldBeCalled();
+        //$this->mail->sendEmail('Password Reset', Argument::any(), 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $this->user->getEmail(), $this->user->getUsername())->shouldBeCalled();
+        $this->mail->send()->willReturn($this->mail);
+        $this->mail->setSubject(Argument::any())->willReturn($this->mail);
+        $this->mail->setBody(Argument::any(), Argument::any())->willReturn($this->mail);
+        $this->mail->setFrom(Argument::any(), Argument::any())->willReturn($this->mail);
+        $this->mail->setTo(Argument::any(), Argument::any())->willReturn($this->mail);
         $token = $this->user->getPasswordToken();
         $this->userService->resetPassword($this->email);
         $this->assertNotSame($token, $this->user->getPasswordToken());
@@ -585,7 +621,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     public function testResetPasswordInvalidEmail()
     {
         $this->emailValidator->isValid($this->email)->willReturn(false);
-        $this->setExpectedException(InvalidArgumentUserException::class, "No params given: email.");
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->resetPassword($this->email);
     }
 
@@ -597,7 +633,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     {
         $this->emailValidator->isValid($this->email)->willReturn(true);
         $this->mapper->findUserByEmail($this->email)->willThrow(\Exception::class);
-        $this->setExpectedException(RecordNotFoundUserException::class, "User with email address " . $this->email . " doesn't exists");
+        $this->expectException(RecordNotFoundUserException::class);
         $this->userService->resetPassword($this->email);
     }
 
@@ -630,7 +666,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     {
         $token = 'dsg4tfsgf5gs';
         $this->notEmptyValidator->isValid('newPassword')->willReturn(false);
-        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: password.');
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->setPassword('newPassword', $token);
     }
 
@@ -643,7 +679,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $token = 'dsg4tfsgf5gs';
         $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
         $this->notEmptyValidator->isValid($token)->willReturn(false);
-        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: token.');
+        $this->expectException(InvalidArgumentUserException::class);
         $this->userService->setPassword('newPassword', $token);
     }
 
@@ -657,7 +693,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->notEmptyValidator->isValid('newPassword')->willReturn(true);
         $this->notEmptyValidator->isValid($token)->willReturn(true);
         $this->mapper->findUserByResetPasswordToken($token)->willThrow(\Exception::class);
-        $this->setExpectedException(RecordNotFoundUserException::class, 'Token ' . $token . ' does not exists');
+        $this->expectException(RecordNotFoundUserException::class);
         $this->userService->setPassword('newPassword', $token);
     }
 
@@ -674,7 +710,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $tokenCreationDate = new \DateTime('2017-01-01', new \DateTimeZone('Europe/Moscow'));
         $this->user->setDateToken($tokenCreationDate);
         $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
-        $this->setExpectedException(ExpiredUserException::class, "Password token " . $token . " expired. User id " . $this->user->getId());
+        $this->expectException(ExpiredUserException::class);
         $this->userService->setPassword('newPassword', $token);
     }
 
@@ -704,7 +740,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     {
         $token = 'dsg4tfsgf5gs';
         $this->notEmptyValidator->isValid($token)->willReturn(false);
-        $this->setExpectedException(InvalidArgumentUserException::class, 'No params given: token.');
+        $this->expectException(InvalidArgumentUserException::class);
         $user = $this->userService->confirmEmail($token);
     }
 
@@ -717,7 +753,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $token = 'dsg4tfsgf5gs';
         $this->notEmptyValidator->isValid($token)->willReturn(true);
         $this->mapper->findUserByEmailToken($token)->willThrow(\Exception::class);
-        $this->setExpectedException(RecordNotFoundUserException::class, 'Token does not exists');
+        $this->expectException(RecordNotFoundUserException::class);
         $this->userService->confirmEmail($token);
     }
 
@@ -733,7 +769,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $tokenCreationDate = new \DateTime('2017-01-01', new \DateTimeZone('Europe/Moscow'));
         $this->user->setDateEmailToken($tokenCreationDate);
         $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
-        $this->setExpectedException(ExpiredUserException::class, "Email token " . $token . " expired. User id " . $this->user->getId());
+        $this->expectException(ExpiredUserException::class);
         $user = $this->userService->confirmEmail($token);
     }
 }
