@@ -88,18 +88,18 @@ class DeleteControllerTest extends AbstractHttpControllerTestCase //\PHPUnit_Fra
      * @covers MxmUser\Controller\DeleteController::deleteUserAction
      *
      */
-    public function testDeleteUserActionAfterConfirmationDeleteting()
-    {
-	$postData = [
-            'delete_confirmation' => 'yes',
-	];
-        $this->dispatch('/delete/user/1', 'POST', $postData);
-        //$this->assertResponseStatusCode(302);
-	//$this->assertRedirectTo('/listUsers');
-        //$this->assertModuleName('MxmUser');
-        //$this->assertControllerName(ListController::class);
-        //$this->assertControllerClass('ListController');
-    }
+//    public function testDeleteUserActionAfterConfirmationDeleteting()
+//    {
+//	$postData = [
+//            'delete_confirmation' => 'yes',
+//	];
+//        $this->dispatch('/delete/user/1', 'POST', $postData);
+//        //$this->assertResponseStatusCode(302);
+//	//$this->assertRedirectTo('/listUsers');
+//        //$this->assertModuleName('MxmUser');
+//        //$this->assertControllerName(ListController::class);
+//        //$this->assertControllerClass('ListController');
+//    }
 
     protected function updateConfig($config)
     {

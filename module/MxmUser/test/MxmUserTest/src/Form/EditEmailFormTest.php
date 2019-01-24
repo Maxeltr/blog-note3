@@ -44,7 +44,8 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
             //'id' => '',
             'newEmail' => '',
             'confirmEmail' => '',
-            'password' => ''
+            'password' => '',
+            'editEmail_csrf' => ''
         );
 
         $this->translator = $this->prophesize(TranslatorInterface::class);
@@ -66,13 +67,10 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($form->setData($data)->isValid());
 
-        //$data['id'] = 1;
-        //$this->assertFalse($form->setData($data)->isValid());
-
-        $data['newEmail'] = 'Email@testmail.ru';
+        $data['newEmail'] = 'email@testmail.ru';
         $this->assertFalse($form->setData($data)->isValid());
 
-	$data['confirmEmail'] = 'Email@testmail.ru';
+	$data['confirmEmail'] = 'email@testmail.ru';
         $this->assertFalse($form->setData($data)->isValid());
 
         $data['password'] = 'password';
@@ -84,13 +82,13 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
         $form = $this->form;
         $data = $this->data;
         //$data['id'] = 1;
-        $data['confirmEmail'] = 'Email@testmail.ru';
+        $data['confirmEmail'] = 'email@testmail.ru';
 	$data['password'] = 'password';
 
         $data['newEmail'] = "test";
         $this->assertFalse($form->setData($data)->isValid());
 
-        $data['newEmail'] = 'Email@testmail.ru';
+        $data['newEmail'] = 'email@testmail.ru';
         $this->assertTrue($form->setData($data)->isValid());
     }
 
@@ -99,28 +97,28 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
         $form = $this->form;
         $data = $this->data;
         //$data['id'] = 1;
-        $data['newEmail'] = 'Email@testmail.ru';
+        $data['newEmail'] = 'email@testmail.ru';
 	$data['password'] = 'password';
 
         $data['confirmEmail'] = "test";
         $this->assertFalse($form->setData($data)->isValid());
 
-        $data['confirmEmail'] = 'Email@testmail.ru';
+        $data['confirmEmail'] = 'email@testmail.ru';
         $this->assertTrue($form->setData($data)->isValid());
     }
 
-	public function testIdenticalEmails()
+    public function testIdenticalEmails()
     {
         $form = $this->form;
         $data = $this->data;
         //$data['id'] = 1;
 	$data['password'] = 'password';
 
-        $data['confirmEmail'] = 'Email@testmail.ru';
+        $data['confirmEmail'] = 'email@testmail.ru';
 	$data['newEmail'] = 'newEmail@testmail.ru';
         $this->assertFalse($form->setData($data)->isValid());
 
-	$data['newEmail'] = 'Email@testmail.ru';
+	$data['newEmail'] = 'email@testmail.ru';
         $this->assertTrue($form->setData($data)->isValid());
     }
 
@@ -129,16 +127,18 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
         $form = $this->form;
         $data = $this->data;
         //$data['id'] = 1;
-        $data['newEmail'] = 'Email@testmail.ru';
-	$data['confirmEmail'] = 'Email@testmail.ru';
+        $data['newEmail'] = 'email@testmail.ru';
+	$data['confirmEmail'] = 'email@testmail.ru';
 
 
-        $data251 = '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901';
-        $data['password'] = $data251;
+        //$data251 = '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901';
+        $data36 = '123456789012345678901234567890123456';
+        $data['password'] = $data36;
 	$this->assertFalse($form->setData($data)->isValid());
 
-        $data250 = '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890';
-        $data['password'] = $data250;
+        //$data250 = '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890';
+        $data35 = '12345678901234567890123456789012345';
+        $data['password'] = $data35;
         $this->assertTrue($form->setData($data)->isValid());
     }
 
@@ -147,15 +147,15 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
         $form = $this->form;
         $data = $this->data;
         //$data['id'] = 1;
-	$data['newEmail'] = ' Email@testmail.ru ';
-        $data['confirmEmail'] = ' Email@testmail.ru ';
+	$data['newEmail'] = ' email@testmail.ru ';
+        $data['confirmEmail'] = ' email@testmail.ru ';
 	$data['password'] = ' password ';
 
 	$form->setData($data)->isValid();
         $validatedData = $form->getData();
 
-	$this->assertSame('Email@testmail.ru', $validatedData['newEmail']);
-	$this->assertSame('Email@testmail.ru', $validatedData['confirmEmail']);
+	$this->assertSame('email@testmail.ru', $validatedData['newEmail']);
+	$this->assertSame('email@testmail.ru', $validatedData['confirmEmail']);
 	$this->assertSame('password', $validatedData['password']);
     }
 }

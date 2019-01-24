@@ -153,8 +153,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->authService->checkIdentity()->willReturn(true);
         $this->authorizationService->checkPermission('find.users')->willReturn(true);
 
-        $this->mapper->findAllUsers()->willReturn($this->paginator);
-        $this->assertSame($this->paginator, $this->userService->findAllUsers());
+        $this->mapper->findAllUsers()->willReturn(clone $this->paginator);
+        $this->assertEquals($this->paginator, $this->userService->findAllUsers());
     }
 
     /**
@@ -192,10 +192,9 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     public function testFindUserById()
     {
         $this->authService->checkIdentity()->willReturn(true);
-        $this->mapper->findUserById('1')->willReturn($this->user);
+        $this->mapper->findUserById('1')->willReturn(clone $this->user);
         $this->authorizationService->checkPermission('find.user')->willReturn(true);
-        $user = clone $this->user;
-        $this->assertSame($user, $this->userService->findUserById('1'));
+        $this->assertEquals($this->user, $this->userService->findUserById('1'));
     }
 
     /**
@@ -219,7 +218,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     {
         $this->authService->checkIdentity()->willReturn(true);
         $this->mapper->findUserById('1')->willThrow(RecordNotFoundUserException::class);
-        $this->authorizationService->checkPermission('find.user', $this->user)->willReturn(true);
+        $this->authorizationService->checkPermission('find.user')->willReturn(true);
         $this->expectException(RecordNotFoundUserException::class);
         $this->userService->findUserById('1');
     }
@@ -232,7 +231,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
     {
         $this->authService->checkIdentity()->willReturn(true);
         $this->mapper->findUserById('1')->willReturn($this->user);
-        $this->authorizationService->checkPermission('find.user', $this->user)->willThrow(NotAuthorizedException::class);
+        $this->authorizationService->checkPermission('find.user')->willThrow(NotAuthorizedException::class);
         $this->expectException(NotAuthorizedException::class);
         $this->userService->findUserById('1');
     }
@@ -252,11 +251,11 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->mail->setBody(Argument::any(), Argument::any())->willReturn($this->mail);
         $this->mail->setFrom(Argument::any(), Argument::any())->willReturn($this->mail);
         $this->mail->setTo(Argument::any(), Argument::any())->willReturn($this->mail);
-
-        $this->mapper->insertUser($this->user)->willReturn($this->user);
         $this->datetime->modify('now')->willReturn($this->datetime);
-        $user = clone $this->user;
-        $this->assertSame($user, $this->userService->insertUser($this->user));
+        $this->user->setCreated($this->datetime->reveal());
+        $this->user->setDateEmailToken($this->datetime->reveal());
+        $this->mapper->insertUser($this->user)->willReturn($this->user);
+        $this->assertEquals($this->user, $this->userService->insertUser($this->user));
     }
 
     /**
@@ -279,8 +278,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->authService->checkIdentity()->willReturn(true);
         $this->authorizationService->checkPermission('edit.user', $this->user)->willReturn(true);
         $this->authorizationService->checkPermission('change.role')->willReturn(true);
-        $this->mapper->updateUser($this->user)->willReturn($this->user);
-        $this->assertSame($this->user, $this->userService->updateUser($this->user));
+        $this->mapper->updateUser($this->user)->willReturn(clone $this->user);
+        $this->assertEquals($this->user, $this->userService->updateUser(clone $this->user));
     }
 
     /**
@@ -318,7 +317,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->authService->checkIdentity()->willReturn(true);
         $this->authorizationService->checkPermission('delete.user', $this->user)->willReturn(true);
         $this->mapper->deleteUser($this->user)->willReturn(true);
-        $this->assertSame(true, $this->userService->deleteUser($this->user));
+        $this->assertEquals(true, $this->userService->deleteUser(clone $this->user));
     }
 
     /**
@@ -361,7 +360,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->bcrypt->verify($this->password, $this->user->getPassword())->willReturn(true);
         $this->mapper->updateUser($this->user)->willReturn($this->user);
         $this->userService->editEmail($this->email, $this->password);
-        $this->assertSame($this->email, $this->user->getEmail());
+        $this->assertEquals($this->email, $this->user->getEmail());
     }
 
     /**
@@ -466,11 +465,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $bcrypt = new Bcrypt();
         $this->passwordHash = $bcrypt->create('newPassword');
         $this->bcrypt->create('newPassword')->willReturn($this->passwordHash);
-
-        //$this->assertSame($this->user, $this->userService->editPassword($this->password, 'newPassword'));
-
         $this->userService->editPassword($this->password, 'newPassword');
-        $this->password = 'newPassword';
         $this->assertSame($this->passwordHash, $this->user->getPassword());
     }
 
@@ -602,7 +597,6 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $datetime = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
         $this->datetime->modify('now')->willReturn($datetime);
         $this->mapper->updateUser($this->user)->shouldBeCalled();
-        //$this->mail->sendEmail('Password Reset', Argument::any(), 'qwer_qwerty_2018@inbox.ru', 'blog-note3', $this->user->getEmail(), $this->user->getUsername())->shouldBeCalled();
         $this->mail->send()->willReturn($this->mail);
         $this->mail->setSubject(Argument::any())->willReturn($this->mail);
         $this->mail->setBody(Argument::any(), Argument::any())->willReturn($this->mail);
@@ -732,7 +726,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(true, $user->getEmailVerification());
     }
 
-	/**
+    /**
      * @covers MxmUser\Service\UserService::confirmEmail
      *
      */
@@ -741,10 +735,10 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $token = 'dsg4tfsgf5gs';
         $this->notEmptyValidator->isValid($token)->willReturn(false);
         $this->expectException(InvalidArgumentUserException::class);
-        $user = $this->userService->confirmEmail($token);
+        $this->userService->confirmEmail($token);
     }
 
-	/**
+    /**
      * @covers MxmUser\Service\UserService::confirmEmail
      *
      */
@@ -757,7 +751,7 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->userService->confirmEmail($token);
     }
 
-	/**
+    /**
      * @covers MxmUser\Service\UserService::confirmEmail
      *
      */
@@ -770,6 +764,6 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
         $this->user->setDateEmailToken($tokenCreationDate);
         $this->datetime->modify('now')->willReturn(new \DateTime('now', new \DateTimeZone('Europe/Moscow')));
         $this->expectException(ExpiredUserException::class);
-        $user = $this->userService->confirmEmail($token);
+        $this->userService->confirmEmail($token);
     }
 }

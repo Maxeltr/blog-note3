@@ -38,7 +38,7 @@ class LoginUserFormTest extends \PHPUnit\Framework\TestCase
     private $csrfValidator;
     private $translator;
     private $validatorTranslator;
-    
+
     public function setUp()
     {
         $this->data = array(
@@ -134,7 +134,7 @@ class LoginUserFormTest extends \PHPUnit\Framework\TestCase
         $form->setData($data)->isValid();
         $validatedData = $form->getData();
 
-        $this->assertSame('Email@mail.ru', $validatedData['email']);
+        $this->assertSame('email@mail.ru', $validatedData['email']);
         $this->assertSame('redirect', $validatedData['password']);
         $this->assertSame('redirect', $validatedData['redirect']);
     }
