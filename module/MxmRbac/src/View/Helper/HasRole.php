@@ -38,8 +38,8 @@ class HasRole extends AbstractHelper
         $this->authorizationService = $authorizationService;
     }
 
-    public function __invoke($roleOrRoles)
+    public function __invoke($objectOrName)
     {
-        return $this->authorizationService->matchIdentityRoles($roleOrRoles);
+        return $this->authorizationService->matchIdentityRoles($objectOrName);
     }
 }

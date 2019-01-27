@@ -46,8 +46,8 @@ use MxmFile\Model\File;
 use MxmRbac\Exception\NotAuthorizedException;
 use MxmRbac\Assertion\MustBeOwnerAssertion;
 
-class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
-{
+class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase {
+
     protected $currentUser;
     protected $rbac;
     protected $assertionPluginManager;
@@ -60,6 +60,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     protected $assertUserIdMatches;
     protected $mustBeAuthorAssertion;
     protected $mustBeOwnerAssertion;
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -94,7 +95,6 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
                         'add.post',
                         'edit.post',
                         'delete.post',
-
                     ],
                 ],
                 'restUser' => [
@@ -181,12 +181,12 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
         $this->mustBeOwnerAssertion->setIdentity($this->currentUser);
 
         $this->authorizationService = new AuthorizationService(
-            $this->rbac,
-            $this->assertionPluginManager->reveal(),
-            $this->config,
-            $this->inArrayValidator,
-            $this->logger->reveal(),
-            $this->currentUser
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal(),
+                $this->currentUser
         );
 
         parent::setUp();
@@ -201,10 +201,207 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithoutAssertions() {
+        $this->assertSame(false, $this->authorizationService->isGranted('nonexistent.permission'));
+        $this->assertSame(false, $this->authorizationService->isGranted('add.post'));
+
+        $this->currentUser->setRole('author');
+        $this->assertSame(true, $this->authorizationService->isGranted('add.post'));
+        $this->assertSame(false, $this->authorizationService->isGranted('add.category'));
+
+        $this->currentUser->setRole('moderator');
+        $this->assertSame(true, $this->authorizationService->isGranted('add.post'));
+        $this->assertSame(true, $this->authorizationService->isGranted('add.category'));
+        $this->assertSame(false, $this->authorizationService->isGranted('manage.role'));
+
+        $this->currentUser->setRole('admin');
+        $this->assertSame(true, $this->authorizationService->isGranted('add.post'));
+        $this->assertSame(true, $this->authorizationService->isGranted('add.category'));
+        $this->assertSame(true, $this->authorizationService->isGranted('manage.role'));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::checkPermission
+     *
+     */
+    public function testCheckPermissionWithAssertUserIdMatchesWhenPermissionDoesNotExist() {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $user = new User();
+        $user->setId('1');
+        $this->expectException(InvalidArgumentException::class);
+        $this->authorizationService->checkPermission('nonexistent.permission', $user);
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::checkPermission
+     *
+     */
+    public function testCheckPermissionWithAssertUserIdMatchesWhenContentIsAbsent() {
+        $this->expectException(NotAuthorizedException::class);
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $this->authorizationService->checkPermission('find.user');
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::checkPermission
+     *
+     */
+    public function testCheckPermissionWithAssertUserIdMatchesWhenRoleIsAbsent() {
+        $this->expectException(NotAuthorizedException::class);
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $user = new User();
+        $user->setId('1');
+        $this->currentUser->setRole('');
+        $this->authorizationService->checkPermission('find.user', $user);
+        $this->currentUser->setRole('nonexistentRole');
+        $this->authorizationService->checkPermission('find.user', $user);
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::checkPermission
+     *
+     */
+    public function testCheckPermissionWithAssertUserIdMatchesWhenCurrentUserIsAbsent() {
+        $this->expectException(NotAuthorizedException::class);
+        $authorizationService = new AuthorizationService(
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal()
+        );
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
+        $user = new User();
+        $user->setId('1');
+        $authorizationService->checkPermission('find.user', $user);
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::checkPermission
+     *
+     */
+    public function testCheckPermissionWithMustBeAuthorAssertionWhenIdsMatchAndPermissionIsNotGranted() {
+        $this->expectException(NotAuthorizedException::class);
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeAuthorAssertion);
+        $user = new User();
+        $user->setId('1');
+        $post = new Post();
+        $post->setAuthor($user);
+        $this->authorizationService->checkPermission('edit.post', $post);
+        $this->currentUser->setRole('author');
+        $this->assertSame(true, $this->authorizationService->checkPermission('edit.post', $post));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::matchIdentityRoles
+     *
+     */
+    public function testMatchIdentityRolesWhenCurrentUserIsAbsent() {
+        $authorizationService = new AuthorizationService(
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal()
+        );
+        $this->assertSame(false, $authorizationService->matchIdentityRoles('user'));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::matchIdentityRoles
+     *
+     */
+    public function testMatchIdentityRolesWhenRoleIsAbsent() {
+        $this->currentUser->setRole('nonexistentRole');
+        $this->assertSame(false, $this->authorizationService->matchIdentityRoles('user'));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::matchUserIds
+     *
+     */
+    public function testMatchUserIdsWithInvalidArgument() {
+        $this->expectException(InvalidArgumentException::class);
+        $this->authorizationService->matchUserIds('user');
+        $this->authorizationService->matchUserIds('1');
+        $this->authorizationService->matchUserIds(1);
+        $this->authorizationService->matchUserIds(null);
+        $this->authorizationService->matchUserIds('');
+        $post = new Post();
+        $this->authorizationService->matchUserIds($post);
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::matchUserIds
+     *
+     */
+    public function testMatchUserIdsWhenCurrentUserIsAbsent() {
+        $authorizationService = new AuthorizationService(
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal()
+        );
+        $user = new User();
+        $user->setId('1');
+        $this->assertSame(false, $authorizationService->matchUserIds($user));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::matchUserIds
+     *
+     */
+    public function testMatchUserIdsNotMatch() {
+        $user = new User();
+        $user->setId('2');
+        $this->assertSame(false, $this->authorizationService->matchUserIds($user));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::matchUserIds
+     *
+     */
+    public function testMatchUserIds() {
+        $user = new User();
+        $user->setId('1');
+        $this->assertSame(true, $this->authorizationService->matchUserIds($user));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::setIdentity
+     *
+     */
+    public function testSetIdentityWithInvalidArgument() {
+        $this->expectException(\TypeError::class);
+        $this->authorizationService->setIdentity('user');
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::setIdentity
+     *
+     */
+    public function testSetAndGetIdentity() {
+        $authorizationService = new AuthorizationService(
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal()
+        );
+        $this->assertSame(null, $authorizationService->getIdentity());
+        $user = clone $this->currentUser;
+        $this->assertEquals($this->authorizationService, $authorizationService->setIdentity($user));
+        $this->assertSame($user, $authorizationService->getIdentity());
+    }
+
+    /**
      * @covers MxmRbac\Service\AuthorizationService::matchIdentityRoles
      */
-    public function testMatchIdentityRolesWithInvalidArgument()
-    {
+    public function testMatchIdentityRolesWithInvalidArgument() {
         $this->expectException(InvalidArgumentException::class);
         $this->authorizationService->matchIdentityRoles(null);
     }
@@ -212,8 +409,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::matchIdentityRoles
      */
-    public function testMatchIdentityRoles()
-    {
+    public function testMatchIdentityRoles() {
         $this->assertSame(true, $this->authorizationService->matchIdentityRoles(new Role('user')));
         $this->assertSame(false, $this->authorizationService->matchIdentityRoles(new Role('author')));
 
@@ -234,15 +430,14 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithoutAssertionsWhenCurrentUserIsAbsent()
-    {
+    public function testCheckPermissionWithoutAssertionsWhenCurrentUserIsAbsent() {
         $this->expectException(NotAuthorizedException::class);
         $authorizationService = new AuthorizationService(
-            $this->rbac,
-            $this->assertionPluginManager->reveal(),
-            $this->config,
-            $this->inArrayValidator,
-            $this->logger->reveal()
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal()
         );
         $authorizationService->checkPermission('add.post');
     }
@@ -250,8 +445,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithoutAssertionsWhenRoleIsAbsent()
-    {
+    public function testCheckPermissionWithoutAssertionsWhenRoleIsAbsent() {
         $this->expectException(NotAuthorizedException::class);
         $this->currentUser->setRole('');
         $this->authorizationService->checkPermission('add.post');
@@ -262,8 +456,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithoutAssertionsWhenPermissionDoesNotExist()
-    {
+    public function testCheckPermissionWithoutAssertionsWhenPermissionDoesNotExist() {
         $this->expectException(NotAuthorizedException::class);
         $this->authorizationService->checkPermission('nonexistent.permission');
         $this->authorizationService->checkPermission('');
@@ -273,8 +466,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithoutAssertionsWhenPermissionIsNotGranted()
-    {
+    public function testCheckPermissionWithoutAssertionsWhenPermissionIsNotGranted() {
         $this->expectException(NotAuthorizedException::class);
         $this->authorizationService->checkPermission('add.post');
     }
@@ -282,8 +474,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithoutAssertionsWhenPermissionIsGranted()
-    {
+    public function testCheckPermissionWithoutAssertionsWhenPermissionIsGranted() {
         $this->currentUser->setRole('author');
         $this->assertSame(true, $this->authorizationService->checkPermission('add.post'));
     }
@@ -291,8 +482,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithAssertUserIdMatchesWhenIdsDoNotMatch()
-    {
+    public function testCheckPermissionWithAssertUserIdMatchesWhenIdsDoNotMatch() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $this->expectException(NotAuthorizedException::class);
         $user = new User();
@@ -303,8 +493,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      */
-    public function testCheckPermissionWithAssertUserIdMatchesWhenIdsMatch()
-    {
+    public function testCheckPermissionWithAssertUserIdMatchesWhenIdsMatch() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $user = new User();
         $user->setId('1');
@@ -315,8 +504,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::checkPermission
      *
      */
-    public function testCheckPermissionWithAssertUserIdMatchesWithNoAssertionsOption()
-    {
+    public function testCheckPermissionWithAssertUserIdMatchesWithNoAssertionsOption() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $this->currentUser->setRole('admin');
         $user = new User();
@@ -327,26 +515,25 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(true, $this->authorizationService->checkPermission('find.user'));
     }
 
-
-
     /**
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWhenIdsMatch()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWhenIdsMatch() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $user = new User();
         $user->setId('1');
         $this->assertSame(true, $this->authorizationService->isGranted('find.user', $user));
+        $this->assertSame(false, $this->authorizationService->isGranted('do.any.moderator', $user));
+        $this->currentUser->setRole('moderator');
+        $this->assertSame(true, $this->authorizationService->isGranted('do.any.moderator', $user));
     }
 
     /**
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWhenIdsDoNotMatch()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWhenIdsDoNotMatch() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $user = new User();
         $user->setId('2');
@@ -357,8 +544,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWhenPermissionDoesNotExist()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWhenPermissionDoesNotExist() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $user = new User();
         $user->setId('1');
@@ -371,8 +557,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWhenContentIsAbsent()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWhenContentIsAbsent() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $this->assertSame(false, $this->authorizationService->isGranted('find.user'));
     }
@@ -381,18 +566,17 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWhenRoleIsAbsent()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWhenRoleIsAbsent() {
         $user = new User();
         $user->setId('1');
         $user->setRole('nonexistentRole');
         $authorizationService = new AuthorizationService(
-            $this->rbac,
-            $this->assertionPluginManager->reveal(),
-            $this->config,
-            $this->inArrayValidator,
-            $this->logger->reveal(),
-              $user
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal(),
+                $user
         );
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
 
@@ -403,14 +587,13 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWhenCurrentUserIsAbsent()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWhenCurrentUserIsAbsent() {
         $authorizationService = new AuthorizationService(
-            $this->rbac,
-            $this->assertionPluginManager->reveal(),
-            $this->config,
-            $this->inArrayValidator,
-            $this->logger->reveal()
+                $this->rbac,
+                $this->assertionPluginManager->reveal(),
+                $this->config,
+                $this->inArrayValidator,
+                $this->logger->reveal()
         );
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $user = new User();
@@ -422,8 +605,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOption()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOption() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $this->currentUser->setRole('admin');
         $user = new User();
@@ -438,8 +620,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOptionWhenPermissionDoesNotExist()
-    {
+    public function testIsGrantedWithAssertUserIdMatchesWithNoAssertionsOptionWhenPermissionDoesNotExist() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->assertUserIdMatches);
         $this->currentUser->setRole('admin');
         $user = new User();
@@ -454,8 +635,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsMatch()
-    {
+    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsMatch() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeAuthorAssertion);
         $this->currentUser->setRole('author');
         $user = new User();
@@ -469,8 +649,7 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
      * @covers MxmRbac\Service\AuthorizationService::isGranted
      *
      */
-    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsDoNotMatch()
-    {
+    public function testIsGrantedWithMustBeAuthorAssertionWhenIdsDoNotMatch() {
         $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeAuthorAssertion);
         $this->currentUser->setRole('author');
         $user = new User();
@@ -479,4 +658,34 @@ class AuthorizationServiceTest extends \PHPUnit\Framework\TestCase
         $post->setAuthor($user);
         $this->assertSame(false, $this->authorizationService->isGranted('edit.post', $post));
     }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithMustBeOwnerAssertionWhenIdsMatch() {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeOwnerAssertion);
+        $user = new User();
+        $user->setId('1');
+        $file = new File();
+        $file->setOwner($user);
+        $this->assertSame(false, $this->authorizationService->isGranted('fetch.file.rest', $file));
+        $this->currentUser->setRole('restUser');
+        $this->assertSame(true, $this->authorizationService->isGranted('fetch.file.rest', $file));
+    }
+
+    /**
+     * @covers MxmRbac\Service\AuthorizationService::isGranted
+     *
+     */
+    public function testIsGrantedWithMustBeOwnerAssertionWhenIdsDoNotMatch() {
+        $this->assertionPluginManager->get(Argument::any())->willReturn($this->mustBeOwnerAssertion);
+        $this->currentUser->setRole('restUser');
+        $user = new User();
+        $user->setId('22');
+        $file = new File();
+        $file->setOwner($user);
+        $this->assertSame(false, $this->authorizationService->isGranted('fetch.file.rest', $file));
+    }
+
 }
