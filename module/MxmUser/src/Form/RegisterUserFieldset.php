@@ -121,8 +121,8 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                     //'font'   => './data/font/thorne_shaded.ttf',
                     'font'   => './public/css/fonts/Fixedsys500c.ttf',
                     'fsize'  => 24,
-//                    'width'  => 350,
-//                    'height' => 100,
+                    'width'  => 200,
+                    'height' => 50,
                     'expiration' => 600,
                     'dotNoiseLevel' => 20,
                     'lineNoiseLevel' => 2

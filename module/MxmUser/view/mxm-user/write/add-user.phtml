@@ -62,7 +62,16 @@
                 </div>
                 <div class="form-group <?php echo empty($form->get('userFieldset')->get('captcha')->getMessages()) ? '' : 'has-error'; ?>">
                     <?php echo $this->formLabel($form->get('userFieldset')->get('captcha'));
-                    echo $this->formElement($form->get('userFieldset')->get('captcha')); ?>
+                    //echo $this->formElement($form->get('userFieldset')->get('captcha'));
+                    $captcha = $form->get('userFieldset')->get('captcha');
+                    $captchaName = $captcha->getName();
+                    $captchaImg = $captcha->getCaptcha();
+                    $captchaImg->generate();
+                    $attributesString = $this->form()->createAttributesString($captcha->getAttributes()); ?>
+                    <img class="img-responsive" width="<?php echo $captchaImg->getWidth() ?>" height="<?php echo $captchaImg->getHeight() ?>" alt="<?php echo $captchaImg->getImgAlt() ?>" src="<?php echo $captchaImg->getImgUrl() . $captchaImg->getId() . $captchaImg->getSuffix(); ?>">
+                    <input name="<?php echo $captchaName ?>[input]" class="<?php echo $captcha->getAttributes()['class'] ?>" type="text" >
+                    <input name="<?php echo $captchaName ?>[id]" class="<?php echo $captcha->getAttributes()['class'] ?>" type="hidden" value="<?php echo $captchaImg->getId() ?>" >
+
                 </div>
                 <div class="form-group">
                     <?php echo $this->formElement($form->get('submit')); ?>
