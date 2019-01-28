@@ -37,7 +37,8 @@
         "zfcampus/zf-apigility": "^1.3",
         "rwoverdijk/assetmanager": "^1.7",
 	"ramsey/uuid": "^2.8",
-        "zendframework/zend-navigation": "^2.8"
+        "zendframework/zend-navigation": "^2.8",
+        "zendframework/zend-mvc-plugin-flashmessenger": "^1.1"
     },
     "autoload": {
         "psr-4": {

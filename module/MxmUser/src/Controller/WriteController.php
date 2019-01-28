@@ -120,6 +120,7 @@ class WriteController extends AbstractActionController
                             . $this->translator->translate('Check that your email address is correct')
                     ]);
                 }
+                $this->flashMessenger()->addMessage($this->translator->translate('An email was sent to the email address you provided with instructions to confirm your registration'), 'info');
 
                 return $this->redirect()->toRoute('detailUser',    //TODO автоматически логинить юзера или перенаправить на страницу login?
                     ['id' => $savedUser->getId()]
@@ -137,6 +138,7 @@ class WriteController extends AbstractActionController
 
     public function editEmailAction()
     {
+        $error = null;
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->editEmailForm->setData($request->getPost());
@@ -154,11 +156,14 @@ class WriteController extends AbstractActionController
 
                 return $this->redirect()->toRoute('detailUser',
                     array('id' => $user->getId()));
+            } else {
+                $error = true;
             }
         }
 
         return new ViewModel([
-            'form' => $this->editEmailForm
+            'form' => $this->editEmailForm,
+            'error' => $error
         ]);
     }
 

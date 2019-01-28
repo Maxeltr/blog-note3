@@ -19,7 +19,15 @@
         </div>
     </div>
 <?php endif; ?>
-
+<div class="container">
+    <?php
+        $flash = $this->flashMessenger();
+        echo $flash->render('error',   array('alert', 'alert-dismissible', 'alert-danger'));
+        echo $flash->render('info',    array('alert', 'alert-dismissible', 'alert-info'));
+        echo $flash->render('default', array('alert', 'alert-dismissible', 'alert-warning'));
+        echo $flash->render('success', array('alert', 'alert-dismissible', 'alert-success'));
+    ?>
+</div>
 <div class="site-wrapper">
     <div class="site-wrapper-inner">
         <div class="cover-container">
