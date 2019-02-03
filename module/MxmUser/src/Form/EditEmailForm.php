@@ -31,6 +31,7 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use MxmUser\Exception\InvalidArgumentException;
 
 class EditEmailForm extends Form implements InputFilterProviderInterface
 {
@@ -125,7 +126,6 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
-//                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [
@@ -151,7 +151,6 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
-//                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [
@@ -171,10 +170,19 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                             'translator' => $this->validatorTranslator
                         ],
                     ],
+//                    [
+//                        'name'    => 'Identical',
+//                        'options' => [
+//                            'token' => 'newEmail',
+//                            'translator' => $this->validatorTranslator
+//                        ],
+//                    ],
                     [
-                        'name'    => 'Identical',
+                        'name'    => 'IdenticalStrings',
                         'options' => [
                             'token' => 'newEmail',
+                            'strict' => false,
+                            'encoding' => 'UTF-8',
                             'translator' => $this->validatorTranslator
                         ],
                     ],

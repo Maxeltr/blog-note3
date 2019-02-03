@@ -49,7 +49,6 @@ return [
             \Zend\i18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\Translator::class,
             //\Zend\Validator\Translator\TranslatorInterface::class => Zend\Mvc\I18n\Translator::class
 
-
         ],
         'factories' => [
             Service\UserService::class => Factory\Service\UserServiceFactory::class,
@@ -65,6 +64,7 @@ return [
             Logger::class => Factory\Logger\LoggerFactory::class,
             \Zend\I18n\Translator\Translator::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
             //Zend\Mvc\I18n\Translator::class => \Zend\Mvc\I18n\TranslatorFactory::class
+
         ],
         'delegators' => [
             \Zend\I18n\Translator\Translator::class => [
@@ -76,6 +76,16 @@ return [
 	],
         'invokables' => [
 
+        ],
+    ],
+    'validators' => [
+        'aliases' => [
+            'IdenticalStrings' => Validator\IdenticalStrings::class,
+            'identicalStrings' => Validator\IdenticalStrings::class,
+            'identicalstrings' => Validator\IdenticalStrings::class,
+        ],
+        'factories' => [
+            Validator\IdenticalStrings::class => InvokableFactory::class,
         ],
     ],
     'form_elements' => [

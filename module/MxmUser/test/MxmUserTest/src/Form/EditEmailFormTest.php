@@ -30,6 +30,9 @@ use MxmUser\Form\EditEmailForm;
 use Zend\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Zend\InputFilter\Input;
+use MxmUser\Validator\IdenticalStrings;
+use Zend\ServiceManager\ServiceManager;
 
 class EditEmailFormTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,14 +54,12 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
         $this->translator = $this->prophesize(TranslatorInterface::class);
         $this->validatorTranslator = $this->prophesize(ValidatorTranslatorInterface::class);
 
-        $this->form = new EditEmailForm(new InputFilter(),$this->translator->reveal(), $this->validatorTranslator->reveal());
+        $this->form = new EditEmailForm(new InputFilter(), $this->translator->reveal(), $this->validatorTranslator->reveal());
         $csrf = $this->form->get('editEmail_csrf')->getValue();
         $this->data['editEmail_csrf'] = $csrf;
 
         parent::setUp();
     }
-
-
 
     public function testEmptyValues()
     {
@@ -117,6 +118,14 @@ class EditEmailFormTest extends \PHPUnit\Framework\TestCase
         $data['confirmEmail'] = 'email@testmail.ru';
 	$data['newEmail'] = 'newEmail@testmail.ru';
         $this->assertFalse($form->setData($data)->isValid());
+
+	$data['newEmail'] = 'email@testmail.ru';
+        $data['confirmEmail'] = 'Email@testmail.ru';
+        $this->assertTrue($form->setData($data)->isValid());
+
+	$data['newEmail'] = 'Email@testmail.ru';
+        $data['confirmEmail'] = 'email@testmail.ru';
+        $this->assertTrue($form->setData($data)->isValid());
 
 	$data['newEmail'] = 'email@testmail.ru';
         $this->assertTrue($form->setData($data)->isValid());

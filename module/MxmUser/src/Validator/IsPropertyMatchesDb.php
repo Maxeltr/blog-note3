@@ -85,8 +85,8 @@ class IsPropertyMatchesDb extends AbstractDb //implements IsPublishedRecordExist
 
         $this->setValue($value->$validatingPropertyMethod());
 
-        $conditionPropertyMethod = 'get' . ucfirst($this->field);
-        if(! is_callable([$value, $conditionPropertyMethod])) {
+        $getColumnForSearch = 'get' . ucfirst($this->field);
+        if(! is_callable([$value, $getColumnForSearch])) {
             throw new Exception\RuntimeException(sprintf(
                 'Method for condition property "%s" is not callable',
                 $this->property
@@ -94,7 +94,7 @@ class IsPropertyMatchesDb extends AbstractDb //implements IsPublishedRecordExist
         }
 
         try {
-            $result = $this->query($value->$conditionPropertyMethod());
+            $result = $this->query($value->$getColumnForSearch());
         } catch (\Exception $ex) {
             $this->error($ex->getMessage());
 

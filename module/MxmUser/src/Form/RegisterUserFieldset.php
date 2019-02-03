@@ -118,6 +118,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                     'suffix' => '.png',
                     'imgUrl' => '/img/captcha/',
                     'imgAlt' => 'CAPTCHA Image',
+//                    'startImage' => './public/img/captcha/startImage.png',
                     //'font'   => './data/font/thorne_shaded.ttf',
                     'font'   => './public/css/fonts/Fixedsys500c.ttf',
                     'fsize'  => 24,
