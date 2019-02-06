@@ -34,6 +34,7 @@ use Interop\Container\ContainerInterface;
 use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use MxmDateTime\Service\DateTimeService;
 
 class TimebeltFieldsetFactory implements FactoryInterface
 {
@@ -41,9 +42,11 @@ class TimebeltFieldsetFactory implements FactoryInterface
     {
         $config = new Config($container->get('config'));
         $timezone = $config->defaults->timezone;
+        $dateTimeService = $container->get(DateTimeService::class);
 
         return new TimebeltFieldset(
             new DateTimeZone($timezone),
+            $dateTimeService,
             $container->get(TimezoneFormHydrator::class),
             $container->get(TranslatorInterface::class),
             $container->get('MvcTranslator'),

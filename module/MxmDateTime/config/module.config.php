@@ -17,9 +17,11 @@ return [
     'service_manager' => [
         'aliases' => [
             'datetime' => DateTime::class,
+            //DateTimeService::class => DateTimeServiceFactory::class,
         ],
         'factories' => [
             DateTime::class => Factory\DateTimeFactory::class,
+            Service\DateTimeService::class => Service\DateTimeServiceFactory::class,
         ],
         'invokables' => [
 
@@ -27,7 +29,7 @@ return [
     ],
     'defaults' => [
         'locale' => 'ru',
-        'timezone' => 'Europe/Moscow',
+        'timezone' => 'UTC',
         'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
 ];

@@ -24,48 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Hydrator\TimezoneFormHydrator;
+namespace MxmDateTime\Service;
 
-use Zend\Hydrator\HydratorInterface;
-use \DateTimeZone;
+use Zend\Log\Logger;
 use Zend\Config\Config;
+use MxmDateTime\Service\DateTimeService;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 
-class TimezoneFormHydrator implements HydratorInterface
+class DateTimeServiceFactory implements FactoryInterface
 {
-    protected $config;
-
-    public function __construct(Config $config)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $this->config = $config;
-    }
+        $config = new Config($container->get('config'));
+        $datetime = $container->get('datetime');
+        $logger = $container->get(Logger::class);
 
-    public function hydrate(array $data, $object)
-    {
-        if (!$object instanceof DateTimeZone) {
-            return $object;
-        }
+        $service = new DateTimeService($datetime, $config, $logger);
 
-        if (array_key_exists('timezone', $data))
-        {
-            $timezone = new DateTimeZone($data['timezone']);
-        } else {
-            return $object;
-        }
-        $object = null;
-
-        return $timezone;
-    }
-
-    public function extract($object)
-    {
-        if (!$object instanceof DateTimeZone) {
-            return array();
-        }
-
-        $values = array();
-
-        $values ['timebelt'] = $object->getName();
-
-        return $values;
+        return $service;
     }
 }

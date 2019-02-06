@@ -16,7 +16,7 @@
                     echo $this->formElementErrors($this->form->get('userFieldset')->get('email'));
                     echo $this->formElementErrors($this->form->get('userFieldset')->get('password'));
                     echo $this->formElementErrors($this->form->get('userFieldset')->get('confirmPassword'));
-                    echo $this->formElementErrors($this->form->get('userFieldset')->get('timebelt')->get('timezoneId'));
+                    echo $this->formElementErrors($this->form->get('userFieldset')->get('timebelt')->get('timezone'));
                     echo $this->formElementErrors($this->form->get('userFieldset')->get('localeId'));
                     echo $this->formElementErrors($this->form->get('userFieldset')->get('captcha'));
                 ?>
@@ -52,9 +52,9 @@
                     <?php echo $this->formLabel($form->get('userFieldset')->get('confirmPassword'));
                     echo $this->formElement($form->get('userFieldset')->get('confirmPassword')); ?>
                 </div>
-                <div class="form-group <?php echo empty($form->get('userFieldset')->get('timebelt')->get('timezoneId')->getMessages()) ? '' : 'has-error'; ?>">
-                    <?php echo $this->formLabel($form->get('userFieldset')->get('timebelt')->get('timezoneId'));
-                    echo $this->formElement($form->get('userFieldset')->get('timebelt')->get('timezoneId')); ?>
+                <div class="form-group <?php echo empty($form->get('userFieldset')->get('timebelt')->get('timezone')->getMessages()) ? '' : 'has-error'; ?>">
+                    <?php echo $this->formLabel($form->get('userFieldset')->get('timebelt')->get('timezone'));
+                    echo $this->formElement($form->get('userFieldset')->get('timebelt')->get('timezone')); ?>
                 </div>
                 <div class="form-group <?php echo empty($form->get('userFieldset')->get('localeId')->getMessages()) ? '' : 'has-error'; ?>">
                     <?php echo $this->formLabel($form->get('userFieldset')->get('localeId'));

@@ -16,7 +16,7 @@ use Zend\Navigation\Service\DefaultNavigationFactory;
 return [
     'defaults' => [
         'locale' => 'ru',
-        'timezone' => 'Europe/Moscow',
+        'timezone' => 'UTC',
         'dateTimeFormat' => 'Y-m-d H:i:s',
     ],
     'db' => [

@@ -63,8 +63,7 @@ class TimebeltHydrator implements HydratorInterface
         $timezone = $object->getTimebelt();
 
         if ($timezone instanceof DateTimeZone) {
-            $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU');
-            $values ['timebelt'] = ['timezoneId' => array_search($timezone->getName(), $timezones)];
+            $values ['timebelt'] = ['timezone' => $timezone->getName()];
         }
 
         return $values;

@@ -191,7 +191,6 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                 'required' => true,
                 'filters' => [
                     ['name' => 'StringTrim'],
-                    ['name' => 'StringToLower'],
                 ],
                 'validators' => [
                     [

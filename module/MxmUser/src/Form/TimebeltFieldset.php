@@ -29,17 +29,21 @@ namespace MxmUser\Form;
 use \DateTimeZone;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Form\Fieldset;
+use MxmDateTime\Service\DateTimeService;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Zend\Validator\Timezone;
 
 class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
 {
     protected $translator;
     protected $validatorTranslator;
+    protected $dateTimeService;
 
     public function __construct(
         DateTimeZone $timezone,
+        DateTimeService $dateTimeService,
         HydratorInterface $hydrator,
         TranslatorInterface $translator,
         ValidatorTranslatorInterface $validatorTranslator,
@@ -48,25 +52,25 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
     ) {
         parent::__construct($name, $options);
 
-        $timezones = $timezone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU'); //TODO move to factory
-
         $this->setHydrator($hydrator);
         $this->setObject($timezone);
 
         $this->translator = $translator;
         $this->validatorTranslator = $validatorTranslator;
+        $this->dateTimeService = $dateTimeService;
 
         $this->add([
-            'name' => 'timezoneId',
+            'name' => 'timezone',
             'type' => 'Zend\Form\Element\Select',
             'attributes' => [
                 'type' => 'select',
                 'required' => 'required',
                 'class' => 'form-control',
+                'value'	=> $this->dateTimeService->getDefaultTimezone()
             ],
             'options' => [
                 'label' => $this->translator->translate('Timezone'),
-                'value_options' => $timezones,
+                'value_options' => $this->dateTimeService->getTimezoneList(),
             ],
         ]);
 
@@ -81,10 +85,19 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
-            'timezoneId' => [
+            'timezone' => [
                 'filters' => [
-                    ['name' => 'Int'],
+                    //['name' => 'Int'],
                 ],
+                'validators' => [
+                    [
+                        'name' => 'Timezone',
+                        'options' => [
+                            //'type' => Timezone::LOCATION	//'location',
+                            'translator' => $this->validatorTranslator
+                        ]
+                    ],
+                ]
             ],
         ];
     }
