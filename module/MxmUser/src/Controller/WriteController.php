@@ -41,6 +41,7 @@ use Zend\Http\Request;
 use Zend\Router\RouteInterface;
 use Zend\Session\Container;
 use Zend\i18n\Translator\TranslatorInterface;
+use Zend\Db\Adapter\Exception\InvalidQueryException;
 
 class WriteController extends AbstractActionController
 {
@@ -152,8 +153,14 @@ class WriteController extends AbstractActionController
                         'form' => $this->editEmailForm,
                         'error' => 'Invalid password.'
                     ]);
-                }
+                } catch (InvalidQueryException $e) {
 
+                    return new ViewModel([
+                        'form' => $this->editEmailForm,
+                        'error' => 'This email is already in use'
+                    ]);
+                }
+ 
                 return $this->redirect()->toRoute('detailUser',
                     array('id' => $user->getId()));
             } else {

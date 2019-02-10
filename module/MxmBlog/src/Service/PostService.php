@@ -30,7 +30,7 @@ use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
-use MxmBlog\Service\DateTimeInterface;
+use DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use Zend\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;

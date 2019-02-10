@@ -29,8 +29,8 @@ namespace MxmBlog\Model;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\AbstractModel;
 use Zend\Tag\ItemList;
-use MxmBlog\Service\DateTimeInterface;
 use MxmUser\Model\UserInterface;
+use DateTimeInterface;
 
 class Post extends AbstractModel implements PostInterface
 {
@@ -65,17 +65,17 @@ class Post extends AbstractModel implements PostInterface
     protected $author;
 
     /**
-     * @var Blog\Service\DateTimeInterface Created
+     * @var DateTimeInterface Created
      */
     protected $created;
 
     /**
-     * @var Blog\Service\DateTimeInterface Updated
+     * @var DateTimeInterface Updated
      */
     protected $updated;
 
     /**
-     * @var Blog\Service\DateTimeInterface Published
+     * @var DateTimeInterface Published
      */
     protected $published;
 

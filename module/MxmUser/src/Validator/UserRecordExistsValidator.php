@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Validator;
-
-use Zend\Validator\Db\RecordExists;
-
-class UserRecordExistsValidator extends RecordExists
-{
-}
+//namespace MxmUser\Validator;
+//
+//use Zend\Validator\Db\RecordExists;
+//
+//class UserRecordExistsValidator extends RecordExists
+//{
+//}

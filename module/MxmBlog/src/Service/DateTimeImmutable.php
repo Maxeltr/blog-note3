@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,8 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Service;
-
-class DateTimeImmutable extends \DateTimeImmutable implements DateTimeInterface
-{
-}
+//namespace MxmBlog\Service;
+//
+//class DateTimeImmutable extends \DateTimeImmutable implements DateTimeInterface
+//{
+//}

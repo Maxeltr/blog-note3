@@ -30,6 +30,7 @@ use MxmBlog\Model\PostInterface;
 use Zend\Hydrator\HydratorInterface;
 use Zend\Validator\Date;
 use Zend\Config\Config;
+use DateTimeInterface;
 
 class DatesHydrator implements HydratorInterface
 {
@@ -39,7 +40,7 @@ class DatesHydrator implements HydratorInterface
 
     private $config;
 
-    public function __construct(\DateTimeInterface $datetime, Date $dateValidator, Config $config)
+    public function __construct(DateTimeInterface $datetime, Date $dateValidator, Config $config)
     {
         $this->dateValidator = $dateValidator;
         $this->datetime = $datetime;

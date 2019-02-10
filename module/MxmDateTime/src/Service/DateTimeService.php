@@ -31,6 +31,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Zend\Log\LoggerInterface;
 use Zend\Config\Config;
+use MxmDatetime\Exception\InvalidArgumentException;
 
 class DateTimeService
 {
@@ -69,7 +70,7 @@ class DateTimeService
      *
      * @return array
      */
-    public function getTimezoneList()
+    public function getTimezoneListWithGmtOffsets()
     {
         $timezones = [];
         $offsets = [];
@@ -102,8 +103,23 @@ class DateTimeService
         return $name;
     }
 
-    public function getDefaultTimezone()    //TODO нужен ли?
+    /**
+     * Retrieve a default timezone in config and return 'UTC' if there is no element set.
+     *
+     * @return string
+     */
+    public function getDefaultTimezone()
     {
-        return $this->config->defaults->timezone;
+        return $this->config->defaults->timezone ?: 'UTC';
+    }
+
+    /**
+     * Retrieve a default DateTimeFormat in config and return 'Y-m-d H:i:s' if there is no element set.
+     *
+     * @return string
+     */
+    public function getDefaultDateTimeFormat()
+    {
+        return $this->config->defaults->dateTimeFormat ?: 'Y-m-d H:i:s';
     }
 }

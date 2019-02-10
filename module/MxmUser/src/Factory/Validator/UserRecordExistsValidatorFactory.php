@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
@@ -24,23 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace MxmUser\Factory\Validator;
-
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use MxmUser\Validator\UserRecordExistsValidator;
-
-class UserRecordExistsValidatorFactory implements FactoryInterface
-{
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
-        $validator = new UserRecordExistsValidator([
-            'table'   => 'user',
-            'field'   => 'email',
-            'adapter' => $dbAdapter,
-        ]);
-
-        return $validator;
-    }
-}
+//namespace MxmUser\Factory\Validator;
+//
+//use Interop\Container\ContainerInterface;
+//use Zend\ServiceManager\Factory\FactoryInterface;
+//use MxmUser\Validator\UserRecordExistsValidator;
+//
+//class UserRecordExistsValidatorFactory implements FactoryInterface
+//{
+//    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+//    {
+//        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+//        $validator = new UserRecordExistsValidator([
+//            'table'   => 'user',
+//            'field'   => 'email',
+//            'adapter' => $dbAdapter,
+//        ]);
+//
+//        return $validator;
+//    }
+//}

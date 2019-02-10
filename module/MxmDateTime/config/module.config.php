@@ -17,6 +17,8 @@ return [
     'service_manager' => [
         'aliases' => [
             'datetime' => DateTime::class,
+            'dateTime' => DateTime::class,
+            'DateTime' => DateTime::class,
             //DateTimeService::class => DateTimeServiceFactory::class,
         ],
         'factories' => [

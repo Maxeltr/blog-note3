@@ -70,7 +70,7 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
             ],
             'options' => [
                 'label' => $this->translator->translate('Timezone'),
-                'value_options' => $this->dateTimeService->getTimezoneList(),
+                'value_options' => $this->dateTimeService->getTimezoneListWithGmtOffsets(),
             ],
         ]);
 

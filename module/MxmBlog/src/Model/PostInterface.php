@@ -27,8 +27,8 @@
 namespace MxmBlog\Model;
 
 use Zend\Tag\ItemList;
-use MxmBlog\Service\DateTimeInterface;
 use MxmUser\Model\UserInterface;
+use DateTimeInterface;
 
 interface PostInterface
 {
@@ -84,21 +84,21 @@ interface PostInterface
     /**
      * Возвращает дату и время создания записи
      *
-     * @return Blog\Service\DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getCreated();
 
     /**
      * Возвращает дату и время изменения записи
      *
-     * @return Blog\Service\DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getUpdated();
 
     /**
      * Возвращает дату и время публикации записи
      *
-     * @return Blog\Service\DateTimeInterface
+     * @return DateTimeInterface
      */
     public function getPublished();
 
@@ -173,7 +173,7 @@ interface PostInterface
 
     /**
      * Устанавливает дату и время создания записи.
-     * @param Blog\Service\DateTimeInterface $created Дата и время создания записи.
+     * @param DateTimeInterface $created Дата и время создания записи.
      *
      * @return $this
      */
@@ -181,7 +181,7 @@ interface PostInterface
 
     /**
      * Устанавливает дату и время изменения записи
-     * @param Blog\Service\DateTimeInterface $updated Дата и время изменения записи.
+     * @param DateTimeInterface $updated Дата и время изменения записи.
      *
      * @return $this
      */
@@ -189,7 +189,7 @@ interface PostInterface
 
     /**
      * Устанавливает дату и время публикации записи
-     * @param Blog\Service\DateTimeInterface $published Дата и время публикации записи.
+     * @param DateTimeInterface $published Дата и время публикации записи.
      *
      * @return $this
      */

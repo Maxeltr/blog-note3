@@ -49,9 +49,9 @@ use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmBlog\Exception\InvalidArgumentBlogException;
 use MxmBlog\Exception\DataBaseErrorBlogException;
 use MxmBlog\Model\TagInterface;
-use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
+use DateTimeInterface;
 
 class ZendDbSqlMapper implements MapperInterface
 {

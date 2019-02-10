@@ -158,4 +158,5 @@ return [
     "User has registered alredy" => "Пользователь уже зарегистрирован",
     "An error occurred while sending the email" => "Произошла ошибка при отправке сообщения электронной почты",
     "Check that your email address is correct" => "Проверьте правильность адреса электронной почты",
+    "This email is already in use" => "Данный адрес электронной почты уже используется",
 ];
