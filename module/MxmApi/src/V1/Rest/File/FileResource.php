@@ -20,6 +20,7 @@ use MxmUser\Exception\RecordNotFoundUserException;
 use Zend\Log\Logger;
 use Zend\Stdlib\ErrorHandler;
 use Zend\Filter\StaticFilter;
+use DateTimeImmutable;
 
 class FileResource extends AbstractResourceListener
 {
@@ -59,7 +60,7 @@ class FileResource extends AbstractResourceListener
     protected $logger;
 
     public function __construct(
-        \DateTimeInterface $datetime,
+        DateTimeImmutable $datetime,
         Config $config,
         Response $response,
         AuthorizationService $authorizationService,

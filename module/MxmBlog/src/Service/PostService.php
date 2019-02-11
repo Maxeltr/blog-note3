@@ -40,6 +40,7 @@ use Zend\Tag\ItemList;
 use MxmBlog\Exception\InvalidArgumentBlogException;
 use Zend\Config\Config;
 use Zend\Paginator\Paginator;
+use DateTimeImmutable;
 
 class PostService implements PostServiceInterface
 {
@@ -80,7 +81,7 @@ class PostService implements PostServiceInterface
 
     public function __construct(
         MapperInterface $mapper,
-        \DateTimeInterface $datetime,
+        DateTimeImmutable $datetime,
         IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
         RecordExists $isRecordExists,
         AuthorizationService $authorizationService,

@@ -19,11 +19,13 @@ return [
             'datetime' => DateTime::class,
             'dateTime' => DateTime::class,
             'DateTime' => DateTime::class,
-            //DateTimeService::class => DateTimeServiceFactory::class,
+            'DateTimeImmutableFormatterStrategy' => Strategy\DateTimeImmutableFormatterStrategy::class,
+
         ],
         'factories' => [
             DateTime::class => Factory\DateTimeFactory::class,
             Service\DateTimeService::class => Service\DateTimeServiceFactory::class,
+            Strategy\DateTimeImmutableFormatterStrategy::class => Strategy\DateTimeImmutableFormatterStrategyFactory::class,
         ],
         'invokables' => [
 

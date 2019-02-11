@@ -47,6 +47,7 @@ use Zend\i18n\Translator\TranslatorInterface;
 use MxmUser\Validator\IsPropertyMatchesDb;
 use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Http\PhpEnvironment\Request;
+use DateTimeImmutable;
 
 class UserService implements UserServiceInterface
 {
@@ -119,7 +120,7 @@ class UserService implements UserServiceInterface
 
     public function __construct(
         MapperInterface $mapper,
-        \DateTimeInterface $datetime,
+        DateTimeImmutable $datetime,
         AuthenticationService $authService,
         EmailAddress $emailValidator,
         NotEmpty $notEmptyValidator,
