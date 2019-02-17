@@ -50,7 +50,8 @@
             "MxmApi\\": "module/MxmApi/src/",
             "MxmAdmin\\": "module/MxmAdmin/src/",
             "MxmDateTime\\": "module/MxmDateTime/src/",
-            "MxmFile\\": "module/MxmFile/src/"
+            "MxmFile\\": "module/MxmFile/src/",
+            "MxmGame\\": "module/MxmGame/src/"
         }
     },
     "autoload-dev": {

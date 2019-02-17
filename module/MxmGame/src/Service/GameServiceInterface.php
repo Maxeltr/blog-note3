@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2019 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace MxmFile\Service;
+namespace MxmGame\Service;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
-use MxmRbac\Service\AuthorizationService;
-use Zend\Config\Config;
-use MxmFile\Logger;
-use MxmFile\Mapper\MapperInterface;
-
-class FileServiceFactory implements FactoryInterface
+interface GameServiceInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $authorizationService = $container->get(AuthorizationService::class);
-        $authService = $container->get(AuthenticationService::class);
-        $config = new Config($container->get('config'));
-        $logger = $container->get(Logger::class);
-        $fileMapper = $container->get(MapperInterface::class);
 
-        return new FileService(
-            $authService,
-            $authorizationService,
-            $fileMapper,
-            $config,
-            $logger
-        );
-    }
 }

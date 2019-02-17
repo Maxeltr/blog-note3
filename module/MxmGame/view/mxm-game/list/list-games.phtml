@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="row row-offcanvas row-offcanvas-right">
+        <div class="col-xs-12 col-sm-9">
+            <p class="pull-right visible-xs">
+                <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button"><?php echo $this->translate('Toggle nav') ?></button>
+            </p>
+            <div class="jumbotron">
+                <img class="img-responsive" id = "textures" src="<?php echo $this->url('loadTextures',
+                    array('action' => 'loadTextures', 'id' => '1', )); ?>" />
+            </div>
+            <div>
+                <canvas id = "canvas" style = "border: ridge;"></canvas>
+            </div>
+            <?php echo $this->headScript()->prependFile($this->basePath('js/p3D.js')); ?>
+            <?php $countColumns = 3;
+            $countGames = $this->games->getCurrentItemCount();
+            $iterator = $this->games->getIterator();
+            if ($countGames):
+                for ($i = 0; $i < $countGames; $i = $i + $countColumns ): ?>
+                    <div class="row">
+                        <?php for ($j = 0; $j < $countColumns; $j++):
+                            if ($iterator->valid()): ?>
+                                <div class="col-xs-12 col-md-4">
+                                    <div class="div-1">
+                                        <?php $game = $iterator->current();
+                                        $iterator->next(); ?>
+                                        <h1><a href="<?php echo $this->url('detailGame',
+                                            array('action' => 'detailGame', 'id' => $game->getId())); ?>">
+                                            <?php echo $this->escapeHtml($game->getTitle()); ?></a>
+                                        </h1>
+                                        <p>
+                                            <?php echo $this->htmlPurifier($game->getSummary()); ?>
+                                        </p>
+                                    </div>
+                                    <p><a role="button" href="<?php echo $this->url('detailGame',
+                                        array('action' => 'detailGame', 'id' => $game->getId())); ?>" class="btn btn-default"><?php echo $this->translate('View details') ?></a>
+                                    </p>
+                                </div>
+                            <?php endif;
+                        endfor; ?>
+                    </div>
+                <?php endfor;
+            endif; ?>
+        </div>
+       
+    </div>
+    <?php echo $this->paginationControl($this->games,
+        'Sliding',
+        'partial/paginator.phtml',
+        array('route' => $route)); ?>
+</div>
+
+

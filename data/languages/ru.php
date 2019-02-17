@@ -162,4 +162,5 @@ return [
     "Edit greeting, please." => "Отредактируйте приветствие, пожалуйста.",
     "Greeting caption" => "Заголовок приветствия",
     "New greeting" => "Новое приветствие",
+    "Games" => "Игры",
 ];

@@ -143,7 +143,8 @@ return [
                         'delete.user',
 			'edit.password',
 			'edit.email',
-                        'find.users'
+                        'find.users',
+                        'find.all.games',
                     ]
                 ],
             ],

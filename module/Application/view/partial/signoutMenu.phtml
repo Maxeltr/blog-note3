@@ -35,6 +35,10 @@
                 <li class="divider" role="separator"></li>
             <?php endif; ?>
             <li>
+                <a href="<?php echo $this->url('listGames', ['action' => 'listGames']); ?>"><?php echo $this->translate('Games') ?></a>
+            </li>
+            <li class="divider" role="separator"></li>
+            <li>
                 <a href="<?php echo $this->url('detailUser', ['action' => 'detailUser', 'id' => $user->getId()]); ?>"><?php echo $this->translate('Profile') ?></a>
             </li>
             <li>

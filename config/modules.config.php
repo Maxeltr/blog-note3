@@ -48,4 +48,5 @@ return [
     'MxmApi',
     'MxmAdmin',
     'MxmFile',
+    'MxmGame',
 ];
