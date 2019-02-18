@@ -33,6 +33,7 @@ use Zend\Authentication\AuthenticationService;
 use MxmGame\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
 use Zend\Paginator\Adapter\ArrayAdapter;
+use MxmGame\Mapper\MapperInterface;
 
 class GameService implements GameServiceInterface
 {
@@ -56,31 +57,39 @@ class GameService implements GameServiceInterface
      */
     protected $logger;
 
+    /**
+     * @var MxmGame\Mapper\MapperInterface
+     */
+    protected $mapper;
+
     public function __construct(
         AuthenticationService $authenticationService,
         AuthorizationService $authorizationService,
         Config $config,
-        Logger $logger
+        Logger $logger,
+        MapperInterface $mapper
     ) {
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->config = $config;
         $this->logger = $logger;
+        $this->mapper = $mapper;
     }
 
-	/**
+    /**
      * {@inheritDoc}
      */
     public function findAllGames()
     {
-        //$this->authenticationService->checkIdentity();
+        return $this->mapper->findAllGames();
+    }
 
-        //$this->authorizationService->checkPermission('find.all.games');
-
-
-        $games = [];
-
-        return new Paginator(new ArrayAdapter($games));
+    /**
+     * {@inheritDoc}
+     */
+    public function findGameById($id)
+    {
+        return $this->mapper->findGameById($id);
     }
 
     public function loadTextures($id)

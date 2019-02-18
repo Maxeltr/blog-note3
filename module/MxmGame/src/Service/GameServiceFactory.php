@@ -42,12 +42,13 @@ class GameServiceFactory implements FactoryInterface
         $authService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
         $logger = $container->get(Logger::class);
-
+        $mapper = $container->get(MapperInterface::class);
         return new GameService(
             $authService,
             $authorizationService,
             $config,
-            $logger
+            $logger,
+            $mapper
         );
     }
 }

@@ -24,36 +24,21 @@
  * THE SOFTWARE.
  */
 
-namespace MxmGame\Model;
+namespace MxmGame\Hydrator\GameMapperHydrator;
 
-interface GameInterface
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use Zend\Hydrator\Reflection as ReflectionHydrator;
+use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+
+class GameMapperHydratorFactory implements FactoryInterface
 {
-    /**
-     * Возвращает ID
-     *
-     * @return string ID
-     */
-    public function getGameId();
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $gameHydrator = new ReflectionHydrator();
+        $gameHydrator->setNamingStrategy(new UnderscoreNamingStrategy());
+        $gameHydrator->addStrategy('uploadDate', $container->get('DateTimeImmutableFormatterStrategy'));
 
-    /**
-     * Возвращает название игры
-     *
-     * @return string
-     */
-    public function getTitle();
-
-    /**
-     * Возвращает описание игры (например правила)
-     *
-     * @return $this
-     */
-    public function getDescription();
-
-    /**
-     * Возвращает текстуры
-     * @param string $id
-     *
-     * @return string
-     */
-    //public function getTextures($id);
+        return $gameHydrator;
+    }
 }

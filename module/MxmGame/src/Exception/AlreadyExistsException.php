@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Maxim Eltratov <Maxim.Eltratov@yandex.ru>.
+ * Copyright 2019 Maxim Eltratov <maxim.eltratov@yandex.ru>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,36 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmGame\Model;
+namespace MxmGame\Exception;
 
-interface GameInterface
+class AlreadyExistsException extends RuntimeException implements ExceptionInterface
 {
-    /**
-     * Возвращает ID
-     *
-     * @return string ID
-     */
-    public function getGameId();
-
-    /**
-     * Возвращает название игры
-     *
-     * @return string
-     */
-    public function getTitle();
-
-    /**
-     * Возвращает описание игры (например правила)
-     *
-     * @return $this
-     */
-    public function getDescription();
-
-    /**
-     * Возвращает текстуры
-     * @param string $id
-     *
-     * @return string
-     */
-    //public function getTextures($id);
 }

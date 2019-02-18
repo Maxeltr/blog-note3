@@ -24,36 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace MxmGame\Model;
+namespace MxmGame\Mapper;
 
-interface GameInterface
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Config\Config;
+use Zend\Http\Response;
+use Zend\ServiceManager\Factory\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use MxmGame\Logger;
+use MxmGame\Hydrator\GameMapperHydrator\GameMapperHydrator;
+use MxmGame\Model\Game;
+
+class ZendTableGatewayMapperFactory implements FactoryInterface
 {
-    /**
-     * Возвращает ID
-     *
-     * @return string ID
-     */
-    public function getGameId();
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = new Config($container->get('config'));
+        $response = new Response();
 
-    /**
-     * Возвращает название игры
-     *
-     * @return string
-     */
-    public function getTitle();
+        $table = 'games';
+        $adapter = $container->get(Adapter::class);
+        $hydrator = $container->get(GameMapperHydrator::class);
+        $resultSet = new HydratingResultSet($hydrator, new Game());
+        $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
+        $logger = $container->get(Logger::class);
 
-    /**
-     * Возвращает описание игры (например правила)
-     *
-     * @return $this
-     */
-    public function getDescription();
-
-    /**
-     * Возвращает текстуры
-     * @param string $id
-     *
-     * @return string
-     */
-    //public function getTextures($id);
+        return new ZendTableGatewayMapper($tableGateway, $config, $response, $logger);
+    }
 }

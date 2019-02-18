@@ -26,13 +26,14 @@
 
 namespace MxmGame\Model;
 
+use \DateTimeInterface;
 
 class Game implements GameInterface
 {
     /**
      * @var string ID
      */
-    protected $id;
+    protected $gameId;
 
     /**
      * @var string Title
@@ -45,19 +46,24 @@ class Game implements GameInterface
     protected $description;
 
     /**
+     * @var DateTimeInterface Upload date
+     */
+    protected $uploadDate;
+
+    /**
      *  {@inheritDoc}
      */
-    public function getId()
+    public function getGameId()
     {
-        return $this->id;
+        return $this->gameId;
     }
 
     /**
      *  {@inheritDoc}
      */
-    public function setId($id)
+    public function setGameId($gameId)
     {
-        $this->id = (string) $id;
+        $this->gameId = (string) $gameId;
 
         return $this;
     }
@@ -94,6 +100,24 @@ class Game implements GameInterface
     public function setDescription($description)
     {
         $this->description = (string) $description;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getUploadDate()
+    {
+        return $this->uploadDate;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setUploadDate(DateTimeInterface $uploadDate)
+    {
+        $this->uploadDate = $uploadDate;
 
         return $this;
     }

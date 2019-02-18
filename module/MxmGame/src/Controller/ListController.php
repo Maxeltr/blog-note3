@@ -81,10 +81,11 @@ class ListController extends AbstractActionController
 
     public function detailGameAction()
     {
-        $id = 1;
+        $id = $this->params()->fromRoute('id');
+        $game = $this->gameService->findGameById($id);
 
         return new ViewModel([
-            'game' => $id
+            'game' => $game
         ]);
     }
 

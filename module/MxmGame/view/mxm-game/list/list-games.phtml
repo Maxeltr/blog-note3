@@ -5,13 +5,8 @@
                 <button data-toggle="offcanvas" class="btn btn-primary btn-xs" type="button"><?php echo $this->translate('Toggle nav') ?></button>
             </p>
             <div class="jumbotron">
-                <img class="img-responsive" id = "textures" src="<?php echo $this->url('loadTextures',
-                    array('action' => 'loadTextures', 'id' => '1', )); ?>" />
+                
             </div>
-            <div>
-                <canvas id = "canvas" style = "border: ridge;"></canvas>
-            </div>
-            <?php echo $this->headScript()->prependFile($this->basePath('js/p3D.js')); ?>
             <?php $countColumns = 3;
             $countGames = $this->games->getCurrentItemCount();
             $iterator = $this->games->getIterator();
@@ -25,15 +20,15 @@
                                         <?php $game = $iterator->current();
                                         $iterator->next(); ?>
                                         <h1><a href="<?php echo $this->url('detailGame',
-                                            array('action' => 'detailGame', 'id' => $game->getId())); ?>">
+                                            array('action' => 'detailGame', 'id' => $game->getGameId())); ?>">
                                             <?php echo $this->escapeHtml($game->getTitle()); ?></a>
                                         </h1>
                                         <p>
-                                            <?php echo $this->htmlPurifier($game->getSummary()); ?>
+                                            <?php echo $this->htmlPurifier($game->getDescription()); ?>
                                         </p>
                                     </div>
                                     <p><a role="button" href="<?php echo $this->url('detailGame',
-                                        array('action' => 'detailGame', 'id' => $game->getId())); ?>" class="btn btn-default"><?php echo $this->translate('View details') ?></a>
+                                        array('action' => 'detailGame', 'id' => $game->getGameId())); ?>" class="btn btn-default"><?php echo $this->translate('View details') ?></a>
                                     </p>
                                 </div>
                             <?php endif;
@@ -42,7 +37,7 @@
                 <?php endfor;
             endif; ?>
         </div>
-       
+
     </div>
     <?php echo $this->paginationControl($this->games,
         'Sliding',

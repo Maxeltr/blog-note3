@@ -24,36 +24,8 @@
  * THE SOFTWARE.
  */
 
-namespace MxmGame\Model;
+namespace MxmGame\Exception;
 
-interface GameInterface
+class RuntimeException extends \RuntimeException implements ExceptionInterface
 {
-    /**
-     * Возвращает ID
-     *
-     * @return string ID
-     */
-    public function getGameId();
-
-    /**
-     * Возвращает название игры
-     *
-     * @return string
-     */
-    public function getTitle();
-
-    /**
-     * Возвращает описание игры (например правила)
-     *
-     * @return $this
-     */
-    public function getDescription();
-
-    /**
-     * Возвращает текстуры
-     * @param string $id
-     *
-     * @return string
-     */
-    //public function getTextures($id);
 }

@@ -24,36 +24,40 @@
  * THE SOFTWARE.
  */
 
-namespace MxmGame\Model;
+namespace MxmGame\Mapper;
 
-interface GameInterface
+use MxmUser\Model\UserInterface;
+use MxmGame\Model\GameInterface;
+
+interface MapperInterface
 {
     /**
-     * Возвращает ID
+     * @param MxmGame\Model\Game $game
      *
-     * @return string ID
+     * @return Array
+     *
+     * @throw DataBaseErrorException
      */
-    public function getGameId();
+    public function insertGame($game);
 
     /**
-     * Возвращает название игры
-     *
-     * @return string
+     * @return Zend\Paginator\Paginator
      */
-    public function getTitle();
+    public function findAllGames();
 
     /**
-     * Возвращает описание игры (например правила)
+     * @param String $gameId
      *
-     * @return $this
+     * @return MxmGame\Model\Game
+     * @throw RecordNotFoundException
      */
-    public function getDescription();
+    public function findGameById($gameId);
 
     /**
-     * Возвращает текстуры
-     * @param string $id
+     * @param MxmGame\Model\GameInterface $game
      *
-     * @return string
+     * @return bool
      */
-    //public function getTextures($id);
+    public function deleteGame(GameInterface $game);
+
 }

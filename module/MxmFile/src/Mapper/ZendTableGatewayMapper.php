@@ -39,6 +39,7 @@ use Zend\Stdlib\ArrayUtils;
 use MxmFile\Model\FileInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Db\Sql\Where;
+use MxmFile\Exception\DataBaseErrorException;
 
 class ZendTableGatewayMapper implements MapperInterface
 {

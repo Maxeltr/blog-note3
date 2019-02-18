@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="page-header">
+        <h1><a href="<?php echo $this->url('listGames', ['action' => 'listGames']); ?>"><?php echo $this->translate('Games') ?></a></h1>
+    </div>
+    <p class="lead">
+
+    </p>
+    <div class="row">
+        <div class="col-sm-8">
+            <div>
+                <h2><?php echo $this->escapeHtml($game->getTitle()); ?></h2>
+                <img class="img-responsive" style="display: none" id = "textures" src="<?php echo $this->url('loadTextures',
+                    array('action' => 'loadTextures', 'id' => '1', )); ?>" />
+                <div>
+                    <canvas id = "canvas" style = "border: ridge;"></canvas>
+                </div>
+                <?php echo $this->headScript()->prependFile($this->basePath('js/p3D.js')); ?>
+                <p>
+                    <?php echo $this->translate('Description'); ?>: <?php echo $this->escapeHtml($game->getDescription()); ?>
+                </p>
+                <p>
+                    <?php echo $this->translate('Uploaded'); ?>: <?php if ($game->getUploadDate() instanceof \DateTimeInterface) {
+                    echo $this->formatDateI18n($game->getUploadDate());
+                } ?>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>

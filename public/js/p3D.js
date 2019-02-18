@@ -110,7 +110,7 @@ var pseudo3D = (function () {
             Main.prototype.fillColor = function () {
                 for (let j = 0; j < this.height; j++) {
                     for (let i = 0; i < this.width; i++) {
-                        this.frameBuffer[i + j * this.width] = this.packColor(255, 255, 255, 255);
+                        this.frameBuffer[i + j * this.width] = -1;
                     }
                 }
             };

@@ -53,10 +53,13 @@ return [
     'service_manager' => [
         'aliases' => [
             Service\GameServiceInterface::class => Service\GameService::class,
+            Mapper\MapperInterface::class => Mapper\ZendTableGatewayMapper::class,
         ],
         'factories' => [
             Service\GameService::class => Service\GameServiceFactory::class,
             Logger::class => Logger\LoggerFactory::class,
+            Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
+            Hydrator\GameMapperHydrator\GameMapperHydrator::class => Hydrator\GameMapperHydrator\GameMapperHydratorFactory::class,
 
         ],
         'invokables' => [
@@ -81,7 +84,7 @@ return [
             'detailGame' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route'    => '/detail/game[/:id]',
+                    'route'    => '/detail/game/:id',
                     'constraints' => [
                         'id' => '[1-9]\d*',
                     ],
