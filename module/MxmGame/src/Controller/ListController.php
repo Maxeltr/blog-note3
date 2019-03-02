@@ -91,14 +91,14 @@ class ListController extends AbstractActionController
 
     public function loadTexturesAction()
     {
-        $pathname = 'c:\js\p3d\textures.png';       //TODO refactor
-
-        $file = file_get_contents($pathname);
-
+        $id = $this->params()->fromRoute('id');
+        $texture = $this->gameService->findTextureById($id);
+        $path = $texture->getPath();
+        $file = file_get_contents($path);
         $response = $this->getEvent()->getResponse();
         $response->getHeaders()->addHeaders(array(
             'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => 'attachment;filename="' . $pathname . '"',
+            'Content-Disposition' => 'attachment;filename="' . $path . '"',
         ));
         $response->setContent($file);
 

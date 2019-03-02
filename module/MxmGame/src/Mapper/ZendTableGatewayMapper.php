@@ -49,6 +49,11 @@ class ZendTableGatewayMapper implements MapperInterface
     protected $gameTableGateway;
 
     /**
+     * @var Zend\Db\TableGateway\TableGateway
+     */
+    protected $textureTableGateway;
+
+    /**
      * @var Zend\Config\Config
      */
     protected $config;
@@ -65,11 +70,13 @@ class ZendTableGatewayMapper implements MapperInterface
 
     public function __construct(
         TableGateway $gameTableGateway,
+        TableGateway $textureTableGateway,
         Config $config,
         Response $response,
         Logger $logger
     ){
         $this->gameTableGateway = $gameTableGateway;
+        $this->textureTableGateway = $textureTableGateway;
         $this->config = $config;
         $this->response = $response;
         $this->logger = $logger;
@@ -107,6 +114,19 @@ class ZendTableGatewayMapper implements MapperInterface
         $resultSet = $this->gameTableGateway->select(['game_id' => $gameId]);
         if (0 === count($resultSet)) {
             throw new RecordNotFoundException('Game ' . $gameId . 'not found.');
+        }
+
+        return $resultSet->current();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findTextureById($textureId)
+    {
+        $resultSet = $this->textureTableGateway->select(['texture_id' => $textureId]);
+        if (0 === count($resultSet)) {
+            throw new RecordNotFoundException('Texture ' . $textureId . 'not found.');
         }
 
         return $resultSet->current();

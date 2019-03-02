@@ -36,6 +36,7 @@ use Interop\Container\ContainerInterface;
 use MxmGame\Logger;
 use MxmGame\Hydrator\GameMapperHydrator\GameMapperHydrator;
 use MxmGame\Model\Game;
+use MxmGame\Model\Texture;
 
 class ZendTableGatewayMapperFactory implements FactoryInterface
 {
@@ -44,13 +45,12 @@ class ZendTableGatewayMapperFactory implements FactoryInterface
         $config = new Config($container->get('config'));
         $response = new Response();
 
-        $table = 'games';
         $adapter = $container->get(Adapter::class);
         $hydrator = $container->get(GameMapperHydrator::class);
-        $resultSet = new HydratingResultSet($hydrator, new Game());
-        $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
+        $gameTableGateway = new TableGateway('games', $adapter, null, new HydratingResultSet($hydrator, new Game()));
+        $textureTableGateway = new TableGateway('textures', $adapter, null, new HydratingResultSet($hydrator, new Texture()));
         $logger = $container->get(Logger::class);
 
-        return new ZendTableGatewayMapper($tableGateway, $config, $response, $logger);
+        return new ZendTableGatewayMapper($gameTableGateway, $textureTableGateway, $config, $response, $logger);
     }
 }

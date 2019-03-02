@@ -92,19 +92,10 @@ class GameService implements GameServiceInterface
         return $this->mapper->findGameById($id);
     }
 
-    public function loadTextures($id)
+    public function findTextureById($id)
     {
-        $pathname = 'c:\js\p3d\textures.png';       //TODO refactor
+        $texture = $this->mapper->findTextureById($id);
 
-        $file = file_get_contents($pathname);
-
-        $response = $this->getEvent()->getResponse();
-        $response->getHeaders()->addHeaders(array(
-            'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => 'attachment;filename="' . $pathname . '"',
-        ));
-        $response->setContent($file);
-
-        return $response;
+        return $texture;
     }
 }
