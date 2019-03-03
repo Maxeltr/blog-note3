@@ -298,14 +298,21 @@ var camera = (function () {
         }
 
         if (typeof this.setTextures !== 'function') {
-            Camera.prototype.setTextures = function () {
+            Camera.prototype.setTextures = function (callback) {
                 let self = this;
 
-                this.amountWallTextures = Math.trunc(this.walls.width / this.walls.height);
-                this.wallTextureSize = Math.trunc(this.walls.width / this.amountWallTextures);
-                this.wallTextures = packTextures(this.walls.image);
+                let loadedCounter = 0;
+                this.walls.image.onload = this.skybox.image.onload = function() {
+                    loadedCounter++;
+                    if (loadedCounter === 2) {
+                        self.amountWallTextures = Math.trunc(self.walls.width / self.walls.height);
+                        self.wallTextureSize = Math.trunc(self.walls.width / self.amountWallTextures);
+                        self.wallTextures = packTextures(self.walls.image);
+                        self.skybox.packedImg = packTextures(self.skybox.image);
 
-                this.skybox.packedImg = packTextures(this.skybox.image);
+                        callback();
+                    }
+                };
 
                 return;
 
@@ -335,21 +342,16 @@ var camera = (function () {
 
         if (typeof this.drawBackground !== 'function') {
             Camera.prototype.drawBackground = function (direction) {
-                let width = this.skybox.width * (this.height / this.skybox.height) * 2;
+                //let width = this.skybox.width * (this.height / this.skybox.height) * 2;
                 let left = Math.trunc((direction / (Math.PI * 2)) * + this.skybox.width);
-                let pixX, pixY, hScale, vScale;
-
-                hScale = this.skybox.width / this.projectionWidth;
-                vScale = this.skybox.height / this.projectionHeight;
+                let top = (this.skybox.height - this.projectionHeight) / 2;
 
                 for (let j = this.projectionTopY, v=0; j < this.projectionBottomY; j++, v++) {
                     for (let i = this.projectionLeftX, h=0; i < this.projectionRightX; i++, h++) {
                         if (left+i < this.skybox.width) {
-                            //this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + Math.trunc(h * hScale) + Math.trunc(v * vScale) * this.skybox.width];
-                        this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + i + j * this.skybox.width];
+                            this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + h + (v + top) * this.skybox.width];
                         } else {
-                            //this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + Math.trunc(h * hScale) - this.skybox.width + Math.trunc(v * vScale) * this.skybox.width];
-                        this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + i - this.skybox.width + j * this.skybox.width];
+                            this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + h - this.skybox.width + (v + top) * this.skybox.width];
                         }
                     }
                 }
@@ -361,7 +363,7 @@ var camera = (function () {
         if (typeof this.setMapPositionOnScreen !== 'function') {
             Camera.prototype.setMapPositionOnScreen = function (map, position) {
                 this.mapPosition = position;
-            }
+            };
         }
 
         if (typeof this.setMap !== 'function') {
@@ -615,42 +617,35 @@ var map = (function () {
             5, , , , , , , , , , , , , , ,0,
             0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1
         ];
-        //this.position = 'onLeft';
-        //this.y;
-
-
     }
 
     return new Map();
 })();
 
 if (document.readyState !== 'loading') {
-    onload();
+    startGame();
 } else {
-    document.addEventListener('DOMContentLoaded', onload);
+    document.addEventListener('DOMContentLoaded', startGame);
 }
 
-function onload() {
+function startGame() {
     var cnv = document.getElementById("canvas");
     camera.setCanvas(cnv);
-    var walls = document.getElementById("sky_daytime_blue");
-    var img = new Image();
-    img.src = walls.src;
-    img.onload = function() {
-        camera.setTextures();
-        camera.setMap(map, 'onRight');
+    camera.setTextures(gameLoop);
+    camera.setMap(map);
+
+    function gameLoop() {
+
         loop.start(function frame(seconds) {
             player.update(controls.states, map, seconds);
             camera.fillColor();
             camera.drawBackground(player.direction);
-            camera.drawMap();
+            //camera.drawMap();
             camera.drawColumns(player);
             //camera.drawPlayer(player);
-
             camera.show();
         });
     }
-
 
 }
 
