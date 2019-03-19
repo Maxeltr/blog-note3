@@ -1,159 +1,15 @@
 'use strict';
 var pseudo3D = (function () {
     function Main() {
-        //this.height = 512;
-        //this.width = 1024;
-        //this.font = "24px serif";
-        //this.textColor = "red";
-        //this.canvas;
-        //this.context;
-        //this.frameBuffer = [];
-        //this.mapHeight = 16;
-        //this.mapWidth = 16;
-//        this.map = [
-//            0,0,0,0,2,2,2,2,2,2,2,2,0,0,0,0,
-//            1, , , , , , , , , , , , , , ,0,
-//            1, , , , , , ,1,1,1,1,1, , , ,0,
-//            1, , , , , ,0, , , , , , , , ,0,
-//            0, , , , , ,0, , ,1,1,1,0,0,0,0,
-//            0, , , , , ,3, , , , , , , , ,0,
-//            0, , , ,1,0,0,0,0, , , , , , ,0,
-//            0, , , ,3, , , ,1,1,1,0,0, , ,0,
-//            5, , , ,4, , , ,0, , , , , , ,0,
-//            5, , , ,4, , , ,1, , ,0,0,0,0,0,
-//            0, , , , , , , ,1, , , , , , ,0,
-//            2, , , , , , , ,1, , , , , , ,0,
-//            0, , , , , , , ,0, , , , , , ,0,
-//            0, ,0,0,0,0,0,0,0, , , , , , ,0,
-//            0, , , , , , , , , , , , , , ,0,
-//            0,0,0,2,2,2,2,2,2,2,2,0,0,0,0,0
-//        ];
-//        this.playerX = 3.456;
-//        this.playerY = 2.345;
-//        this.playerA = 1.523;	//player view direction
-//        this.fov = Math.PI / 3.0;	//field of view
-        //this.horizontalScaleRatio = 0.0;
-        //this.verticalScaleRatio = 0.0;
-        //this.imgDataFinalScene;
-        //this.wallTextures = [];
-        //this.amountWallTextures;
-        //this.wallTextureSize;
-
-//        if (typeof this.setCanvas !== 'function') {
-//            Main.prototype.setCanvas = function (canvas) {
-//                this.canvas = canvas;
-//                this.context = this.canvas.getContext("2d");
-//                this.canvas.width = this.width;
-//                this.canvas.height = this.height;
-//                this.horizontalScaleRatio = this.width / (this.mapWidth * 2);
-//                this.verticalScaleRatio = this.height / this.mapHeight;
-//                this.imgDataFinalScene = this.context.getImageData(0, 0, this.width, this.height);
-//            };
-//        }
-
 
         if (typeof this.getRandomInt !== 'function') {
             Main.prototype.getRandomInt = function (min, max) {
                 return Math.floor(Math.random() * (max - min)) + min;
             };
         }
-
-
-
-
-//        if (typeof this.playerViewTrace !== 'function') {
-//            Main.prototype.playerViewTrace = function (player) {
-//                let cx = 0.0;
-//                let cy = 0.0;
-//                let pix_x;
-//                let pix_y;
-//                let angle = 0.0;
-//                let columnHeight;
-//                let textureId;
-//                let textureX;
-//                let column;
-//                let hitX;
-//                let hitY;
-//
-//                for (let i = 0; i < this.width / 2; i++) {                                                      //step define amount of rays
-//                    angle = player.direction - player.fov / 2 + player.fov * i / (this.width / 2);
-//                    for (let t = 0; t < 20; t += 0.01) {                                                        //step of the ray
-//                        cx = player.x + t * Math.cos(angle);                                                    //x coordinate of ray
-//                        cy = player.y + t * Math.sin(angle);                                                    //y coordinate of ray
-//                        pix_x = Math.trunc(cx * this.horizontalScaleRatio);                                     //scale to screen
-//                        pix_y = Math.trunc(cy * this.verticalScaleRatio);                                       //scale to screen
-//                        this.frameBuffer[pix_x + pix_y * this.width] = -6250336;                                //draw a pixel of the ray with grayish color
-//                        textureId = this.map[Math.trunc(cx) + Math.trunc(cy) * this.mapWidth];
-//                        if (textureId !== undefined) {                                                          //check intersection the ray with a wall (there is no wall if undefined)
-//                            columnHeight = Math.trunc(this.height / (t * Math.cos(angle - player.direction)));
-//                            hitX = cx - Math.floor(cx + 0.5);                                                   //get fractional part of x
-//                            hitY = cy - Math.floor(cy + 0.5);                                                   //get fractional part of y
-//                            textureX = hitX * this.wallTextureSize;
-//                            if (Math.abs(hitY) > Math.abs(hitX)) {
-//                                textureX = hitY * this.wallTextureSize;
-//                            }
-//                            if (textureX < 0)
-//                                textureX += this.wallTextureSize;
-//                            column = this.getColumnTexture(textureId, textureX, columnHeight);
-//                            pix_x = Math.trunc(this.width / 2) + i;
-//                            for (let j = 0; j < columnHeight; j++) {
-//                                pix_y = j + Math.trunc(this.height / 2) - Math.trunc(columnHeight / 2);
-//                                if (pix_y < 0 || pix_y > this.width)
-//                                    continue;
-//                                this.frameBuffer[pix_x + pix_y * this.width] = column[j];
-//                            }
-//                            break;
-//                        }
-//                    }
-//                }
-//            };
-//        }
-
-//        if (typeof this.getColumnTexture !== 'function') {
-//            Main.prototype.getColumnTexture = function (textureId, textureX, columnHeight) {
-//                let column = [];
-//                let pixX;
-//                let pixY;
-//                for (let i = 0; i < columnHeight; i++) {
-//                    pixX = textureId * this.wallTextureSize + Math.trunc(textureX);
-//                    pixY = Math.trunc((i * this.wallTextureSize) / columnHeight);
-//                    column[i] = this.wallTextures[pixX + pixY * this.wallTextureSize * this.amountWallTextures];
-//                }
-//
-//                return column;
-//            };
-//        }
-
-
     }
 
     return new Main();
-})();
-
-var loop = (function () {
-    function GameLoop() {
-        this.lastTime = 0;
-        this.callback = function() {};
-
-        if (typeof this.start !== 'function') {
-            GameLoop.prototype.start = function (callback) {
-                this.callback = callback;
-                requestAnimationFrame(this.frame);
-            };
-        }
-
-        if (typeof this.frame !== 'function') {
-            GameLoop.prototype.frame = function (time) {
-                let seconds = (time - this.lastTime) / 1000;
-                this.lastTime = time;
-                if (seconds < 0.2)
-                    this.callback(seconds);
-                requestAnimationFrame(this.frame);
-            }.bind(this);
-        }
-    }
-
-    return new GameLoop();
 })();
 
 var controls = (function () {
@@ -179,15 +35,15 @@ var controls = (function () {
     return new Controls();
 })();
 
-var player = (function () {
     function Player(x, y, direction) {
         this.x = x || 3.456;
         this.y = y || 2.345;
-        this.direction = direction || 1.523;    //player view direction
+        this.direction = direction || 1.523;    //player view direction degrees - rad, 0-0, 90-‪1.570796‬, 180-‪3.141593‬, 270-‪4.712389‬
         this.weapon;
         this.paces = 0;
         this.circle = Math.PI * 2;
         this.fov = Math.PI / 3.0;               //field of view
+        this.sizeRadius = 0.1;		//calculate in depence of map size
 
         if (typeof this.rotate !== 'function') {
             Player.prototype.rotate = function (angle) {
@@ -212,24 +68,99 @@ var player = (function () {
             Player.prototype.move = function (map, distance) {
                 let dx = Math.cos(this.direction) * distance;
                 let dy = Math.sin(this.direction) * distance;
-                if (map.walls[Math.trunc(this.x + dx) + Math.trunc(this.y) * map.width] === undefined)
+                let moveDirection = this.direction;
+
+                if (distance < 0)
+                    moveDirection += Math.PI;
+
+                if (map.checkCollisionsWithWalls(this.x + dx, this.y, moveDirection, this.sizeRadius))
                     this.x += dx;
-                if (map.walls[Math.trunc(this.x) + Math.trunc(this.y + dy) * map.width] === undefined)
+                if (map.checkCollisionsWithWalls(this.x, this.y + dy, moveDirection, this.sizeRadius))
                     this.y += dy;
+
+                this.paces += distance;
             };
         }
     }
 
-    return new Player();
-})();
+    var player = new Player();
 
-function Bitmap(src, width, height) {
-    this.image = new Image();
-    this.image.src = src;
-    this.width = width;
-    this.height = height;
-    this.packedImg;
-}
+    function Sprite(x, y, textureId) {
+        this.x = 0.0 || x;
+        this.y = 0.0 || y;
+        this.textureId = textureId || 0;
+        this.distanceToPlayer;
+        this.sizeRadius = 0.1;		//calculate in depence of map size
+        this.precision = 0.001;
+    }
+
+    function Npc(x, y, textureId, direction) {
+        Sprite.apply(this, arguments);
+        this.direction = direction || 1.523;
+        this.weapon;
+        this.paces = 0;
+        this.circle = Math.PI * 2;
+        this.fov = Math.PI / 3.0;
+        this.ray;
+        this.waypoint;
+    }
+
+    Npc.prototype = Object.create(Sprite.prototype);
+    Npc.prototype.constructor = Npc;
+
+    Npc.prototype.move = function (map, distance) {
+        let dx = Math.cos(this.direction) * distance;
+        let dy = Math.sin(this.direction) * distance;
+        let moveDirection = this.direction;
+        let prevX = this.x;
+        let prevY = this.y;
+
+        if (distance < 0)
+            moveDirection += Math.PI;
+
+        if (map.checkCollisionsWithWalls(this.x + dx, this.y, moveDirection, this.sizeRadius))
+            this.x += dx;
+        if (map.checkCollisionsWithWalls(this.x, this.y + dy, moveDirection, this.sizeRadius))
+            this.y += dy;
+
+        if (this.x > prevX || this.y > prevY)
+            this.paces += Math.abs(distance);
+    };
+
+    Npc.prototype.update = function (map, seconds) {
+        this.ray = map.castRay(this, this.direction, 0.3, true);
+        if (this.ray.distance < 0.9) {
+            this.direction = this.getRandom(0, 6);
+        } else {
+            this.move(map, 3 * seconds);
+        }
+
+
+    }
+
+    Npc.prototype.getRandomInt = function (min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    Npc.prototype.getRandom = function (min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function Monster () {
+        Npc.apply(this, arguments);
+        this.sizeRadius = 0.3;
+    }
+
+    Monster.prototype = Object.create(Npc.prototype);
+    Monster.prototype.constructor = Monster;
+
+    function Bitmap(src, width, height) {
+        this.image = new Image();
+        this.image.src = src;
+        this.width = width;
+        this.height = height;
+        this.packedImg;
+    }
 
 var camera = (function () {
     function Camera() {
@@ -242,7 +173,8 @@ var camera = (function () {
         this.map;
 	this.amountWallTextures;
         this.wallTextureSize;
-        this.wallTextures = [];
+        this.amountSpriteTextures;
+        this.spriteTextureSize;
         this.mapPosition;
         this.projectionWidth;
         this.projectionHeight;
@@ -251,14 +183,16 @@ var camera = (function () {
         this.projectionMiddleY;
         this.projectionTopY = 0;
         this.projectionBottomY;
-        this.hScale;
-        this.vScale;
+        this.hMapScaleRatio;
+        this.vMapScaleRatio;
         this.mapWinLeftX = 0;
         this.mapWinTopY = 0;
-        this.walls = new Bitmap('/load/textures/1', 384, 64);
-        this.skybox = new Bitmap('/load/textures/2', 2048, 1024);
-        this.backgroundTexture = [];
-        this.coneBuffer = [];
+        this.wallTextures = new Bitmap('/load/textures/1', 384, 64);
+        this.skyboxTextures = new Bitmap('/load/textures/2', 2048, 1024);
+        this.spriteTextures = new Bitmap('/load/textures/3', 256, 64);
+        this.knifeTexture = new Bitmap('/load/textures/4', 319, 320);
+        this.weaponTextures = [this.knifeTexture];
+        this.showRayOnMap = true;
 
         if (typeof this.drawGradient !== 'function') {
             Camera.prototype.drawGradient = function () {
@@ -291,6 +225,9 @@ var camera = (function () {
             Camera.prototype.setCanvas = function (canvas) {
                 this.canvas = canvas;
                 this.context = this.canvas.getContext("2d");
+                this.context.msImageSmoothingEnabled = false;
+                this.context.mozImageSmoothingEnabled = false;
+                this.context.imageSmoothingEnabled = false;
                 this.canvas.width = this.width;
                 this.canvas.height = this.height;
                 this.imgDataFinalScene = this.context.getImageData(0, 0, this.width, this.height);
@@ -302,13 +239,20 @@ var camera = (function () {
                 let self = this;
 
                 let loadedCounter = 0;
-                this.walls.image.onload = this.skybox.image.onload = function() {
+                this.wallTextures.image.onload = this.skyboxTextures.image.onload =
+                        this.spriteTextures.image.onload = this.knifeTexture.image.onload =  function() {
                     loadedCounter++;
-                    if (loadedCounter === 2) {
-                        self.amountWallTextures = Math.trunc(self.walls.width / self.walls.height);
-                        self.wallTextureSize = Math.trunc(self.walls.width / self.amountWallTextures);
-                        self.wallTextures = packTextures(self.walls.image);
-                        self.skybox.packedImg = packTextures(self.skybox.image);
+                    if (loadedCounter === 4) {
+                        self.amountWallTextures = Math.trunc(self.wallTextures.width / self.wallTextures.height);
+                        self.wallTextureSize = self.wallTextures.height;
+                        self.wallTextures.packedImg = packTextures(self.wallTextures.image);
+
+                        self.skyboxTextures.packedImg = packTextures(self.skyboxTextures.image);
+                        self.weaponTextures[0].packedImg = packTextures(self.weaponTextures[0].image);
+
+                        self.amountSpriteTextures = self.spriteTextures.width / self.spriteTextures.height;
+			self.spriteTextureSize = self.spriteTextures.height;
+                        self.spriteTextures.packedImg = packTextures(self.spriteTextures.image);
 
                         callback();
                     }
@@ -342,20 +286,26 @@ var camera = (function () {
 
         if (typeof this.drawBackground !== 'function') {
             Camera.prototype.drawBackground = function (direction) {
-                //let width = this.skybox.width * (this.height / this.skybox.height) * 2;
-                let left = Math.trunc((direction / (Math.PI * 2)) * + this.skybox.width);
-                let top = (this.skybox.height - this.projectionHeight) / 2;
+                //let width = this.skyboxTextures.width * (this.height / this.skyboxTextures.height) * 2;
+                let left = Math.trunc((direction / (Math.PI * 2)) * + this.skyboxTextures.width);
+                let top = (this.skyboxTextures.height - this.projectionHeight) / 2;
 
                 for (let j = this.projectionTopY, v=0; j < this.projectionBottomY; j++, v++) {
                     for (let i = this.projectionLeftX, h=0; i < this.projectionRightX; i++, h++) {
-                        if (left+i < this.skybox.width) {
-                            this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + h + (v + top) * this.skybox.width];
+                        if ((left+h) < this.skyboxTextures.width) {
+                            this.frameBuffer[i + j  * this.width] = this.skyboxTextures.packedImg[left + h + (v + top) * this.skyboxTextures.width];
                         } else {
-                            this.frameBuffer[i + j  * this.width] = this.skybox.packedImg[left + h - this.skybox.width + (v + top) * this.skybox.width];
+                            this.frameBuffer[i + j  * this.width] = this.skyboxTextures.packedImg[left + h - this.skyboxTextures.width + (v + top) * this.skyboxTextures.width];
                         }
                     }
                 }
 
+
+            };
+        }
+
+        if (typeof this.setPlayer !== 'function') {
+            Camera.prototype.setPlayer = function (player) {
 
             };
         }
@@ -378,8 +328,8 @@ var camera = (function () {
                     this.projectionMiddleY = Math.trunc(this.height * 3 / 4);
                     this.projectionTopY = this.height / 2;
                     this.projectionBottomY = this.height;
-                    this.hScale = this.width / map.width;
-                    this.vScale = this.height / (map.height * 2);
+                    this.hMapScaleRatio = this.width / map.width;
+                    this.vMapScaleRatio = this.height / (map.height * 2);
                     this.mapWinLeftX = 0;
                     this.mapWinTopY = 0;
                 } else if (this.mapPosition === 'onBottom') {
@@ -390,8 +340,8 @@ var camera = (function () {
                     this.projectionMiddleY = Math.trunc(this.height / 4);
                     this.projectionTopY = 0;
                     this.projectionBottomY = this.height / 2;
-                    this.hScale = this.width / map.width;
-                    this.vScale = this.height / (map.height * 2);
+                    this.hMapScaleRatio = this.width / map.width;
+                    this.vMapScaleRatio = this.height / (map.height * 2);
                     this.mapWinLeftX = 0;
                     this.mapWinTopY = this.height / 2;
                 } else if (this.mapPosition === 'onRight') {
@@ -402,8 +352,8 @@ var camera = (function () {
                     this.projectionMiddleY = Math.trunc(this.height / 2);
                     this.projectionTopY = 0;
                     this.projectionBottomY = this.height;
-                    this.hScale = this.width / (map.width * 2);
-                    this.vScale = this.height / map.height;
+                    this.hMapScaleRatio = this.width / (map.width * 2);
+                    this.vMapScaleRatio = this.height / map.height;
                     this.mapWinLeftX = Math.trunc(this.width / 2);
                     this.mapWinTopY = 0;
                 } else if (this.mapPosition === 'onLeft') {
@@ -414,8 +364,8 @@ var camera = (function () {
                     this.projectionMiddleY = Math.trunc(this.height / 2);
                     this.projectionTopY = 0;
                     this.projectionBottomY = this.height;
-                    this.hScale = this.width / (map.width * 2);
-                    this.vScale = this.height / map.height;
+                    this.hMapScaleRatio = this.width / (map.width * 2);
+                    this.vMapScaleRatio = this.height / map.height;
                     this.mapWinLeftX = 0;
                     this.mapWinTopY = 0;
                 } else {
@@ -426,8 +376,8 @@ var camera = (function () {
                     this.projectionMiddleY = Math.trunc(this.height / 2);
                     this.projectionTopY = 0;
                     this.projectionBottomY = this.height;
-                    this.hScale = this.width / map.width;
-                    this.vScale = this.height / map.height;
+                    this.hMapScaleRatio = this.width / map.width;
+                    this.vMapScaleRatio = this.height / map.height;
                     this.mapWinLeftX = 0;
                     this.mapWinTopY = 0;
                 }
@@ -453,12 +403,62 @@ var camera = (function () {
             };
         }
 
+        if (typeof this.drawSpritesOnMap !== 'function') {
+            Camera.prototype.drawSpritesOnMap = function (sprites) {
+                for (let i = 0; i < sprites.length; i++){
+                    this.drawRect(sprites[i].x * this.projectionWidth / (this.map.width) + this.mapWinLeftX, sprites[i].y * this.projectionHeight / this.map.height + this.mapWinTopY, 6, 6, this.packColor(255, 0, 0, 255));
+                }
+            };
+        }
+
+        if (typeof this.drawSprites !== 'function') {
+            Camera.prototype.drawSprites = function (sprites, player, depthBuffer) {
+                sprites.sort(function(spriteA, spriteB) {
+                    return spriteB.distanceToPlayer - spriteA.distanceToPlayer;
+                });
+                for (let i = 0; i < sprites.length; i++) {
+                    sprites[i].distanceToPlayer = Math.sqrt(Math.pow(player.x - sprites[i].x, 2) + Math.pow(player.y - sprites[i].y, 2));
+                    camera.drawSprite(sprites[i], player, depthBuffer);
+                    if (this.showRayOnMap) {
+                        this.drawRayOnMap(sprites[i].ray);
+                    }
+                }
+
+            }
+        }
+
+        if (typeof this.drawSprite !== 'function') {
+            Camera.prototype.drawSprite = function (sprite, player, depthBuffer) {
+                let spriteDirection, spriteProjectionSize, h_offset, v_offset, pixel, spriteScaleRatio, spriteOffset;
+
+                spriteDirection = Math.atan2(sprite.y - player.y, sprite.x - player.x);						// absolute direction from the player to the sprite (in radians)
+                while (spriteDirection - player.direction >  Math.PI)
+                    spriteDirection -= 2 * Math.PI; 													// remove unncesessary periods from the relative direction
+                while (spriteDirection - player.direction < - Math.PI)
+                    spriteDirection += 2 * Math.PI;
+                spriteProjectionSize = Math.min(500, Math.trunc(this.projectionHeight / sprite.distanceToPlayer));
+                h_offset = Math.trunc((spriteDirection - player.direction) * this.projectionWidth / player.fov + this.projectionWidth / 2 - spriteProjectionSize / 2);
+                v_offset = this.projectionMiddleY - Math.trunc(spriteProjectionSize / 2);
+                spriteScaleRatio = this.spriteTextureSize/spriteProjectionSize;
+                spriteOffset = sprite.textureId * this.spriteTextureSize;
+
+                for (let i = 0; i < spriteProjectionSize; i++) {
+                    if ((h_offset + i) < 0 || depthBuffer[h_offset + i] < sprite.distanceToPlayer) continue;
+                    if ((h_offset + i) >= this.projectionWidth) break;
+                    for (let j = 0; j < spriteProjectionSize; j++) {
+                        if ((v_offset + j) < 0)  continue;
+                        if ((v_offset + j) >= this.projectionBottomY)  break;
+                        pixel = this.spriteTextures.packedImg[Math.trunc(i * spriteScaleRatio) + spriteOffset + Math.trunc(j * spriteScaleRatio) * this.spriteTextures.width];
+                        if (this.unpackColor(pixel)[3] > 128)
+                            this.frameBuffer[this.projectionLeftX + h_offset + i + (v_offset + j) * this.width] = pixel;
+                    }
+                }
+            };
+        }
+
         if (typeof this.drawMap !== 'function') {
             Camera.prototype.drawMap = function () {
-                let textureId, hScale, vScale;
-
-                hScale = this.width / this.map.width;
-                vScale = this.height / this.map.height;
+                let textureId;
 
                 for (let j = 0; j < this.map.height; j++) {
                     for (let i = 0; i < this.map.width; i++) {
@@ -467,15 +467,15 @@ var camera = (function () {
                         }
                         textureId = this.map.walls[i + j * this.map.width];
                         if (this.mapPosition === 'onLeft') {
-                            this.drawRect(i * hScale / 2, j * vScale, vScale, hScale / 2, this.wallTextures[textureId * this.wallTextureSize]);
+                            this.drawRect(i * this.hMapScaleRatio, j * this.vMapScaleRatio, this.vMapScaleRatio, this.hMapScaleRatio, this.wallTextures.packedImg[textureId * this.wallTextureSize]);
                         } else if (this.mapPosition === 'onRight') {
-                            this.drawRect(i * hScale / 2 + this.width / 2, j * vScale, vScale, hScale / 2, this.wallTextures[textureId * this.wallTextureSize]);
+                            this.drawRect(i * this.hMapScaleRatio + this.mapWinLeftX, j * this.vMapScaleRatio, this.vMapScaleRatio, this.hMapScaleRatio, this.wallTextures.packedImg[textureId * this.wallTextureSize]);
                         } else if (this.mapPosition === 'onTop') {
-                            this.drawRect(i * hScale, j * vScale / 2, vScale / 2, hScale, this.wallTextures[textureId * this.wallTextureSize]);
+                            this.drawRect(i * this.hMapScaleRatio, j * this.vMapScaleRatio, this.vMapScaleRatio, this.hMapScaleRatio, this.wallTextures.packedImg[textureId * this.wallTextureSize]);
                         } else if (this.mapPosition === 'onBottom') {
-                            this.drawRect(i * hScale, j * vScale / 2 + this.height / 2, vScale / 2, hScale, this.wallTextures[textureId * this.wallTextureSize]);
+                            this.drawRect(i * this.hMapScaleRatio, j * this.vMapScaleRatio + this.mapWinTopY, this.vMapScaleRatio, this.hMapScaleRatio, this.wallTextures.packedImg[textureId * this.wallTextureSize]);
                         } else {
-                            this.drawRect(i * hScale, j * vScale, vScale, hScale, this.wallTextures[textureId * this.wallTextureSize]);
+                            this.drawRect(i * this.hMapScaleRatio, j * this.vMapScaleRatio, this.vMapScaleRatio, this.hMapScaleRatio, this.wallTextures.packedImg[textureId * this.wallTextureSize]);
                         }
                     }
                 }
@@ -498,48 +498,89 @@ var camera = (function () {
             };
         }
 
+        if (typeof this.drawWeapon !== 'function') {
+            Camera.prototype.drawWeapon = function (weaponId, paces) {
+                let pixel, periodY = 4, periodX = 2, amplitudeY = 6,amplitudeX = 6, initialX = 0.66, initialY = 0.6;
+                let scale = (this.width + this.height) / 1700;
+                let scaledWeaponTextureHeight = Math.trunc(this.weaponTextures[weaponId].height/scale);
+                let scaledWeaponTextureWidth = Math.trunc(this.weaponTextures[weaponId].width/scale);
+
+                let bobX = Math.cos(paces * periodX) * scale * amplitudeX;
+                let bobY = Math.sin(paces * periodY) * scale * amplitudeY;
+                let left = Math.trunc(this.projectionLeftX + this.projectionWidth - (scaledWeaponTextureWidth * initialX + amplitudeX * scale) + bobX);
+                let top = Math.trunc(this.projectionTopY + this.projectionHeight - (scaledWeaponTextureHeight * initialY + amplitudeY * scale) + bobY);
+
+                for (let j = 0; j < scaledWeaponTextureHeight; j++) {
+                    if ((j + top) > this.projectionBottomY) break;
+                    for (let i = 0; i < scaledWeaponTextureWidth; i++) {
+                        if ((i + left) > this.projectionRightX) break;
+                        pixel = this.weaponTextures[weaponId].packedImg[Math.trunc(i*scale) + Math.trunc(j*scale) * this.weaponTextures[weaponId].width];
+                        if (this.unpackColor(pixel)[3] > 128)
+                            this.frameBuffer[i + left  + (j + top) * this.width] = pixel;
+                    }
+                }
+            };
+        }
+
         if (typeof this.drawColumns !== 'function') {
-            Camera.prototype.drawColumns = function (player) {
+            Camera.prototype.drawColumns = function (player, map) {
                 let cx = 0.0, cy = 0.0, angle = 0.0;
-                let pix_x, pix_y;
+                let pix_x, pix_y, ray;
                 let column, columnHeight;
                 let textureId, textureX;
                 let hitX, hitY;
+                let leftEdge, distance, depthBuffer = [];
 
-                let leftEdge = player.direction - player.fov / 2;
+                leftEdge = player.direction - player.fov / 2;
                 let angleBetweenRays = player.fov / this.projectionWidth;
 
                 for (let i = 0; i < this.projectionWidth; i++) {                                                      //step define amount of rays
                     angle = leftEdge + angleBetweenRays * i;
-                    for (let step = 0; step < 20; step += 0.01) {                                                        //step of the ray
-                        cx = player.x + step * Math.cos(angle);                                                    //x coordinate of ray
-                        cy = player.y + step * Math.sin(angle);                                                    //y coordinate of ray
-                        if (this.mapPosition) {
-                            pix_x = Math.trunc(cx * this.hScale + this.mapWinLeftX);                                     //scale to screen
-                            pix_y = Math.trunc(cy * this.vScale + this.mapWinTopY);                                       //scale to screen
-                            this.frameBuffer[pix_x + pix_y * this.width] = -6250336;                                //draw a pixel of the ray with grayish color
-                        }
-                        textureId = this.map.walls[Math.trunc(cx) + Math.trunc(cy) * this.map.width];
-                        if (textureId !== undefined) {                                                          //check intersection the ray with a wall (there is no wall if undefined)
-                            columnHeight = Math.trunc(this.projectionHeight / (step * Math.cos(angle - player.direction)));
-                            hitX = cx - Math.floor(cx + 0.5);                                                   //get fractional part of x
-                            hitY = cy - Math.floor(cy + 0.5);                                                   //get fractional part of y
-                            textureX = hitX * this.wallTextureSize;
-                            if (Math.abs(hitY) > Math.abs(hitX))
-                                textureX = hitY * this.wallTextureSize;
-                            if (textureX < 0)
-                                textureX += this.wallTextureSize;
-                            column = this.getColumnTexture(textureId, textureX, columnHeight);
-                            pix_x = this.projectionLeftX + i;
-                            for (let j = 0; j < columnHeight; j++) {
-                                pix_y = j + this.projectionMiddleY - Math.trunc(columnHeight / 2);
-                                if (pix_y >= this.projectionTopY && pix_y < this.projectionBottomY)
-                                    this.frameBuffer[pix_x + pix_y * this.width] = column[j];
-                            }
-                            break;
-                        }
+                    ray = map.castRay(player, angle, 0.01, true);
+                    depthBuffer[i] = ray.distance;
+                    columnHeight = Math.min(1000, Math.trunc(this.projectionHeight / ray.distance));
+                    textureX = this.getTextureX(ray.x, ray.y);
+                    column = this.getColumnTexture(ray.barrier, textureX, columnHeight);
+                    pix_x = this.projectionLeftX + i;
+                    for (let j = 0; j < columnHeight; j++) {
+                        pix_y = j + this.projectionMiddleY - Math.trunc(columnHeight / 2);
+                        if (pix_y >= this.projectionTopY && pix_y < this.projectionBottomY)
+                            this.frameBuffer[pix_x + pix_y * this.width] = column[j];
+                    }
+                    if (this.showRayOnMap) {
+                        this.drawRayOnMap(ray);
                     }
                 }
+
+                return depthBuffer;
+            };
+        }
+
+        if (typeof this.drawRayOnMap !== 'function') {
+            Camera.prototype.drawRayOnMap = function (ray) {
+                let x, y;
+
+                for (let j = 0; j < ray.trace.length; j++) {
+                    x = Math.trunc(ray.trace[j].x * this.hMapScaleRatio + this.mapWinLeftX);                                     //scale to screen
+                    y = Math.trunc(ray.trace[j].y * this.vMapScaleRatio + this.mapWinTopY);                                       //scale to screen
+                    this.frameBuffer[x + y * this.width] = -6250336;                                //draw a pixel of the ray with grayish color
+                }
+            }
+        }
+
+        if (typeof this.getTextureX !== 'function') {
+            Camera.prototype.getTextureX = function (x, y) {
+                let hitX, hitY, textureX;
+
+                hitX = x - Math.floor(x + 0.5);                                                   //get fractional part of x
+                hitY = y - Math.floor(y + 0.5);                                                   //get fractional part of y
+                textureX = hitX * this.wallTextureSize;
+                if (Math.abs(hitY) > Math.abs(hitX))
+                    textureX = hitY * this.wallTextureSize;
+                if (textureX < 0)
+                    textureX += this.wallTextureSize;
+
+                return textureX;
             };
         }
 
@@ -552,7 +593,7 @@ var camera = (function () {
                 pixX = textureId * this.wallTextureSize + Math.trunc(textureX);
                 for (let i = 0; i < columnHeight; i++) {
                     pixY = Math.trunc((i * this.wallTextureSize) / columnHeight);
-                    column[i] = this.wallTextures[pixX + pixY * this.wallTextureSize * this.amountWallTextures];
+                    column[i] = this.wallTextures.packedImg[pixX + pixY * this.wallTextureSize * this.amountWallTextures];
                 }
 
                 return column;
@@ -569,8 +610,22 @@ var camera = (function () {
             };
         }
 
+        if (typeof this.render !== 'function') {
+            Camera.prototype.render = function (player, monsters, map) {
+                this.fillColor();
+                this.drawBackground(player.direction);
+                this.drawMap();
+                let depthBuffer = this.drawColumns(player, map);
+                //camera.drawPlayer(player);
+                this.drawSpritesOnMap(monsters);
+                this.drawSprites(monsters, player, depthBuffer);
+                this.drawWeapon(0, player.paces);
+                this.show(debug.message);
+            }
+        }
+
 	if (typeof this.show !== 'function') {
-            Camera.prototype.show = function () {
+            Camera.prototype.show = function (message) {
                 let rgba;
                 let pointer;
                 let imgData = this.imgDataFinalScene.data;
@@ -588,6 +643,11 @@ var camera = (function () {
                 }
                 this.context.putImageData(this.imgDataFinalScene, 0, 0);
 
+                if (message) {
+                    this.context.fillStyle = 'red';
+                    this.context.font = "14px monospace";
+                    this.context.fillText(message, 15, 20);
+                }
             };
         }
     }
@@ -595,32 +655,73 @@ var camera = (function () {
     return new Camera();
 })();
 
-var map = (function () {
+    function DebugMessage(message) {
+        this.message = message;
+
+    }
+    var debug = new DebugMessage('test');
+
     function Map() {
         this.width = 16;
         this.height = 16;
         this.walls = [
             2,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,
             0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
-            0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
-            0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
-            0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
-            0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
-            0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
-            0, , , , , , , , , , , , , , ,3,
-            5, , , , , , , , , , , , , , ,0,
+            5, , , ,2, , , , ,2, , , , , ,0,
+            0, , , ,2,2,2,2, ,2, , , ,2,2,3,
+            5, , , ,2, , , , ,2, , , ,2, ,0,
+            0, , , ,2, ,2,2,2,2, , , ,2, ,3,
+            5, , , ,2, , , , ,2, , , ,2, ,0,
+            0, , , ,2,2,2,2, ,2,2,2, ,2, ,3,
+            5, , , ,2, , , , ,2, , , , , ,0,
+            0, , , ,2, , , , ,2, ,2,2,2,2,3,
+            5, , , ,2, , , , ,2, , , , , ,0,
+            0, , , ,2, , , , ,2, , , , , ,3,
+            5, , , ,2, , , , ,2, , , , , ,0,
+            0, , , , , , , , ,2, , , , , ,3,
+            5, , , ,2, , , , , , , , , , ,0,
             0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1
         ];
     }
 
-    return new Map();
-})();
+    Map.prototype.isEmptyCell = function (x, y) {
+        return this.walls[Math.trunc(x) + Math.trunc(y) * map.width] === undefined;
+    };
+
+    Map.prototype.checkCollisionsWithWalls = function (x, y, direction, radius) {	//degrees - rad, 0-0, 90-‪1.570796‬, 180-‪3.141593‬, 270-‪4.712389‬
+        if (direction >= 0 && direction <= 1.571) {
+            return this.isEmptyCell(x + radius, y + radius);
+        } else if (direction > 1.571 && direction <= 3.142) {
+            return this.isEmptyCell(x - radius, y + radius);
+        } else if (direction > 3.142 && direction <= 4.712) {
+            return this.isEmptyCell(x - radius, y - radius);
+        } else if (direction > 4.712 && direction <= 6.2832) {
+            return this.isEmptyCell(x + radius, y - radius);
+        } else {
+            return this.checkCollisionsWithWalls(x, y, (direction + (Math.PI * 2)) % (Math.PI * 2), radius);
+        }
+    }
+
+    Map.prototype.castRay = function (player, angle, step, saveTrace) {
+        let textureId, cx, cy, pix_x, pix_y, distance, steps;
+        let increment = step || 0.01;
+        let trace = [];
+
+        for (steps = 0; steps < 20; steps += increment) {                                                        //step of the ray
+            cx = player.x + steps * Math.cos(angle);                                                    //x coordinate of ray
+            cy = player.y + steps * Math.sin(angle);                                                    //y coordinate of ray
+            if (saveTrace) {
+                trace.push({x: cx, y: cy});
+            }
+            textureId = this.walls[Math.trunc(cx) + Math.trunc(cy) * this.width];
+            if (textureId !== undefined) break;
+        }
+        distance = steps * Math.cos(angle - player.direction);
+
+        return {x: cx, y: cy, distance: distance, barrier: textureId, trace: trace};
+    }
+
+var map = new Map();
 
 if (document.readyState !== 'loading') {
     startGame();
@@ -629,23 +730,62 @@ if (document.readyState !== 'loading') {
 }
 
 function startGame() {
+    let depthBuffer;
+    let sprites = [new Sprite(4.1, 5.5, 2), new Sprite(2.5, 5.5, 2), new Sprite(1.5, 6.5, 1), new Sprite(1.4, 9.9, 0)];
+//let monster = new Monster(6, 6, 0, 3.5);
+let monsters = [new Monster(6, 6, 0, 3.5), new Monster(6, 6, 0, 3.5), new Monster(6, 6, 0, 3.5), new Monster(6, 6, 0, 3.5), new Monster(6, 6, 0, 3.5), new Monster(6, 6, 0, 3.5)];
+
     var cnv = document.getElementById("canvas");
     camera.setCanvas(cnv);
     camera.setTextures(gameLoop);
-    camera.setMap(map);
+    camera.setMap(map, 'onRight');
 
     function gameLoop() {
 
         loop.start(function frame(seconds) {
             player.update(controls.states, map, seconds);
-            camera.fillColor();
+            for (let i = 0; i < monsters.length; i++) {
+                monsters[i].update(map, seconds);
+            }
+            //monster.update(map, seconds);
+
+            camera.render(player, monsters, map);
+            /*camera.fillColor();
             camera.drawBackground(player.direction);
-            //camera.drawMap();
-            camera.drawColumns(player);
+            camera.drawMap();
+            depthBuffer = camera.drawColumns(player);
             //camera.drawPlayer(player);
-            camera.show();
+            camera.drawSpritesOnMap(sprites);
+            camera.drawSprites(sprites, player, depthBuffer);
+
+            camera.show();*/
         });
     }
 
 }
 
+var loop = (function () {
+    function GameLoop() {
+        this.lastTime = 0;
+        this.callback = function() {};
+
+        if (typeof this.start !== 'function') {
+            GameLoop.prototype.start = function (callback) {
+                this.callback = callback;
+                requestAnimationFrame(this.frame);
+            };
+        }
+
+        if (typeof this.frame !== 'function') {
+            GameLoop.prototype.frame = function (time) {
+                let seconds = (time - this.lastTime) / 1000;
+                this.lastTime = time;
+                if (seconds < 0.2)
+                    this.callback(seconds);
+                requestAnimationFrame(this.frame);
+            }.bind(this);
+        }
+    }
+
+    return new GameLoop();
+})();
