@@ -80,7 +80,7 @@
         this.frames = frames - 1;
     }
 
-    function MoveableSprite(x, y, textureId, direction) {
+    function MoveableSprite(x, y, textures, frames, direction) {
         Sprite.apply(this, arguments);
         this.direction = direction || 1.523;    // degrees - rad, 0-0, 90-‪1.570796‬, 180-‪3.141593‬, 270-‪4.712389‬
         this.weapon;
@@ -366,13 +366,39 @@
     }
 
     Camera.prototype.drawSprite = function (sprite, player, depthBuffer) {
-        let spriteDirection, spriteProjectionSize, h_offset, v_offset, pixel, hSpriteScaleRatio, vSpriteScaleRatio, spriteOffset;
+        let row, spriteDirection, spriteProjectionSize, h_offset, v_offset, pixel, hSpriteScaleRatio, vSpriteScaleRatio, spriteOffset;
 
-        spriteDirection = Math.atan2(sprite.y - player.y, sprite.x - player.x);						// absolute direction from the player to the sprite (in radians)
+        spriteDirection = Math.atan2(sprite.y - player.y, sprite.x - player.x);						// absolute direction from the player(!) to the sprite(!) (in radians)
         while (spriteDirection - player.direction >  Math.PI)
             spriteDirection -= 2 * Math.PI; 													// remove unncesessary periods from the relative direction
         while (spriteDirection - player.direction < - Math.PI)
             spriteDirection += 2 * Math.PI;
+
+        let spriteDirectionAboutPlayer = player.direction - sprite.direction;
+            while (spriteDirectionAboutPlayer >  Math.PI)
+            spriteDirectionAboutPlayer -= 2 * Math.PI; 													// remove unncesessary periods from the relative direction
+        while (spriteDirectionAboutPlayer < - Math.PI)
+            spriteDirectionAboutPlayer += 2 * Math.PI;
+
+        if (spriteDirectionAboutPlayer < -2.356 || spriteDirectionAboutPlayer > 2.356) {
+            debug.message = spriteDirectionAboutPlayer + ' forward';
+            row = 0;
+        } else if ((spriteDirectionAboutPlayer > -0.785 && spriteDirectionAboutPlayer < 0) || (spriteDirectionAboutPlayer >= 0 && spriteDirectionAboutPlayer < 0.785)) {
+            debug.message = spriteDirectionAboutPlayer + ' backward';
+            row = 1*96;
+        } else if (spriteDirectionAboutPlayer >= -2.356 && spriteDirectionAboutPlayer <= -0.785) {
+            debug.message = spriteDirectionAboutPlayer + ' right';
+            row = 3*96;
+        } else if (spriteDirectionAboutPlayer <= 2.356 && spriteDirectionAboutPlayer >= 0.785) {
+            debug.message = spriteDirectionAboutPlayer + ' left';
+            row = 2*96;
+        }
+
+        /*if (spriteDirectionAboutPlayer > 0)
+                debug.message = spriteDirectionAboutPlayer + ' right';
+        if (spriteDirectionAboutPlayer < 0)
+                debug.message = spriteDirectionAboutPlayer + ' left'; 	*/
+
         spriteProjectionSize = Math.min(500, Math.floor(this.projectionHeight / sprite.distanceToPlayer));
         h_offset = Math.floor((spriteDirection - player.direction) * this.projectionWidth / player.fov + this.projectionWidth / 2 - spriteProjectionSize / 2);
         v_offset = this.projectionMiddleY - Math.floor(spriteProjectionSize / 2);
@@ -386,7 +412,7 @@
             for (let j = 0; j < spriteProjectionSize; j++) {
                 if ((v_offset + j) < 0)  continue;
                 if ((v_offset + j) >= this.projectionBottomY)  break;
-                pixel = sprite.textures.packedImg[Math.floor(i * hSpriteScaleRatio) + spriteOffset + Math.floor(j * vSpriteScaleRatio) * sprite.textures.width];
+                pixel = sprite.textures.packedImg[Math.floor(i * hSpriteScaleRatio) + spriteOffset + Math.floor(j * vSpriteScaleRatio + row) * sprite.textures.width];
                 if (sprite.textures.unpackColor(pixel)[3] > 128)
                     this.frameBuffer[this.projectionLeftX + h_offset + i + (v_offset + j) * this.width] = pixel;
             }
@@ -580,19 +606,19 @@
         this.walls = [
             2,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,
             0, , , , , , , , , , , , , , ,3,
-            5, , , ,2, , , , ,2, , , , , ,0,
-            0, , , ,2,2,2,2, ,2, , , ,2,2,3,
-            5, , , , , , , , ,2, , , ,2, ,0,
-            0, , , , , ,2,2,2,2, , , ,2, ,3,
-            5, , , , , , , , ,2, , , ,2, ,0,
-            0, , , , ,2,2,2, ,2,2,2, ,2, ,3,
-            5, , , ,2, , , , ,2, , , , , ,0,
-            0, , , ,2, , , , ,2, ,2,2,2,2,3,
-            5, , , ,2, , , , ,2, , , , , ,0,
-            0, , , ,2, , , , ,2, , , , , ,3,
-            5, , , ,2, , , , ,2, , , , , ,0,
-            0, , , , , , , , ,2, , , , , ,3,
-            5, , , ,2, , , , , , , , , , ,0,
+            5, , , , , , , , , , , , , , ,0,
+            0, , , , , , , , , , , , ,2,2,3,
+            5, , , , , , , , , , , , ,2, ,0,
+            0, , , , , , , , , , , , ,2, ,3,
+            5, , , , , , , , , , , , ,2, ,0,
+            0, , , , , , , , , , , , ,2, ,3,
+            5, , , , , , , , , , , , , , ,0,
+            0, , , , , , , , , , , , ,2,2,3,
+            5, , , , , , , , , , , , , , ,0,
+            0, , , , , , , , , , , , , , ,3,
+            5, , , , , , , , , , , , , , ,0,
+            0, , , , , , , , , , , , , , ,3,
+            5, , , , , , , , , , , , , , ,0,
             0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1
         ];
     }
@@ -651,12 +677,12 @@
 
 let texture = new Bitmap('/load/textures/3', 576, 384, 72, 96, onload);
 
-        let text = new Bitmap('/load/textures/3', 256, 64, 64, 64, onload);
+        //let text = new Bitmap('/load/textures/3', 256, 64, 64, 64, onload);
         let weapon = new Bitmap('/load/textures/4', 319, 320, 319, 320, onload);
         let background = new Bitmap('/load/textures/2', 2048, 1024, 2048, 1024, onload);
         let walls = new Bitmap('/load/textures/1', 384, 64, 64, 64, onload);
 
-        let monsters = [new Monster(6, 6, text, 3)];
+        let monsters = [new Monster(6, 6, texture, 3)];
         let controls = new Controls();
         let map = new Map();
         let camera = new Camera();
