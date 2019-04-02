@@ -1,5 +1,19 @@
 'use strict';
 
+    function Angle() {
+        this.circle = Math.PI * 2;
+    }
+
+    Angle.prototype.normalize = function (angle) {
+        while (angle < 0) {
+            angle += (2 * Math.PI);
+        }
+        while (angle >= (2 * Math.PI)) {
+            angle -= (2 * Math.PI);
+        }
+        return angle;
+    };
+
     function Controls() {
         this.codes = { 37: 'left', 39: 'right', 38: 'forward', 40: 'backward' };
         this.states = { 'left': false, 'right': false, 'forward': false, 'backward': false };
@@ -76,13 +90,25 @@
         this.sizeRadius = 0.1;		//calculate in depence of map size
         this.precision = 0.001;
         this.textures = textures;
-        this.animationSpeed = 5;
+        this.animationSpeed = 9;
         this.frames = frames - 1;
-    }
+    };
+
+	Sprite.prototype.updateAnimation = function (seconds) {
+        this._frameIndex += this.animationSpeed * seconds;
+        this.frameIndex = Math.trunc(this._frameIndex);
+        if (this.frameIndex > this.frames) {
+            this.frameIndex = this._frameIndex = 0;
+        }
+    };
+
+    var STATE_STAND = 1;
+    var STATE_MOVE = 2;
+    var STATE_ATTACK = 4;
 
     function MoveableSprite(x, y, textures, frames, direction) {
         Sprite.apply(this, arguments);
-        this.direction = direction || 1.523;    // degrees - rad, 0-0, 90-‪1.570796‬, 180-‪3.141593‬, 270-‪4.712389‬
+        this.direction = direction || -4.619;    // degrees - rad, 0-0, 90-‪1.570796‬, 180-‪3.141593‬, 270-‪4.712389‬
         this.weapon;
         this.paces = 0;
         this.circle = Math.PI * 2;
@@ -90,10 +116,18 @@
         this.ray;
         this.waypoint;
         this.lifetime = 0.0;
-    }
+        this.reactionTime = 0.0;
+        this._reactionTime = 0.0;
+        this.state;
+        this.minDistance = 0.5;
+    };
 
     MoveableSprite.prototype = Object.create(Sprite.prototype);
     MoveableSprite.prototype.constructor = MoveableSprite;
+
+    MoveableSprite.prototype.rotate = function (angle) {
+        this.direction = (this.direction + angle + this.circle) % this.circle;
+    };
 
     MoveableSprite.prototype.move = function (map, distance) {
         let dx = Math.cos(this.direction) * distance;
@@ -110,38 +144,28 @@
         if (map.checkCollisionsWithWalls(this.x, this.y + dy, moveDirection, this.sizeRadius))
             this.y += dy;
 
-        if (this.x > prevX || this.y > prevY)
+        if (this.x > prevX || this.y > prevY) {
             this.paces += Math.abs(distance);
+        }
     };
 
     MoveableSprite.prototype.update = function (map, seconds) {
 
-        this.ray = map.castRay(this, this.direction, 0.3, true);
-        if (this.ray.distance < 0.9) {
-            this.direction = this.getRandom(0, 6);
-        } else {
-            this.move(map, seconds);
-        }
-        this.lifetime += seconds;
-
-        this._frameIndex += this.animationSpeed * seconds;
-        this.frameIndex = Math.trunc(this._frameIndex);
-        if (this.frameIndex > this.frames) {
+        if (this.state & STATE_MOVE) {
+            this.updateAnimation(seconds);
+            this.move(map, 2 * seconds);
+        } else if (this.state & STATE_STAND) {
             this.frameIndex = this._frameIndex = 0;
         }
+
+        this.lifetime += seconds;
+
     };
 
-    MoveableSprite.prototype.getRandomInt = function (min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-    };
-
-    MoveableSprite.prototype.getRandom = function (min, max) {
-        return Math.random() * (max - min) + min;
-    };
 
     function Npc() {
         MoveableSprite.apply(this, arguments);
-    }
+    };
 
     Npc.prototype = Object.create(MoveableSprite.prototype);
     Npc.prototype.constructor = Npc;
@@ -149,12 +173,100 @@
     function Monster () {
         Npc.apply(this, arguments);
         this.sizeRadius = 0.3;
-    }
+    };
 
     Monster.prototype = Object.create(Npc.prototype);
     Monster.prototype.constructor = Monster;
 
-    function Bitmap(src, width, height, hFrameSize, vFrameSize, onload) {
+    function Ai(player, npc) {
+        this.minSight = 3;
+        this.angle = new Angle();
+    };
+
+    Ai.prototype.update = function (player, npc, seconds, map) {
+
+        if (this.findTarget(player, npc, seconds, map)) {
+            this.attack(player, npc);
+        } else {
+            this.changeState(STATE_STAND, npc);
+        }
+
+
+    };
+
+    Ai.prototype.attack = function (player, npc) {
+        this.changeDirection(Math.atan2(player.y - npc.y, player.x - npc.x), npc);
+        let distance = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
+        if ((npc.state & STATE_STAND) && distance > npc.minDistance)
+            this.changeState(STATE_MOVE, npc);
+        if (distance <= npc.minDistance)
+            this.changeState(STATE_STAND, npc);
+
+    };
+
+    Ai.prototype.changeDirection = function (newDirection, npc) {
+        npc.direction = this.angle.normalize(newDirection);
+    };
+
+    Ai.prototype.changeState = function (newState, npc) {
+        npc.state = newState;
+    };
+
+    Ai.prototype.addState = function (newState, npc) {
+            if (((npc.state & STATE_MOVE) && newState === STATE_STAND) || ((npc.state & STATE_STAND) && newState === STATE_MOVE)) return;
+            npc.state = npc.state | newState;
+    };
+
+    Ai.prototype.checkSight = function (player, npc, map) {
+        let distance = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
+        let direction = Math.atan2(player.y - npc.y, player.x - npc.x);
+        let deltax = player.x - npc.x;
+        let deltay = player.y - npc.y;
+
+        let ray = map.castRay(npc, direction, 0.3, false);
+
+        //if (ray.distance < distance) return false;	//player is behind wall if distance to wall is less than to player
+
+        if (Math.abs(deltax) < this.minSight && Math.abs(deltay) < this.minSight) {		//we see player if he is too close
+            return true;
+        }
+
+        return false;
+    };
+
+    Ai.prototype.findTarget = function (player, npc, seconds, map) {
+
+        if (npc.reactionTime && (npc.state & STATE_STAND)) {
+            if (npc.reactionTime > 0) {
+                npc.reactionTime -= seconds;
+                return false;
+            }
+            npc.reactionTime = 0;
+        } else {
+            if (! this.checkSight(player, npc, map)) {
+                return false;
+            }
+
+            //we have detected player here
+            if (npc.state & STATE_STAND) {
+                npc.reactionTime = this.getRandom(0.1, 0.7);
+
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    Ai.prototype.getRandomInt = function (min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    };
+
+    Ai.prototype.getRandom = function (min, max) {
+        return Math.random() * (max - min) + min;
+    };
+
+    function Bitmap(src, width, height, hFrameSize, vFrameSize, onload, front, back, left, right) {
         this.width = width;
         this.height = height;
         this.isLoaded;
@@ -163,11 +275,13 @@
         this.src = src;
         this.vFrameSize = vFrameSize;
         this.hFrameSize = hFrameSize;
-        this.rows = Math.floor(height / vFrameSize);
-        this.columns = Math.floor(width / hFrameSize);
+        this.front = front || 0;
+        this.back = back || vFrameSize;
+        this.left = left || vFrameSize * 2;
+        this.right = right || vFrameSize * 3;
 
         this.load();
-    }
+    };
 
     Bitmap.prototype.load = function (onload, src) {
         let self = this;
@@ -349,7 +463,7 @@
     Camera.prototype.drawSpritesOnMap = function (sprites) {
         for (let i = 0; i < sprites.length; i++){
             this.drawRect(sprites[i].x * this.hMapScaleRatio + this.mapWinLeftX, sprites[i].y * this.vMapScaleRatio + this.mapWinTopY, 5, 5, this.packColor(255, 0, 0, 255));
-            if (this.showRayOnMap) {
+            if (this.showRayOnMap && sprites[i].ray) {
                 this.drawRayOnMap(sprites[i].ray);
             }
         }
@@ -366,7 +480,7 @@
     }
 
     Camera.prototype.drawSprite = function (sprite, player, depthBuffer) {
-        let row, spriteDirection, spriteProjectionSize, h_offset, v_offset, pixel, hSpriteScaleRatio, vSpriteScaleRatio, spriteOffset;
+        let vOffset, spriteDirection, spriteProjectionSize, h_offset, v_offset, pixel, hSpriteScaleRatio, vSpriteScaleRatio, hOffset;
 
         spriteDirection = Math.atan2(sprite.y - player.y, sprite.x - player.x);						// absolute direction from the player(!) to the sprite(!) (in radians)
         while (spriteDirection - player.direction >  Math.PI)
@@ -381,30 +495,25 @@
             spriteDirectionAboutPlayer += 2 * Math.PI;
 
         if (spriteDirectionAboutPlayer < -2.356 || spriteDirectionAboutPlayer > 2.356) {
-            debug.message = spriteDirectionAboutPlayer + ' forward';
-            row = 0;
+            //debug.message = spriteDirectionAboutPlayer + ' forward';
+            vOffset = sprite.textures.front;
         } else if ((spriteDirectionAboutPlayer > -0.785 && spriteDirectionAboutPlayer < 0) || (spriteDirectionAboutPlayer >= 0 && spriteDirectionAboutPlayer < 0.785)) {
-            debug.message = spriteDirectionAboutPlayer + ' backward';
-            row = 1*96;
+            //debug.message = spriteDirectionAboutPlayer + ' backward';
+            vOffset = sprite.textures.back;
         } else if (spriteDirectionAboutPlayer >= -2.356 && spriteDirectionAboutPlayer <= -0.785) {
-            debug.message = spriteDirectionAboutPlayer + ' right';
-            row = 3*96;
+            //debug.message = spriteDirectionAboutPlayer + ' right';
+            vOffset = sprite.textures.right;
         } else if (spriteDirectionAboutPlayer <= 2.356 && spriteDirectionAboutPlayer >= 0.785) {
-            debug.message = spriteDirectionAboutPlayer + ' left';
-            row = 2*96;
+            //debug.message = spriteDirectionAboutPlayer + ' left';
+            vOffset = sprite.textures.left;
         }
-
-        /*if (spriteDirectionAboutPlayer > 0)
-                debug.message = spriteDirectionAboutPlayer + ' right';
-        if (spriteDirectionAboutPlayer < 0)
-                debug.message = spriteDirectionAboutPlayer + ' left'; 	*/
 
         spriteProjectionSize = Math.min(500, Math.floor(this.projectionHeight / sprite.distanceToPlayer));
         h_offset = Math.floor((spriteDirection - player.direction) * this.projectionWidth / player.fov + this.projectionWidth / 2 - spriteProjectionSize / 2);
         v_offset = this.projectionMiddleY - Math.floor(spriteProjectionSize / 2);
         hSpriteScaleRatio = sprite.textures.hFrameSize / spriteProjectionSize;
         vSpriteScaleRatio = sprite.textures.vFrameSize / spriteProjectionSize;
-        spriteOffset = sprite.frameIndex * sprite.textures.hFrameSize;
+        hOffset = sprite.frameIndex * sprite.textures.hFrameSize;
 
         for (let i = 0; i < spriteProjectionSize; i++) {
             if ((h_offset + i) < 0 || depthBuffer[h_offset + i] < sprite.distanceToPlayer) continue;
@@ -412,7 +521,7 @@
             for (let j = 0; j < spriteProjectionSize; j++) {
                 if ((v_offset + j) < 0)  continue;
                 if ((v_offset + j) >= this.projectionBottomY)  break;
-                pixel = sprite.textures.packedImg[Math.floor(i * hSpriteScaleRatio) + spriteOffset + Math.floor(j * vSpriteScaleRatio + row) * sprite.textures.width];
+                pixel = sprite.textures.packedImg[Math.floor(i * hSpriteScaleRatio) + hOffset + Math.floor(j * vSpriteScaleRatio + vOffset) * sprite.textures.width];
                 if (sprite.textures.unpackColor(pixel)[3] > 128)
                     this.frameBuffer[this.projectionLeftX + h_offset + i + (v_offset + j) * this.width] = pixel;
             }
@@ -682,12 +791,13 @@ let texture = new Bitmap('/load/textures/3', 576, 384, 72, 96, onload);
         let background = new Bitmap('/load/textures/2', 2048, 1024, 2048, 1024, onload);
         let walls = new Bitmap('/load/textures/1', 384, 64, 64, 64, onload);
 
-        let monsters = [new Monster(6, 6, texture, 3)];
+        let monsters = [new Monster(3.8, 6, texture, 8)];
         let controls = new Controls();
         let map = new Map();
         let camera = new Camera();
         let player = new Player();
         let loop = new GameLoop();
+		let ai = new Ai();
 
         let cnv = document.getElementById("canvas");
         camera.setCanvas(cnv);
@@ -698,7 +808,11 @@ let texture = new Bitmap('/load/textures/3', 576, 384, 72, 96, onload);
                 player.update(controls.states, map, seconds);
                 for (let i = 0; i < monsters.length; i++) {
                     monsters[i].update(map, seconds);
+					ai.update(player, monsters[i], seconds, map);
+
+
                 }
+
 
                 camera.render(player, monsters, map, weapon, background, walls);
             });
