@@ -38,7 +38,7 @@ class FormatDateI18nFactory implements FactoryInterface
         $config = new Config($container->get('config'));
 
         $timezone = new \DateTimeZone($config->defaults->timezone);
-        $datetime = new \DateTimeImmutable('now', $timezone);
+        $datetime = new \DateTime('now', $timezone);
 
         $authenticationService = $container->get(AuthenticationService::class);
         $sessionContainer = $container->get('MxmUserSessionContainer');

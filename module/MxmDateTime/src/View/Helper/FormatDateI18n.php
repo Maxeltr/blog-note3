@@ -42,7 +42,7 @@ class FormatDateI18n extends DateFormat
 
     protected $sessionContainer;
 
-    public function __construct(Config $config, DateTimeImmutable $datetime, AuthenticationService $authenticationService, SessionContainer $sessionContainer)
+    public function __construct(Config $config, \DateTimeInterface $datetime, AuthenticationService $authenticationService, SessionContainer $sessionContainer)
     {
         $this->config = $config;
         $this->datetime = $datetime;

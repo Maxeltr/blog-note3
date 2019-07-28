@@ -113,13 +113,15 @@
         this.paces = 0;
         this.circle = Math.PI * 2;
         this.fov = Math.PI / 3.0;
-        this.ray;
+        this.rays;
         this.waypoint;
         this.lifetime = 0.0;
         this.reactionTime = 0.0;
         this._reactionTime = 0.0;
         this.state;
-        this.minDistance = 0.5;
+        this.minDistanceToObject = 0.5;
+		this.sightDistance = 4.0;
+		this.hearingDistance = 1;
     };
 
     MoveableSprite.prototype = Object.create(Sprite.prototype);
@@ -160,6 +162,7 @@
 
         this.lifetime += seconds;
 
+		this.rays = [map.castRay(this, this.direction-this.fov/2, 0.3, true), map.castRay(this, this.direction, 0.3, true), map.castRay(this, this.direction+this.fov/2, 0.3, true)];	//for debug
     };
 
 
@@ -179,7 +182,6 @@
     Monster.prototype.constructor = Monster;
 
     function Ai(player, npc) {
-        this.minSight = 3;
         this.angle = new Angle();
     };
 
@@ -197,9 +199,9 @@
     Ai.prototype.attack = function (player, npc) {
         this.changeDirection(Math.atan2(player.y - npc.y, player.x - npc.x), npc);
         let distance = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
-        if ((npc.state & STATE_STAND) && distance > npc.minDistance)
+        if ((npc.state & STATE_STAND) && distance > npc.minDistanceToObject)
             this.changeState(STATE_MOVE, npc);
-        if (distance <= npc.minDistance)
+        if (distance <= npc.minDistanceToObject)
             this.changeState(STATE_STAND, npc);
 
     };
@@ -218,22 +220,42 @@
     };
 
     Ai.prototype.checkSight = function (player, npc, map) {
-        let distance = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));
-        let direction = Math.atan2(player.y - npc.y, player.x - npc.x);
-        let deltax = player.x - npc.x;
-        let deltay = player.y - npc.y;
+        let distanceBetweenNpcAndPlayer, toPlayerDirection, angleBetweenVectors;
+		let nNpcX, nNpcY, nPlayerX, nPlayerY, ray; 
 
-        let ray = map.castRay(npc, direction, 0.3, false);
+        toPlayerDirection = Math.atan2(player.y - npc.y, player.x - npc.x);		//direction from npc to player
+		ray = map.castRay(npc, toPlayerDirection, 0.3, false);	//ray from npc in player direction
+		
+		distanceBetweenNpcAndPlayer = Math.sqrt(Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2));	//distance from npc to player
+		
+		if (Math.abs(ray.distance) < distanceBetweenNpcAndPlayer) 		//player is behind wall if distance to wall is less than to player
+			return false;
 
-        //if (ray.distance < distance) return false;	//player is behind wall if distance to wall is less than to player
+        ray = map.castRay(npc, npc.direction, 0.3, false);	//ray from npc in itself direction
+        
+		nNpcX = (ray.x - npc.x) / ray.distance;			//normalize vector sight direction
+		nNpcY = (ray.y - npc.y) / ray.distance;			//normalize vector sight direction
+		
+		nPlayerX = (player.x - npc.x) / distanceBetweenNpcAndPlayer;						//normalize vector direction to player
+		nPlayerY = (player.y - npc.y) / distanceBetweenNpcAndPlayer;						//normalize vector direction to player
+		
+		angleBetweenVectors = Math.acos(Math.floor((nNpcX * nPlayerX + nNpcY * nPlayerY) * 1000) / 1000);		//to avoid rounding error, sometimes we get Math.acos(1.0000000002)
 
-        if (Math.abs(deltax) < this.minSight && Math.abs(deltay) < this.minSight) {		//we see player if he is too close
-            return true;
-        }
+		if (angleBetweenVectors < (npc.fov / 2) && distanceBetweenNpcAndPlayer < npc.sightDistance) 		//player in fov of npc and at sight distance
+			return true;
 
         return false;
     };
 
+	Ai.prototype.checkHearing = function (player, npc, map) {
+		
+		if (Math.abs((player.x - npc.x)) < npc.hearingDistance && Math.abs((player.y - npc.y)) < npc.hearingDistance) {		//we hear player if he is too close
+            return true;
+        }
+		
+		return false;
+	}
+	
     Ai.prototype.findTarget = function (player, npc, seconds, map) {
 
         if (npc.reactionTime && (npc.state & STATE_STAND)) {
@@ -243,7 +265,7 @@
             }
             npc.reactionTime = 0;
         } else {
-            if (! this.checkSight(player, npc, map)) {
+            if (! this.checkSight(player, npc, map) && ! this.checkHearing(player, npc, map)) {
                 return false;
             }
 
@@ -463,8 +485,10 @@
     Camera.prototype.drawSpritesOnMap = function (sprites) {
         for (let i = 0; i < sprites.length; i++){
             this.drawRect(sprites[i].x * this.hMapScaleRatio + this.mapWinLeftX, sprites[i].y * this.vMapScaleRatio + this.mapWinTopY, 5, 5, this.packColor(255, 0, 0, 255));
-            if (this.showRayOnMap && sprites[i].ray) {
-                this.drawRayOnMap(sprites[i].ray);
+            if (this.showRayOnMap && sprites[i].rays) {
+				for (let j = 0; j < sprites[i].rays.length; j++) {
+					this.drawRayOnMap(sprites[i].rays[j]);
+				}
             }
         }
     };

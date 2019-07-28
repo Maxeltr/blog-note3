@@ -510,11 +510,11 @@ class UserService implements UserServiceInterface
             return $this;
 	}
 
-	$this->sessionContainer->locale = $lang;
+	$this->sessionContainer->locale = strtolower($lang);
 
 	if ($this->authService->hasIdentity()) {
             $currentUser = $this->authService->getIdentity();
-            $currentUser->setLocale($lang);
+            $currentUser->setLocale(strtolower($lang));
             $this->mapper->updateUser($currentUser);
         }
 
