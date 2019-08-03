@@ -552,7 +552,7 @@ class ZendDbSqlMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findPostsByPublishDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null)
+    public function findPostsByPublishDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null, $hideUnpublished = true)
     {
         $parameters = array(
             'group' => array(
@@ -573,6 +573,10 @@ class ZendDbSqlMapper implements MapperInterface
             $parameters['lessThanOrEqualTo'] = array(
                 'published' => $to->format($this->config->defaults->dateTimeFormat)
             );
+        }
+
+        if($hideUnpublished === true) {
+            $parameters['where']['isPublished'] = true;
         }
 
         $parameters['where']['isPublished'] = true;
