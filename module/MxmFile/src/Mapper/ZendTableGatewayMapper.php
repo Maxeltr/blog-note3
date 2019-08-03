@@ -40,6 +40,7 @@ use MxmFile\Model\FileInterface;
 use MxmUser\Model\UserInterface;
 use Zend\Db\Sql\Where;
 use MxmFile\Exception\DataBaseErrorException;
+use MxmFile\Exception\RuntimeException;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
