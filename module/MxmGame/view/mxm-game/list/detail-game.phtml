@@ -9,14 +9,17 @@
         <div class="col-sm-8">
             <div>
                 <h2><?php echo $this->escapeHtml($game->getTitle()); ?></h2>
-                <img class="img-responsive" style="display: none" id = "textures" src="<?php echo $this->url('loadTextures',
-                    array('action' => 'loadTextures', 'id' => '1', )); ?>" />
-                <img class="img-responsive" style="display: none" id = "sky_daytime_blue" src="<?php echo $this->url('loadTextures',
-                    array('action' => 'loadTextures', 'id' => '2', )); ?>" />
+                
                 <div>
-                    <canvas id = "canvas" style = "border: ridge;"></canvas>
+                    <canvas id = "map" style = "border: ridge;"></canvas>
                 </div>
-                <?php echo $this->headScript()->prependFile($this->basePath('js/p3D.js')); ?>
+                <div>
+                    <canvas id = "3DView" style = "border: ridge;"></canvas>
+                </div>
+                <?php $this->headScript()->setAllowArbitraryAttributes(true);
+                    echo $this->headScript()->prependFile($this->basePath('js/p3D2/public_html/lib/require.js'), null, ['data-main' => 'http://blog-note3/js/p3D2/public_html/app.js']);
+                ?>
+                <?php //echo $this->headScript()->prependFile($this->basePath('js/p3D.js')); ?>
                 <p>
                     <?php echo $this->translate('Description'); ?>: <?php echo $this->escapeHtml($game->getDescription()); ?>
                 </p>

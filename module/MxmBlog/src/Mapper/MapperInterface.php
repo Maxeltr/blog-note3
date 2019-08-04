@@ -147,7 +147,7 @@ interface MapperInterface
      *
      * @return Paginator
      */
-    public function findPostsByPublishDate(\DateTimeInterface $since, \DateTimeInterface $to);
+    public function findPostsByPublishDate(\DateTimeInterface $since, \DateTimeInterface $to, $hideUnpublished = true);
 
     /**
      * Найти даты, когда были публикации и подсчитать кол-во публикаций.

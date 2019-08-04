@@ -68,12 +68,12 @@ class ArchiveDates extends AbstractHelper
 
                 $this->formatter->setPattern('Y');
                 $year = $this->formatter->format(
-                    \DateTime::createFromFormat('Y|', $result['year'])
+                    \DateTime::createFromFormat('Y', $result['year'])
                 );
 
                 $this->formatter->setPattern('LLLL');
                 $month = $this->formatter->format(
-                    \DateTime::createFromFormat('m|', $result['month'])
+                    \DateTime::createFromFormat('m', $result['month'])
                 );
 
                 $archive[$year][$key]['monthNum'] = $result['month'];
