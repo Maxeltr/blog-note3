@@ -52,9 +52,10 @@ class Module implements BootstrapListenerInterface, ConfigProviderInterface
     {
         $message = '';
         $request = new Request();
+        $message .= "Remote address: " . $request->getServer('REMOTE_ADDR') . "\n";
         $requestUri = $request->getServer('REQUEST_URI', null);
         if (isset($requestUri)) {
-            $message = "Request URI: " . $requestUri . "\n";
+            $message .= "Request URI: " . $requestUri . "\n";
         }
 
         $message .= "Controller: " . $event->getController() . "\n";

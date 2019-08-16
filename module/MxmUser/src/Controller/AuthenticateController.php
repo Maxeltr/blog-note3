@@ -123,11 +123,17 @@ class AuthenticateController extends AbstractActionController
                     }
                 } elseif ($resultCode === Result::FAILURE_IDENTITY_NOT_FOUND) {
                     $loginError = 'Incorrect login and/or password';
+                    $remoteAddr = $request->getServer('REMOTE_ADDR');
+                    $this->logger->err('FAILURE_IDENTITY_NOT_FOUND. ' . 'Remote adress ' . $remoteAddr);
                 } else {
                     $loginError = 'Incorrect login and/or password';
+                    $remoteAddr = $request->getServer('REMOTE_ADDR');
+                    $this->logger->err('Unknown authenticate error. ' . 'Remote adress ' . $remoteAddr);
                 }
             } else {
                 $loginError = true;
+                $remoteAddr = $request->getServer('REMOTE_ADDR');
+                $this->logger->err('Form data is invalid. ' . 'Remote adress ' . $remoteAddr);
             }
 
         }
