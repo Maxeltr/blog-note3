@@ -26,21 +26,21 @@
 
 namespace MxmFile\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Config\Config;
-use Zend\Log\Logger;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Config\Config;
+use Laminas\Log\Logger;
 use MxmFile\Service\DownloadServiceInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class DownloadController  extends AbstractActionController
 {
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

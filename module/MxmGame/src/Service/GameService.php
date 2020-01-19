@@ -26,19 +26,19 @@
 
 namespace MxmGame\Service;
 
-use Zend\Log\Logger;
-use Zend\Config\Config;
-use Zend\Paginator\Paginator;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Paginator\Paginator;
+use Laminas\Authentication\AuthenticationService;
 use MxmGame\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Adapter\ArrayAdapter;
 use MxmGame\Mapper\MapperInterface;
 
 class GameService implements GameServiceInterface
 {
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
@@ -48,12 +48,12 @@ class GameService implements GameServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

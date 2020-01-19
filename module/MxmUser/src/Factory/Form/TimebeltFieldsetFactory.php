@@ -26,14 +26,14 @@
 
 namespace MxmUser\Factory\Form;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\TimebeltFieldset;
 use \DateTimeZone;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use Interop\Container\ContainerInterface;
 use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 use MxmDateTime\Service\DateTimeService;
 
 class TimebeltFieldsetFactory implements FactoryInterface

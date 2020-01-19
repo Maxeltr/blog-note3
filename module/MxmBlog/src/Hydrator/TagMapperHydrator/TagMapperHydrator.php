@@ -27,8 +27,8 @@
 namespace MxmBlog\Hydrator\TagMapperHydrator;
 
 use MxmBlog\Model\TagInterface;
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Hydrator\HydratorInterface;
 
 class TagMapperHydrator extends ClassMethods implements HydratorInterface
 {
@@ -64,7 +64,7 @@ class TagMapperHydrator extends ClassMethods implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof TagInterface) {
             return array();

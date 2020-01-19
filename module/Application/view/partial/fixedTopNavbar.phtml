@@ -10,7 +10,7 @@
             <a href="<?php echo $this->url('home'); ?>" class="navbar-brand"><?php echo $this->translate('Home') ?></a>
         </div>
         <div class="navbar-collapse collapse" id="navbar">
-            <?php echo $this->navigation('Zend\Navigation\changeLanguageMenu')->menu()->setUlClass('nav navbar-nav'); ?>
+            <?php echo $this->navigation('Laminas\Navigation\changeLanguageMenu')->menu()->setUlClass('nav navbar-nav'); ?>
             <ul class="nav navbar-nav navbar-right">
                 <?php $user = $this->identity();
                     if ($user) {

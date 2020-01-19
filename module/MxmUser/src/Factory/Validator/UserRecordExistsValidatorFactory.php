@@ -27,14 +27,14 @@
 //namespace MxmUser\Factory\Validator;
 //
 //use Interop\Container\ContainerInterface;
-//use Zend\ServiceManager\Factory\FactoryInterface;
+//use Laminas\ServiceManager\Factory\FactoryInterface;
 //use MxmUser\Validator\UserRecordExistsValidator;
 //
 //class UserRecordExistsValidatorFactory implements FactoryInterface
 //{
 //    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
 //    {
-//        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+//        $dbAdapter = $container->get('Laminas\Db\Adapter\Adapter');
 //        $validator = new UserRecordExistsValidator([
 //            'table'   => 'user',
 //            'field'   => 'email',

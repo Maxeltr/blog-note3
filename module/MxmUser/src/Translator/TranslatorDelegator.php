@@ -27,10 +27,10 @@
 namespace MxmUser\Translator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
-use Zend\I18n\Translator\Resources;
-use Zend\Config\Config;
-use Zend\Authentication\AuthenticationService;
+use Laminas\ServiceManager\Factory\DelegatorFactoryInterface;
+use Laminas\I18n\Translator\Resources;
+use Laminas\Config\Config;
+use Laminas\Authentication\AuthenticationService;
 
 class TranslatorDelegator implements DelegatorFactoryInterface
 {

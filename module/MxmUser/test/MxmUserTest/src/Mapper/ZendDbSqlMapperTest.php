@@ -27,23 +27,23 @@
 namespace MxmUserTest\Mapper;
 
 use MxmUser\Mapper\ZendDbSqlMapper;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Adapter\Adapter;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Config\Config;
-use Zend\Db\Adapter\Driver\StatementInterface;
-use Zend\Db\Adapter\Driver\Pdo\Statement;
-use Zend\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Config\Config;
+use Laminas\Db\Adapter\Driver\StatementInterface;
+use Laminas\Db\Adapter\Driver\Pdo\Statement;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use MxmUser\Model\User;
 use MxmUser\Model\UserInterface;
 use Prophecy\Argument;
-use Zend\Db\Adapter\Platform\Mysql;
-use Zend\Db\Adapter\DriverInterface;
-use Zend\Db\Adapter\Driver\Pdo\Pdo;
-use Zend\Db\Sql\Sql;
+use Laminas\Db\Adapter\Platform\Mysql;
+use Laminas\Db\Adapter\DriverInterface;
+use Laminas\Db\Adapter\Driver\Pdo\Pdo;
+use Laminas\Db\Sql\Sql;
 use MxmUser\Exception\RecordNotFoundUserException;
-use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
+use Laminas\Paginator\Adapter\ArrayAdapter;
 use MxmUser\Exception\DataBaseErrorUserException;
 
 class ZendDbSqlMapperTest extends \PHPUnit\Framework\TestCase

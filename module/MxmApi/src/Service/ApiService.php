@@ -26,21 +26,21 @@
 
 namespace MxmApi\Service;
 
-use Zend\Config\Config;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Config\Config;
+use Laminas\Crypt\Password\Bcrypt;
 use MxmUser\Model\UserInterface;
 use MxmUser\Service\DateTimeInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmApi\Exception\InvalidArgumentException;
 use MxmApi\Exception\AlreadyExistsException;
-use Zend\Validator\Db\RecordExists;
+use Laminas\Validator\Db\RecordExists;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
 use MxmApi\Model\ClientInterface;
-use Zend\Log\Logger;
+use Laminas\Log\Logger;
 use MxmApi\Exception\RuntimeException;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 
 class ApiService implements ApiServiceInterface
@@ -51,7 +51,7 @@ class ApiService implements ApiServiceInterface
     protected $datetime;
 
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
@@ -61,17 +61,17 @@ class ApiService implements ApiServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Crypt\Password\Bcrypt
+     * @var Laminas\Crypt\Password\Bcrypt
      */
     protected $bcrypt;
 
     /**
-     * @var Zend\Validator\Db\RecordExists
+     * @var Laminas\Validator\Db\RecordExists
      */
     protected $clientExistsValidator;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $grantTypes;
 
@@ -91,12 +91,12 @@ class ApiService implements ApiServiceInterface
     protected $fileMapper;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
     /**
-     * @var Zend\Http\Response
+     * @var Laminas\Http\Response
      */
     protected $response;
 

@@ -27,12 +27,12 @@
 namespace MxmBlog\Factory\View\Helper;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\View\Helper\ArchiveDates;
 use MxmBlog\Date;
-use Zend\Config\Config;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Config\Config;
+use Laminas\Authentication\AuthenticationService;
 use MxmUser\Model\UserInterface;
 
 class ArchiveDatesFactory implements FactoryInterface

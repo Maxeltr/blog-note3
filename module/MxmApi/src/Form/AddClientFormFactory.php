@@ -27,10 +27,10 @@
 namespace MxmApi\Form;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\InputFilter\InputFilter;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmApi\Model\Client;
 use MxmApi\Hydrator\ClientFormHydrator;
 

@@ -27,11 +27,11 @@
 namespace MxmAdmin\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Config\Config;
-use Zend\Http\Response;
+use Laminas\Config\Config;
+use Laminas\Http\Response;
 use MxmAdmin\Logger;
 use MxmFile\Mapper\DirectoryMapper;
 

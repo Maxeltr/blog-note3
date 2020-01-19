@@ -26,7 +26,7 @@
 
 namespace MxmBlog\Model;
 
-use Zend\Tag\ItemList;
+use Laminas\Tag\ItemList;
 use MxmUser\Model\UserInterface;
 use DateTimeInterface;
 
@@ -119,7 +119,7 @@ interface PostInterface
     /**
      * Возвращает теги
      *
-     * @return Zend\Tag\ItemList
+     * @return Laminas\Tag\ItemList
      */
     public function getTags();
 
@@ -213,7 +213,7 @@ interface PostInterface
 
     /**
      * Устанавливает теги.
-     * @param array|Zend\Tag\ItemList $tags объект ItemList
+     * @param array|Laminas\Tag\ItemList $tags объект ItemList
      *
      * @return $this
      * @throw \InvalidArgumentException

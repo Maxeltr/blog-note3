@@ -1,8 +1,8 @@
 <?php
 namespace MxmBlog;
 
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\Router\Http\Literal;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\Router\Http\Literal;
 
 return [
     'mxm_blog' => [
@@ -43,7 +43,7 @@ return [
             Model\Tag::class => Factory\Model\TagFactory::class,
             Model\Category::class => Factory\Model\CategoryFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
-            //\Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            //\Laminas\Db\Adapter\Adapter::class => \Laminas\Db\Adapter\AdapterServiceFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
         ],
         'invokables' => [
@@ -58,7 +58,7 @@ return [
             View\Helper\ArchiveDates::class => Factory\View\Helper\ArchiveDatesFactory::class,
         ],
         'invokables' => [
-            //'translate' => \Zend\I18n\View\Helper\Translate::class
+            //'translate' => \Laminas\I18n\View\Helper\Translate::class
         ]
     ],
     'filters' => [

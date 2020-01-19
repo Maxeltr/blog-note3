@@ -27,14 +27,14 @@
 namespace MxmBlog\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\Aggregate\AggregateHydrator;
 use MxmBlog\Hydrator\PostFormHydrator\TagsHydrator;
 use MxmBlog\Hydrator\PostFormHydrator\CategoryHydrator;
 use MxmBlog\Hydrator\PostFormHydrator\PostHydrator;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
-use Zend\Tag\ItemList;
+use Laminas\Tag\ItemList;
 
 class PostFormHydratorFactory implements FactoryInterface
 {

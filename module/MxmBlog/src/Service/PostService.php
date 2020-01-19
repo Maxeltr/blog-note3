@@ -32,14 +32,14 @@ use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
 use DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmUser\Model\UserInterface;
-use Zend\Validator\Db\RecordExists;
-use Zend\Tag\ItemList;
+use Laminas\Validator\Db\RecordExists;
+use Laminas\Tag\ItemList;
 use MxmBlog\Exception\InvalidArgumentBlogException;
-use Zend\Config\Config;
-use Zend\Paginator\Paginator;
+use Laminas\Config\Config;
+use Laminas\Paginator\Paginator;
 use DateTimeImmutable;
 
 class PostService implements PostServiceInterface
@@ -70,12 +70,12 @@ class PostService implements PostServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
@@ -232,7 +232,7 @@ class PostService implements PostServiceInterface
 
         if(!$itemList instanceof ItemList) {
             throw new InvalidArgumentBlogException(sprintf(
-                'Tags property of PostInterface should contain Zend\Tag\ItemList "%s"',
+                'Tags property of PostInterface should contain Laminas\Tag\ItemList "%s"',
                 (is_object($itemList) ? get_class($itemList) : gettype($itemList))
             ));
         }
@@ -480,7 +480,7 @@ class PostService implements PostServiceInterface
      */
     public function getGreeting()
     {
-        $options = \Zend\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
+        $options = \Laminas\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
 
         return $options;
     }
@@ -512,12 +512,12 @@ class PostService implements PostServiceInterface
         $whitelist = ['caption', 'message'];
         $greeting = array_intersect_key($greeting, array_flip($whitelist));
 
-        $result = \Zend\Config\Factory::toFile($this->config->mxm_blog->optionFilePath, ['greeting' => $greeting]);
+        $result = \Laminas\Config\Factory::toFile($this->config->mxm_blog->optionFilePath, ['greeting' => $greeting]);
         if ($result === false) {
             throw new RuntimeBlogException('Unable to save greeting.');
         }
 
-        $options = \Zend\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
+        $options = \Laminas\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
 
         return $options;
     }

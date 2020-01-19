@@ -28,7 +28,7 @@ namespace MxmBlog\Factory\Model;
 
 use MxmBlog\Model\Tag;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class TagFactory implements FactoryInterface
 {

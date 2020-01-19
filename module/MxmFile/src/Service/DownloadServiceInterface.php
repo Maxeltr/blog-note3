@@ -33,7 +33,7 @@ interface DownloadServiceInterface
      *
      * @param String $id
      *
-     * @return Zend\Http\Response
+     * @return Laminas\Http\Response
      */
     public function downloadFileById($id);
 
@@ -43,7 +43,7 @@ interface DownloadServiceInterface
      * @param String $name
      * @param String $dir
      *
-     * @return Zend\Http\Response
+     * @return Laminas\Http\Response
      */
     public function downloadFileFromDir($name, $dir);
 }

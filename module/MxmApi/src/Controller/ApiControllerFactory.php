@@ -27,12 +27,12 @@
 namespace MxmApi\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmApi\Form\AddClientForm;
 use MxmApi\Service\ApiService;
-use Zend\Log\Logger;
-use Zend\Config\Config;
-use Zend\Log\Writer\Stream;
+use Laminas\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Log\Writer\Stream;
 use MxmUser\Service\UserServiceInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 

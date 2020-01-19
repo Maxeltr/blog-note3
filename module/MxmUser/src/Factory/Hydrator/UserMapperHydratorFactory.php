@@ -27,12 +27,12 @@
 namespace MxmUser\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\Aggregate\AggregateHydrator;
 use MxmUser\Hydrator\UserMapperHydrator\UserHydrator;
 use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
 use MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmUser\Date;
 
 class UserMapperHydratorFactory implements FactoryInterface

@@ -27,9 +27,9 @@
 namespace MxmBlog\View\Helper;
 
 use MxmBlog\Mapper\MapperInterface;
-use Zend\View\Helper\AbstractHelper;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Validator\Date;
+use Laminas\Config\Config;
 
 class ArchiveDates extends AbstractHelper
 {

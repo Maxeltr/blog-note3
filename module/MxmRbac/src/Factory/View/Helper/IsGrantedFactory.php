@@ -27,7 +27,7 @@
 namespace MxmRbac\Factory\View\Helper;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmRbac\Service\AuthorizationServiceInterface;
 use MxmRbac\View\Helper\IsGranted;
 

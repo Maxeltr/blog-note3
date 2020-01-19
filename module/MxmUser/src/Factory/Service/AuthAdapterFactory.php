@@ -27,7 +27,7 @@
 namespace MxmUser\Factory\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Service\Authentication\Adapter\AuthAdapter;
 

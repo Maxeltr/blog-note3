@@ -30,7 +30,7 @@ use MxmUser\Controller\WriteController;
 use MxmUser\Form\EditUserForm;
 use MxmUser\Form\RegisterUserForm;
 use MxmUser\Form\EditPasswordForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Form\EditEmailForm;

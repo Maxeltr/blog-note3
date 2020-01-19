@@ -27,10 +27,10 @@
 namespace MxmRbac\Factory\Guard;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmRbac\Service\AuthorizationServiceInterface;
 use MxmRbac\Guard\RouteGuard;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class RouteGuardFactory implements FactoryInterface
 {

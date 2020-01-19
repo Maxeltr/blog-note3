@@ -26,15 +26,15 @@
 
 namespace MxmApi\Form;
 
-use Zend\Config\Config;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Config\Config;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Hydrator\ReflectionHydrator;
 use MxmApi\Model\ClientInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class AddClientForm extends Form implements InputFilterProviderInterface
 {
@@ -89,7 +89,7 @@ class AddClientForm extends Form implements InputFilterProviderInterface
         ]);
 
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'grant_types',
             'attributes' => [
                 'type' => 'select',

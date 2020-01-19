@@ -27,11 +27,11 @@
 namespace MxmRbac\Factory\Assertion;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmRbac\Assertion\AssertionPluginManager;
 use MxmRbac\Assertion\MustBeAuthorAssertion;
 use MxmRbac\Assertion\AssertUserIdMatches;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use MxmRbac\Assertion\MustBeOwnerAssertion;
 
 class AssertionPluginManagerFactory implements FactoryInterface

@@ -29,10 +29,10 @@ namespace MxmUserTest\Hydrator\UserMapperHydrator;
 use MxmUser\Model\User;
 use MxmUser\Model\UserInterface;
 use \DateTimeInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use MxmUser\Hydrator\UserMapperHydrator\DatesHydrator;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use Laminas\Validator\Date;
+use Laminas\Config\Config;
 use MxmUser\Exception\InvalidArgumentUserException;
 
 class DatesHydratorTest extends \PHPUnit\Framework\TestCase

@@ -41,7 +41,7 @@ interface MapperInterface
     public function insertGame($game);
 
     /**
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      */
     public function findAllGames();
 

@@ -26,10 +26,10 @@
 
 namespace MxmBlog\Factory\Form;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Form\TagFieldset;
 use MxmBlog\Model\TagInterface;
-use Zend\Hydrator\ClassMethods;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
 use Interop\Container\ContainerInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 

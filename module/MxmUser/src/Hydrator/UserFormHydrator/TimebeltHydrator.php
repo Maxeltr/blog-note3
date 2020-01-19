@@ -27,9 +27,9 @@
 namespace MxmUser\Hydrator\UserFormHydrator;
 
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use \DateTimeZone;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class TimebeltHydrator implements HydratorInterface
 {
@@ -53,7 +53,7 @@ class TimebeltHydrator implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof UserInterface) {
             return [];

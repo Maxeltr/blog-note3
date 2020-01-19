@@ -26,8 +26,8 @@
 
 namespace MxmRbac\Assertion;
 
-use Zend\Permissions\Rbac\AssertionInterface;
-use Zend\Permissions\Rbac\Rbac;
+use Laminas\Permissions\Rbac\AssertionInterface;
+use Laminas\Permissions\Rbac\Rbac;
 use MxmUser\Model\UserInterface;
 
 class MustBeOwnerAssertion implements AssertionInterface

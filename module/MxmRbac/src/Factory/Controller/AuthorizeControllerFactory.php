@@ -27,7 +27,7 @@
 namespace MxmRbac\Factory\Controller;
 
 use MxmRbac\Controller\AuthorizeController;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
 class AuthorizeControllerFactory implements FactoryInterface

@@ -27,12 +27,12 @@
 namespace MxmUserTest\Form;
 
 use MxmUser\Form\EditEmailForm;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
-use Zend\InputFilter\Input;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\InputFilter\Input;
 use MxmUser\Validator\IdenticalStrings;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 class EditEmailFormTest extends \PHPUnit\Framework\TestCase
 {

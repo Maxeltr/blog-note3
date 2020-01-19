@@ -26,8 +26,8 @@
 
 namespace MxmApi\V1\Rest\User;
 
-use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\Rest\AbstractResourceListener;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 

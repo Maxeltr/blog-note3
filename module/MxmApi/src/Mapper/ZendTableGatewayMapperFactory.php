@@ -27,12 +27,12 @@
 namespace MxmApi\Mapper;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\HydratingResultSet;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Config\Config;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\ResultSet\HydratingResultSet;
 use MxmApi\Model\Client;
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Db\TableGateway\TableGateway;
 use MxmApi\Hydrator\ClientMapperHydrator;
 use MxmApi\Logger;
 

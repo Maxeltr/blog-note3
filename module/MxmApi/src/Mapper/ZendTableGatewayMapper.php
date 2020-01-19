@@ -26,43 +26,43 @@
 
 namespace MxmApi\Mapper;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Config\Config;
-use Zend\Paginator\Paginator;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Config\Config;
+use Laminas\Paginator\Paginator;
 use MxmApi\Exception\RecordNotFoundException;
 use MxmApi\Exception\InvalidArgumentException;
 use MxmApi\Exception\DataBaseErrorException;
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Paginator\Adapter\DbTableGateway;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Paginator\Adapter\DbTableGateway;
 use MxmApi\Model\ClientInterface;
-use Zend\Db\Sql\Where;
-use Zend\Log\Logger;
+use Laminas\Db\Sql\Where;
+use Laminas\Log\Logger;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
     /**
-     * @var Zend\Db\TableGateway\TableGateway
+     * @var Laminas\Db\TableGateway\TableGateway
      */
     protected $oauthClientsTableGateway;
 
     /**
-     * @var Zend\Db\TableGateway\TableGateway
+     * @var Laminas\Db\TableGateway\TableGateway
      */
     protected $oauthAccessTokensTableGateway;
 
     /**
-     * @var Zend\Hydrator\HydratorInterface
+     * @var Laminas\Hydrator\HydratorInterface
      */
     protected $clientHydrator;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

@@ -25,14 +25,14 @@
  */
 namespace MxmFile\Mapper;
 
-use Zend\Config\Config;
-use Zend\Log\Logger;
-use Zend\Http\Response;
-use Zend\Filter\StaticFilter;
-use Zend\Paginator\Paginator;
-use Zend\Stdlib\ErrorHandler;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Paginator\Adapter\ArrayAdapter;
+use Laminas\Config\Config;
+use Laminas\Log\Logger;
+use Laminas\Http\Response;
+use Laminas\Filter\StaticFilter;
+use Laminas\Paginator\Paginator;
+use Laminas\Stdlib\ErrorHandler;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Paginator\Adapter\ArrayAdapter;
 use MxmFile\Model\File;
 use MxmFile\Exception\RuntimeException;
 use MxmFile\Exception\InvalidArgumentException;
@@ -45,22 +45,22 @@ class DirectoryMapper
     protected $datetime;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
     /**
-     * @var \Zend\Hydrator\HydratorInterface
+     * @var \Laminas\Hydrator\HydratorInterface
      */
     protected $hydrator;
 
     /**
-     * @var Zend\Http\Response
+     * @var Laminas\Http\Response
      */
     protected $response;
 
@@ -131,7 +131,7 @@ class DirectoryMapper
         }
 
         foreach ($files as $file) {
-            $path = $dirPath . StaticFilter::execute($file, 'Zend\Filter\BaseName');
+            $path = $dirPath . StaticFilter::execute($file, 'Laminas\Filter\BaseName');
 
             if (!is_readable($path)) {
                 throw new RuntimeException('Path "' . $path . '" is not readable.');

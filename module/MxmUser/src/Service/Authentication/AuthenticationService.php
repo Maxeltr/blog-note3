@@ -26,10 +26,10 @@
 
 namespace MxmUser\Service\Authentication;
 
-use Zend\Authentication\AuthenticationService as ZendAuthenticationService;
+use Laminas\Authentication\AuthenticationService as LaminasAuthenticationService;
 use MxmUser\Exception\NotAuthenticatedUserException;
 
-class AuthenticationService extends ZendAuthenticationService
+class AuthenticationService extends LaminasAuthenticationService
 {
     /**
      * Returns true if an identity is available from storage. Throw exception if an identity is not available.

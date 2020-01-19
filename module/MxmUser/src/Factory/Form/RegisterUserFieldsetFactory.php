@@ -30,10 +30,10 @@ use MxmUser\Form\RegisterUserFieldset;
 use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
-use Zend\Config\Config;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Config\Config;
 
 class RegisterUserFieldsetFactory implements FactoryInterface
 {

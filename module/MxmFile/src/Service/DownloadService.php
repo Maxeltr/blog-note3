@@ -26,21 +26,21 @@
 
 namespace MxmFile\Service;
 
-use Zend\Log\Logger;
-use Zend\Config\Config;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmFile\Mapper\MapperInterface;
 use MxmFile\Mapper\DirectoryMapper;
 use MxmFile\Exception\RuntimeException;
 use MxmFile\Exception\InvalidArgumentException;
-use Zend\Filter\StaticFilter;
+use Laminas\Filter\StaticFilter;
 
 class DownloadService implements DownloadServiceInterface
 {
 
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
@@ -50,12 +50,12 @@ class DownloadService implements DownloadServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
@@ -111,7 +111,7 @@ class DownloadService implements DownloadServiceInterface
                 (is_object($name) ? get_class($name) : gettype($name))
             ));
         }
-        $name = StaticFilter::execute($name, 'Zend\Filter\BaseName');
+        $name = StaticFilter::execute($name, 'Laminas\Filter\BaseName');
 
         if (! is_string($dir)) {
             throw new InvalidArgumentException(sprintf(
@@ -119,7 +119,7 @@ class DownloadService implements DownloadServiceInterface
                 (is_object($dir) ? get_class($dir) : gettype($dir))
             ));
         }
-        $dir = StaticFilter::execute($dir, 'Zend\Filter\BaseName');
+        $dir = StaticFilter::execute($dir, 'Laminas\Filter\BaseName');
 
         $this->authenticationService->checkIdentity();
 

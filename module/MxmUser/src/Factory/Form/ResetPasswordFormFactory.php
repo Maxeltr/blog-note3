@@ -27,11 +27,11 @@
 namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\ResetPasswordForm;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class ResetPasswordFormFactory implements FactoryInterface
 {

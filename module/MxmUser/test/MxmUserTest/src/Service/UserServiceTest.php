@@ -27,16 +27,16 @@
 namespace MxmUserTest\Service;
 
 use MxmUser\Mapper\MapperInterface;
-//use Zend\Authentication\AuthenticationService;
+//use Laminas\Authentication\AuthenticationService;
 use MxmUser\Service\Authentication\AuthenticationService;
-use Zend\Validator\Db\RecordExists;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
+use Laminas\Validator\Db\RecordExists;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\NotEmpty;
 use MxmUser\Exception\RuntimeUserException;
 use MxmUser\Exception\ExpiredUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\InvalidArgumentUserException;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
@@ -44,13 +44,13 @@ use MxmRbac\Service\AuthorizationService;
 use Prophecy\Argument;
 use MxmUser\Service\UserService;
 use MxmUser\Model\User;
-use Zend\Authentication\Storage\StorageInterface;
+use Laminas\Authentication\Storage\StorageInterface;
 use MxmUser\Service\Authentication\Adapter\AuthAdapter;
-use Zend\Authentication\Result;
+use Laminas\Authentication\Result;
 use MxmMail\Service\MailService;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Session\Container as SessionContainer;
 use MxmUser\Validator\IsPropertyMatchesDb;
-use Zend\Http\PhpEnvironment\Request;
+use Laminas\Http\PhpEnvironment\Request;
 use Zend\i18n\Translator\TranslatorInterface;
 use MxmRbac\Exception\NotAuthorizedException;
 
@@ -87,8 +87,8 @@ class UserServiceTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp() {
         $array = array();
-        $this->paginator = new \Zend\Paginator\Paginator(
-            new \Zend\Paginator\Adapter\ArrayAdapter($array)
+        $this->paginator = new \Laminas\Paginator\Paginator(
+            new \Laminas\Paginator\Adapter\ArrayAdapter($array)
         );
         $this->user = new User();
         $this->user->setId('1');

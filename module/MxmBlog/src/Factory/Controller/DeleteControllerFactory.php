@@ -27,7 +27,7 @@
 namespace MxmBlog\Factory\Controller;
 
 use MxmBlog\Controller\DeleteController;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmBlog\Logger;

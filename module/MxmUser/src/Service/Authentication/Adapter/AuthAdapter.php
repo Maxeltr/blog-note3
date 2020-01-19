@@ -26,9 +26,9 @@
 
 namespace MxmUser\Service\Authentication\Adapter;
 
-use Zend\Authentication\Adapter\AdapterInterface;
-use Zend\Authentication\Result;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Authentication\Adapter\AdapterInterface;
+use Laminas\Authentication\Result;
+use Laminas\Crypt\Password\Bcrypt;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 
@@ -62,8 +62,8 @@ class AuthAdapter implements AdapterInterface
     /**
      * Проверка подлинности юзера
      *
-     * @return \Zend\Authentication\Result
-     * @throws \Zend\Authentication\Adapter\Exception\ExceptionInterface
+     * @return \Laminas\Authentication\Result
+     * @throws \Laminas\Authentication\Adapter\Exception\ExceptionInterface
      */
     public function authenticate()
     {

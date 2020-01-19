@@ -27,10 +27,10 @@
 namespace MxmBlog\Factory\Mapper;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\ClassMethods;
-use Zend\Config\Config;
-use Zend\Db\Adapter\Adapter;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Config\Config;
+use Laminas\Db\Adapter\Adapter;
 use MxmBlog\Hydrator\PostMapperHydrator\PostMapperHydrator;
 use MxmBlog\Mapper\ZendDbSqlMapper;
 use MxmBlog\Hydrator\TagMapperHydrator\TagMapperHydrator;

@@ -27,7 +27,7 @@
 namespace MxmUser\Factory\Controller;
 
 use MxmUser\Controller\DeleteController;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Logger;

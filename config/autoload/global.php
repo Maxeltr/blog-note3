@@ -11,7 +11,7 @@
  * file.
  */
 
-use Zend\Navigation\Service\DefaultNavigationFactory;
+use Laminas\Navigation\Service\DefaultNavigationFactory;
 
 return [
     'defaults' => [
@@ -74,7 +74,7 @@ return [
     ],
     'service_manager' => [
         'abstract_factories' => [
-            \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
+            \Laminas\Navigation\Service\NavigationAbstractServiceFactory::class,
         ],
 //        'factories' => [
 //            'navigation' => DefaultNavigationFactory::class,

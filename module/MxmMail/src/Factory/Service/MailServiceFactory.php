@@ -27,11 +27,11 @@
 namespace MxmMail\Factory\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmMail\Logger;
 use MxmMail\Service\MailService;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Mail\Transport\Sendmail;
+use Laminas\Mail\Transport\Sendmail;
 
 class MailServiceFactory implements FactoryInterface
 {

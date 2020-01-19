@@ -27,13 +27,13 @@
 namespace MxmRbac\Service;
 
 use MxmUser\Model\UserInterface;
-use Zend\Permissions\Rbac\AssertionInterface;
-use Zend\Permissions\Rbac\RoleInterface;
-use Zend\Permissions\Rbac\Rbac;
+use Laminas\Permissions\Rbac\AssertionInterface;
+use Laminas\Permissions\Rbac\RoleInterface;
+use Laminas\Permissions\Rbac\Rbac;
 use MxmRbac\Assertion\AssertionPluginManager;
-use Zend\Config\Config;
-use Zend\Validator\InArray;
-use Zend\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Validator\InArray;
+use Laminas\Log\Logger;
 use MxmRbac\Exception\InvalidArgumentException;
 use RecursiveIteratorIterator;
 use MxmRbac\Exception\NotAuthorizedException;
@@ -46,7 +46,7 @@ class AuthorizationService implements AuthorizationServiceInterface
     protected $identity;
 
     /*
-     * @var Zend\Permissions\Rbac\Rbac
+     * @var Laminas\Permissions\Rbac\Rbac
      */
     protected $rbac;
 
@@ -56,17 +56,17 @@ class AuthorizationService implements AuthorizationServiceInterface
     protected $assertionPluginManager;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /*
-     * var Zend\Validator\InArray
+     * var Laminas\Validator\InArray
      */
     protected $inArrayValidator;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
@@ -172,7 +172,7 @@ class AuthorizationService implements AuthorizationServiceInterface
     {
         if (! is_string($objectOrName) && ! $objectOrName instanceof RoleInterface) {
             throw new InvalidArgumentException(sprintf(
-                'Expected string or implement \Zend\Permissions\Rbac\RoleInterface; received "%s"',
+                'Expected string or implement \Laminas\Permissions\Rbac\RoleInterface; received "%s"',
                 (is_object($objectOrName) ? get_class($objectOrName) : gettype($objectOrName))
             ));
         }

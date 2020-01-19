@@ -33,7 +33,7 @@
                 </p>
                 <hr>
                 <p>
-                    <?php echo $this->translate('Tags'); ?>: <?php if ($post->getTags() instanceof \Zend\Tag\ItemList) { ?>
+                    <?php echo $this->translate('Tags'); ?>: <?php if ($post->getTags() instanceof \Laminas\Tag\ItemList) { ?>
                     <?php $tags = $this->post->getTags();
                     foreach ($tags as $tag): ?>
                         <?php echo $this->escapeHtml($tag->getTitle());?>

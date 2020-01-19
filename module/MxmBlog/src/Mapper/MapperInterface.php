@@ -156,7 +156,7 @@ interface MapperInterface
      * @param int $limit Вернуть не больше чем $limit
      * @param bool $paginated Вернуть пагинатор
      *
-     * @return Zend\Db\ResultSet
+     * @return Laminas\Db\ResultSet
      */
     public function findPublishDates($group, $limit, $paginated);
 

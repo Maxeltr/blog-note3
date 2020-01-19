@@ -1,10 +1,10 @@
 <?php
 namespace MxmUser;
 
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\Session\Storage\SessionArrayStorage;
-use Zend\Session\Validator\RemoteAddr;
-use Zend\Session\Validator\HttpUserAgent;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\Session\Storage\SessionArrayStorage;
+use Laminas\Session\Validator\RemoteAddr;
+use Laminas\Session\Validator\HttpUserAgent;
 
 return [
     'mxm_user' => [
@@ -45,16 +45,16 @@ return [
             Service\UserServiceInterface::class => Service\UserService::class,
             Mapper\MapperInterface::class => Mapper\ZendDbSqlMapper::class,
             Model\UserInterface::class => Model\User::class,
-            \Zend\Authentication\AuthenticationService::class => AuthenticationService::class,
-            \Zend\i18n\Translator\TranslatorInterface::class => \Zend\I18n\Translator\Translator::class,
-            //\Zend\Validator\Translator\TranslatorInterface::class => Zend\Mvc\I18n\Translator::class
+            \Laminas\Authentication\AuthenticationService::class => AuthenticationService::class,
+            \Zend\i18n\Translator\TranslatorInterface::class => \Laminas\I18n\Translator\Translator::class,
+            //\Laminas\Validator\Translator\TranslatorInterface::class => Laminas\Mvc\I18n\Translator::class
 
         ],
         'factories' => [
             Service\UserService::class => Factory\Service\UserServiceFactory::class,
             Mapper\ZendDbSqlMapper::class => Factory\Mapper\ZendDbSqlMapperFactory::class,
             Model\User::class => Factory\Model\UserFactory::class,
-            \Zend\Db\Adapter\Adapter::class => \Zend\Db\Adapter\AdapterServiceFactory::class,
+            \Laminas\Db\Adapter\Adapter::class => \Laminas\Db\Adapter\AdapterServiceFactory::class,
             Hydrator\TimezoneFormHydrator\TimezoneFormHydrator::class => Factory\Hydrator\TimezoneFormHydratorFactory::class,
             AuthenticationService::class => Factory\Service\AuthenticationServiceFactory::class,
             Service\Authentication\Adapter\AuthAdapter::class => Factory\Service\AuthAdapterFactory::class,
@@ -62,15 +62,15 @@ return [
             Hydrator\UserFormHydrator\UserFormHydrator::class => Factory\Hydrator\UserFormHydratorFactory::class,
             Date::class => Factory\Validator\DateValidatorFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
-            \Zend\I18n\Translator\Translator::class => \Zend\I18n\Translator\TranslatorServiceFactory::class,
-            //Zend\Mvc\I18n\Translator::class => \Zend\Mvc\I18n\TranslatorFactory::class
+            \Laminas\I18n\Translator\Translator::class => \Laminas\I18n\Translator\TranslatorServiceFactory::class,
+            //Laminas\Mvc\I18n\Translator::class => \Laminas\Mvc\I18n\TranslatorFactory::class
 
         ],
         'delegators' => [
-            \Zend\I18n\Translator\Translator::class => [
+            \Laminas\I18n\Translator\Translator::class => [
                 Translator\TranslatorDelegator::class
             ],
-            \Zend\Mvc\I18n\Translator::class => [
+            \Laminas\Mvc\I18n\Translator::class => [
                 Translator\MvcTranslatorDelegator::class
             ],
 	],

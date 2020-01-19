@@ -26,11 +26,11 @@
 
 namespace MxmBlog\Factory\Form;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Form\TagForm;
-use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\ClassMethods;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class TagFormFactory implements FactoryInterface

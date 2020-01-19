@@ -271,8 +271,8 @@ interface PostServiceInterface
      *
      * @return array ['caption' => 'Hello, world!', 'message' => 'bla-bla-bla']
      *
-     * @throws Zend\Config\Exception\InvalidArgumentException
-     * @throws Zend\Config\Exception\RuntimeException
+     * @throws Laminas\Config\Exception\InvalidArgumentException
+     * @throws Laminas\Config\Exception\RuntimeException
      */
     public function getGreeting();
 
@@ -283,8 +283,8 @@ interface PostServiceInterface
      *
      * @return array ['caption' => 'Hello, world!', 'message' => 'bla-bla-bla']
      *
-     * @throws Zend\Config\Exception\InvalidArgumentException
-     * @throws Zend\Config\Exception\RuntimeException
+     * @throws Laminas\Config\Exception\InvalidArgumentException
+     * @throws Laminas\Config\Exception\RuntimeException
      * @throws MxmBlog\Exception\RuntimeBlogException
      */
     public function editGreeting($greeting);

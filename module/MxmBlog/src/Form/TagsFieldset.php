@@ -27,12 +27,12 @@
 namespace MxmBlog\Form;
 
 use MxmBlog\Model\TagInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Mapper\MapperInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class TagsFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -65,7 +65,7 @@ class TagsFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add(array(
             'name' => 'id',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'attributes' => array(
                 'type' => 'select',
                 'required' => 'required',
@@ -81,7 +81,7 @@ class TagsFieldset extends Fieldset implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */

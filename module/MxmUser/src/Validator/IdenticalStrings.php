@@ -26,7 +26,7 @@
 
 namespace MxmUser\Validator;
 
-use Zend\Validator\Identical;
+use Laminas\Validator\Identical;
 
 class IdenticalStrings extends Identical {
 

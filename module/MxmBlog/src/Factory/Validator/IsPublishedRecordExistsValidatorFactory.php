@@ -27,9 +27,9 @@
 namespace MxmBlog\Factory\Validator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidator;
-use Zend\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\Adapter;
 
 class IsPublishedRecordExistsValidatorFactory implements FactoryInterface
 {

@@ -27,7 +27,7 @@
 namespace MxmRbac\View\Helper;
 
 use MxmRbac\Service\AuthorizationServiceInterface;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class HasRole extends AbstractHelper
 {

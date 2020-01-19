@@ -26,11 +26,11 @@
 
 namespace MxmApi\Controller;
 
-use Zend\Log\Logger;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Log\Logger;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use MxmApi\Service\ApiServiceInterface;
-use Zend\Form\FormInterface;
+use Laminas\Form\FormInterface;
 use MxmApi\Exception\AlreadyExistsException;
 use MxmUser\Service\UserServiceInterface;
 use Zend\i18n\Translator\TranslatorInterface;
@@ -38,13 +38,13 @@ use Zend\i18n\Translator\TranslatorInterface;
 class ApiController extends AbstractActionController
 {
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $addClientForm;
 
@@ -54,7 +54,7 @@ class ApiController extends AbstractActionController
     protected $apiService;
 
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authService;
 

@@ -5,9 +5,9 @@
 namespace MxmUserTest\Controller;
 
 use MxmUser\Controller\ListController;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use  Zend\ServiceManager\ServiceManager;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use  Laminas\ServiceManager\ServiceManager;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Service\UserService;
 use MxmUser\Model\User;
@@ -63,8 +63,8 @@ class ListControllerTest extends AbstractHttpControllerTestCase //\PHPUnit_Frame
     public function testListUsersAction()
     {
 //        $array = array();
-//        $paginator = new \Zend\Paginator\Paginator(
-//                new \Zend\Paginator\Adapter\ArrayAdapter($array)
+//        $paginator = new \Laminas\Paginator\Paginator(
+//                new \Laminas\Paginator\Adapter\ArrayAdapter($array)
 //            );
 //
 //        $userServiceMock = $this->getMockBuilder('MxmUser\Service\UserServiceInterface')
@@ -128,8 +128,8 @@ class ListControllerTest extends AbstractHttpControllerTestCase //\PHPUnit_Frame
         $this->userService = $this->prophesize(UserServiceInterface::class);
 
         $array = array();
-        $paginator = new \Zend\Paginator\Paginator(
-            new \Zend\Paginator\Adapter\ArrayAdapter($array)
+        $paginator = new \Laminas\Paginator\Paginator(
+            new \Laminas\Paginator\Adapter\ArrayAdapter($array)
         );
 	$this->userService->findAllUsers()->willReturn($paginator);
 

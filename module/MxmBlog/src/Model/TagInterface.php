@@ -26,7 +26,7 @@
 
 namespace MxmBlog\Model;
 
-use Zend\Tag\TaggableInterface;
+use Laminas\Tag\TaggableInterface;
 
 interface TagInterface extends TaggableInterface
 {

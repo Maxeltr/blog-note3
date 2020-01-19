@@ -27,10 +27,10 @@
 namespace MxmGame\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmGame\Logger;
 use MxmGame\Mapper\MapperInterface;
 

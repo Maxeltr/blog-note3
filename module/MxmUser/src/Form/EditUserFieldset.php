@@ -26,14 +26,14 @@
 
 namespace MxmUser\Form;
 
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -85,7 +85,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 
         if ($this->authorizationService->isGranted('change.role')) {
             $this->add([
-                'type' => 'Zend\Form\Element\Select',
+                'type' => 'Laminas\Form\Element\Select',
                 'name' => 'role',
                 'attributes' => [
                     'type' => 'select',
@@ -101,7 +101,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'localeId',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'attributes' => [
                 'type' => 'select',
                 'required' => 'required',
@@ -127,7 +127,7 @@ class EditUserFieldset extends Fieldset implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */

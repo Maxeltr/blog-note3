@@ -26,7 +26,7 @@
 
 namespace MxmRbac\Assertion;
 
-use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractPluginManager;
 
 class AssertionPluginManager extends AbstractPluginManager
 {

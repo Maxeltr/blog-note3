@@ -26,35 +26,35 @@
 
 namespace MxmMail\Service;
 
-use Zend\Log\LoggerInterface;
-use Zend\Mail\Message as MailMessage;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mail\Transport\Sendmail as SendMailTransport;
-use Zend\Mime\Part as MimePart;
-use Zend\Mail\Address\AddressInterface;
-use Zend\Mail\AddressList;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mail\Transport\TransportInterface;
+use Laminas\Log\LoggerInterface;
+use Laminas\Mail\Message as MailMessage;
+use Laminas\Mime\Message as MimeMessage;
+use Laminas\Mail\Transport\Sendmail as SendMailTransport;
+use Laminas\Mime\Part as MimePart;
+use Laminas\Mail\Address\AddressInterface;
+use Laminas\Mail\AddressList;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mail\Transport\TransportInterface;
 
 class MailService
 {
     /*
-     * @var Zend\Log\LoggerInterface
+     * @var Laminas\Log\LoggerInterface
      */
     protected $logger;
 
     /*
-     * @var Zend\Mime\Part
+     * @var Laminas\Mime\Part
      */
     protected $mimePart;
 
     /*
-     * @var Zend\Mime\Message
+     * @var Laminas\Mime\Message
      */
     protected $body;
 
     /*
-     * @var Zend\Mail\Message
+     * @var Laminas\Mail\Message
      */
     protected $mailMessage;
 
@@ -69,12 +69,12 @@ class MailService
     protected $subject;
 
     /*
-     * @var Zend\Mail\AddressList
+     * @var Laminas\Mail\AddressList
      */
     protected $from;
 
     /*
-     * @var Zend\Mail\AddressList
+     * @var Laminas\Mail\AddressList
      */
     protected $to;
 

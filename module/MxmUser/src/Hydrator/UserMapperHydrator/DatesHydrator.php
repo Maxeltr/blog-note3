@@ -28,9 +28,9 @@ namespace MxmUser\Hydrator\UserMapperHydrator;
 
 use MxmUser\Model\UserInterface;
 use \DateTimeInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Validator\Date;
+use Laminas\Config\Config;
 use DateTimeImmutable;
 
 class DatesHydrator implements HydratorInterface
@@ -69,7 +69,7 @@ class DatesHydrator implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof UserInterface) {
             return array();

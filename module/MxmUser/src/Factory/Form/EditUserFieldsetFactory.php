@@ -30,11 +30,11 @@ use MxmUser\Form\EditUserFieldset;
 use MxmUser\Model\UserInterface;
 use Interop\Container\ContainerInterface;
 use MxmUser\Hydrator\UserFormHydrator\UserFormHydrator;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class EditUserFieldsetFactory implements FactoryInterface
 {

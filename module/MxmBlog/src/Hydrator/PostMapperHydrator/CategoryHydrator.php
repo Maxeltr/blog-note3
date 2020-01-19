@@ -28,8 +28,8 @@ namespace MxmBlog\Hydrator\PostMapperHydrator;
 
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Hydrator\HydratorInterface;
 
 class CategoryHydrator extends ClassMethods implements HydratorInterface
 {
@@ -66,7 +66,7 @@ class CategoryHydrator extends ClassMethods implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof PostInterface) {
             return array();

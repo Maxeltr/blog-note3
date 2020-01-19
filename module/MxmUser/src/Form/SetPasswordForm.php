@@ -26,11 +26,11 @@
 
 namespace MxmUser\Form;
 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class SetPasswordForm extends Form implements InputFilterProviderInterface
 {
@@ -82,11 +82,11 @@ class SetPasswordForm extends Form implements InputFilterProviderInterface
         ]);
 
         $this->add([
-            'type' => 'Zend\Form\Element\Captcha',
+            'type' => 'Laminas\Form\Element\Captcha',
             'name' => 'setPassword_captcha',
             'options' => [
                 'label' => $this->translator->translate('Please verify you are human'),
-                'captcha' => new \Zend\Captcha\Figlet(),
+                'captcha' => new \Laminas\Captcha\Figlet(),
             ],
         ]);
 

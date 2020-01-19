@@ -27,19 +27,19 @@
 namespace MxmUser\Factory\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Validator\Db\RecordExists;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Validator\Db\RecordExists;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\NotEmpty;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Service\UserService;
-use Zend\Authentication\AuthenticationService;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
 use Zend\i18n\Translator\TranslatorInterface;
 use MxmUser\Validator\IsPropertyMatchesDb;
-use Zend\Http\PhpEnvironment\Request;
+use Laminas\Http\PhpEnvironment\Request;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -51,7 +51,7 @@ class UserServiceFactory implements FactoryInterface
         $authService = $container->get(AuthenticationService::class);
         $emailValidator = new EmailAddress();
         $notEmptyValidator = new NotEmpty();
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+        $dbAdapter = $container->get('Laminas\Db\Adapter\Adapter');
         $recordExistsValidator = new RecordExists([
             'table'   => 'users',
             'field'   => 'email',

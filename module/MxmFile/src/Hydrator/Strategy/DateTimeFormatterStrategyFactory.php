@@ -27,8 +27,8 @@
 namespace MxmFile\Hydrator\Strategy;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Config\Config;
 
 class DateTimeFormatterStrategyFactory implements FactoryInterface	
 {

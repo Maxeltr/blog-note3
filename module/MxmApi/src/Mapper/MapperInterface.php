@@ -48,14 +48,14 @@ interface MapperInterface
     public function findClientById($clientId);
 
     /**
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      */
     public function findAllClients();
 
     /**
      * @param UserInterface $user
      *
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      */
     public function findClientsByUser(UserInterface $user);
 

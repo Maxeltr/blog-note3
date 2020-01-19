@@ -28,7 +28,7 @@ namespace MxmBlog\Model;
 
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\AbstractModel;
-use Zend\Tag\ItemList;
+use Laminas\Tag\ItemList;
 use MxmUser\Model\UserInterface;
 use DateTimeInterface;
 
@@ -90,7 +90,7 @@ class Post extends AbstractModel implements PostInterface
     protected $version;
 
     /**
-     * @var Zend\Tag\ItemList;
+     * @var Laminas\Tag\ItemList;
      */
     protected $tags;
 

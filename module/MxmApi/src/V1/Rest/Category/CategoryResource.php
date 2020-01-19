@@ -26,8 +26,8 @@
 
 namespace MxmApi\V1\Rest\Category;
 
-use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\Rest\AbstractResourceListener;
 use MxmBlog\Mapper\MapperInterface as PostMapperInterface;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 

@@ -26,17 +26,17 @@
 
 namespace MxmAdmin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Paginator\Paginator;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Paginator\Paginator;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\NotAuthorizedUserException;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use MxmBlog\Exception\NotAuthenticatedBlogException;
 use MxmUser\Service\UserServiceInterface;
-use Zend\Config\Config;
-use Zend\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Log\Logger;
 use MxmApi\Service\ApiServiceInterface;
 use MxmApi\Exception\NotAuthorizedException;
 use MxmApi\Exception\NotAuthenticatedException;
@@ -50,12 +50,12 @@ use MxmFile\Service\FileServiceInterface;
 class AdminController  extends AbstractActionController
 {
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

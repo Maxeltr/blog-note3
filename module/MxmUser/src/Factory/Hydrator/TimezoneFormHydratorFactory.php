@@ -27,9 +27,9 @@
 namespace MxmUser\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Hydrator\TimezoneFormHydrator\TimezoneFormHydrator;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class TimezoneFormHydratorFactory implements FactoryInterface
 {

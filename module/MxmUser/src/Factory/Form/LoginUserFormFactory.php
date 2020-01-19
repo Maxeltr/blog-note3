@@ -27,12 +27,12 @@
 namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\LoginUserForm;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Mvc\I18n\Translator;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Mvc\I18n\Translator;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class LoginUserFormFactory implements FactoryInterface
 {

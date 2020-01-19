@@ -27,7 +27,7 @@
 namespace MxmBlog\Hydrator\PostFormHydrator;
 
 use MxmBlog\Model\PostInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class PostHydrator implements HydratorInterface
 {
@@ -70,7 +70,7 @@ class PostHydrator implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof PostInterface) {
             return array();

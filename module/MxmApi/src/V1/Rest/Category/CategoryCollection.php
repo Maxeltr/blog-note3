@@ -26,7 +26,7 @@
 
 namespace MxmApi\V1\Rest\Category;
 
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class CategoryCollection extends Paginator
 {

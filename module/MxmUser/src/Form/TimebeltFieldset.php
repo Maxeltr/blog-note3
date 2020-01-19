@@ -27,13 +27,13 @@
 namespace MxmUser\Form;
 
 use \DateTimeZone;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Form\Fieldset;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Form\Fieldset;
 use MxmDateTime\Service\DateTimeService;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
-use Zend\Validator\Timezone;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Timezone;
 
 class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -61,7 +61,7 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'timezone',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'attributes' => [
                 'type' => 'select',
                 'required' => 'required',
@@ -78,7 +78,7 @@ class TimebeltFieldset extends Fieldset implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */

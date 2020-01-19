@@ -26,12 +26,12 @@
 
 namespace MxmBlog\Form;
 
-use Zend\Form\Fieldset;
+use Laminas\Form\Fieldset;
 use MxmBlog\Model\CategoryInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -85,7 +85,7 @@ class CategoryFieldset extends Fieldset implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */

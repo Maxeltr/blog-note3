@@ -27,9 +27,9 @@
 namespace MxmUser\Factory\Form;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Form\EditEmailForm;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class EditEmailFormFactory implements FactoryInterface

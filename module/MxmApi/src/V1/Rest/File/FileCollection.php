@@ -26,7 +26,7 @@
 
 namespace MxmApi\V1\Rest\File;
 
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class FileCollection extends Paginator
 {

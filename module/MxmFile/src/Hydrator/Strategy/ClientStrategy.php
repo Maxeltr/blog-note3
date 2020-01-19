@@ -26,7 +26,7 @@
 
 namespace MxmFile\Hydrator\Strategy;
 
-use Zend\Hydrator\Strategy\StrategyInterface;
+use Laminas\Hydrator\Strategy\StrategyInterface;
 use MxmApi\Mapper\MapperInterface;
 use MxmApi\Model\ClientInterface;
 
@@ -52,7 +52,7 @@ class ClientStrategy implements StrategyInterface
      *
      * @return mixed|string
      */
-    public function extract($value)
+    public function extract($value, ?object $object = null)
     {
         if ($value instanceof ClientInterface) {
             return $value->getClientId();
@@ -68,7 +68,7 @@ class ClientStrategy implements StrategyInterface
      *
      * @return mixed|ClientInterface
      */
-    public function hydrate($value)
+    public function hydrate($value, ?array $data)
     {
         if (empty($value)) {
             return $value;

@@ -26,25 +26,25 @@
 
 namespace MxmBlog\Mapper;
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Delete;
-use Zend\Db\Sql\Insert;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Update;
-use Zend\Filter\StaticFilter;
-use Zend\Config\Config;
-use Zend\Db\Sql\Predicate\Expression;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Paginator\Adapter\DbSelect;
-use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\Iterator;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Validator\StaticValidator;
-use Zend\Db\Sql\PreparableSqlInterface;
-use Zend\Tag\ItemList;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\ResultSet\HydratingResultSet;
+use Laminas\Db\Sql\Delete;
+use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Update;
+use Laminas\Filter\StaticFilter;
+use Laminas\Config\Config;
+use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Paginator\Adapter\DbSelect;
+use Laminas\Paginator\Paginator;
+use Laminas\Paginator\Adapter\Iterator;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Validator\StaticValidator;
+use Laminas\Db\Sql\PreparableSqlInterface;
+use Laminas\Tag\ItemList;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmBlog\Exception\InvalidArgumentBlogException;
 use MxmBlog\Exception\DataBaseErrorBlogException;
@@ -56,12 +56,12 @@ use DateTimeInterface;
 class ZendDbSqlMapper implements MapperInterface
 {
     /**
-     * @var \Zend\Db\Adapter\AdapterInterface
+     * @var \Laminas\Db\Adapter\AdapterInterface
      */
     protected $dbAdapter;
 
     /**
-     * @var \Zend\Hydrator\HydratorInterface
+     * @var \Laminas\Hydrator\HydratorInterface
      */
     protected $postHydrator;
 
@@ -71,7 +71,7 @@ class ZendDbSqlMapper implements MapperInterface
     protected $tagHydrator;
 
     /**
-     * @var \Zend\Hydrator\HydratorInterface
+     * @var \Laminas\Hydrator\HydratorInterface
      */
     protected $classMethodsHydrator;
 
@@ -96,7 +96,7 @@ class ZendDbSqlMapper implements MapperInterface
     protected $tagPrototype;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
@@ -1115,7 +1115,7 @@ class ZendDbSqlMapper implements MapperInterface
      * Сформировать запрос select.
      * @param array $parameters
      *
-     * @return Zend\Db\Sql\Select
+     * @return Laminas\Db\Sql\Select
      */
     private function createPostSelectQuery($parameters)
     {

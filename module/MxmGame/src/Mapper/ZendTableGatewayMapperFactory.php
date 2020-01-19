@@ -26,12 +26,12 @@
 
 namespace MxmGame\Mapper;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Config\Config;
-use Zend\Http\Response;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\ResultSet\HydratingResultSet;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Config\Config;
+use Laminas\Http\Response;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmGame\Logger;
 use MxmGame\Hydrator\GameMapperHydrator\GameMapperHydrator;

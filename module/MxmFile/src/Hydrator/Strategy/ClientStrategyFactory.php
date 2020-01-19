@@ -27,7 +27,7 @@
 namespace MxmFile\Hydrator\Strategy;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmApi\Mapper\MapperInterface;
 
 class ClientStrategyFactory implements FactoryInterface

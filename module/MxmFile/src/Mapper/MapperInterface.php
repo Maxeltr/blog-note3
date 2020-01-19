@@ -41,14 +41,14 @@ interface MapperInterface
     public function insertFile($file);
 
     /**
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      */
     public function findAllFiles();
 
     /**
      * @param UserInterface $user
      *
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      */
     public function findAllFilesByOwner(UserInterface $user = null);
 
@@ -63,7 +63,7 @@ interface MapperInterface
     /**
      * @param MxmFile\Model\FileInterface $file
      *
-     * @return Zend\Http\Response
+     * @return Laminas\Http\Response
      *
      * @throw RuntimeException
      */

@@ -27,9 +27,9 @@
 namespace MxmDateTime\View\Helper;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
-use Zend\Authentication\AuthenticationService;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Config\Config;
+use Laminas\Authentication\AuthenticationService;
 
 class FormatDateI18nFactory implements FactoryInterface
 {

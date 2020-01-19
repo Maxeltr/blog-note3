@@ -26,9 +26,9 @@
 
 namespace MxmApi\V1\Rest\User;
 
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\Filter\MethodMatchFilter;
-use Zend\Hydrator\Filter\FilterComposite;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Hydrator\Filter\MethodMatchFilter;
+use Laminas\Hydrator\Filter\FilterComposite;
 
 class UserHydratorFactory
 {

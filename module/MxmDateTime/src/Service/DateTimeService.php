@@ -29,8 +29,8 @@ namespace MxmDateTime\Service;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
-use Zend\Log\LoggerInterface;
-use Zend\Config\Config;
+use Laminas\Log\LoggerInterface;
+use Laminas\Config\Config;
 use MxmDatetime\Exception\InvalidArgumentException;
 
 class DateTimeService
@@ -41,12 +41,12 @@ class DateTimeService
     protected $datetime;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Log\LoggerInterface
+     * @var Laminas\Log\LoggerInterface
      */
     protected $logger;
 

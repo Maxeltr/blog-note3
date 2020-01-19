@@ -27,18 +27,18 @@
 namespace MxmApi\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmApi\Service\ApiService;
-use Zend\Authentication\AuthenticationService;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\Crypt\Password\Bcrypt;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Db\Adapter\Adapter;
-use Zend\Config\Config;
-use Zend\Validator\Db\RecordExists;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Config\Config;
+use Laminas\Validator\Db\RecordExists;
 use MxmApi\Logger;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmApi\Mapper\MapperInterface as ApiMapperInterface;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 
 class ApiServiceFactory implements FactoryInterface

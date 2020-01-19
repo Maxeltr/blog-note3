@@ -26,10 +26,10 @@
 
 namespace MxmFile\Service;
 
-use Zend\Log\Logger;
-use Zend\Config\Config;
-use Zend\Paginator\Paginator;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Paginator\Paginator;
+use Laminas\Authentication\AuthenticationService;
 use MxmFile\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
 use MxmFile\Mapper\MapperInterface;
@@ -37,7 +37,7 @@ use MxmFile\Mapper\MapperInterface;
 class FileService implements FileServiceInterface
 {
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
@@ -47,12 +47,12 @@ class FileService implements FileServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

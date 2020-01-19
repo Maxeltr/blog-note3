@@ -28,8 +28,8 @@ namespace MxmBlog\Hydrator\PostMapperHydrator;
 
 use MxmBlog\Model\PostInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Hydrator\HydratorInterface;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 
@@ -63,7 +63,7 @@ class UserHydrator extends ClassMethods implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof PostInterface) {
             return array();

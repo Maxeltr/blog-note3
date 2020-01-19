@@ -80,7 +80,7 @@ interface ApiServiceInterface
     /**
      * Извлечь данные клиентов (приложение, сайт) из базы данных.
      *
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      * @throws NotAuthenticatedException
      * @throws NotAuthorizedException
      * @throws DataBaseErrorException

@@ -27,10 +27,10 @@
 namespace MxmBlog\Factory\Form;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Form\GreetingForm;
-use Zend\InputFilter\InputFilter;
-use Zend\Hydrator\ClassMethods;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class GreetingFormFactory implements FactoryInterface

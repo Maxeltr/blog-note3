@@ -26,13 +26,13 @@
 
 namespace MxmRbac\Guard;
 
-use Zend\Mvc\MvcEvent;
-use Zend\EventManager\ListenerAggregateTrait;
-use Zend\EventManager\EventManagerInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\EventManager\ListenerAggregateTrait;
+use Laminas\EventManager\EventManagerInterface;
 use MxmRbac\Exception\NotAuthorizedException;
 use MxmRbac\Service\AuthorizationServiceInterface;
 use MxmRbac\Exception\InvalidArgumentException;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class RouteGuard implements RouteGuardInterface
 {
@@ -47,7 +47,7 @@ class RouteGuard implements RouteGuardInterface
     const GUARD_UNAUTHORIZED = 'guard-unauthorized';
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 

@@ -26,21 +26,21 @@
 
 namespace MxmUser\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Authentication\Result;
-use Zend\Form\FormInterface;
-use Zend\Router\RouteInterface;
-use Zend\Log\Logger;
-use Zend\Config\Config;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Authentication\Result;
+use Laminas\Form\FormInterface;
+use Laminas\Router\RouteInterface;
+use Laminas\Log\Logger;
+use Laminas\Config\Config;
 use MxmUser\Service\UserServiceInterface;
-use Zend\Http\Request;
+use Laminas\Http\Request;
 use MxmUser\Exception\ExpiredUserException;
 
 class AuthenticateController extends AbstractActionController
 {
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
@@ -55,18 +55,18 @@ class AuthenticateController extends AbstractActionController
     protected $datetime;
 
     /**
-     * @var Zend\Router\RouteInterface
+     * @var Laminas\Router\RouteInterface
      */
     protected $router;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $loginUserForm;
 

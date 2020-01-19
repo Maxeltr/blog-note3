@@ -27,9 +27,9 @@
 namespace MxmUser\Factory\Validator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Validator\Date;
+use Laminas\Config\Config;
 
 class DateValidatorFactory implements FactoryInterface
 {

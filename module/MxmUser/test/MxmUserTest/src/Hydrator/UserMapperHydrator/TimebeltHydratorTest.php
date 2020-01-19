@@ -29,11 +29,11 @@ namespace MxmUserTest\Hydrator\UserMapperHydrator;
 use MxmUser\Model\User;
 use MxmUser\Model\UserInterface;
 use \DateTimeInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use MxmUser\Hydrator\UserMapperHydrator\TimebeltHydrator;
 use \DateTimeZone;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use Laminas\Validator\Date;
+use Laminas\Config\Config;
 
 class TimebeltHydratorTest extends \PHPUnit\Framework\TestCase
 {

@@ -27,7 +27,7 @@
 namespace MxmBlog\Factory\Model;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Model\Category;
 
 class CategoryFactory implements FactoryInterface

@@ -1,15 +1,15 @@
 <?php
 namespace MxmApi\V1\Rest\File;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Hydrator\ClassMethods;
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Config\Config;
-use Zend\Http\Response;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\ResultSet\HydratingResultSet;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Config\Config;
+use Laminas\Http\Response;
 use MxmRbac\Service\AuthorizationService;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmApi\Logger;
 use MxmFile\Mapper\MapperInterface as FileMapperInterface;

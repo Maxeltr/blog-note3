@@ -26,7 +26,7 @@
 
 namespace MxmBlog\Model;
 
-use Zend\Tag\Item;
+use Laminas\Tag\Item;
 
 class Tag extends Item implements TagInterface
 {

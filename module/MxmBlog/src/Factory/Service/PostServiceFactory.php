@@ -27,14 +27,14 @@
 namespace MxmBlog\Factory\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use MxmBlog\Service\PostService;
 use MxmRbac\Service\AuthorizationService;
-use Zend\Authentication\AuthenticationService;
-use Zend\Validator\Db\RecordExists;
-use Zend\Config\Config;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\Validator\Db\RecordExists;
+use Laminas\Config\Config;
 
 class PostServiceFactory implements FactoryInterface
 {
@@ -45,7 +45,7 @@ class PostServiceFactory implements FactoryInterface
         $isPublishedRecordExistsValidator = $container->get(IsPublishedRecordExistsValidatorInterface::class);
         $authorizationService = $container->get(AuthorizationService::class);
         $authenticationService = $container->get(AuthenticationService::class);
-        $dbAdapter = $container->get('Zend\Db\Adapter\Adapter');
+        $dbAdapter = $container->get('Laminas\Db\Adapter\Adapter');
         $isRecordExists = new RecordExists([
             'table'   => 'tags',
             'field'   => 'id',

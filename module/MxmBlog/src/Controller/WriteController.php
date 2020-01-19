@@ -27,16 +27,16 @@
 namespace MxmBlog\Controller;
 
 use MxmBlog\Service\PostServiceInterface;
-use Zend\Form\FormInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Log\Logger;
+use Laminas\Form\FormInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Log\Logger;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Exception\DataBaseErrorBlogException;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use MxmBlog\Exception\NotAuthenticatedBlogException;
-use Zend\Http\Request;
-use Zend\Router\RouteInterface;
+use Laminas\Http\Request;
+use Laminas\Router\RouteInterface;
 
 class WriteController extends AbstractActionController
 {
@@ -48,31 +48,31 @@ class WriteController extends AbstractActionController
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $postForm;
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $categoryForm;
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $tagForm;
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $greetingForm;
 
     /**
      *
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

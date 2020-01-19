@@ -26,11 +26,11 @@
 
 namespace MxmUser\Form;
 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 use MxmUser\Exception\InvalidArgumentException;
 
 class EditEmailForm extends Form implements InputFilterProviderInterface
@@ -140,7 +140,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                     [
                         'name' => 'EmailAddress',
                         'options' => [
-                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'allow' => \Laminas\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
                             'translator' => $this->validatorTranslator
                         ],
@@ -165,7 +165,7 @@ class EditEmailForm extends Form implements InputFilterProviderInterface
                     [
                         'name' => 'EmailAddress',
                         'options' => [
-                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'allow' => \Laminas\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
                             'translator' => $this->validatorTranslator
                         ],

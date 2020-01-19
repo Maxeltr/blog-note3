@@ -28,25 +28,25 @@ namespace MxmUser\Service;
 
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Authentication\AuthenticationService;
-use Zend\Validator\Db\RecordExists;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\NotEmpty;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\Validator\Db\RecordExists;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\NotEmpty;
 use MxmUser\Exception\RuntimeUserException;
 use MxmUser\Exception\ExpiredUserException;
 use MxmUser\Exception\InvalidArgumentUserException;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Crypt\Password\Bcrypt;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
 use MxmRbac\Service\AuthorizationService;
 use MxmMail\Service\MailService;
-use Zend\Math\Rand;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Math\Rand;
+use Laminas\Session\Container as SessionContainer;
 use Zend\i18n\Translator\TranslatorInterface;
 use MxmUser\Validator\IsPropertyMatchesDb;
-use Zend\EventManager\EventManagerAwareTrait;
-use Zend\Http\PhpEnvironment\Request;
+use Laminas\EventManager\EventManagerAwareTrait;
+use Laminas\Http\PhpEnvironment\Request;
 use DateTimeImmutable;
 
 class UserService implements UserServiceInterface
@@ -62,22 +62,22 @@ class UserService implements UserServiceInterface
     protected $datetime;
 
     /**
-     * @var Zend\Authentication\AuthenticationService;
+     * @var Laminas\Authentication\AuthenticationService;
      */
     protected $authService;
 
     /**
-     * @var Zend\Validator\EmailAddress;
+     * @var Laminas\Validator\EmailAddress;
      */
     protected $emailValidator;
 
     /**
-     * @var Zend\Validator\NotEmpty;
+     * @var Laminas\Validator\NotEmpty;
      */
     protected $notEmptyValidator;
 
     /**
-     * @var Zend\Validator\Db\RecordExists;
+     * @var Laminas\Validator\Db\RecordExists;
      */
     protected $isUserExists;
 
@@ -92,7 +92,7 @@ class UserService implements UserServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Crypt\Password\Bcrypt
+     * @var Laminas\Crypt\Password\Bcrypt
      */
     protected $bcrypt;
 
@@ -107,12 +107,12 @@ class UserService implements UserServiceInterface
     protected $translator;
 
     /**
-     * @var Zend\Session\Container
+     * @var Laminas\Session\Container
      */
     protected $sessionContainer;
 
     /**
-     * @var use Zend\Stdlib\RequestInterface;
+     * @var use Laminas\Stdlib\RequestInterface;
      */
     protected $request;
 

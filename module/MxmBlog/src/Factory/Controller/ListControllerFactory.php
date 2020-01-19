@@ -27,12 +27,12 @@
 namespace MxmBlog\Factory\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmBlog\Date;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmBlog\Controller\ListController;
 use MxmBlog\Service\PostServiceInterface;
-use Zend\Validator\NotEmpty;
+use Laminas\Validator\NotEmpty;
 use MxmBlog\Logger;
 use MxmUser\Service\UserServiceInterface;
 

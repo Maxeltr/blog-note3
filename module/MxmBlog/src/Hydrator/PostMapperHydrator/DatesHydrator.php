@@ -27,9 +27,9 @@
 namespace MxmBlog\Hydrator\PostMapperHydrator;
 
 use MxmBlog\Model\PostInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Validator\Date;
-use Zend\Config\Config;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Validator\Date;
+use Laminas\Config\Config;
 use DateTimeInterface;
 use DateTimeImmutable;
 
@@ -69,7 +69,7 @@ class DatesHydrator implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof PostInterface) {
             return array();

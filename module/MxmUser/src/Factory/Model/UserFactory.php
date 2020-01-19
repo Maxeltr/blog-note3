@@ -27,7 +27,7 @@
 namespace MxmUser\Factory\Model;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Model\User;
 
 class UserFactory implements FactoryInterface

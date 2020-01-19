@@ -26,9 +26,9 @@
 
 namespace MxmFile\Mapper;
 
-use Zend\Http\Response;
-use Zend\Config\Config;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Http\Response;
+use Laminas\Config\Config;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmFile\Logger;
 use MxmFile\Hydrator\FileMapperHydrator\FileMapperHydrator;

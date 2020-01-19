@@ -27,12 +27,12 @@
 //Filename: /module/Blog/src/Blog/Form/PostFieldset.php
 namespace MxmBlog\Form;
 
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Model\PostInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class PostFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -123,7 +123,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
         ]);
 
         $this->add([
-            'type' => 'Zend\Form\Element\Collection',
+            'type' => 'Laminas\Form\Element\Collection',
             'name' => 'tags',
             'options' => [
                 //'label' => $this->translator->translate('Choose tags'),
@@ -143,7 +143,7 @@ class PostFieldset extends Fieldset implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */

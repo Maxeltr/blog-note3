@@ -27,9 +27,9 @@
 namespace MxmBlog;
 
 use MxmUser\Service\UserServiceInterface;
-use Zend\EventManager\EventInterface;
-use Zend\ModuleManager\Feature\BootstrapListenerInterface;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Laminas\EventManager\EventInterface;
+use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
+use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use MxmBlog\Mapper\MapperInterface;
 
 class Module implements BootstrapListenerInterface, ConfigProviderInterface

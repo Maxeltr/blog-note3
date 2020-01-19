@@ -27,7 +27,7 @@
 namespace MxmUser\Hydrator\UserMapperHydrator;
 
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class UserHydrator implements HydratorInterface
 {
@@ -68,7 +68,7 @@ class UserHydrator implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof UserInterface) {
             return array();

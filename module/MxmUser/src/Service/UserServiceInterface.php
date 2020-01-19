@@ -27,14 +27,14 @@
 namespace MxmUser\Service;
 
 use MxmUser\Model\UserInterface;
-use Zend\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareInterface;
 
 interface UserServiceInterface extends EventManagerAwareInterface
 {
     /**
      * Должен вернуть Paginator
      *
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      * @throws NotAuthenticatedUserException
      * @throw NotAuthorizedException
      */
@@ -132,7 +132,7 @@ interface UserServiceInterface extends EventManagerAwareInterface
      * @param string $email
      * @param string $password
      *
-     * @return Zend\Authentication\Result
+     * @return Laminas\Authentication\Result
      * @throws InvalidArgumentUserException
      * @throws RuntimeUserException
      * @throws RecordNotFoundUserException

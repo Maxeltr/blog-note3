@@ -26,7 +26,7 @@
 
 namespace MxmApi\V1\Rest\User;
 
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class UserCollection extends Paginator
 {

@@ -30,7 +30,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use DateTime;
-use Zend\Hydrator\Strategy\StrategyInterface;
+use Laminas\Hydrator\Strategy\StrategyInterface;
 
 class DateTimeImmutableFormatterStrategy implements StrategyInterface
 {
@@ -63,7 +63,7 @@ class DateTimeImmutableFormatterStrategy implements StrategyInterface
      *
      * @return mixed|string
      */
-    public function extract($value) {
+    public function extract($value, ?object $object = null) {
         if ($value instanceof DateTimeInterface) {
             return $value->format($this->format);
         }
@@ -78,7 +78,7 @@ class DateTimeImmutableFormatterStrategy implements StrategyInterface
      *
      * @return mixed|DateTimeImmutable
      */
-    public function hydrate($value) {
+    public function hydrate($value, ?array $data) {
         if ($value === '' || $value === null) {
             return;
         }

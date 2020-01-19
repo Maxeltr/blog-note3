@@ -211,13 +211,13 @@ return [
             ],
         ],
     ],
-    'zf-oauth2' => array(
+    'api-tools-oauth2' => array(
         'db' => [
             'dsn' => 'mysql:dbname=blog-note;host=localhost',
             'username' => 'root',
             'password' => '',
         ],
-        'storage' => 'ZF\OAuth2\Adapter\PdoAdapter',
+        'storage' => 'Laminas\ApiTools\OAuth2\Adapter\PdoAdapter',
         "grant_types" => [
             "client_credentials" => true,
 //            "authorization_code" => true,
@@ -235,11 +235,11 @@ return [
 //            'always_issue_new_refresh_token' => true,
 //        ),
     ),
-    'zf-mvc-auth' => [
+    'api-tools-mvc-auth' => [
         'authentication' => [
             'adapters' => [
                 'MxmApi' => [
-                    'adapter' => \ZF\MvcAuth\Authentication\OAuth2Adapter::class,
+                    'adapter' => \Laminas\ApiTools\MvcAuth\Authentication\OAuth2Adapter::class,
                     'storage' => [
                         'adapter' => \PDO::class,
                         'dsn' => 'mysql:dbname=blog-note;host=localhost',
@@ -272,7 +272,7 @@ return [
             ],
         ],
     ],
-    'zf-versioning' => [
+    'api-tools-versioning' => [
         'uri' => [
             0 => 'mxm-api.rest.post',
             1 => 'mxm-api.rest.user',
@@ -281,7 +281,7 @@ return [
             4 => 'mxm-api.rest.file',
         ],
     ],
-    'zf-rest' => [
+    'api-tools-rest' => [
         'MxmApi\\V1\\Rest\\Post\\Controller' => [
             'listener' => \MxmApi\V1\Rest\Post\PostResource::class,
             'route_name' => 'mxm-api.rest.post',
@@ -415,7 +415,7 @@ return [
             'service_name' => 'client',
         ],
     ],
-    'zf-content-negotiation' => [
+    'api-tools-content-negotiation' => [
         'controllers' => [
             'MxmApi\\V1\\Rest\\Post\\Controller' => 'HalJson',
             'MxmApi\\V1\\Rest\\Category\\Controller' => 'HalJson',
@@ -485,13 +485,13 @@ return [
             ],
         ],
     ],
-    'zf-hal' => [
+    'api-tools-hal' => [
         'metadata_map' => [
             \MxmBlog\Model\Post::class => [
                 'entity_identifier_name' => 'id',                       //name of the class property (after serialization) used for the identifier
                 'route_name' => 'mxm-api.rest.post',                    //a reference to the route name used to generate `self` relational links for the collection or entity
                 'route_identifier_name' => 'post_id',                   //the identifier name used in the route that will represent the entity identifier in the URI path
-                'hydrator' => \Zend\Hydrator\ClassMethods::class,
+                'hydrator' => \Laminas\Hydrator\ClassMethodsHydrator::class,
             ],
             \MxmUser\Model\User::class => [
                 'entity_identifier_name' => 'id',
@@ -503,20 +503,20 @@ return [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'mxm-api.rest.category',
                 'route_identifier_name' => 'category_id',
-                'hydrator' => \Zend\Hydrator\ClassMethods::class,
+                'hydrator' => \Laminas\Hydrator\ClassMethodsHydrator::class,
             ],
-            \Zend\Tag\ItemList::class => [
+            \Laminas\Tag\ItemList::class => [
                 //'entity_identifier_name' => 'id',
                 //'route_name' => 'mxm-api.rest.tag',
                 //'route_identifier_name' => 'tag_id',
-                //'hydrator' => \Zend\Hydrator\ClassMethods::class,
+                //'hydrator' => \Laminas\Hydrator\ClassMethods::class,
                 'is_collection' => true,
             ],
             \MxmBlog\Model\Tag::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'mxm-api.rest.tag',
                 'route_identifier_name' => 'tag_id',
-                'hydrator' => \Zend\Hydrator\ClassMethods::class,
+                'hydrator' => \Laminas\Hydrator\ClassMethodsHydrator::class,
             ],
             \MxmApi\V1\Rest\Post\PostCollection::class => [
                 'entity_identifier_name' => 'id',
@@ -528,7 +528,7 @@ return [
                 'entity_identifier_name' => 'file_id',
                 'route_name' => 'mxm-api.rest.file',
                 'route_identifier_name' => 'file_id',
-                'hydrator' => \Zend\Hydrator\ClassMethods::class,
+                'hydrator' => \Laminas\Hydrator\ClassMethodsHydrator::class,
             ],
             \MxmApi\V1\Rest\File\FileCollection::class => [
                 'entity_identifier_name' => 'file_id',
@@ -544,7 +544,7 @@ return [
             ],
         ],
     ],
-    'zf-content-validation' => [
+    'api-tools-content-validation' => [
         'MxmApi\\V1\\Rest\\File\\Controller' => [
             'input_filter' => 'MxmApi\\V1\\Rest\\File\\Validator',
         ],
@@ -556,7 +556,7 @@ return [
                 'required' => true,
                 'validators' => [
                     0 => [
-                        'name' => \Zend\Validator\File\MimeType::class,
+                        'name' => \Laminas\Validator\File\MimeType::class,
                         'options' => [
                             'mimeType' => [
                                 'text/plain'
@@ -564,7 +564,7 @@ return [
                         ],
                     ],
                     1 => [
-                        'name'=>'Zend\Validator\File\Size',
+                        'name'=>'Laminas\Validator\File\Size',
                         'options' => [
                             //'min' => '10kB',
                             'max' => '4MB'
@@ -573,7 +573,7 @@ return [
                 ],
                 'filters' => [
                     0 => [
-                        'name' => \Zend\Filter\File\RenameUpload::class,
+                        'name' => \Laminas\Filter\File\RenameUpload::class,
                         'options' => [
                             'randomize' => true,
                             'target' => __DIR__ . '/../../../data/files/file.txt',
@@ -581,7 +581,7 @@ return [
                     ],
                 ],
                 'description' => 'file upload',
-                'type' => \Zend\InputFilter\FileInput::class,
+                'type' => \Laminas\InputFilter\FileInput::class,
                 'error_message' => 'file upload fail',
                 'field_type' => 'multipart/form-data',
             ],

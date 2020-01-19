@@ -27,11 +27,11 @@
 namespace MxmUser\Factory\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Session\SessionManager;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Session\SessionManager;
 use MxmUser\Service\Authentication\Adapter\AuthAdapter;
 use MxmUser\Service\Authentication\AuthenticationService;
-use Zend\Authentication\Storage\Session as SessionStorage;
+use Laminas\Authentication\Storage\Session as SessionStorage;
 
 class AuthenticationServiceFactory implements FactoryInterface
 {

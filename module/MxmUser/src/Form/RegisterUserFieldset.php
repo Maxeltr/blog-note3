@@ -26,13 +26,13 @@
 
 namespace MxmUser\Form;
 
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
-use Zend\Config\Config;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Config\Config;
 
 class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -107,11 +107,11 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
         ]);
 
         $this->add([
-            'type' => 'Zend\Form\Element\Captcha',
+            'type' => 'Laminas\Form\Element\Captcha',
             'name' => 'captcha',
             'options' => [
                 'label' => $this->translator->translate('Please verify you are human'),
-                //'captcha' => new \Zend\Captcha\Figlet(),
+                //'captcha' => new \Laminas\Captcha\Figlet(),
                 'captcha' => [
                     'class' => 'Image',
                     'imgDir' => 'public/img/captcha',
@@ -120,7 +120,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                     'imgAlt' => 'CAPTCHA Image',
 //                    'startImage' => './public/img/captcha/startImage.png',
                     //'font'   => './data/font/thorne_shaded.ttf',
-                    'font'   => './public/css/fonts/Fixedsys500c.ttf',
+                    'font'   => realpath('./public/css/fonts/Fixedsys500c.ttf'),
                     'fsize'  => 24,
                     'width'  => 200,
                     'height' => 50,
@@ -136,7 +136,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
 
         $this->add([
             'name' => 'localeId',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'attributes' => [
                 'type' => 'select',
                 'required' => 'required',
@@ -161,7 +161,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */
@@ -196,7 +196,7 @@ class RegisterUserFieldset extends Fieldset implements InputFilterProviderInterf
                     [
                         'name' => 'EmailAddress',
                         'options' => [
-                            'allow' => \Zend\Validator\Hostname::ALLOW_DNS,
+                            'allow' => \Laminas\Validator\Hostname::ALLOW_DNS,
                             'useMxCheck' => false,
                             'translator' => $this->validatorTranslator
                         ],

@@ -31,7 +31,7 @@ interface AdminServiceInterface
     /**
      * Найти все файлы в папке указанной в module.config.php
      *
-     * @return Zend\Paginator\Paginator
+     * @return Laminas\Paginator\Paginator
      *
      * @throws NotAuthenticatedException
      * @throws NotAuthorizedException

@@ -27,14 +27,14 @@
 namespace MxmRbacTest\Service;
 
 use MxmUser\Model\UserInterface;
-use Zend\Permissions\Rbac\AssertionInterface;
-use Zend\Permissions\Rbac\RoleInterface;
-use Zend\Permissions\Rbac\Rbac;
-use Zend\Permissions\Rbac\Role;
+use Laminas\Permissions\Rbac\AssertionInterface;
+use Laminas\Permissions\Rbac\RoleInterface;
+use Laminas\Permissions\Rbac\Rbac;
+use Laminas\Permissions\Rbac\Role;
 use MxmRbac\Assertion\AssertionPluginManager;
-use Zend\Config\Config;
-use Zend\Validator\InArray;
-use Zend\Log\Logger;
+use Laminas\Config\Config;
+use Laminas\Validator\InArray;
+use Laminas\Log\Logger;
 use MxmRbac\Service\AuthorizationService;
 use Prophecy\Argument;
 use MxmBlog\Model\Post;

@@ -26,8 +26,8 @@
 
 namespace MxmApi\Hydrator\ClientFormHydrator;
 
-use Zend\Hydrator\Strategy\StrategyInterface;
-use Zend\Config\Config;
+use Laminas\Hydrator\Strategy\StrategyInterface;
+use Laminas\Config\Config;
 
 class GrantTypesStrategy implements StrategyInterface
 {
@@ -38,12 +38,12 @@ class GrantTypesStrategy implements StrategyInterface
         $this->grantTypes = $grantTypes->toArray();
     }
 
-    public function extract($value)
+    public function extract($value, ?object $object = null)
     {
         return array_search($value, $this->grantTypes);
     }
 
-    public function hydrate($value)
+    public function hydrate($value, ?array $data)
     {
         return $this->grantTypes[$value];
     }

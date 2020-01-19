@@ -26,7 +26,7 @@
 
 namespace MxmApi\V1\Rest\Post;
 
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class PostCollection extends Paginator
 {

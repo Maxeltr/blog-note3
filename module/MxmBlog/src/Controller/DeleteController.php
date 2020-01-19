@@ -27,11 +27,11 @@
 namespace MxmBlog\Controller;
 
 use MxmBlog\Service\PostServiceInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmBlog\Exception\NotAuthorizedBlogException;
-use Zend\Log\Logger;
+use Laminas\Log\Logger;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class DeleteController extends AbstractActionController
@@ -43,7 +43,7 @@ class DeleteController extends AbstractActionController
 
     /**
      *
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

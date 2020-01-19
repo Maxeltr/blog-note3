@@ -27,13 +27,13 @@
 namespace MxmUser\Factory\Mapper;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Hydrator\UserMapperHydrator\UserMapperHydrator;
-use Zend\Config\Config;
-use Zend\Db\Adapter\Adapter;
+use Laminas\Config\Config;
+use Laminas\Db\Adapter\Adapter;
 use MxmUser\Mapper\ZendDbSqlMapper;
 use MxmUser\Model\UserInterface;
-use Zend\Db\Sql\Sql;
+use Laminas\Db\Sql\Sql;
 
 class ZendDbSqlMapperFactory implements FactoryInterface
 {

@@ -27,9 +27,9 @@
 namespace MxmAdmin\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmAdmin\Logger;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmApi\Service\ApiServiceInterface;

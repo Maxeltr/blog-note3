@@ -27,13 +27,13 @@
 namespace MxmBlog\Controller;
 
 use MxmBlog\Service\PostServiceInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Paginator\Paginator;
-use Zend\Config\Config;
-use Zend\Validator\Date;
-use Zend\Validator\NotEmpty;
-use Zend\Log\Logger;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Paginator\Paginator;
+use Laminas\Config\Config;
+use Laminas\Validator\Date;
+use Laminas\Validator\NotEmpty;
+use Laminas\Log\Logger;
 use MxmUser\Service\UserServiceInterface;
 
 class ListController extends AbstractActionController
@@ -54,13 +54,13 @@ class ListController extends AbstractActionController
     protected $dateTimeFormat;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
      *
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

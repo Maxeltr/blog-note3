@@ -27,11 +27,11 @@
 namespace MxmUser\Controller;
 
 use MxmUser\Service\UserServiceInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
-use Zend\Log\Logger;
+use Laminas\Log\Logger;
 use MxmUser\Exception\NotAuthorizedUserException;
 use Zend\i18n\Translator\TranslatorInterface;
 
@@ -43,7 +43,7 @@ class DeleteController extends AbstractActionController
     protected $userService;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

@@ -30,7 +30,7 @@ use MxmBlog\Controller\WriteController;
 use MxmBlog\Form\PostForm;
 use MxmBlog\Form\TagForm;
 use MxmBlog\Form\CategoryForm;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Service\PostServiceInterface;
 use MxmBlog\Logger;

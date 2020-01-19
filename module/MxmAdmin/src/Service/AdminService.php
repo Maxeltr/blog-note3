@@ -26,17 +26,17 @@
 
 namespace MxmAdmin\Service;
 
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
-use Zend\Config\Config;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
+use Laminas\Config\Config;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmAdmin\Exception\RuntimeException;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 use MxmAdmin\Exception\InvalidArgumentException;
-use Zend\Filter\StaticFilter;
-use Zend\Stdlib\ErrorHandler;
-use Zend\Log\Logger;
+use Laminas\Filter\StaticFilter;
+use Laminas\Stdlib\ErrorHandler;
+use Laminas\Log\Logger;
 use MxmFile\Mapper\DirectoryMapper;
 
 class AdminService implements AdminServiceInterface
@@ -47,7 +47,7 @@ class AdminService implements AdminServiceInterface
     protected $datetime;
 
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $authenticationService;
 
@@ -57,17 +57,17 @@ class AdminService implements AdminServiceInterface
     protected $authorizationService;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
     /**
-     * @var Zend\Http\Response
+     * @var Laminas\Http\Response
      */
     protected $response;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

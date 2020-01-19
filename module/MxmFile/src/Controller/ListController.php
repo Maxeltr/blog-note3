@@ -26,23 +26,23 @@
 
 namespace MxmFile\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Paginator\Paginator;
-use Zend\Config\Config;
-use Zend\Log\Logger;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Paginator\Paginator;
+use Laminas\Config\Config;
+use Laminas\Log\Logger;
 use MxmFile\Service\FileServiceInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class ListController extends AbstractActionController
 {
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

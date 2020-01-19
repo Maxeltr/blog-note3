@@ -27,11 +27,11 @@
 namespace MxmUser\Controller;
 
 use MxmUser\Exception\RecordNotFoundUserException;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Paginator\Paginator;
-use Zend\Config\Config;
-use Zend\Log\Logger;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\Paginator\Paginator;
+use Laminas\Config\Config;
+use Laminas\Log\Logger;
 use \DateTimeInterface;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\NotAuthenticatedUserException;
@@ -45,12 +45,12 @@ class ListController extends AbstractActionController
     protected $userService;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

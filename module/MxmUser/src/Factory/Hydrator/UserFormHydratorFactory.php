@@ -27,13 +27,13 @@
 namespace MxmUser\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\Aggregate\AggregateHydrator;
 use MxmUser\Hydrator\UserFormHydrator\UserHydrator;
 use MxmUser\Hydrator\UserFormHydrator\TimebeltHydrator;
 use MxmUser\Hydrator\UserFormHydrator\RoleHydrator;
 use MxmUser\Hydrator\UserFormHydrator\LocaleHydrator;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class UserFormHydratorFactory implements FactoryInterface
 {

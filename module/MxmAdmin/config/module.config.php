@@ -26,9 +26,9 @@
 
 namespace MxmAdmin;
 
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'mxm_admin' => [
@@ -49,7 +49,7 @@ return [
     ],
     'service_manager' => [
         'abstract_factories' => [
-            \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
+            \Laminas\Navigation\Service\NavigationAbstractServiceFactory::class,
         ],
         'aliases' => [
             Service\AdminServiceInterface::class => Service\AdminService::class,

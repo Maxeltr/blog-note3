@@ -29,9 +29,9 @@ namespace MxmBlog\Hydrator\PostFormHydrator;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\TagInterface;
 use MxmBlog\Exception\InvalidArgumentBlogException;
-use Zend\Hydrator\ClassMethods;
-use Zend\Tag\ItemList;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\ClassMethodsHydrator as ClassMethods;
+use Laminas\Tag\ItemList;
+use Laminas\Hydrator\HydratorInterface;
 
 class TagsHydrator extends ClassMethods implements HydratorInterface
 {
@@ -70,7 +70,7 @@ class TagsHydrator extends ClassMethods implements HydratorInterface
         return $object;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof PostInterface) {
             return array();

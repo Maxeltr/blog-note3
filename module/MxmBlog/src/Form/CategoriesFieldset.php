@@ -27,12 +27,12 @@
 namespace MxmBlog\Form;
 
 use MxmBlog\Model\CategoryInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use MxmBlog\Mapper\MapperInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class CategoriesFieldset extends Fieldset implements InputFilterProviderInterface
 {
@@ -65,7 +65,7 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
 
         $this->add([
             'name' => 'id',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'attributes' => [
                 'type'=>'select',
                 'required' => 'required',
@@ -81,7 +81,7 @@ class CategoriesFieldset extends Fieldset implements InputFilterProviderInterfac
 
     /**
      * Should return an array specification compatible with
-     * {@link ZendInputFilterFactory::createInputFilter()}.
+     * {@link LaminasInputFilterFactory::createInputFilter()}.
      *
      * @return array
      */

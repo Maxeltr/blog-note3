@@ -26,10 +26,10 @@
 
 namespace MxmDateTime\Service;
 
-use Zend\Log\Logger;
-use Zend\Config\Config;
+use Laminas\Log\Logger;
+use Laminas\Config\Config;
 use MxmDateTime\Service\DateTimeService;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 

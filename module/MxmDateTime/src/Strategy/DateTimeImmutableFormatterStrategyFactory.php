@@ -27,7 +27,7 @@
 namespace MxmDateTime\Strategy;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmDateTime\Service\DateTimeService;
 use DateTimeZone;
 

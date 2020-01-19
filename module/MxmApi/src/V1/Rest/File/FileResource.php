@@ -1,25 +1,25 @@
 <?php
 namespace MxmApi\V1\Rest\File;
 
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Db\TableGateway\TableGateway;
 use DomainException;
 use InvalidArgumentException;
 use Traversable;
 use Rhumsaa\Uuid\Uuid;
-use Zend\Paginator\Adapter\DbTableGateway;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Config\Config;
-use Zend\Http\Response;
-use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
-use ZF\MvcAuth\Identity\AuthenticatedIdentity;
+use Laminas\Paginator\Adapter\DbTableGateway;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Config\Config;
+use Laminas\Http\Response;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\Rest\AbstractResourceListener;
+use Laminas\ApiTools\MvcAuth\Identity\AuthenticatedIdentity;
 use MxmRbac\Service\AuthorizationService;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 use MxmFile\Mapper\MapperInterface as FileMapperInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
-use Zend\Log\Logger;
-use Zend\Stdlib\ErrorHandler;
-use Zend\Filter\StaticFilter;
+use Laminas\Log\Logger;
+use Laminas\Stdlib\ErrorHandler;
+use Laminas\Filter\StaticFilter;
 use DateTimeImmutable;
 
 class FileResource extends AbstractResourceListener
@@ -30,12 +30,12 @@ class FileResource extends AbstractResourceListener
     protected $datetime;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Http\Response
+     * @var Laminas\Http\Response
      */
     protected $response;
 
@@ -55,7 +55,7 @@ class FileResource extends AbstractResourceListener
     protected $fileMapper;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
@@ -91,7 +91,7 @@ class FileResource extends AbstractResourceListener
             return new ApiProblem(500, 'Create operation failed. No data received.');
         }
 
-        $filePathName = StaticFilter::execute($file['tmp_name'], 'Zend\Filter\RealPath');
+        $filePathName = StaticFilter::execute($file['tmp_name'], 'Laminas\Filter\RealPath');
 
         $identity = $this->getMvcAuthIdentity();
         if (! $identity) {

@@ -27,9 +27,9 @@
 namespace MxmUserTest\Form;
 
 use MxmUser\Form\SetPasswordForm;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
+use Laminas\Validator\Translator\TranslatorInterface as ValidatorTranslatorInterface;
 
 class SetPasswordFormTest extends \PHPUnit\Framework\TestCase
 {

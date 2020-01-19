@@ -26,7 +26,7 @@
 
 namespace MxmApi\V1\Rest\Client;
 
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class ClientCollection extends Paginator
 {

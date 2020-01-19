@@ -25,46 +25,46 @@
  */
 namespace MxmGame\Mapper;
 
-use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\DbTableGateway;
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Paginator\Paginator;
+use Laminas\Paginator\Adapter\DbTableGateway;
+use Laminas\Db\TableGateway\TableGateway;
 use Rhumsaa\Uuid\Uuid;
-use Zend\Config\Config;
-use Zend\Http\Response;
-use Zend\Log\Logger;
-use Zend\Stdlib\ErrorHandler;
+use Laminas\Config\Config;
+use Laminas\Http\Response;
+use Laminas\Log\Logger;
+use Laminas\Stdlib\ErrorHandler;
 use MxmGame\Exception\RecordNotFoundException;
 use MxmGame\Exception\InvalidArgumentException;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 use MxmGame\Model\GameInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Db\Sql\Where;
+use Laminas\Db\Sql\Where;
 use MxmGame\Exception\DataBaseErrorException;
 
 class ZendTableGatewayMapper implements MapperInterface
 {
     /**
-     * @var Zend\Db\TableGateway\TableGateway
+     * @var Laminas\Db\TableGateway\TableGateway
      */
     protected $gameTableGateway;
 
     /**
-     * @var Zend\Db\TableGateway\TableGateway
+     * @var Laminas\Db\TableGateway\TableGateway
      */
     protected $textureTableGateway;
 
     /**
-     * @var Zend\Config\Config
+     * @var Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * @var Zend\Http\Response
+     * @var Laminas\Http\Response
      */
     protected $response;
 
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 

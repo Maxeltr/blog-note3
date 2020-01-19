@@ -26,11 +26,11 @@
 
 namespace MxmBlog\Validator;
 
-use Zend\Db\Sql\Select;
+use Laminas\Db\Sql\Select;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use MxmBlog\Model\PostInterface;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Adapter\Adapter;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Adapter\Adapter;
 
 class IsPublishedRecordExistsValidator implements IsPublishedRecordExistsValidatorInterface
 {

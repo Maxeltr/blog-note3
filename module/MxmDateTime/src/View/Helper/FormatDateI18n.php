@@ -26,11 +26,11 @@
 
 namespace MxmDateTime\View\Helper;
 
-use Zend\I18n\View\Helper\DateFormat;
-use Zend\Config\Config;
-use Zend\Authentication\AuthenticationService;
+use Laminas\I18n\View\Helper\DateFormat;
+use Laminas\Config\Config;
+use Laminas\Authentication\AuthenticationService;
 use MxmUser\Model\UserInterface;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Session\Container as SessionContainer;
 use MxmDateTime\Exception\InvalidArgumentException;
 use DateTimeImmutable;
 

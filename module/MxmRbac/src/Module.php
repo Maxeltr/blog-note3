@@ -26,10 +26,10 @@
 
 namespace MxmRbac;
 
-use Zend\Mvc\MvcEvent;
-use Zend\EventManager\EventInterface;
-use Zend\ModuleManager\Feature\BootstrapListenerInterface;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\EventManager\EventInterface;
+use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
+use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use MxmRbac\Guard\RouteGuardInterface;
 use MxmRbac\Exception\NotAuthorizedException;
 

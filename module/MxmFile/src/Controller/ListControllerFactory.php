@@ -26,10 +26,10 @@
 
 namespace MxmFile\Controller;
 
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use Interop\Container\ContainerInterface;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmFile\Logger;
 use MxmFile\Service\FileServiceInterface;
 

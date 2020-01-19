@@ -26,7 +26,7 @@
 
 namespace MxmFile\Hydrator\Strategy;
 
-use Zend\Hydrator\Strategy\StrategyInterface;
+use Laminas\Hydrator\Strategy\StrategyInterface;
 use MxmUser\Mapper\MapperInterface;
 use MxmUser\Model\UserInterface;
 
@@ -52,7 +52,7 @@ class OwnerStrategy implements StrategyInterface
      *
      * @return mixed|string
      */
-    public function extract($value)
+    public function extract($value, ?object $object = null)
     {
         if ($value instanceof UserInterface) {
             return $value->getId();
@@ -68,7 +68,7 @@ class OwnerStrategy implements StrategyInterface
      *
      * @return mixed|UserInterface
      */
-    public function hydrate($value)
+    public function hydrate($value, ?array $data)
     {
         if (empty($value)) {
             return $value;

@@ -32,13 +32,13 @@ use MxmBlog\Model\Category;
 use MxmBlog\Model\Tag;
 use MxmBlog\Service\DateTimeInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 use MxmRbac\Service\AuthorizationService;
 use MxmBlog\Exception\NotAuthorizedBlogException;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmUser\Model\UserInterface;
-use Zend\Validator\Db\RecordExists;
-use Zend\Tag\ItemList;
+use Laminas\Validator\Db\RecordExists;
+use Laminas\Tag\ItemList;
 use MxmBlog\Exception\InvalidArgumentBlogException;
 use MxmUser\Model\User;
 use Prophecy\Argument;
@@ -68,8 +68,8 @@ class PostServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp() {
         $array = array();
-        $this->paginator = new \Zend\Paginator\Paginator(
-            new \Zend\Paginator\Adapter\ArrayAdapter($array)
+        $this->paginator = new \Laminas\Paginator\Paginator(
+            new \Laminas\Paginator\Adapter\ArrayAdapter($array)
         );
         $this->user = new User();
         $this->user->setId('1');

@@ -27,9 +27,9 @@
 namespace MxmUserTest\Controller;
 
 use MxmUser\Controller\DeleteController;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\ServiceManager\ServiceManager;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Service\UserService;
 use MxmUser\Model\User;

@@ -26,9 +26,9 @@
 
 namespace MxmMail\Service;
 
-use Zend\Mail\Message;
-use Zend\Mail\Address\AddressInterface;
-use Zend\Mail\AddressList;
+use Laminas\Mail\Message;
+use Laminas\Mail\Address\AddressInterface;
+use Laminas\Mail\AddressList;
 
 interface MailServiceInterface
 {
@@ -103,7 +103,7 @@ interface MailServiceInterface
     /**
      * Return the currently set message body
      *
-     * @return Zend\Mime\Message object
+     * @return Laminas\Mime\Message object
      */
     public function getBody();
 

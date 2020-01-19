@@ -26,8 +26,8 @@
 
 namespace MxmFile;
 
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\Router\Http\Literal;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\Router\Http\Literal;
 
 return [
     'mxm_file' => [

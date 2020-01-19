@@ -30,7 +30,7 @@ use MxmBlog\Form\PostFieldset;
 use MxmBlog\Model\PostInterface;
 use Interop\Container\ContainerInterface;
 use MxmBlog\Hydrator\PostFormHydrator\PostFormHydrator;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Zend\i18n\Translator\TranslatorInterface;
 
 class PostFieldsetFactory implements FactoryInterface

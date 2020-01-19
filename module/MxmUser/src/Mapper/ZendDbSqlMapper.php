@@ -26,18 +26,18 @@
 
 namespace MxmUser\Mapper;
 
-use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Db\Sql\Delete;
-use Zend\Db\Sql\Insert;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Update;
-use Zend\Config\Config;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Paginator\Adapter\DbSelect;
-use Zend\Paginator\Paginator;
-use Zend\Db\Sql\PreparableSqlInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\ResultSet\HydratingResultSet;
+use Laminas\Db\Sql\Delete;
+use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Update;
+use Laminas\Config\Config;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Paginator\Adapter\DbSelect;
+use Laminas\Paginator\Paginator;
+use Laminas\Db\Sql\PreparableSqlInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 use MxmUser\Exception\InvalidArgumentUserException;
 use MxmUser\Exception\DataBaseErrorUserException;
@@ -46,12 +46,12 @@ use MxmUser\Model\UserInterface;
 class ZendDbSqlMapper implements MapperInterface
 {
     /**
-     * @var Zend\Db\Sql\Sql
+     * @var Laminas\Db\Sql\Sql
      */
     protected $sql;
 
     /**
-     * @var \Zend\Hydrator\HydratorInterface
+     * @var \Laminas\Hydrator\HydratorInterface
      */
     protected $aggregateHydrator;
 
@@ -61,7 +61,7 @@ class ZendDbSqlMapper implements MapperInterface
     protected $userPrototype;
 
     /**
-     * @var Zend\Config\Config;
+     * @var Laminas\Config\Config;
      */
     protected $config;
 
@@ -315,7 +315,7 @@ class ZendDbSqlMapper implements MapperInterface
      * Сформировать запрос select.
      * @param array $parameters
      *
-     * @return Zend\Db\Sql\Select
+     * @return Laminas\Db\Sql\Select
      */
     private function createUserSelectQuery($parameters)
     {

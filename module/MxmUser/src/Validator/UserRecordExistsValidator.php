@@ -26,7 +26,7 @@
 
 //namespace MxmUser\Validator;
 //
-//use Zend\Validator\Db\RecordExists;
+//use Laminas\Validator\Db\RecordExists;
 //
 //class UserRecordExistsValidator extends RecordExists
 //{

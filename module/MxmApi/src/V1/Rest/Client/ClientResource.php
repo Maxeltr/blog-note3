@@ -26,8 +26,8 @@
 
 namespace MxmApi\V1\Rest\Client;
 
-use ZF\ApiProblem\ApiProblem;
-use ZF\Rest\AbstractResourceListener;
+use Laminas\ApiTools\ApiProblem\ApiProblem;
+use Laminas\ApiTools\Rest\AbstractResourceListener;
 
 
 class ClientResource extends AbstractResourceListener

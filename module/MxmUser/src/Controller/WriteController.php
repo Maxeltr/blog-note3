@@ -26,8 +26,8 @@
 
 namespace MxmUser\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Exception\ExpiredUserException;
 use MxmUser\Exception\RecordNotFoundUserException;
@@ -35,18 +35,18 @@ use MxmUser\Exception\AlreadyExistsUserException;
 use MxmUser\Exception\InvalidPasswordUserException;
 use MxmUser\Exception\NotAuthenticatedUserException;
 use MxmUser\Exception\NotAuthorizedUserException;
-use Zend\Form\FormInterface;
-use Zend\Log\Logger;
-use Zend\Http\Request;
-use Zend\Router\RouteInterface;
-use Zend\Session\Container;
+use Laminas\Form\FormInterface;
+use Laminas\Log\Logger;
+use Laminas\Http\Request;
+use Laminas\Router\RouteInterface;
+use Laminas\Session\Container;
 use Zend\i18n\Translator\TranslatorInterface;
-use Zend\Db\Adapter\Exception\InvalidQueryException;
+use Laminas\Db\Adapter\Exception\InvalidQueryException;
 
 class WriteController extends AbstractActionController
 {
     /**
-     * @var Zend\Log\Logger
+     * @var Laminas\Log\Logger
      */
     protected $logger;
 
@@ -57,7 +57,7 @@ class WriteController extends AbstractActionController
 
     /**
      *
-     * @var Zend\Form\FormInterface
+     * @var Laminas\Form\FormInterface
      */
     protected $editUserForm;
     protected $registerUserForm;
@@ -112,7 +112,7 @@ class WriteController extends AbstractActionController
                         'form' => $this->registerUserForm,
                         'error' => $this->translator->translate('User has registered alredy')
                     ]);
-                } catch (\Zend\Mail\Transport\Exception\RuntimeException $ex) {
+                } catch (\Laminas\Mail\Transport\Exception\RuntimeException $ex) {
                     $this->logger->err($ex->getFile() . ' ' . $ex->getLine() . ' ' . $ex->getMessage());
 
                     return new ViewModel([

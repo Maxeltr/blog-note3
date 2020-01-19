@@ -27,8 +27,8 @@
 namespace MxmUser\Factory\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\Config\Config;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\Config\Config;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use MxmUser\Controller\AuthenticateController;
 use MxmUser\Service\UserServiceInterface;
 use MxmUser\Form\LoginUserForm;

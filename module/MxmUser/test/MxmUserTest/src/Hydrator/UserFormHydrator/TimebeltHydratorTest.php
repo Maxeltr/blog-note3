@@ -26,10 +26,10 @@
 
 namespace MxmUserTest\Hydrator\UserFormHydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use MxmUser\Hydrator\UserFormHydrator\TimebeltHydrator;
 use \DateTimeZone;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmUser\Model\User;
 
 class TimebeltHydratorTest extends \PHPUnit\Framework\TestCase

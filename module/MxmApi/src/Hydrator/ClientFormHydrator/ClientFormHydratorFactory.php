@@ -27,10 +27,10 @@
 namespace MxmApi\Hydrator\ClientFormHydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Reflection as ReflectionHydrator;
-use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
-use Zend\Config\Config;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\ReflectionHydrator;
+use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+use Laminas\Config\Config;
 
 class ClientFormHydratorFactory implements FactoryInterface
 {

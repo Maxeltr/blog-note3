@@ -27,8 +27,8 @@
 namespace MxmDateTime\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Config\Config;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Config\Config;
 use MxmDatetime\Exception\InvalidArgumentException;
 
 class DateTimeFactory implements FactoryInterface

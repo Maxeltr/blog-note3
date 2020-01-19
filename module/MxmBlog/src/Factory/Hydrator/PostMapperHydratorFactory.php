@@ -27,8 +27,8 @@
 namespace MxmBlog\Factory\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Hydrator\Aggregate\AggregateHydrator;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\Aggregate\AggregateHydrator;
 use MxmBlog\Hydrator\PostMapperHydrator\TagsHydrator;
 use MxmBlog\Hydrator\PostMapperHydrator\CategoryHydrator;
 use MxmBlog\Hydrator\PostMapperHydrator\PostHydrator;
@@ -36,9 +36,9 @@ use MxmBlog\Hydrator\PostMapperHydrator\DatesHydrator;
 use MxmBlog\Hydrator\PostMapperHydrator\UserHydrator;
 use MxmBlog\Model\CategoryInterface;
 use MxmUser\Model\UserInterface;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 use MxmBlog\Model\TagInterface;
-use Zend\Tag\ItemList;
+use Laminas\Tag\ItemList;
 use MxmBlog\Date;
 use MxmUser\Mapper\MapperInterface as UserMapperInterface;
 

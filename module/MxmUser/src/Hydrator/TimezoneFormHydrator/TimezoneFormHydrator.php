@@ -26,9 +26,9 @@
 
 namespace MxmUser\Hydrator\TimezoneFormHydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use \DateTimeZone;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class TimezoneFormHydrator implements HydratorInterface
 {
@@ -56,7 +56,7 @@ class TimezoneFormHydrator implements HydratorInterface
         return $timezone;
     }
 
-    public function extract($object)
+    public function extract($object) : array
     {
         if (!$object instanceof DateTimeZone) {
             return array();
