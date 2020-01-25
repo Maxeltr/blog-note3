@@ -30,7 +30,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Db\Adapter\Adapter;
 use MxmBlog\Hydrator\CategoryMapperHydrator;
-use MxmBlog\Model\PostInterface;
+use MxmBlog\Model\CategoryInterface;
 use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\TableGateway\TableGateway;
 
@@ -40,11 +40,11 @@ class CategoryRepositoryFactory implements FactoryInterface {
         $table = 'category';    //TODO перенсти в настройки
         $adapter = $container->get(Adapter::class);
         $hydrator = $container->get(CategoryMapperHydrator::class);
-        $entity = $container->get(CategoryInterface::class);
-        $resultSet = new HydratingResultSet($hydrator, $entity);
+        $prototype = $container->get(CategoryInterface::class);
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
         $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
         
-        return new PostRepository($tableGateway);
+        return new CategoryRepository($tableGateway);
     }
 
 }

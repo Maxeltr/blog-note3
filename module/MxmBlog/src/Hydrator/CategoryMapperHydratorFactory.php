@@ -24,37 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Model;
+namespace MxmBlog\Hydrator;
 
-use Laminas\Db\TableGateway\TableGateway;
-use MxmBlog\Exception\RecordNotFoundBlogException;
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\ReflectionHydrator;
+use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+use MxmDateTime\Strategy\DateTimeImmutableFormatterStrategy;
+use MxmUser\Hydrator\Strategy\UserStrategy;
+use MxmBlog\Hydrator\Strategy\OwnerStrategy;
+use MxmBlog\Hydrator\Strategy\ClientStrategy;
+use Laminas\Hydrator\NamingStrategy\MapNamingStrategy;
 
-class PostRepository implements PostRepositoryInterface {
+class CategoryMapperHydratorFactory implements FactoryInterface {
 
-    /**
-     * @var Laminas\Db\TableGateway\TableGateway
-     */
-    protected $tableGateway;
-
-    /**
-     * @param TableGateway $tableGateway
-     */
-    public function __construct(
-            TableGateway $tableGateway
-    ) {
-        $this->tableGateway = $tableGateway;
-    }
-
-    /**
-     * {@see PostRepositoryInterface}
-     */
-    public function findPostById($id, $hideUnpublished = true) {
-        $resultSet = $this->tableGateway->select(['id' => $id, 'isPublished' => '1']);
-        if (0 === count($resultSet)) {
-            throw new RecordNotFoundBlogException('Post ' . $id . ' not found.');
-        }
-
-        return $resultSet->current();
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        $hydrator = new ReflectionHydrator();
+        
+        return $hydrator;
     }
 
 }

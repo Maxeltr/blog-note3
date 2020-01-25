@@ -24,37 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Model;
+namespace MxmBlog\Hydrator\Strategy;
 
-use Laminas\Db\TableGateway\TableGateway;
-use MxmBlog\Exception\RecordNotFoundBlogException;
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use MxmBlog\Model\CategoryRepositoryInterface;
 
-class PostRepository implements PostRepositoryInterface {
+class CategoryStrategyFactory implements FactoryInterface
+{
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $repository = $container->get(CategoryRepositoryInterface::class);
 
-    /**
-     * @var Laminas\Db\TableGateway\TableGateway
-     */
-    protected $tableGateway;
-
-    /**
-     * @param TableGateway $tableGateway
-     */
-    public function __construct(
-            TableGateway $tableGateway
-    ) {
-        $this->tableGateway = $tableGateway;
+        return new CategoryStrategy($repository);
     }
-
-    /**
-     * {@see PostRepositoryInterface}
-     */
-    public function findPostById($id, $hideUnpublished = true) {
-        $resultSet = $this->tableGateway->select(['id' => $id, 'isPublished' => '1']);
-        if (0 === count($resultSet)) {
-            throw new RecordNotFoundBlogException('Post ' . $id . ' not found.');
-        }
-
-        return $resultSet->current();
-    }
-
 }

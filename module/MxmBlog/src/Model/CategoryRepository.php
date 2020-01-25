@@ -29,7 +29,7 @@ namespace MxmBlog\Model;
 use Laminas\Db\TableGateway\TableGateway;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 
-class CategoryRepository implements CategoryRepositoryInterface{
+class CategoryRepository implements CategoryRepositoryInterface {
 
     /**
      * @var Laminas\Db\TableGateway\TableGateway
@@ -44,13 +44,17 @@ class CategoryRepository implements CategoryRepositoryInterface{
     ) {
         $this->tableGateway = $tableGateway;
     }
-    
+
     /**
      * {@see CategoryRepositoryInterface}
      */
     public function findCategoryById($id) {
-        
+        $resultSet = $this->tableGateway->select(['id' => $id]);
+        if (0 === count($resultSet)) {
+            throw new RecordNotFoundBlogException('Category ' . $id . ' not found.');
+        }
+
+        return $resultSet->current();
     }
 
-    
 }

@@ -40,8 +40,8 @@ class PostRepositoryFactory implements FactoryInterface {
         $table = 'articles';    //TODO перенсти в настройки
         $adapter = $container->get(Adapter::class);
         $hydrator = $container->get(PostMapperHydrator::class);
-        $post = $container->get(PostInterface::class);
-        $resultSet = new HydratingResultSet($hydrator, $post);
+        $prototype = $container->get(PostInterface::class);
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
         $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
         
         return new PostRepository($tableGateway);

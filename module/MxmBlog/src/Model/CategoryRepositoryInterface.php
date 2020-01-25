@@ -42,11 +42,11 @@ interface CategoryRepositoryInterface {
      *
      * @return Paginator
      */
-    public function findCategoriesByName($name);
+//    public function findCategoriesByName($name);
 
     /**
      *
      * @return Paginator
      */
-    public function findAllCategories();
+//    public function findAllCategories();
 }

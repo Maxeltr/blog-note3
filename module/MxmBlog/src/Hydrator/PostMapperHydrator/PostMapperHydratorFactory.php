@@ -32,22 +32,27 @@ use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 use MxmDateTime\Strategy\DateTimeImmutableFormatterStrategy;
 use MxmUser\Hydrator\Strategy\UserStrategy;
-use MxmBlog\Hydrator\Strategy\OwnerStrategy;
-use MxmBlog\Hydrator\Strategy\ClientStrategy;
+use MxmBlog\Hydrator\Strategy\TagsStrategy;
+use MxmBlog\Hydrator\Strategy\CategoryStrategy;
+use Laminas\Hydrator\NamingStrategy\MapNamingStrategy;
 
 class PostMapperHydratorFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $fileHydrator = new ReflectionHydrator();
-//        $fileHydrator->setNamingStrategy(new UnderscoreNamingStrategy());
-        $fileHydrator->addStrategy('created', $container->get(DateTimeImmutableFormatterStrategy::class));
-        $fileHydrator->addStrategy('updated', $container->get(DateTimeImmutableFormatterStrategy::class));
-        $fileHydrator->addStrategy('published', $container->get(DateTimeImmutableFormatterStrategy::class));
-//        $fileHydrator->addStrategy('category', $container->get(CategoryStrategy::class));
-//        $fileHydrator->addStrategy('tags', $container->get(TagsStrategy::class));
-        $fileHydrator->addStrategy('author', $container->get(UserStrategy::class));
+        $hydrator = new ReflectionHydrator();
+//        $hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
+        $hydrator->addStrategy('created', $container->get(DateTimeImmutableFormatterStrategy::class));
+        $hydrator->addStrategy('updated', $container->get(DateTimeImmutableFormatterStrategy::class));
+        $hydrator->addStrategy('published', $container->get(DateTimeImmutableFormatterStrategy::class));
+        $namingStrategy = MapNamingStrategy::createFromHydrationMap([
+                    'categoryId' => 'category'
+        ]);
+        $hydrator->setNamingStrategy($namingStrategy);
+        $hydrator->addStrategy('category', $container->get(CategoryStrategy::class));
+//        $hydrator->addStrategy('tags', $container->get(TagsStrategy::class));
+        $hydrator->addStrategy('author', $container->get(UserStrategy::class));
 
-        return $fileHydrator;
+        return $hydrator;
     }
 }

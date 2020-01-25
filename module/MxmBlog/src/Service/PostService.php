@@ -42,6 +42,7 @@ use Laminas\Config\Config;
 use Laminas\Paginator\Paginator;
 use DateTimeImmutable;
 use MxmBlog\Model\PostRepositoryInterface;
+use MxmBlog\Model\CategoryRepositoryInterface;
 
 class PostService implements PostServiceInterface
 {
@@ -79,11 +80,16 @@ class PostService implements PostServiceInterface
      * @var Laminas\Config\Config
      */
     protected $config;
-    
+
     /**
      * @var MxmBlog\Model\PostRepositoryInterface
      */
     protected $postRepository;
+
+    /**
+     * @var MxmBlog\Model\CategoryRepositoryInterface
+     */
+    protected $categoryRepository;
 
     public function __construct(
         MapperInterface $mapper,
@@ -93,7 +99,8 @@ class PostService implements PostServiceInterface
         AuthorizationService $authorizationService,
         AuthenticationService $authenticationService,
         Config $config,
-        PostRepositoryInterface $postRepository
+        PostRepositoryInterface $postRepository,
+        CategoryRepositoryInterface $categoryRepository
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -103,6 +110,7 @@ class PostService implements PostServiceInterface
         $this->authenticationService = $authenticationService;
         $this->config = $config;
         $this->postRepository = $postRepository;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -321,7 +329,7 @@ class PostService implements PostServiceInterface
      */
     public function findCategoryById($id)
     {
-	return $this->mapper->findCategoryById($id);
+	return $this->categoryRepository->findCategoryById($id);
     }
 
     /**

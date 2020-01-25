@@ -36,6 +36,7 @@ use Laminas\Authentication\AuthenticationService;
 use Laminas\Validator\Db\RecordExists;
 use Laminas\Config\Config;
 use MxmBlog\Model\PostRepositoryInterface;
+use MxmBlog\Model\CategoryRepositoryInterface;
 
 class PostServiceFactory implements FactoryInterface
 {
@@ -53,6 +54,7 @@ class PostServiceFactory implements FactoryInterface
             'adapter' => $dbAdapter,
         ]);
         $postRepository = $container->get(PostRepositoryInterface::class);
+        $categoryRepository = $container->get(CategoryRepositoryInterface::class);
 
         $config = new Config($container->get('config'));
 
@@ -64,7 +66,8 @@ class PostServiceFactory implements FactoryInterface
             $authorizationService,
             $authenticationService,
             $config,
-            $postRepository    
+            $postRepository,
+            $categoryRepository
         );
     }
 }
