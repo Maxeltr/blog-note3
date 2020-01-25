@@ -41,6 +41,7 @@ use MxmBlog\Exception\InvalidArgumentBlogException;
 use Laminas\Config\Config;
 use Laminas\Paginator\Paginator;
 use DateTimeImmutable;
+use MxmBlog\Model\PostRepositoryInterface;
 
 class PostService implements PostServiceInterface
 {
@@ -78,6 +79,11 @@ class PostService implements PostServiceInterface
      * @var Laminas\Config\Config
      */
     protected $config;
+    
+    /**
+     * @var MxmBlog\Model\PostRepositoryInterface
+     */
+    protected $postRepository;
 
     public function __construct(
         MapperInterface $mapper,
@@ -86,7 +92,8 @@ class PostService implements PostServiceInterface
         RecordExists $isRecordExists,
         AuthorizationService $authorizationService,
         AuthenticationService $authenticationService,
-        Config $config
+        Config $config,
+        PostRepositoryInterface $postRepository
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -95,6 +102,7 @@ class PostService implements PostServiceInterface
         $this->authorizationService = $authorizationService;
         $this->authenticationService = $authenticationService;
         $this->config = $config;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -140,7 +148,8 @@ class PostService implements PostServiceInterface
      */
     public function findPostById($id)
     {
-        $post = $this->mapper->findPostById($id, false);
+//        $post = $this->mapper->findPostById($id, false);
+        $post = $this->postRepository->findPostById($id, false);
         if ($post->getIsPublished()) {
             return $post;
         }

@@ -63,7 +63,8 @@ return [
             Date::class => Factory\Validator\DateValidatorFactory::class,
             Logger::class => Factory\Logger\LoggerFactory::class,
             \Laminas\I18n\Translator\Translator::class => \Laminas\I18n\Translator\TranslatorServiceFactory::class,
-            //Laminas\Mvc\I18n\Translator::class => \Laminas\Mvc\I18n\TranslatorFactory::class
+            //Laminas\Mvc\I18n\Translator::class => \Laminas\Mvc\I18n\TranslatorFactory::class,
+            Hydrator\Strategy\UserStrategy::class => Hydrator\Strategy\UserStrategyFactory::class,
 
         ],
         'delegators' => [
