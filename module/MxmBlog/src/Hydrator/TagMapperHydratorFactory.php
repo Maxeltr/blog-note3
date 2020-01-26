@@ -24,36 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Model;
+namespace MxmBlog\Hydrator;
 
-interface TagRepositoryInterface {
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Hydrator\ReflectionHydrator;
+use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+use MxmDateTime\Strategy\DateTimeImmutableFormatterStrategy;
+use MxmUser\Hydrator\Strategy\UserStrategy;
+use MxmBlog\Hydrator\Strategy\OwnerStrategy;
+use MxmBlog\Hydrator\Strategy\ClientStrategy;
+use Laminas\Hydrator\NamingStrategy\MapNamingStrategy;
 
-    /**
-     * @param string $id
-     *
-     * @return TagInterface
-     * @throw RecordNotFoundBlogException
-     * @throw InvalidArgumentBlogException
-     */
-    public function findTagById($id);
+class TagMapperHydratorFactory implements FactoryInterface {
 
-    /**
-     * @param string $id
-     *
-     * @return array
-     */
-    public function findTagsByPostId($id);
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        $hydrator = new ReflectionHydrator();
+        
+        return $hydrator;
+    }
 
-    /**
-     * @param string $name
-     *
-     * @return Paginator
-     */
-//    public function findTagsByName($name);
-
-    /**
-     *
-     * @return Paginator
-     */
-//    public function findAllTags();
 }

@@ -43,6 +43,7 @@ use Laminas\Paginator\Paginator;
 use DateTimeImmutable;
 use MxmBlog\Model\PostRepositoryInterface;
 use MxmBlog\Model\CategoryRepositoryInterface;
+use MxmBlog\Model\TagRepositoryInterface;
 
 class PostService implements PostServiceInterface
 {
@@ -91,6 +92,11 @@ class PostService implements PostServiceInterface
      */
     protected $categoryRepository;
 
+    /**
+     * @var MxmBlog\Model\TagRepositoryInterface
+     */
+    protected $tagRepository;
+
     public function __construct(
         MapperInterface $mapper,
         DateTimeImmutable $datetime,
@@ -100,7 +106,8 @@ class PostService implements PostServiceInterface
         AuthenticationService $authenticationService,
         Config $config,
         PostRepositoryInterface $postRepository,
-        CategoryRepositoryInterface $categoryRepository
+        CategoryRepositoryInterface $categoryRepository,
+        TagRepositoryInterface $tagRepository
     ) {
         $this->mapper = $mapper;
         $this->datetime = $datetime;
@@ -111,6 +118,7 @@ class PostService implements PostServiceInterface
         $this->config = $config;
         $this->postRepository = $postRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->tagRepository = $tagRepository;
     }
 
     /**
@@ -413,7 +421,7 @@ class PostService implements PostServiceInterface
      */
     public function findTagById($id)
     {
-	return $this->mapper->findTagById($id);
+	return $this->tagRepository->findTagById($id);
     }
 
     /**

@@ -24,62 +24,53 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Hydrator\Strategy;
+namespace MxmBlog\Model;
 
-use Laminas\Hydrator\Strategy\StrategyInterface;
-use MxmBlog\Model\CategoryRepositoryInterface;
-use MxmBlog\Model\CategoryInterface;
+use Laminas\Db\TableGateway\TableGateway;
+use MxmBlog\Exception\RecordNotFoundBlogException;
+use Laminas\Db\Sql\Predicate\Expression;
 
-class CategoryStrategy implements StrategyInterface
-{
-    /**
-     * @var MxmBlog\Model\CategoryRepositoryInterface
-     */
-    protected $repository;
+class TagRepository implements TagRepositoryInterface {
 
     /**
-     * @param CategoryRepositoryInterface $repository
+     * @var Laminas\Db\TableGateway\TableGateway
      */
-    public function __construct(CategoryRepositoryInterface $repository)
-    {
-        $this->repository = $repository;
+    protected $tableGateway;
+
+    /**
+     * @param TableGateway $tableGateway
+     */
+    public function __construct(
+            TableGateway $tableGateway
+    ) {
+        $this->tableGateway = $tableGateway;
     }
 
     /**
-     * Converts CategoryInterface to id string
-     *
-     * @param CategoryInterface $value
-     *
-     * @return mixed|string
+     * {@see TagRepositoryInterface}
      */
-    public function extract($value, ?object $object = null)
-    {
-        if ($value instanceof CategoryInterface) {
-            return $value->getId();
+    public function findTagById($id) {
+        $select = $this->tableGateway->getSql()->select();
+        $select->join('articles_tags', 'tags.id = articles_tags.tag_id', ['tag_id'], 'left');
+        $select->where(array('tags.id = ?' => $id));
+        $select->columns([
+            'id' => new Expression('tags.id'),
+            'title' => new Expression('tags.title'),
+            'weight' => new Expression('COUNT(articles_tags.tag_id)'),
+        ]);
+        $resultSet = $this->tableGateway->selectWith($select);
+
+        if (0 === count($resultSet)) {
+            throw new RecordNotFoundBlogException('Tag ' . $id . ' not found.');
         }
 
-        return $value;
+        return $resultSet->current();
     }
 
     /**
-     * Converts id string to CategoryInterface instance for injecting to object
-     *
-     * @param mixed|string $value
-     *
-     * @return mixed|CategoryInterface
+     * {@see TagRepositoryInterface}
      */
-    public function hydrate($value, ?array $data)
-    {
-        if (empty($value)) {
-            return $value;
-        }
+    public function findTagsByPostId($id) {
 
-        try {
-            $entity = $this->repository->findCategoryById($value);
-        } catch (\Exception $ex) {
-            return $value;
-        }
-
-        return $entity;
     }
 }

@@ -26,34 +26,25 @@
 
 namespace MxmBlog\Model;
 
-interface TagRepositoryInterface {
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Db\Adapter\Adapter;
+use MxmBlog\Hydrator\TagMapperHydrator;
+use MxmBlog\Model\TagInterface;
+use Laminas\Db\ResultSet\HydratingResultSet;
+use Laminas\Db\TableGateway\TableGateway;
 
-    /**
-     * @param string $id
-     *
-     * @return TagInterface
-     * @throw RecordNotFoundBlogException
-     * @throw InvalidArgumentBlogException
-     */
-    public function findTagById($id);
+class TagRepositoryFactory implements FactoryInterface {
 
-    /**
-     * @param string $id
-     *
-     * @return array
-     */
-    public function findTagsByPostId($id);
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        $table = 'tags';    //TODO перенсти в настройки
+        $adapter = $container->get(Adapter::class);
+        $hydrator = $container->get(TagMapperHydrator::class);
+        $prototype = $container->get(TagInterface::class);
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
 
-    /**
-     * @param string $name
-     *
-     * @return Paginator
-     */
-//    public function findTagsByName($name);
+        return new TagRepository($tableGateway);
+    }
 
-    /**
-     *
-     * @return Paginator
-     */
-//    public function findAllTags();
 }

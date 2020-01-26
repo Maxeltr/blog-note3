@@ -49,7 +49,12 @@ class PostRepository implements PostRepositoryInterface {
      * {@see PostRepositoryInterface}
      */
     public function findPostById($id, $hideUnpublished = true) {
-        $resultSet = $this->tableGateway->select(['id' => $id, 'isPublished' => '1']);
+        if ($hideUnpublished === false) {
+            $resultSet = $this->tableGateway->select(['id' => $id]);
+        } else {
+            $resultSet = $this->tableGateway->select(['id' => $id, 'isPublished' => '1']);
+        }
+
         if (0 === count($resultSet)) {
             throw new RecordNotFoundBlogException('Post ' . $id . ' not found.');
         }
