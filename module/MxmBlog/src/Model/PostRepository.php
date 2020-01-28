@@ -28,6 +28,11 @@ namespace MxmBlog\Model;
 
 use Laminas\Db\TableGateway\TableGateway;
 use MxmBlog\Exception\RecordNotFoundBlogException;
+use MxmBlog\Exception\InvalidArgumentBlogException;
+use Laminas\Validator\StaticValidator;
+use Laminas\Paginator\Paginator;
+use Laminas\Paginator\Adapter\DbSelect;
+use Laminas\Db\Sql\Predicate\Expression;
 
 class PostRepository implements PostRepositoryInterface {
 
@@ -49,17 +54,73 @@ class PostRepository implements PostRepositoryInterface {
      * {@see PostRepositoryInterface}
      */
     public function findPostById($id, $hideUnpublished = true) {
-        if ($hideUnpublished === false) {
-            $resultSet = $this->tableGateway->select(['id' => $id]);
-        } else {
-            $resultSet = $this->tableGateway->select(['id' => $id, 'isPublished' => '1']);
+        $select = $this->tableGateway->getSql()->select();
+        $select->where(['id' => $id]);
+        if ($hideUnpublished === true) {
+            $select->where(['isPublished' => '1']);
         }
-
+        $resultSet = $this->tableGateway->selectWith($select);
         if (0 === count($resultSet)) {
             throw new RecordNotFoundBlogException('Post ' . $id . ' not found.');
         }
 
         return $resultSet->current();
+    }
+
+    /**
+     * {@see PostRepositoryInterface}
+     */
+    public function findPublishDates(string $group = 'year', string $limit = null) {
+        $sql = $this->tableGateway->getSql();
+        $table = $this->tableGateway->getTable();
+        $select = $sql->select();
+
+        switch ($group) {
+            case "day":
+                $select->columns(array(
+                    'year' => new Expression('YEAR(published)'),
+                    'month' => new Expression('MONTH(published)'),
+                    'day' => new Expression('DAY(published)'),
+                    'total' => new Expression('COUNT(*)')
+                ));
+                $select->group('day');
+                $select->group('month');
+                $select->group('year');
+                break;
+
+            case "month":
+                $select->columns(array(
+                    'year' => new Expression('YEAR(published)'),
+                    'month' => new Expression('MONTH(published)'),
+                    'total' => new Expression('COUNT(*)')
+                ));
+                $select->group('month');
+                $select->group('year');
+                break;
+
+            case "year":
+                $select->columns(array(
+                    'year' => new Expression('YEAR(published)'),
+                    'total' => new Expression('COUNT(*)')
+                ));
+                $select->group('year');
+                break;
+
+            default:
+                throw new InvalidArgumentBlogException("Invalid parameter for group: must be day, month or year");
+        }
+
+        $select->where([$table . '.isPublished' => true]);
+
+        $select->order('published DESC');
+
+        if (StaticValidator::execute($limit, 'Digits')) {
+            $select->limit($limit);
+        }
+
+        $paginator = new Paginator(new DbSelect($select, $sql));
+
+        return $paginator;
     }
 
 }

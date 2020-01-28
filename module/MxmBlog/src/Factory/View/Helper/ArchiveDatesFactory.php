@@ -34,15 +34,17 @@ use MxmBlog\Date;
 use Laminas\Config\Config;
 use Laminas\Authentication\AuthenticationService;
 use MxmUser\Model\UserInterface;
+use MxmBlog\Model\PostRepositoryInterface;
 
 class ArchiveDatesFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $mapper = $container->get(MapperInterface::class);
+//        $mapper = $container->get(MapperInterface::class);
         $dateValidator = $container->get(Date::class);
         $config = new Config($container->get('config'));
         $authenticationService = $container->get(AuthenticationService::class);
+        $postRepository = $container->get(PostRepositoryInterface::class);
 
         $locale = null;
 
@@ -67,6 +69,6 @@ class ArchiveDatesFactory implements FactoryInterface
             \IntlDateFormatter::FULL
         );
 
-        return new ArchiveDates($mapper, $dateValidator, $formatter);
+        return new ArchiveDates($postRepository, $dateValidator, $formatter);
     }
 }

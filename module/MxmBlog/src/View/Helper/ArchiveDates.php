@@ -30,6 +30,7 @@ use MxmBlog\Mapper\MapperInterface;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\Validator\Date;
 use Laminas\Config\Config;
+use MxmBlog\Model\PostRepositoryInterface;
 
 class ArchiveDates extends AbstractHelper
 {
@@ -39,7 +40,7 @@ class ArchiveDates extends AbstractHelper
 
     protected $formatter;
 
-    public function __construct(MapperInterface $mapper, Date $dateValidator, \IntlDateFormatter $formatter)
+    public function __construct(PostRepositoryInterface $mapper, Date $dateValidator, \IntlDateFormatter $formatter)
     {
         $this->mapper = $mapper;
         $this->dateValidator = $dateValidator;

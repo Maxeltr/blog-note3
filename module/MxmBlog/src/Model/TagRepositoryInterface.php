@@ -40,7 +40,7 @@ interface TagRepositoryInterface {
     /**
      * @param string $id
      *
-     * @return array
+     * @return Paginator
      */
     public function findTagsByPostId($id);
 

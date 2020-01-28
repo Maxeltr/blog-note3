@@ -32,14 +32,14 @@ use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 use MxmDateTime\Strategy\DateTimeImmutableFormatterStrategy;
 use MxmUser\Hydrator\Strategy\UserStrategy;
-use MxmBlog\Hydrator\Strategy\TagsStrategy;
 use MxmBlog\Hydrator\Strategy\CategoryStrategy;
 use Laminas\Hydrator\NamingStrategy\MapNamingStrategy;
+use Laminas\Hydrator\Aggregate\AggregateHydrator;
+use MxmBlog\Model\TagRepositoryInterface;
 
-class PostMapperHydratorFactory implements FactoryInterface
-{
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
+class PostMapperHydratorFactory implements FactoryInterface {
+
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
         $hydrator = new ReflectionHydrator();
 //        $hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
         $hydrator->addStrategy('created', $container->get(DateTimeImmutableFormatterStrategy::class));
@@ -50,9 +50,17 @@ class PostMapperHydratorFactory implements FactoryInterface
         ]);
         $hydrator->setNamingStrategy($namingStrategy);
         $hydrator->addStrategy('category', $container->get(CategoryStrategy::class));
-//        $hydrator->addStrategy('tags', $container->get(TagsStrategy::class));
         $hydrator->addStrategy('author', $container->get(UserStrategy::class));
 
-        return $hydrator;
+        $aggregatehydrator = new AggregateHydrator();
+        $aggregatehydrator->setEventManager($container->get('EventManager'));
+        $aggregatehydrator->add($hydrator);
+
+        $tagRepository = $container->get(TagRepositoryInterface::class);
+        $tagsHydrator = new TagCloudHydrator($tagRepository);
+        $aggregatehydrator->add($tagsHydrator);
+
+        return $aggregatehydrator;
     }
+
 }

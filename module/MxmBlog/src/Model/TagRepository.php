@@ -29,6 +29,9 @@ namespace MxmBlog\Model;
 use Laminas\Db\TableGateway\TableGateway;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Paginator\Paginator;
+use Laminas\Paginator\Adapter\DbTableGateway;
+use Laminas\Paginator\Adapter\DbSelect;
 
 class TagRepository implements TagRepositoryInterface {
 
@@ -71,6 +74,21 @@ class TagRepository implements TagRepositoryInterface {
      * {@see TagRepositoryInterface}
      */
     public function findTagsByPostId($id) {
+        $sql = $this->tableGateway->getSql();
+        $select = $sql->select();
+        $select->join('articles_tags', 'tags.id = articles_tags.tag_id', [], 'left');
+        $select->where(['articles_tags.article_id = ?' => $id, 'articles_tags.article_id = tags.id']);
+//        $select->where(['articles_tags.article_id = tags.id']);
+        $select->columns([
+            'id' => new Expression('tags.id'),
+            'title' => new Expression('tags.title'),
+            'weight' => new Expression('COUNT(articles_tags.tag_id)'),
+        ]);
 
+        $resultSetPrototype = $this->tableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
     }
+
 }
