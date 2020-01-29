@@ -42,6 +42,7 @@ use Laminas\Config\Config;
 use Laminas\Paginator\Paginator;
 use DateTimeImmutable;
 use MxmBlog\Model\PostRepositoryInterface;
+use MxmBlog\Model\PostManagerInterface;
 use MxmBlog\Model\CategoryRepositoryInterface;
 use MxmBlog\Model\TagRepositoryInterface;
 
@@ -88,6 +89,11 @@ class PostService implements PostServiceInterface
     protected $postRepository;
 
     /**
+     * @var MxmBlog\Model\PostManagerInterface
+     */
+    protected $postManager;
+
+    /**
      * @var MxmBlog\Model\CategoryRepositoryInterface
      */
     protected $categoryRepository;
@@ -106,6 +112,7 @@ class PostService implements PostServiceInterface
         AuthenticationService $authenticationService,
         Config $config,
         PostRepositoryInterface $postRepository,
+        PostManagerInterface $postManager,
         CategoryRepositoryInterface $categoryRepository,
         TagRepositoryInterface $tagRepository
     ) {
@@ -117,6 +124,7 @@ class PostService implements PostServiceInterface
         $this->authenticationService = $authenticationService;
         $this->config = $config;
         $this->postRepository = $postRepository;
+        $this->postManager = $postManager;
         $this->categoryRepository = $categoryRepository;
         $this->tagRepository = $tagRepository;
     }
@@ -221,7 +229,7 @@ class PostService implements PostServiceInterface
         $this->unsetNonExistingTags($post);
         $this->unsetNonExistingCategory($post);
 
-        return $this->mapper->insertPost($post);
+        return $this->postManager->insertPost($post);
     }
 
     /**

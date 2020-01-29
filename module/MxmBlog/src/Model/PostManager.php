@@ -36,14 +36,20 @@ use Laminas\Paginator\Adapter\DbSelect;
 use Laminas\Validator\Db\NoRecordExists;
 use Laminas\Validator\ValidatorInterface;
 use Laminas\Filter\StaticFilter;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Tag\ItemList;
 
 class PostManager implements PostManagerInterface {
 
     /**
      * @var Laminas\Db\TableGateway\TableGateway
      */
+    protected $postTableGateway;
 
-    protected $tableGateway;
+    /**
+     * @var Laminas\Db\TableGateway\TableGateway
+     */
+    protected $tagPostTableGateway;
 
     /**
      * @var Laminas\Validator\Db\NoRecordExists
@@ -54,32 +60,47 @@ class PostManager implements PostManagerInterface {
      * @param TableGateway $tableGateway
      */
     public function __construct(
-            TableGateway $tableGateway,
-            ValidatorInterface $noRecordExists
+            TableGateway $postTableGateway,
+            TableGateway $tagPostTableGateway,
+            ValidatorInterface $noRecordExists,
+            HydratorInterface $postHydrator
     ) {
-        $this->tableGateway = $tableGateway;
+        $this->postTableGateway = $postTableGateway;
+        $this->tagPostTableGateway = $tagPostTableGateway;
+        $this->noRecordExists = $noRecordExists;
+        $this->postHydrator = $postHydrator;
     }
 
     /**
      * {@see PostManagerInterface}
      */
     public function insertPost(PostInterface $post) {
-        $this->fileTableGateway->insert($post);
-        $newId = $result->getLastInsertValue();
+        $postArray = $this->postHydrator->extract($post);
+        unset($postArray['tags']);
+        $this->postTableGateway->insert($postArray);
+        $newId = $this->postTableGateway->getLastInsertValue();
         if (!$newId) {
-            throw new DataBaseErrorException("Insert operation failed");
+            throw new DataBaseErrorBlogException("Insert operation failed");
         }
 
-        $this->deletePostAssociationWithTags($post);
         $this->saveTagsAndTagPostAssociations($newId, $post->getTags());
 
-        $resultSet = $this->fileTableGateway->select(['id' => $newId]);
+        $resultSet = $this->postTableGateway->select(['id' => $newId]);
         if (0 === count($resultSet)) {
-            throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
+            throw new DataBaseErrorBlogException("Insert operation failed or did not result in new row.");
         }
 
-
         return $resultSet->current();
+    }
+
+    /**
+     * Удаляет связи поста с тегами (article_id - tag_id)
+     * @param string $id
+     *
+     * @return Affected Rows
+     */
+    private function deletePostAssociationWithTags($id) {
+        return $this->tagPostTableGateway->$delete(['article_id' => $id]);
     }
 
     /**
@@ -89,7 +110,7 @@ class PostManager implements PostManagerInterface {
      *
      * @return $this
      */
-    private function saveTagsAndTagPostAssociations(string $postId, ItemList $tags) { //add
+    private function saveTagsAndTagPostAssociations(string $postId, ItemList $tags) {
         for ($offset = 0, $countTags = count($tags); $offset < $countTags; $offset++) {
             $tagId = $tags->offsetGet($offset)->getId();
             if ($this->noRecordExists->isValid($tagId)) {
@@ -118,36 +139,12 @@ class PostManager implements PostManagerInterface {
             throw new InvalidArgumentBlogException("Cannot save tag-post association: Empty param given: tag ID:{$tagId} or post ID:{$postId}");
         }
 
-        $sql = $this->tableGateway->getSql();
-        $table = $this->tableGateway->getTable();
-        $insert = $sql->insert('articles_tags');
-
-        $insert->values([
+        $this->tagPostTableGateway->insert([
             'article_id' => $postId,
             'tag_id' => $tagId,
         ]);
-        $this->tableGateway->insertWith($insert);
 
-        $newId = $result->getLastInsertValue();
-        if (!$newId) {
-            throw new DataBaseErrorException("Insert operation failed");
-        }
-
-
-
-        $statement = $sql->prepareStatementForSqlObject($insert);
-        $result = $statement->execute();
-
-        if ($result instanceof ResultInterface) {
-            $lastInsertId = $result->getGeneratedValue();
-            if ($lastInsertId) {
-                return $lastInsertId;
-            }
-
-            return false;
-        }
-
-        throw new DataBaseErrorBlogException("Database error. ZendDbSqlMapper. saveTagPostAssociation. No result returned.");
+        return $this->tagPostTableGateway->getLastInsertValue();
     }
 
 }

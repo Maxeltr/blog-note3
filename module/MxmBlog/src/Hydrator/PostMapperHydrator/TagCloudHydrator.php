@@ -32,6 +32,7 @@ use Laminas\Hydrator\HydratorInterface;
 use MxmBlog\Model\TagRepositoryInterface;
 use MxmUser\Exception\RecordNotFoundUserException;
 use Laminas\Tag\Cloud;
+use Laminas\Tag\ItemList;
 use MxmBlog\Model\TagInterface;
 use Laminas\Paginator\Paginator;
 
