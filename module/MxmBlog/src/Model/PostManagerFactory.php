@@ -33,7 +33,6 @@ use MxmBlog\Hydrator\PostMapperHydrator\PostMapperHydrator;
 use MxmBlog\Model\PostInterface;
 use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\TableGateway\TableGateway;
-use Laminas\Validator\Db\NoRecordExists;
 
 class PostManagerFactory implements FactoryInterface {
 
@@ -46,13 +45,8 @@ class PostManagerFactory implements FactoryInterface {
         $resultSet = new HydratingResultSet($hydrator, $prototype);
         $postTableGateway = new TableGateway($postTable, $adapter, null, $resultSet);
         $tagPostTableGateway = new TableGateway($tagPostTable, $adapter);
-        $noRecordExists = new NoRecordExists([
-            'table' => 'tags',
-            'field' => 'id',
-            'adapter' => $adapter,
-        ]);
 
-        return new PostManager($postTableGateway, $tagPostTableGateway, $noRecordExists, $hydrator);
+        return new PostManager($postTableGateway, $tagPostTableGateway);
     }
 
 }

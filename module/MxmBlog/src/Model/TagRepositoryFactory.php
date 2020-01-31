@@ -37,14 +37,16 @@ use Laminas\Db\TableGateway\TableGateway;
 class TagRepositoryFactory implements FactoryInterface {
 
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
-        $table = 'tags';    //TODO перенсти в настройки
+        $tagTable = 'tags';    //TODO перенсти в настройки
+        $tagPostTable = 'articles_tags';
         $adapter = $container->get(Adapter::class);
         $hydrator = $container->get(TagMapperHydrator::class);
         $prototype = $container->get(TagInterface::class);
         $resultSet = new HydratingResultSet($hydrator, $prototype);
-        $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
+        $tagTableGateway = new TableGateway($tagTable, $adapter, null, $resultSet);
+        $tagPostTableGateway = new TableGateway($tagPostTable, $adapter);
 
-        return new TagRepository($tableGateway);
+        return new TagRepository($tagTableGateway, $tagPostTableGateway);
     }
 
 }

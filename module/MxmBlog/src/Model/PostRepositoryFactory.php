@@ -37,14 +37,16 @@ use Laminas\Db\TableGateway\TableGateway;
 class PostRepositoryFactory implements FactoryInterface {
 
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
-        $table = 'articles';    //TODO перенсти в настройки
+        $postTable = 'articles';    //TODO перенсти в настройки
+        $tagPostTable = 'articles_tags';
         $adapter = $container->get(Adapter::class);
         $hydrator = $container->get(PostMapperHydrator::class);
         $prototype = $container->get(PostInterface::class);
         $resultSet = new HydratingResultSet($hydrator, $prototype);
-        $tableGateway = new TableGateway($table, $adapter, null, $resultSet);
-        
-        return new PostRepository($tableGateway);
+        $postTableGateway = new TableGateway($postTable, $adapter, null, $resultSet);
+        $tagPostTableGateway = new TableGateway($tagPostTable, $adapter);
+
+        return new PostRepository($postTableGateway, $tagPostTableGateway);
     }
 
 }

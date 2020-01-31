@@ -263,7 +263,7 @@ interface PostServiceInterface
      *
      * @return Paginator
      */
-    public function findPublishDates($group);
+//    public function findPublishDates($group);
 
     /**
      * Получить приветственную надпись для главной страницы в виде

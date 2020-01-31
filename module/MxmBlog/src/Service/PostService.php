@@ -134,7 +134,7 @@ class PostService implements PostServiceInterface
      */
     public function findPostsByCategory(CategoryInterface $category)
     {
-        return $this->mapper->findPostsByCategory($category);
+        return $this->postRepository->findPostsByCategory($category->getId());
     }
 
     /**
@@ -156,7 +156,7 @@ class PostService implements PostServiceInterface
             $this->authorizationService->checkPermission('find.unpublished.posts');
         }
 
-        return $this->mapper->findAllPosts($hideUnpublished);
+        return $this->postRepository->findAllPosts($hideUnpublished);
     }
 
     /**
@@ -172,7 +172,6 @@ class PostService implements PostServiceInterface
      */
     public function findPostById($id)
     {
-//        $post = $this->mapper->findPostById($id, false);
         $post = $this->postRepository->findPostById($id, false);
         if ($post->getIsPublished()) {
             return $post;
@@ -503,10 +502,10 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function findPublishDates($group)
-    {
-        return $this->mapper->findPublishDates($group, null, true);
-    }
+//    public function findPublishDates($group)
+//    {
+//        return $this->postManager->findPublishDates($group, null, true);
+//    }
 
     /**
      * {@inheritDoc}

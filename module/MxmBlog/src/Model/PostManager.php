@@ -26,6 +26,7 @@
 
 namespace MxmBlog\Model;
 
+use ArrayAccess;
 use Laminas\Db\TableGateway\TableGateway;
 use MxmBlog\Exception\RecordNotFoundBlogException;
 use MxmBlog\Exception\InvalidArgumentBlogException;
@@ -52,30 +53,24 @@ class PostManager implements PostManagerInterface {
     protected $tagPostTableGateway;
 
     /**
-     * @var Laminas\Validator\Db\NoRecordExists
-     */
-    protected $noRecordExists;
-
-    /**
-     * @param TableGateway $tableGateway
+     * @param TableGateway $postTableGateway
+     * @param TableGateway $tagPostTableGateway
      */
     public function __construct(
             TableGateway $postTableGateway,
-            TableGateway $tagPostTableGateway,
-            ValidatorInterface $noRecordExists,
-            HydratorInterface $postHydrator
+            TableGateway $tagPostTableGateway
     ) {
         $this->postTableGateway = $postTableGateway;
         $this->tagPostTableGateway = $tagPostTableGateway;
-        $this->noRecordExists = $noRecordExists;
-        $this->postHydrator = $postHydrator;
     }
 
     /**
      * {@see PostManagerInterface}
      */
     public function insertPost(PostInterface $post) {
-        $postArray = $this->postHydrator->extract($post);
+        $postHydrator = $this->postTableGateway->getResultSetPrototype()->getHydrator();
+        $postArray = $postHydrator->extract($post);
+        unset($postArray['id']);
         unset($postArray['tags']);
         $this->postTableGateway->insert($postArray);
         $newId = $this->postTableGateway->getLastInsertValue();
@@ -100,22 +95,19 @@ class PostManager implements PostManagerInterface {
      * @return Affected Rows
      */
     private function deletePostAssociationWithTags($id) {
-        return $this->tagPostTableGateway->$delete(['article_id' => $id]);
+        return $this->tagPostTableGateway->delete(['article_id' => $id]);
     }
 
     /**
      * Сохранить теги и связи тег-статья в базе.
      *
-     * @param ItemList $tags
+     * @param ArrayAccess Array|ArrayObject with TagInterface tags
      *
      * @return $this
      */
-    private function saveTagsAndTagPostAssociations(string $postId, ItemList $tags) {
+    private function saveTagsAndTagPostAssociations(string $postId, ArrayAccess $tags) {
         for ($offset = 0, $countTags = count($tags); $offset < $countTags; $offset++) {
-            $tagId = $tags->offsetGet($offset)->getId();
-            if ($this->noRecordExists->isValid($tagId)) {
-                continue;
-            }
+            $tagId = $tags[$offset]->getId();
             $this->saveTagPostAssociation($tagId, $postId);
         }
 

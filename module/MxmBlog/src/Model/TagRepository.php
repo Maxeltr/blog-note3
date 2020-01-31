@@ -38,30 +38,37 @@ class TagRepository implements TagRepositoryInterface {
     /**
      * @var Laminas\Db\TableGateway\TableGateway
      */
-    protected $tableGateway;
+    protected $tagTableGateway;
+
+    /**
+     * @var Laminas\Db\TableGateway\TableGateway
+     */
+    protected $tagPostTableGateway;
 
     /**
      * @param TableGateway $tableGateway
      */
     public function __construct(
-            TableGateway $tableGateway
+            TableGateway $tagTableGateway,
+            TableGateway $tagPostTableGateway
     ) {
-        $this->tableGateway = $tableGateway;
+        $this->tagTableGateway = $tagTableGateway;
+        $this->tagPostTableGateway = $tagPostTableGateway;
     }
 
     /**
      * {@see TagRepositoryInterface}
      */
     public function findTagById($id) {
-        $select = $this->tableGateway->getSql()->select();
-        $select->join('articles_tags', 'tags.id = articles_tags.tag_id', ['tag_id'], 'left');
+        $select = $this->tagTableGateway->getSql()->select();
+        $select->join('articles_tags', 'tags.id = articles_tags.tag_id', ['tag_id'], $select::JOIN_LEFT);
         $select->where(array('tags.id = ?' => $id));
         $select->columns([
             'id' => new Expression('tags.id'),
             'title' => new Expression('tags.title'),
             'weight' => new Expression('COUNT(articles_tags.tag_id)'),
         ]);
-        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet = $this->tagTableGateway->selectWith($select);
 
         if (0 === count($resultSet)) {
             throw new RecordNotFoundBlogException('Tag ' . $id . ' not found.');
@@ -74,18 +81,40 @@ class TagRepository implements TagRepositoryInterface {
      * {@see TagRepositoryInterface}
      */
     public function findTagsByPostId($id) {
-        $sql = $this->tableGateway->getSql();
+        $sql = $this->tagTableGateway->getSql();
         $select = $sql->select();
-        $select->join('articles_tags', 'tags.id = articles_tags.tag_id', [], 'left');
-        $select->where(['articles_tags.article_id = ?' => $id, 'articles_tags.article_id = tags.id']);
-//        $select->where(['articles_tags.article_id = tags.id']);
+        $select->where(['articles_tags.tag_id = tags.id']);
+
+        $select->join(
+                'articles_tags',
+                'tags.id = articles_tags.tag_id',
+                [],
+                $select::JOIN_LEFT
+        );
+        $select->where(['articles_tags.article_id = ?' => $id]);
+        $select->group('tags.id');
+
+        $subSelect = $this->tagPostTableGateway->getSql()->select();
+        $subSelect->columns([
+            'tag_id',
+            'tag_weight' => new Expression('COUNT(`tag_id`)')
+        ]);
+        $subSelect->group('tag_id');
+
+        $select->join(
+                ['tag_weights' => $subSelect],
+                'articles_tags.tag_id = tag_weights.tag_id',
+                [],
+                $select::JOIN_LEFT
+        );
+
         $select->columns([
             'id' => new Expression('tags.id'),
-            'title' => new Expression('tags.title'),
-            'weight' => new Expression('COUNT(articles_tags.tag_id)'),
+            'title' => new Expression('MIN(tags.title)'),
+            'weight' => new Expression('MIN(tag_weights.tag_weight)'),
         ]);
 
-        $resultSetPrototype = $this->tableGateway->getResultSetPrototype();
+        $resultSetPrototype = $this->tagTableGateway->getResultSetPrototype();
         $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
 
         return $paginator;

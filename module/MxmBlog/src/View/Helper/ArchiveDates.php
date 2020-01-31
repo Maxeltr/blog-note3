@@ -26,33 +26,33 @@
 
 namespace MxmBlog\View\Helper;
 
-use MxmBlog\Mapper\MapperInterface;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\Validator\Date;
-use Laminas\Config\Config;
 use MxmBlog\Model\PostRepositoryInterface;
 
 class ArchiveDates extends AbstractHelper
 {
-    protected $mapper;
+    protected $repository;
 
     protected $dateValidator;
 
     protected $formatter;
 
-    public function __construct(PostRepositoryInterface $mapper, Date $dateValidator, \IntlDateFormatter $formatter)
+    public function __construct(PostRepositoryInterface $repository, Date $dateValidator, \IntlDateFormatter $formatter)
     {
-        $this->mapper = $mapper;
+        $this->repository = $repository;
         $this->dateValidator = $dateValidator;
         $this->formatter = $formatter;
     }
 
     public function __invoke()
     {
-        $resultSet = $this->mapper->findPublishDates('month', 12);
-
+        $dates = $this->repository->findPublishDates('month', 12);
+        $dates = iterator_to_array($dates->setItemCountPerPage(-1));
+        \Zend\Debug\Debug::dump($dates);
+//        die();
         $archive = array();
-        foreach ($resultSet as $key => $result) {
+        foreach ($dates as $key => $result) {
             if (array_key_exists('year', $result) && array_key_exists('month', $result) &&
                 array_key_exists('total', $result)) {
                 $this->dateValidator->setFormat('Y');
@@ -82,7 +82,8 @@ class ArchiveDates extends AbstractHelper
                 $archive[$year][$key]['total'] = $result['total'];
             }
         }
-
+\Zend\Debug\Debug::dump($archive);
+        die();
         return $archive;
     }
 }

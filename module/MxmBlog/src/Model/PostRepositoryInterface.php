@@ -51,7 +51,7 @@ interface PostRepositoryInterface {
      *
      * @return Paginator
      */
-//    public function findAllPosts($hideUnpublished = true);
+    public function findAllPosts($hideUnpublished = true);
 
     /**
      * @param string $id ID категории
@@ -59,7 +59,7 @@ interface PostRepositoryInterface {
      *
      * @return Paginator
      */
-//    public function findPostsByCategory($id, $hideUnpublished = true);
+    public function findPostsByCategory($id, $hideUnpublished = true);
 
     /**
      * @param string $tag Название тега
@@ -72,7 +72,7 @@ interface PostRepositoryInterface {
     /**
      * Найти статьи, написанные определенным пользователем.
      *
-     * @param string $id ID пользователя 
+     * @param string $id ID пользователя
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
      * @return Paginator
@@ -116,9 +116,8 @@ interface PostRepositoryInterface {
      *
      * @param string $group Сгруппировать по годам ('year'), месяцам ('month') или дням ('day').
      * @param string $limit Вернуть не больше, чем limit.
-     * @param bool $paginated Вернуть пагинатор, если true.
      *
-     * @return Laminas\Db\ResultSet|Paginator
+     * @return Paginator
      */
-//    public function findPublishDates($group, $limit, $paginated);
+    public function findPublishDates(string $group, string $limit);
 }

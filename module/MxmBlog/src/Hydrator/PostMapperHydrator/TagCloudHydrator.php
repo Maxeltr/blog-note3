@@ -30,11 +30,9 @@ use MxmBlog\Model\PostInterface;
 use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\HydratorInterface;
 use MxmBlog\Model\TagRepositoryInterface;
-use MxmUser\Exception\RecordNotFoundUserException;
 use Laminas\Tag\Cloud;
 use Laminas\Tag\ItemList;
 use MxmBlog\Model\TagInterface;
-use Laminas\Paginator\Paginator;
 
 class TagCloudHydrator extends ReflectionHydrator implements HydratorInterface {
 
@@ -49,15 +47,8 @@ class TagCloudHydrator extends ReflectionHydrator implements HydratorInterface {
             return $object;
         }
 
-        try {
-            $tags = $this->tagRepository->findTagsByPostId($data['id']);
-        } catch (RecordNotFoundUserException $ex) {                         //TODO add logger
-            return $object;
-        }
-
-        if ($tags instanceof Paginator) {
-            $tags = iterator_to_array($tags->setItemCountPerPage(-1));
-        }
+        $tags = $this->tagRepository->findTagsByPostId($data['id']);
+        $tags = iterator_to_array($tags->setItemCountPerPage(-1));
 
         $cloud = new Cloud();
         $cloud->setTags($tags);

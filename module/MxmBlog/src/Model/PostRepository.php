@@ -39,27 +39,35 @@ class PostRepository implements PostRepositoryInterface {
     /**
      * @var Laminas\Db\TableGateway\TableGateway
      */
-    protected $tableGateway;
+    protected $postTableGateway;
 
     /**
-     * @param TableGateway $tableGateway
+     * @var Laminas\Db\TableGateway\TableGateway
+     */
+    protected $tagPostTableGateway;
+
+    /**
+     * @param TableGateway $postTableGateway
+     * @param TableGateway $tagPostTableGateway
      */
     public function __construct(
-            TableGateway $tableGateway
+            TableGateway $postTableGateway,
+            TableGateway $tagPostTableGateway
     ) {
-        $this->tableGateway = $tableGateway;
+        $this->postTableGateway = $postTableGateway;
+        $this->tagPostTableGateway = $tagPostTableGateway;
     }
 
     /**
      * {@see PostRepositoryInterface}
      */
     public function findPostById($id, $hideUnpublished = true) {
-        $select = $this->tableGateway->getSql()->select();
+        $select = $this->postTableGateway->getSql()->select();
         $select->where(['id' => $id]);
         if ($hideUnpublished === true) {
-            $select->where(['isPublished' => '1']);
+            $select->where(['isPublished' => true]);
         }
-        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet = $this->postTableGateway->selectWith($select);
         if (0 === count($resultSet)) {
             throw new RecordNotFoundBlogException('Post ' . $id . ' not found.');
         }
@@ -70,9 +78,39 @@ class PostRepository implements PostRepositoryInterface {
     /**
      * {@see PostRepositoryInterface}
      */
+    public function findAllPosts($hideUnpublished = true) {
+        $sql = $this->postTableGateway->getSql();
+        $select = $sql->select();
+        if ($hideUnpublished) {
+            $select->where(['isPublished' => true]);
+        }
+        $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
+    }
+
+    /**
+     * {@see PostRepositoryInterface}
+     */
+    public function findPostsByCategory($id, $hideUnpublished = true) {
+        $sql = $this->postTableGateway->getSql();
+        $select = $sql->select();
+        if ($hideUnpublished) {
+            $select->where(['isPublished' => true]);
+        }
+        $select->where(['categoryId' => $id]);
+        $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
+    }
+
+    /**
+     * {@see PostRepositoryInterface}
+     */
     public function findPublishDates(string $group = 'year', string $limit = null) {
-        $sql = $this->tableGateway->getSql();
-        $table = $this->tableGateway->getTable();
+        $sql = $this->postTableGateway->getSql();
         $select = $sql->select();
 
         switch ($group) {
@@ -86,16 +124,21 @@ class PostRepository implements PostRepositoryInterface {
                 $select->group('day');
                 $select->group('month');
                 $select->group('year');
+                $select->order('year DESC');
+                $select->order('month DESC');
+                $select->order('day DESC');
                 break;
 
             case "month":
                 $select->columns(array(
                     'year' => new Expression('YEAR(published)'),
                     'month' => new Expression('MONTH(published)'),
-                    'total' => new Expression('COUNT(*)')
+                    'total' => new Expression('COUNT(*)'),
                 ));
                 $select->group('month');
                 $select->group('year');
+                $select->order('year DESC');
+                $select->order('month DESC');
                 break;
 
             case "year":
@@ -104,15 +147,16 @@ class PostRepository implements PostRepositoryInterface {
                     'total' => new Expression('COUNT(*)')
                 ));
                 $select->group('year');
+                $select->order('year DESC');
                 break;
 
             default:
                 throw new InvalidArgumentBlogException("Invalid parameter for group: must be day, month or year");
         }
 
-        $select->where([$table . '.isPublished' => true]);
+        $select->where(['isPublished' => true]);
 
-        $select->order('published DESC');
+//        $select->order('published DESC');
 
         if (StaticValidator::execute($limit, 'Digits')) {
             $select->limit($limit);
