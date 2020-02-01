@@ -47,11 +47,10 @@ class ArchiveDates extends AbstractHelper
 
     public function __invoke()
     {
-        $dates = $this->repository->findPublishDates('month', 12);
-        $dates = iterator_to_array($dates->setItemCountPerPage(-1));
-        \Zend\Debug\Debug::dump($dates);
-//        die();
-        $archive = array();
+        $datesPaginator = $this->repository->findPublishDates('month', 12);
+        $dates = iterator_to_array($datesPaginator->setItemCountPerPage(-1));
+
+        $archive = [];
         foreach ($dates as $key => $result) {
             if (array_key_exists('year', $result) && array_key_exists('month', $result) &&
                 array_key_exists('total', $result)) {
@@ -63,9 +62,6 @@ class ArchiveDates extends AbstractHelper
                 if (!$this->dateValidator->isValid($result['month'])) {
                     break;
                 }
-//                if (!$result['year']) {
-//                    break;
-//                }
 
                 $this->formatter->setPattern('Y');
                 $year = $this->formatter->format(
@@ -82,8 +78,7 @@ class ArchiveDates extends AbstractHelper
                 $archive[$year][$key]['total'] = $result['total'];
             }
         }
-\Zend\Debug\Debug::dump($archive);
-        die();
+
         return $archive;
     }
 }

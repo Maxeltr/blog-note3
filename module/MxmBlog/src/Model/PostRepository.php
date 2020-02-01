@@ -156,8 +156,6 @@ class PostRepository implements PostRepositoryInterface {
 
         $select->where(['isPublished' => true]);
 
-//        $select->order('published DESC');
-
         if (StaticValidator::execute($limit, 'Digits')) {
             $select->limit($limit);
         }
