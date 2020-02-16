@@ -28,7 +28,7 @@ namespace MxmBlog\Factory\Service;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use MxmBlog\Mapper\MapperInterface;
+//use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\Validator\IsPublishedRecordExistsValidatorInterface;
 use MxmBlog\Service\PostService;
 use MxmRbac\Service\AuthorizationService;
@@ -38,42 +38,48 @@ use Laminas\Config\Config;
 use MxmBlog\Model\PostRepositoryInterface;
 use MxmBlog\Model\PostManagerInterface;
 use MxmBlog\Model\CategoryRepositoryInterface;
+use MxmBlog\Model\CategoryManagerInterface;
 use MxmBlog\Model\TagRepositoryInterface;
+use MxmBlog\Model\TagManagerInterface;
 
-class PostServiceFactory implements FactoryInterface
-{
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $mapper = $container->get(MapperInterface::class);
+class PostServiceFactory implements FactoryInterface {
+
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+//        $mapper = $container->get(MapperInterface::class);
         $dateTime = $container->get('datetime');
         $isPublishedRecordExistsValidator = $container->get(IsPublishedRecordExistsValidatorInterface::class);
         $authorizationService = $container->get(AuthorizationService::class);
         $authenticationService = $container->get(AuthenticationService::class);
         $dbAdapter = $container->get('Laminas\Db\Adapter\Adapter');
         $isRecordExists = new RecordExists([
-            'table'   => 'tags',
-            'field'   => 'id',
+            'table' => 'tags',
+            'field' => 'id',
             'adapter' => $dbAdapter,
         ]);
         $postRepository = $container->get(PostRepositoryInterface::class);
         $postManager = $container->get(PostManagerInterface::class);
         $categoryRepository = $container->get(CategoryRepositoryInterface::class);
+        $categoryManager = $container->get(CategoryManagerInterface::class);
         $tagRepository = $container->get(TagRepositoryInterface::class);
+        $tagManager = $container->get(TagManagerInterface::class);
 
         $config = new Config($container->get('config'));
 
         return new PostService(
-            $mapper,
-            $dateTime,
-            $isPublishedRecordExistsValidator,
-            $isRecordExists,
-            $authorizationService,
-            $authenticationService,
-            $config,
-            $postRepository,
-            $postManager,
-            $categoryRepository,
-            $tagRepository
+//                $mapper,
+                $dateTime,
+                $isPublishedRecordExistsValidator,
+                $isRecordExists,
+                $authorizationService,
+                $authenticationService,
+                $config,
+                $postRepository,
+                $postManager,
+                $categoryRepository,
+                $categoryManager,
+                $tagRepository,
+                $tagManager
         );
     }
+
 }

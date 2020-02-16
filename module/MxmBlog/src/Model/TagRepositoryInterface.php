@@ -55,5 +55,5 @@ interface TagRepositoryInterface {
      *
      * @return Paginator
      */
-//    public function findAllTags();
+    public function findAllTags();
 }

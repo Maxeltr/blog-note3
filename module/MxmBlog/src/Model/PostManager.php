@@ -89,6 +89,27 @@ class PostManager implements PostManagerInterface {
     }
 
     /**
+     * {@see PostManagerInterface}
+     */
+    public function updatePost(PostInterface $post) {
+        $postHydrator = $this->postTableGateway->getResultSetPrototype()->getHydrator();
+        $postArray = $postHydrator->extract($post);
+        unset($postArray['id']);
+        unset($postArray['tags']);
+        $this->postTableGateway->update($postArray, ['id = ?' => $post->getId()]);
+
+        $this->deletePostAssociationWithTags($post->getId());
+        $this->saveTagsAndTagPostAssociations($post->getId(), $post->getTags());
+
+        $resultSet = $this->postTableGateway->select(['id' => $post->getId()]);
+        if (0 === count($resultSet)) {
+            throw new DataBaseErrorBlogException("Insert operation failed or did not result in new row.");
+        }
+
+        return $resultSet->current();
+    }
+
+    /**
      * Удаляет связи поста с тегами (article_id - tag_id)
      * @param string $id
      *
@@ -96,6 +117,20 @@ class PostManager implements PostManagerInterface {
      */
     private function deletePostAssociationWithTags($id) {
         return $this->tagPostTableGateway->delete(['article_id' => $id]);
+    }
+
+    /**
+     * Удаляет связи постов с тегами (article_id - tag_id)
+     * @param array $ids
+     *
+     * @return Affected Rows
+     */
+    private function deletePostAssociationsWithTags($ids) {
+        $sql = $this->tagPostTableGateway->getSql();
+        $delete = $sql->delete();
+        $delete->where->in('article_id', $ids);
+
+        return $this->tagPostTableGateway->deleteWith($delete);
     }
 
     /**
@@ -137,6 +172,60 @@ class PostManager implements PostManagerInterface {
         ]);
 
         return $this->tagPostTableGateway->getLastInsertValue();
+    }
+
+    /**
+     * {@see PostManagerInterface}
+     */
+    public function deletePost(PostInterface $post) {
+        $this->deletePostAssociationWithTags($post->getId());
+        return $this->postTableGateway->delete(['id' => $post->getId()]);
+    }
+
+    /**
+     * {@see PostManagerInterface}
+     */
+    public function deletePosts($posts) {
+        if ($posts instanceof Paginator) {
+            $posts = iterator_to_array($posts->setItemCountPerPage(-1));
+        }
+
+        if (!is_array($posts)) {
+            throw new InvalidArgumentBlogException(sprintf(
+                            'The data must be array; received "%s"',
+                            (is_object($posts) ? get_class($posts) : gettype($posts))
+            ));
+        }
+
+        if (empty($posts)) {
+
+            return 0;
+        }
+
+        $func = function ($value) {
+            if (is_string($value)) {
+                return $value;
+            } elseif ($value instanceof PostInterface) {
+                return $value->getId();
+            } else {
+                throw new InvalidArgumentBlogException(sprintf(
+                                'Invalid value in data array detected, value must be a string or instance of PostInterface, %s given.',
+                                (is_object($value) ? get_class($value) : gettype($value))
+                ));
+            }
+        };
+
+        $postIds = array_map($func, $posts);
+
+        $sql = $this->postTableGateway->getSql();
+        $delete = $sql->delete();
+        $delete->where->in('id', $postIds);
+        $result = $this->postTableGateway->deleteWith($delete);
+        if (0 !== $result) {
+            $this->deletePostAssociationsWithTags($postIds);
+        }
+
+        return $result;
     }
 
 }

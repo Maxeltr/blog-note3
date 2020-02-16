@@ -26,7 +26,7 @@
 
 namespace MxmBlog\Service;
 
-use MxmBlog\Mapper\MapperInterface;
+//use MxmBlog\Mapper\MapperInterface;
 use MxmBlog\Model\PostInterface;
 use MxmBlog\Model\CategoryInterface;
 use MxmBlog\Model\TagInterface;
@@ -44,10 +44,12 @@ use DateTimeImmutable;
 use MxmBlog\Model\PostRepositoryInterface;
 use MxmBlog\Model\PostManagerInterface;
 use MxmBlog\Model\CategoryRepositoryInterface;
+use MxmBlog\Model\CategoryManagerInterface;
 use MxmBlog\Model\TagRepositoryInterface;
+use MxmBlog\Model\TagManagerInterface;
 
-class PostService implements PostServiceInterface
-{
+class PostService implements PostServiceInterface {
+
     /**
      * @var string
      */
@@ -56,7 +58,7 @@ class PostService implements PostServiceInterface
     /**
      * @var \Blog\Mapper\MapperInterface
      */
-    protected $mapper;
+//    protected $mapper;
 
     /**
      * @var DateTimeInterface
@@ -99,24 +101,36 @@ class PostService implements PostServiceInterface
     protected $categoryRepository;
 
     /**
+     * @var MxmBlog\Model\CategoryManagerInterface
+     */
+    protected $categoryManager;
+
+    /**
      * @var MxmBlog\Model\TagRepositoryInterface
      */
     protected $tagRepository;
 
+    /**
+     * @var MxmBlog\Model\TagManagerInterface
+     */
+    protected $tagManager;
+
     public function __construct(
-        MapperInterface $mapper,
-        DateTimeImmutable $datetime,
-        IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
-        RecordExists $isRecordExists,
-        AuthorizationService $authorizationService,
-        AuthenticationService $authenticationService,
-        Config $config,
-        PostRepositoryInterface $postRepository,
-        PostManagerInterface $postManager,
-        CategoryRepositoryInterface $categoryRepository,
-        TagRepositoryInterface $tagRepository
+//            MapperInterface $mapper,
+            DateTimeImmutable $datetime,
+            IsPublishedRecordExistsValidatorInterface $isPublishedValidator,
+            RecordExists $isRecordExists,
+            AuthorizationService $authorizationService,
+            AuthenticationService $authenticationService,
+            Config $config,
+            PostRepositoryInterface $postRepository,
+            PostManagerInterface $postManager,
+            CategoryRepositoryInterface $categoryRepository,
+            CategoryManagerInterface $categoryManager,
+            TagRepositoryInterface $tagRepository,
+            TagManagerInterface $tagManager
     ) {
-        $this->mapper = $mapper;
+//        $this->mapper = $mapper;
         $this->datetime = $datetime;
         $this->IsPublishedRecordExistsValidator = $isPublishedValidator;
         $this->isRecordExists = $isRecordExists;
@@ -126,30 +140,29 @@ class PostService implements PostServiceInterface
         $this->postRepository = $postRepository;
         $this->postManager = $postManager;
         $this->categoryRepository = $categoryRepository;
+        $this->categoryManager = $categoryManager;
         $this->tagRepository = $tagRepository;
+        $this->tagManager = $tagManager;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findPostsByCategory(CategoryInterface $category)
-    {
-        return $this->postRepository->findPostsByCategory($category->getId());
+    public function findPostsByCategory(CategoryInterface $category) {
+        return $this->postRepository->findPostsByCategoryId($category->getId());
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findPostsByTag(TagInterface $tag)
-    {
-        return $this->mapper->findPostsByTag($tag);
+    public function findPostsByTag(TagInterface $tag) {
+        return $this->postRepository->findPostsByTagId($tag->getId());
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findAllPosts($hideUnpublished = true)
-    {
+    public function findAllPosts($hideUnpublished = true) {
         if ($hideUnpublished === false) {
             $this->authenticationService->checkIdentity();
 
@@ -162,16 +175,16 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function findPostsByPublishDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null)
-    {
-        return $this->mapper->findPostsByPublishDate($since, $to);
+    public function findPostsByPublishDate(\DateTimeInterface $since = null, \DateTimeInterface $to = null) {
+        return $this->postRepository->findPostsByPublishDate(
+                        $since->format($this->config->defaults->dateTimeFormat),
+                        $to->format($this->config->defaults->dateTimeFormat));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findPostById($id)
-    {
+    public function findPostById($id) {
         $post = $this->postRepository->findPostById($id, false);
         if ($post->getIsPublished()) {
             return $post;
@@ -179,40 +192,37 @@ class PostService implements PostServiceInterface
 
         $this->authorizationService->checkPermission('find.unpublished.post', $post);
 
-	return $post;
+        return $post;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findPostsByUser(UserInterface $user)
-    {
+    public function findPostsByUser(UserInterface $user) {
         if ($this->authorizationService->isGranted('find.unpublished.posts', $user)) {
-            $posts = $this->mapper->findPostsByUser($user, false);
+            $posts = $this->postRepository->findPostsByUserId($user->getId(), false);
         } else {
-            $posts = $this->mapper->findPostsByUser($user);
+            $posts = $this->postRepository->findPostsByUserId($user->getId());
         }
 
-	return $posts;
+        return $posts;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findUnPublishedPostsByUser(UserInterface $user)
-    {
+    public function findUnPublishedPostsByUser(UserInterface $user) {
         $this->authorizationService->checkPermission('find.unpublished.posts');
 
-	$posts = $this->mapper->findPostsByUser($user, false);
+        $posts = $this->postRepository->findPostsByUserId($user->getId(), false);
 
-	return $posts;
+        return $posts;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function insertPost(PostInterface $post)
-    {
+    public function insertPost(PostInterface $post) {
         $this->authorizationService->checkPermission('add.post');
 
         $post->setCreated($this->datetime->modify('now'));
@@ -234,8 +244,7 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function updatePost(PostInterface $post)
-    {
+    public function updatePost(PostInterface $post) {
         $this->authorizationService->checkPermission('edit.post', $post);
 
         $post->setUpdated($this->datetime->modify('now'));
@@ -247,9 +256,9 @@ class PostService implements PostServiceInterface
         $post->setVersion($post->getVersion() + 1);
 
         $this->unsetNonExistingTags($post);
-	$this->unsetNonExistingCategory($post);
+        $this->unsetNonExistingCategory($post);
 
-        return $this->mapper->updatePost($post);
+        return $this->postManager->updatePost($post);
     }
 
     /**
@@ -258,29 +267,28 @@ class PostService implements PostServiceInterface
      * @param  PostInterface $post
      * @return void
      */
-    private function unsetNonExistingTags(PostInterface $post)
-    {
+    private function unsetNonExistingTags(PostInterface $post) {
         $itemList = $post->getTags();
 
-        if(!$itemList instanceof ItemList) {
+        if (!$itemList instanceof ItemList) {
             throw new InvalidArgumentBlogException(sprintf(
-                'Tags property of PostInterface should contain Laminas\Tag\ItemList "%s"',
-                (is_object($itemList) ? get_class($itemList) : gettype($itemList))
+                            'Tags property of PostInterface should contain Laminas\Tag\ItemList "%s"',
+                            (is_object($itemList) ? get_class($itemList) : gettype($itemList))
             ));
         }
 
         $this->isRecordExists->setField('id');
         $this->isRecordExists->setTable('tags');
 
-        foreach($itemList as $offset => $item) {
-            if(!$item instanceof TagInterface) {
+        foreach ($itemList as $offset => $item) {
+            if (!$item instanceof TagInterface) {
                 throw new InvalidArgumentBlogException(sprintf(
-                    'Itemlist of PostInterface should contain MxmBlog\Model\TagInterface "%s"',
-                    (is_object($item) ? get_class($item) : gettype($item))
+                                'Itemlist of PostInterface should contain MxmBlog\Model\TagInterface "%s"',
+                                (is_object($item) ? get_class($item) : gettype($item))
                 ));
             }
 
-            if(!$this->isRecordExists->isValid($item->getId())) {
+            if (!$this->isRecordExists->isValid($item->getId())) {
                 $itemList->offsetUnset($offset);
             }
         }
@@ -292,106 +300,97 @@ class PostService implements PostServiceInterface
      * @param  PostInterface $post
      * @return void
      */
-    private function unsetNonExistingCategory(PostInterface $post)
-    {
+    private function unsetNonExistingCategory(PostInterface $post) {
         $category = $post->getCategory();
 
-        if(!$category instanceof CategoryInterface) {
+        if (!$category instanceof CategoryInterface) {
             throw new InvalidArgumentBlogException(sprintf(
-                'Category property of PostInterface should contain CategoryInterface "%s"',
-                (is_object($category) ? get_class($category) : gettype($category))
+                            'Category property of PostInterface should contain CategoryInterface "%s"',
+                            (is_object($category) ? get_class($category) : gettype($category))
             ));
         }
 
         $this->isRecordExists->setField('id');
         $this->isRecordExists->setTable('category');
 
-        if(!$this->isRecordExists->isValid($category->getId())) {
-            $post->setCategory(new MxmBlog\Model\Category());		//TODO придумать что нить
+        if (!$this->isRecordExists->isValid($category->getId())) {
+            $post->setCategory(new MxmBlog\Model\Category());  //TODO придумать что нить
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deletePost(PostInterface $post)
-    {
+    public function deletePost(PostInterface $post) {
         $this->authorizationService->checkPermission('delete.post', $post);
 
-        return $this->mapper->deletePost($post);
+        return $this->postManager->deletePost($post);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deletePosts($posts)
-    {
+    public function deletePosts($posts) {
         $this->authorizationService->checkPermission('delete.posts');
 
-        return $this->mapper->deletePosts($posts);
+        return $this->postManager->deletePosts($posts);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findAllCategories()
-    {
-        return $this->mapper->findAllCategories();
+    public function findAllCategories() {
+        return $this->categoryRepository->findAllCategories();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findCategoryById($id)
-    {
-	return $this->categoryRepository->findCategoryById($id);
+    public function findCategoryById($id) {
+        return $this->categoryRepository->findCategoryById($id);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function insertCategory(CategoryInterface $category)
-    {
+    public function insertCategory(CategoryInterface $category) {
         $this->authorizationService->checkPermission('add.category');
 
-        return $this->mapper->insertCategory($category);
+        return $this->categoryManager->insertCategory($category);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function updateCategory(CategoryInterface $category)
-    {
+    public function updateCategory(CategoryInterface $category) {
         $this->authorizationService->checkPermission('edit.category');
 
-        return $this->mapper->updateCategory($category);
+        return $this->categoryManager->updateCategory($category);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deleteCategory(CategoryInterface $category)
-    {
+    public function deleteCategory(CategoryInterface $category) {
         $this->authorizationService->checkPermission('delete.category');
 
-        return $this->mapper->deleteCategory($category);
+        return $this->categoryManager->deleteCategory($category);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deleteCategories($categories)
-    {
+    public function deleteCategories($categories) {
         $this->authorizationService->checkPermission('delete.categories');
 
         if ($categories instanceof Paginator) {
             $categories = iterator_to_array($categories->setItemCountPerPage(-1));
         }
 
-        if (! is_array($categories)) {
+        if (!is_array($categories)) {
             throw new InvalidArgumentBlogException(sprintf(
-                'The data must be array; received "%s"',
-                (is_object($categories) ? get_class($categories) : gettype($categories))
+                            'The data must be array; received "%s"',
+                            (is_object($categories) ? get_class($categories) : gettype($categories))
             ));
         }
 
@@ -406,76 +405,70 @@ class PostService implements PostServiceInterface
                 return $value->getId();
             } else {
                 throw new InvalidArgumentBlogException(sprintf(
-                    'Invalid value in data array detected, value must be a string or instance of CategoryInterface, %s given.',
-                    (is_object($value) ? get_class($value) : gettype($value))
+                                'Invalid value in data array detected, value must be a string or instance of CategoryInterface, %s given.',
+                                (is_object($value) ? get_class($value) : gettype($value))
                 ));
             }
         };
 
-        return $this->mapper->deleteCategories(array_map($func, $categories));
+        return $this->categoryManager->deleteCategories(array_map($func, $categories));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findAllTags()
-    {
-        return $this->mapper->findAllTags();
+    public function findAllTags() {
+        return $this->tagRepository->findAllTags();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findTagById($id)
-    {
-	return $this->tagRepository->findTagById($id);
+    public function findTagById($id) {
+        return $this->tagRepository->findTagById($id);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function insertTag(TagInterface $tag)
-    {
+    public function insertTag(TagInterface $tag) {
         $this->authorizationService->checkPermission('add.tag');
 
-        return $this->mapper->insertTag($tag);
+        return $this->tagManager->insertTag($tag);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function updateTag(TagInterface $tag)
-    {
+    public function updateTag(TagInterface $tag) {
         $this->authorizationService->checkPermission('edit.tag');
 
-        return $this->mapper->updateTag($tag);
+        return $this->tagManager->updateTag($tag);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deleteTag(TagInterface $tag)
-    {
+    public function deleteTag(TagInterface $tag) {
         $this->authorizationService->checkPermission('delete.tag');
 
-        return $this->mapper->deleteTag($tag);
+        return $this->tagManager->deleteTag($tag);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deleteTags($tags)
-    {
+    public function deleteTags($tags) {
         $this->authorizationService->checkPermission('delete.tags');
 
         if ($tags instanceof Paginator) {
             $tags = iterator_to_array($tags->setItemCountPerPage(-1));
         }
 
-        if (! is_array($tags)) {
+        if (!is_array($tags)) {
             throw new InvalidArgumentBlogException(sprintf(
-                'The data must be array; received "%s"',
-                (is_object($tags) ? get_class($tags) : gettype($tags))
+                            'The data must be array; received "%s"',
+                            (is_object($tags) ? get_class($tags) : gettype($tags))
             ));
         }
 
@@ -490,13 +483,13 @@ class PostService implements PostServiceInterface
                 return $value->getId();
             } else {
                 throw new InvalidArgumentBlogException(sprintf(
-                    'Invalid value in data array detected, value must be a string or instance of TagInterface, %s given.',
-                    (is_object($value) ? get_class($value) : gettype($value))
+                                'Invalid value in data array detected, value must be a string or instance of TagInterface, %s given.',
+                                (is_object($value) ? get_class($value) : gettype($value))
                 ));
             }
         };
 
-        return $this->mapper->deleteTags(array_map($func, $tags));
+        return $this->tagManager->deleteTags(array_map($func, $tags));
     }
 
     /**
@@ -510,8 +503,7 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function getGreeting()
-    {
+    public function getGreeting() {
         $options = \Laminas\Config\Factory::fromFile($this->config->mxm_blog->optionFilePath);
 
         return $options;
@@ -520,24 +512,23 @@ class PostService implements PostServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function editGreeting($greeting)
-    {
+    public function editGreeting($greeting) {
         $this->authenticationService->checkIdentity();
 
         $this->authorizationService->checkPermission('edit.greeting');
 
-        if (! is_array($greeting)) {
+        if (!is_array($greeting)) {
             throw new InvalidArgumentBlogException(sprintf(
-                'Greeting must be an array, received "%s"',
-                (is_object($greeting) ? get_class($greeting) : gettype($greeting))
-        ));
+                            'Greeting must be an array, received "%s"',
+                            (is_object($greeting) ? get_class($greeting) : gettype($greeting))
+            ));
         }
 
-        if (! array_key_exists('caption', $greeting)) {
+        if (!array_key_exists('caption', $greeting)) {
             throw new InvalidArgumentBlogException(sprintf(self::MISSING_KEY_ERROR, 'greeting', 'caption'));
         }
 
-        if (! array_key_exists('message', $greeting)) {
+        if (!array_key_exists('message', $greeting)) {
             throw new InvalidArgumentBlogException(sprintf(self::MISSING_KEY_ERROR, 'greeting', 'message'));
         }
 
@@ -553,4 +544,5 @@ class PostService implements PostServiceInterface
 
         return $options;
     }
+
 }

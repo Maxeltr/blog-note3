@@ -59,15 +59,15 @@ interface PostRepositoryInterface {
      *
      * @return Paginator
      */
-    public function findPostsByCategory($id, $hideUnpublished = true);
+    public function findPostsByCategoryId($id, $hideUnpublished = true);
 
     /**
-     * @param string $tag Название тега
+     * @param string $id ID тега
      * @param bool $hideUnpublished Скрыть неопубликованные посты. По умолчанию true.
      *
      * @return Paginator
      */
-//    public function findPostsByTag($tag, $hideUnpublished = true);
+    public function findPostsByTagId($id, $hideUnpublished = true);
 
     /**
      * Найти статьи, написанные определенным пользователем.
@@ -77,7 +77,7 @@ interface PostRepositoryInterface {
      *
      * @return Paginator
      */
-//    public function findPostsByUser($id, $hideUnpublished = true);
+    public function findPostsByUserId($id, $hideUnpublished = true);
 
     /**
      * Найти статьи по дате создания.
@@ -109,7 +109,7 @@ interface PostRepositoryInterface {
      *
      * @return Paginator
      */
-//    public function findPostsByPublishDate($since, $to, $hideUnpublished = true);
+    public function findPostsByPublishDate($since, $to);
 
     /**
      * Найти даты, когда были публикации , сгруппировать по дате и подсчитать кол-во публикаций на группу.

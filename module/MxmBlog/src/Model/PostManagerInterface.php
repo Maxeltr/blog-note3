@@ -44,7 +44,7 @@ interface PostManagerInterface {
      * @throw InvalidArgumentBlogException
      * @throw DataBaseErrorBlogException
      */
-//    public function updatePost(PostInterface $post);
+    public function updatePost(PostInterface $post);
 
     /**
      * Должен удалить полученный объект, реализующий PostInterface, и его связи
@@ -54,12 +54,12 @@ interface PostManagerInterface {
      *
      * @return bool
      */
-//    public function deletePost(PostInterface $post);
+    public function deletePost(PostInterface $post);
 
     /**
      * @param array|Paginator $posts
      *
      * @return int Кол-во удаленных объектов.
      */
-//    public function deletePosts($posts);
+    public function deletePosts($posts);
 }

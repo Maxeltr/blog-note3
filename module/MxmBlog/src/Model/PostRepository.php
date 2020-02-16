@@ -84,6 +84,8 @@ class PostRepository implements PostRepositoryInterface {
         if ($hideUnpublished) {
             $select->where(['isPublished' => true]);
         }
+        $select->order('id DESC');
+
         $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
         $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
 
@@ -93,13 +95,74 @@ class PostRepository implements PostRepositoryInterface {
     /**
      * {@see PostRepositoryInterface}
      */
-    public function findPostsByCategory($id, $hideUnpublished = true) {
+    public function findPostsByCategoryId($id, $hideUnpublished = true) {
         $sql = $this->postTableGateway->getSql();
         $select = $sql->select();
         if ($hideUnpublished) {
             $select->where(['isPublished' => true]);
         }
         $select->where(['categoryId' => $id]);
+        $select->order('articles.id DESC');
+
+        $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
+    }
+
+    /**
+     * {@see PostRepositoryInterface}
+     */
+    public function findPostsByTagId($id, $hideUnpublished = true) {
+        $sql = $this->postTableGateway->getSql();
+        $select = $sql->select();
+        if ($hideUnpublished) {
+            $select->where(['isPublished' => true]);
+        }
+        $select->join(
+                'articles_tags',
+                'articles.id = articles_tags.article_id',
+                [],
+                $select::JOIN_LEFT
+        );
+        $select->where(['articles_tags.tag_id = ?' => $id]);
+        $select->order('articles.id DESC');
+
+        $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
+    }
+
+    /**
+     * {@see PostRepositoryInterface}
+     */
+    public function findPostsByPublishDate($since, $to) {
+        $sql = $this->postTableGateway->getSql();
+        $select = $sql->select();
+        $select->where(['isPublished' => true]);
+        $select->where->greaterThanOrEqualTo('articles.published', $since);
+        $select->where->lessThanOrEqualTo('articles.published', $to);
+        $select->order('articles.id DESC');
+
+        $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
+    }
+
+    /**
+     * {@see PostRepositoryInterface}
+     */
+    public function findPostsByUserId($id, $hideUnpublished = true) {
+        $sql = $this->postTableGateway->getSql();
+        $select = $sql->select();
+        if ($hideUnpublished) {
+            $select->where(['isPublished' => true]);
+        }
+        $select->where(['author' => $id]);
+        $select->order('articles.id DESC');
+
         $resultSetPrototype = $this->postTableGateway->getResultSetPrototype();
         $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
 

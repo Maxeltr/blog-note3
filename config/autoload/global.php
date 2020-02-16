@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Global Configuration Override
  *
@@ -10,7 +11,6 @@
  * control, so do not include passwords or other sensitive information in this
  * file.
  */
-
 use Laminas\Navigation\Service\DefaultNavigationFactory;
 
 return [
@@ -18,6 +18,27 @@ return [
         'locale' => 'ru',
         'timezone' => 'UTC',
         'dateTimeFormat' => 'Y-m-d H:i:s',
+    ],
+    'api-tools-oauth2' => [
+        'db' => [
+            'username' => 'root',
+            'password' => '',
+        ]
+    ],
+    'api-tools-mvc-auth' => [
+        'authentication' => [
+            'adapters' => [
+                'MxmApi' => [
+                    'storage' => [
+                        'username' => 'root',
+                        'password' => '',
+                    ],
+                ],
+            ],
+            'map' => [
+                'MxmApi\\V1' => 'oauth2',
+            ]
+        ]
     ],
     'db' => [
         'driver' => 'Pdo',
@@ -37,19 +58,19 @@ return [
             //'HTML.Trusted' => 'true',
             //'HTML.SafeEmbed' => 'true',
             'AutoFormat.RemoveEmpty.RemoveNbsp' => 'true',
-            'AutoFormat.RemoveEmpty' => 'true',     // удаляет пустые теги
+            'AutoFormat.RemoveEmpty' => 'true', // удаляет пустые теги
             'Core.EscapeInvalidTags' => 'true',
-            //'AutoFormat.AutoParagraph' => 'true',   // авто добавление <p> в тексте при переносе
-            //'Output.TidyFormat' => true,
+        //'AutoFormat.AutoParagraph' => 'true',   // авто добавление <p> в тексте при переносе
+        //'Output.TidyFormat' => true,
         ],
     ],
     'translator' => [
         'locale' => 'ru',
         'translation_file_patterns' => [
             [
-                'type'     => 'phpArray',
+                'type' => 'phpArray',
                 'base_dir' => __DIR__ . '/../../data/languages',
-                'pattern'  => '%s.php',
+                'pattern' => '%s.php',
             ],
         ],
     ],
@@ -70,7 +91,6 @@ return [
                 'query' => ['lang' => 'En']
             ],
         ],
-
     ],
     'service_manager' => [
         'abstract_factories' => [

@@ -26,46 +26,25 @@
 
 namespace MxmBlog\Model;
 
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Db\Adapter\Adapter;
+use MxmBlog\Hydrator\CategoryMapperHydrator;
+use MxmBlog\Model\CategoryInterface;
+use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\TableGateway\TableGateway;
-use MxmBlog\Exception\RecordNotFoundBlogException;
-use Laminas\Paginator\Paginator;
-use Laminas\Paginator\Adapter\DbTableGateway;
 
-class CategoryRepository implements CategoryRepositoryInterface {
+class CategoryManagerFactory implements FactoryInterface {   //add
 
-    /**
-     * @var Laminas\Db\TableGateway\TableGateway
-     */
-    protected $tableGateway;
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        $categoryTable = 'category';    //TODO перенсти в настройки
+        $adapter = $container->get(Adapter::class);
+        $hydrator = $container->get(CategoryMapperHydrator::class);
+        $prototype = $container->get(CategoryInterface::class);
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        $tableGateway = new TableGateway($categoryTable, $adapter, null, $resultSet);
 
-    /**
-     * @param TableGateway $tableGateway
-     */
-    public function __construct(
-            TableGateway $tableGateway
-    ) {
-        $this->tableGateway = $tableGateway;
-    }
-
-    /**
-     * {@see CategoryRepositoryInterface}
-     */
-    public function findCategoryById($id) {
-        $resultSet = $this->tableGateway->select(['id' => $id]);
-        if (0 === count($resultSet)) {
-            throw new RecordNotFoundBlogException('Category ' . $id . ' not found.');
-        }
-
-        return $resultSet->current();
-    }
-
-    /**
-     * {@see CategoryRepositoryInterface}
-     */
-    public function findAllCategories() {
-        $paginator = new Paginator(new DbTableGateway($this->tableGateway, null, 'id DESC'));
-
-        return $paginator;
+        return new CategoryManager($tableGateway);
     }
 
 }

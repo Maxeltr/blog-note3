@@ -90,6 +90,7 @@ return [
                         'edit.greeting',
                         'delete.categories',
                         'delete.posts',
+                        'delete.tags',
                         'delete.logs',
                         'find.all.files',
                         'download.file'

@@ -83,7 +83,7 @@ class TagRepository implements TagRepositoryInterface {
     public function findTagsByPostId($id) {
         $sql = $this->tagTableGateway->getSql();
         $select = $sql->select();
-        $select->where(['articles_tags.tag_id = tags.id']);
+        $select->order('id DESC');
 
         $select->join(
                 'articles_tags',
@@ -103,7 +103,39 @@ class TagRepository implements TagRepositoryInterface {
 
         $select->join(
                 ['tag_weights' => $subSelect],
-                'articles_tags.tag_id = tag_weights.tag_id',
+                'tags.id = tag_weights.tag_id',
+                [],
+                $select::JOIN_LEFT
+        );
+
+        $select->columns([
+            'id' => new Expression('tags.id'),
+            'title' => new Expression('MIN(tags.title)'),
+            'weight' => new Expression('MIN(tag_weights.tag_weight)'),
+        ]);
+
+        $resultSetPrototype = $this->tagTableGateway->getResultSetPrototype();
+        $paginator = new Paginator(new DbSelect($select, $sql, $resultSetPrototype));
+
+        return $paginator;
+    }
+
+    public function findAllTags() {
+        $sql = $this->tagTableGateway->getSql();
+        $select = $sql->select();
+        $select->group('tags.id');
+        $select->order('id DESC');
+
+        $subSelect = $this->tagPostTableGateway->getSql()->select();
+        $subSelect->columns([
+            'tag_id',
+            'tag_weight' => new Expression('COUNT(`tag_id`)')
+        ]);
+        $subSelect->group('tag_id');
+
+        $select->join(
+                ['tag_weights' => $subSelect],
+                'tags.id = tag_weights.tag_id',
                 [],
                 $select::JOIN_LEFT
         );

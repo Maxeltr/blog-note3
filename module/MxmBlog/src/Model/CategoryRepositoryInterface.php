@@ -48,5 +48,5 @@ interface CategoryRepositoryInterface {
      *
      * @return Paginator
      */
-//    public function findAllCategories();
+    public function findAllCategories();
 }

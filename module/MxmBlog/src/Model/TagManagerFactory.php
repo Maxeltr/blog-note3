@@ -26,46 +26,27 @@
 
 namespace MxmBlog\Model;
 
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Db\Adapter\Adapter;
+use MxmBlog\Hydrator\TagMapperHydrator;
+use MxmBlog\Model\TagInterface;
+use Laminas\Db\ResultSet\HydratingResultSet;
 use Laminas\Db\TableGateway\TableGateway;
-use MxmBlog\Exception\RecordNotFoundBlogException;
-use Laminas\Paginator\Paginator;
-use Laminas\Paginator\Adapter\DbTableGateway;
 
-class CategoryRepository implements CategoryRepositoryInterface {
+class TagManagerFactory implements FactoryInterface {
 
-    /**
-     * @var Laminas\Db\TableGateway\TableGateway
-     */
-    protected $tableGateway;
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        $tagTable = 'tags';    //TODO перенсти в настройки
+        $tagPostTable = 'articles_tags';
+        $adapter = $container->get(Adapter::class);
+        $hydrator = $container->get(TagMapperHydrator::class);
+        $prototype = $container->get(TagInterface::class);
+        $resultSet = new HydratingResultSet($hydrator, $prototype);
+        $tagTableGateway = new TableGateway($tagTable, $adapter, null, $resultSet);
+        $tagPostTableGateway = new TableGateway($tagPostTable, $adapter);
 
-    /**
-     * @param TableGateway $tableGateway
-     */
-    public function __construct(
-            TableGateway $tableGateway
-    ) {
-        $this->tableGateway = $tableGateway;
-    }
-
-    /**
-     * {@see CategoryRepositoryInterface}
-     */
-    public function findCategoryById($id) {
-        $resultSet = $this->tableGateway->select(['id' => $id]);
-        if (0 === count($resultSet)) {
-            throw new RecordNotFoundBlogException('Category ' . $id . ' not found.');
-        }
-
-        return $resultSet->current();
-    }
-
-    /**
-     * {@see CategoryRepositoryInterface}
-     */
-    public function findAllCategories() {
-        $paginator = new Paginator(new DbTableGateway($this->tableGateway, null, 'id DESC'));
-
-        return $paginator;
+        return new TagManager($tagTableGateway, $tagPostTableGateway);
     }
 
 }
