@@ -33,22 +33,31 @@ use MxmRbac\Service\AuthorizationService;
 use Laminas\Config\Config;
 use MxmGame\Logger;
 use MxmGame\Mapper\MapperInterface;
+use Laminas\Db\Adapter\Adapter;
 
-class GameServiceFactory implements FactoryInterface
-{
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
+class GameServiceFactory implements FactoryInterface {
+
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
         $authorizationService = $container->get(AuthorizationService::class);
         $authService = $container->get(AuthenticationService::class);
         $config = new Config($container->get('config'));
         $logger = $container->get(Logger::class);
         $mapper = $container->get(MapperInterface::class);
+        $dbAdapter = $container->get(Adapter::class);
+        $recordExistsValidator = new RecordExists([
+            'table' => 'games',
+            'field' => 'is_published',
+            'adapter' => $dbAdapter,
+        ]);
+
         return new GameService(
-            $authService,
-            $authorizationService,
-            $config,
-            $logger,
-            $mapper
+                $authService,
+                $authorizationService,
+                $config,
+                $logger,
+                $mapper,
+                $recordExistsValidator
         );
     }
+
 }

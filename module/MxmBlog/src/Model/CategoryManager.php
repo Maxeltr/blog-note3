@@ -87,7 +87,7 @@ class CategoryManager implements CategoryManagerInterface {
 
         $resultSet = $this->tableGateway->select(['id' => $category->getId()]);
         if (0 === count($resultSet)) {
-            throw new DataBaseErrorBlogException("Insert operation failed or did not result in new row.");
+            throw new DataBaseErrorBlogException("Update operation failed or did not result in new row.");
         }
 
         return $resultSet->current();

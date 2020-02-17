@@ -24,27 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Model;
+namespace MxmGame\Form;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\Db\Adapter\Adapter;
-use MxmBlog\Hydrator\CategoryMapperHydrator;
-use MxmBlog\Model\CategoryInterface;
-use Laminas\Db\ResultSet\HydratingResultSet;
-use Laminas\Db\TableGateway\TableGateway;
+use Laminas\InputFilter\InputFilter;
+use Zend\i18n\Translator\TranslatorInterface;
+use MxmGame\Model\Game;
+use MxmGame\Form\GameForm;
+use Laminas\Hydrator\ReflectionHydrator;
+use MxmGame\Hydrator\GameMapperHydrator;
 
-class CategoryManagerFactory implements FactoryInterface {
+class GameFormFactory implements FactoryInterface {
 
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
-        $categoryTable = 'category';    //TODO перенсти в настройки
-        $adapter = $container->get(Adapter::class);
-        $hydrator = $container->get(CategoryMapperHydrator::class);
-        $prototype = $container->get(CategoryInterface::class);
-        $resultSet = new HydratingResultSet($hydrator, $prototype);
-        $tableGateway = new TableGateway($categoryTable, $adapter, null, $resultSet);
-
-        return new CategoryManager($tableGateway);
+        return new GameForm(
+                new InputFilter(),
+                $container->get(TranslatorInterface::class),
+                $container->get('MvcTranslator'),
+                new Game(),
+                $container->get(GameMapperHydrator::class)
+        );
     }
 
 }

@@ -1,0 +1,18 @@
+#myform {                               //add
+    height: 30ph;
+    border-style: outset;
+    padding: 5px;
+    background-color: #f0f0f0;
+    font-size: 17px;
+}
+
+#myform input[type = "button"] {
+    font-weight: bold;
+    height: 30px;
+}
+
+#myform select {
+    height: 30px;
+    border-color: silver;
+    font-weight: bold;
+}

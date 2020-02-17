@@ -34,9 +34,10 @@ use MxmGame\Exception\InvalidArgumentException;
 use MxmRbac\Service\AuthorizationService;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use MxmGame\Mapper\MapperInterface;
+use Laminas\Validator\Db\RecordExists;
 
-class GameService implements GameServiceInterface
-{
+class GameService implements GameServiceInterface {
+
     /**
      * @var Laminas\Authentication\AuthenticationService
      */
@@ -62,40 +63,60 @@ class GameService implements GameServiceInterface
      */
     protected $mapper;
 
+    /**
+     * @var Laminas\Validator\Db\RecordExists
+     */
+    protected $recordExists;
+
     public function __construct(
-        AuthenticationService $authenticationService,
-        AuthorizationService $authorizationService,
-        Config $config,
-        Logger $logger,
-        MapperInterface $mapper
+            AuthenticationService $authenticationService,
+            AuthorizationService $authorizationService,
+            Config $config,
+            Logger $logger,
+            MapperInterface $mapper,
+            RecordExists $recordExists
     ) {
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
         $this->config = $config;
         $this->logger = $logger;
         $this->mapper = $mapper;
+        $this->recordExists = $recordExists;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findAllGames()
-    {
+    public function findAllGames() {
         return $this->mapper->findAllGames();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findGameById($id)
-    {
+    public function findGameById($id) {
         return $this->mapper->findGameById($id);
     }
 
-    public function findTextureById($id)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public function updateGame(GameInterface $game) {
+        $this->authorizationService->checkPermission('edit.game', $game);
+
+        $game->setUpdateDate($this->datetime->modify('now'));
+
+        if ($game->getIsPublished() === true && $this->recordExists->isValid(true)) {
+            $game->setPublished($this->datetime->modify('now'));
+        }
+
+        return $this->mapper->updateGame($game);
+    }
+
+    public function findTextureById($id) {
         $texture = $this->mapper->findTextureById($id);
 
         return $texture;
     }
+
 }

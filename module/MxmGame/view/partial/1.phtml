@@ -1,0 +1,10 @@
+<h2><?php echo $this->escapeHtml($game->getTitle()); ?></h2>    //add
+<div>
+    <canvas id = "map" style = "border: ridge;"></canvas>
+</div>
+<div>
+    <canvas id = "3DView" style = "border: ridge;"></canvas>
+</div>
+<?php $this->headScript()->setAllowArbitraryAttributes(true);
+    echo $this->headScript()->prependFile($this->basePath('js/p3D2/public_html/lib/require.js'), null, ['data-main' => $this->basePath('js/p3D2/public_html/app.js')]); //add
+?>

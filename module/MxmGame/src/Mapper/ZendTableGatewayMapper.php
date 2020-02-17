@@ -96,6 +96,24 @@ class ZendTableGatewayMapper implements MapperInterface
         return $resultSet->current();
     }
 
+    /*
+     * {@inheritDoc}
+     */
+    public function updateGame($game)
+    {
+        $hydrator = $this->gameTableGateway->getResultSetPrototype()->getHydrator();
+        $gameArray = $hydrator->extract($game);
+        unset($gameArray['id']);
+        $this->gameTableGateway->update($gameArray, ['id = ?' => $game->getId()]);
+
+        $resultSet = $this->gameTableGateway->select(['id' => $game->getId()]);
+        if (0 === count($resultSet)) {
+            throw new DataBaseErrorBlogException("Update operation failed or did not result in new row.");
+        }
+
+        return $resultSet->current();
+    }
+
     /**
      * {@inheritDoc}
      */

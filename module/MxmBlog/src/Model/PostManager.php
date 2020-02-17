@@ -103,7 +103,7 @@ class PostManager implements PostManagerInterface {
 
         $resultSet = $this->postTableGateway->select(['id' => $post->getId()]);
         if (0 === count($resultSet)) {
-            throw new DataBaseErrorBlogException("Insert operation failed or did not result in new row.");
+            throw new DataBaseErrorBlogException("Update operation failed or did not result in new row.");
         }
 
         return $resultSet->current();

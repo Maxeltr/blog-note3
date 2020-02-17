@@ -37,9 +37,6 @@ return [
         'logger' => [
             'path' => __DIR__ . '/../../../data/logs/MxmGame.log',
         ],
-        'allowedFolders' => [
-            'logs' => __DIR__ . '/../../../data/logs/',
-        ],
     ],
     'defaults' => [
 
@@ -47,7 +44,7 @@ return [
     'controllers' => [
         'factories' => [
             Controller\ListController::class => Controller\ListControllerFactory::class,
-
+            Controller\WriteController::class => Controller\WriteControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -65,6 +62,11 @@ return [
         'invokables' => [
 
         ],
+    ],
+    'form_elements' => [
+        'factories' => [
+            Form\GameForm::class => Factory\Form\GameFormFactory::class,
+        ]
     ],
     'router' => [
         'routes' => [
@@ -107,7 +109,19 @@ return [
                     ],
                 ],
             ],
-
+            'editGame' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route'    => '/edit/game/:id',
+                    'constraints' => [
+                        'id' => '[1-9]\d*',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'editGame'
+                    ],
+                ],
+            ],
         ],
     ],
     'view_manager' => [

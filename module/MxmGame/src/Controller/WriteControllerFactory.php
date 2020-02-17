@@ -24,27 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace MxmBlog\Model;
+namespace MxmGame\Controller;
 
+use Laminas\Config\Config;
 use Interop\Container\ContainerInterface;
+use Zend\i18n\Translator\TranslatorInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\Db\Adapter\Adapter;
-use MxmBlog\Hydrator\CategoryMapperHydrator;
-use MxmBlog\Model\CategoryInterface;
-use Laminas\Db\ResultSet\HydratingResultSet;
-use Laminas\Db\TableGateway\TableGateway;
+use MxmGame\Logger;
+use MxmGame\Service\GameServiceInterface;
+use MxmGame\Form\GameForm;
 
-class CategoryManagerFactory implements FactoryInterface {
+class WriteControllerFactory implements FactoryInterface
+{
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $gameService = $container->get(GameServiceInterface::class);
+        $logger = $container->get(Logger::class);
+        $formManager = $container->get('FormElementManager');
+        $gameForm = $formManager->get(GameForm::class);
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
-        $categoryTable = 'category';    //TODO перенсти в настройки
-        $adapter = $container->get(Adapter::class);
-        $hydrator = $container->get(CategoryMapperHydrator::class);
-        $prototype = $container->get(CategoryInterface::class);
-        $resultSet = new HydratingResultSet($hydrator, $prototype);
-        $tableGateway = new TableGateway($categoryTable, $adapter, null, $resultSet);
-
-        return new CategoryManager($tableGateway);
+        return new WriteController($gameService, $gameForm, $logger);
     }
-
 }

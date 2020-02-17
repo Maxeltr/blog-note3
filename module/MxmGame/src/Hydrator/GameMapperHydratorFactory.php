@@ -30,15 +30,18 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+use MxmDateTime\Strategy\DateTimeImmutableFormatterStrategy;
 
-class GameMapperHydratorFactory implements FactoryInterface
-{
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
-    {
-        $gameHydrator = new ReflectionHydrator();
-        $gameHydrator->setNamingStrategy(new UnderscoreNamingStrategy());
-        $gameHydrator->addStrategy('uploadDate', $container->get('DateTimeImmutableFormatterStrategy'));
+class GameMapperHydratorFactory implements FactoryInterface {
+
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        $hydrator = new ReflectionHydrator();
+        $hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
+        $hydrator->addStrategy('uploadDate', $container->get(DateTimeImmutableFormatterStrategy::class));
+        $hydrator->addStrategy('publishDate', $container->get(DateTimeImmutableFormatterStrategy::class));
+        $hydrator->addStrategy('updateDate', $container->get(DateTimeImmutableFormatterStrategy::class));
 
         return $gameHydrator;
     }
+
 }

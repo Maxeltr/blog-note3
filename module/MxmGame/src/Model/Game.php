@@ -51,6 +51,21 @@ class Game implements GameInterface
     protected $uploadDate;
 
     /**
+     * @var DateTimeInterface Publish date
+     */
+    protected $publishDate;
+
+    /**
+     * @var DateTimeInterface Update date
+     */
+    protected $updateDate;
+
+    /**
+     * @var bool Is game published?
+     */
+    protected $isPublished;
+
+    /**
      *  {@inheritDoc}
      */
     public function getGameId()
@@ -118,6 +133,60 @@ class Game implements GameInterface
     public function setUploadDate(DateTimeInterface $uploadDate)
     {
         $this->uploadDate = $uploadDate;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getPublishDate()
+    {
+        return $this->publishDate;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setPublishDate(DateTimeInterface $publishDate)
+    {
+        $this->publishDate = $publishDate;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getUpdateDate()
+    {
+        return $this->updateDate;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setUpdateDate(DateTimeInterface $updateDate)
+    {
+        $this->updateDate = $updateDate;
+
+        return $this;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function getIsPublished()
+    {
+        return $this->isPublished;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public function setIsPublished($isPublished)
+    {
+        $this->isPublished = (bool) $isPublished;
 
         return $this;
     }

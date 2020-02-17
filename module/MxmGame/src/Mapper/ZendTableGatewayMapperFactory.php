@@ -37,6 +37,7 @@ use MxmGame\Logger;
 use MxmGame\Hydrator\GameMapperHydrator\GameMapperHydrator;
 use MxmGame\Model\Game;
 use MxmGame\Model\Texture;
+use MxmGame\Hydrator\GameMapperHydrator;
 
 class ZendTableGatewayMapperFactory implements FactoryInterface
 {
