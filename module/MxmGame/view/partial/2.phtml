@@ -1,9 +1,9 @@
-<?php       //add
-    echo $this->headLink()->prependStylesheet($this->basePath('css/life.css'))
+<?php
+    echo $this->headLink()->prependStylesheet($this->basePath('css/life.css'));
     $this->headScript()->setAllowArbitraryAttributes(true);
     echo $this->headScript()->prependFile($this->basePath('js/life/life.js'));
 ?>
-<form id = "myform">  
+<form id = "myform">
     <b>Probability</b>
     <select size = "1" id = "probability">
         <option value = "0.1">0.10</option>

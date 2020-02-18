@@ -34,6 +34,7 @@ use Laminas\Config\Config;
 use MxmGame\Logger;
 use MxmGame\Mapper\MapperInterface;
 use Laminas\Db\Adapter\Adapter;
+use Laminas\Validator\Db\RecordExists;
 
 class GameServiceFactory implements FactoryInterface {
 

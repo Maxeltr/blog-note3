@@ -56,7 +56,7 @@ return [
             Service\GameService::class => Service\GameServiceFactory::class,
             Logger::class => Logger\LoggerFactory::class,
             Mapper\ZendTableGatewayMapper::class => Mapper\ZendTableGatewayMapperFactory::class,
-            Hydrator\GameMapperHydrator\GameMapperHydrator::class => Hydrator\GameMapperHydrator\GameMapperHydratorFactory::class,
+            Hydrator\GameMapperHydrator::class => Hydrator\GameMapperHydratorFactory::class,
 
         ],
         'invokables' => [
@@ -65,7 +65,7 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            Form\GameForm::class => Factory\Form\GameFormFactory::class,
+            Form\GameForm::class => Form\GameFormFactory::class,
         ]
     ],
     'router' => [
@@ -119,6 +119,16 @@ return [
                     'defaults' => [
                         'controller' => Controller\WriteController::class,
                         'action' => 'editGame'
+                    ],
+                ],
+            ],
+            'addGame' => [
+                'type'    => 'literal',
+                'options' => [
+                    'route'    => '/add/game',
+                    'defaults' => [
+                        'controller' => Controller\WriteController::class,
+                        'action' => 'addGame'
                     ],
                 ],
             ],

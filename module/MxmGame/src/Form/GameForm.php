@@ -53,7 +53,7 @@ class GameForm extends Form implements InputFilterProviderInterface {
         parent::__construct($name, $options);
 
         $this->setHydrator($hydrator);
-        $this->setObject($client);
+        $this->setObject($game);
 
         $this->setAttribute('method', 'post')
                 ->setInputFilter($inputFilter);

@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace MxmGame\Hydrator\GameMapperHydrator;
+namespace MxmGame\Hydrator;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -41,7 +41,7 @@ class GameMapperHydratorFactory implements FactoryInterface {
         $hydrator->addStrategy('publishDate', $container->get(DateTimeImmutableFormatterStrategy::class));
         $hydrator->addStrategy('updateDate', $container->get(DateTimeImmutableFormatterStrategy::class));
 
-        return $gameHydrator;
+        return $hydrator;
     }
 
 }

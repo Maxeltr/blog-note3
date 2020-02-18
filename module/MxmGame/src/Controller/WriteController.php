@@ -90,6 +90,7 @@ class WriteController extends AbstractActionController {
     }
 
     public function editGameAction() {
+        $error = false;
         $request = $this->getRequest();
         $game = $this->gameService->findGameById($this->params('id'));
 
@@ -102,11 +103,14 @@ class WriteController extends AbstractActionController {
                 return $this->redirect()->toRoute('detailGame',
                                 ['id' => $game->getId()]
                 );
+            } else {
+                $error = true;
             }
         }
 
         return new ViewModel([
-            'form' => $this->gameForm
+            'form' => $this->gameForm,
+            'error' => $error
         ]);
     }
 

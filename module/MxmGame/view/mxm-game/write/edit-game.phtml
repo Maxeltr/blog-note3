@@ -28,19 +28,15 @@
                 <?php $form = $this->form;
                 $form->setAttribute('action', $this->url('editGame', array(), true));
                 $form->prepare();
-                echo $this->form()->openTag($form);
-                $game = $form->get('game'); ?>
-                <div class="form-group">
-                    <?php echo $this->formRow($game->get('id')); ?>
-                </div>
-                <div class="form-group <?php echo empty($form->get('game')->get('title')->getMessages()) ? '' : 'has-error'; ?>">
-                   <?php echo $this->formLabel($form->get('game')->get('title'));
-                    echo $this->formElement($form->get(game)->get('title'));
+                echo $this->form()->openTag($form); ?>
+                <div class="form-group <?php echo empty($form->get('title')->getMessages()) ? '' : 'has-error'; ?>">
+                   <?php echo $this->formLabel($form->get('title'));
+                    echo $this->formElement($form->get('title'));
                      ?>
                 </div>
-                <div class="form-group <?php echo empty($form->get('game')->get('description')->getMessages()) ? '' : 'has-error'; ?>">
-                    <?php echo $this->formLabel($form->get('game')->get('description'));
-                    echo $this->formElement($form->get('game')->get('description'));
+                <div class="form-group <?php echo empty($form->get('description')->getMessages()) ? '' : 'has-error'; ?>">
+                    <?php echo $this->formLabel($form->get('description'));
+                    echo $this->formElement($form->get('description'));
                     ?>
                 </div>
                 <div class="form-group">

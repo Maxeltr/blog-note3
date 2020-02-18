@@ -35,6 +35,7 @@ use MxmRbac\Service\AuthorizationService;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use MxmGame\Mapper\MapperInterface;
 use Laminas\Validator\Db\RecordExists;
+use MxmGame\Model\GameInterface;
 
 class GameService implements GameServiceInterface {
 

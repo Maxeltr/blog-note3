@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-'use strict';                                //add
+
+'use strict';
 var life = (function(canvas) {
     function Grid(canvas) {
         this.height = 100;
@@ -39,7 +39,7 @@ var life = (function(canvas) {
         this.amountCells = 0;
         this.amountFemaleCells = 0;
         this.amountMaleCells = 0;
-                
+
         if (typeof this.init != 'function') {
             Grid.prototype.init = function(probability) {
                 this.generation = 0;
@@ -55,22 +55,22 @@ var life = (function(canvas) {
                         }
                     }
                 }
-                
+
                 return this.grid;
             }
         }
-        
+
         if (typeof this.giveBirthToCell != 'function') {
             Grid.prototype.giveBirthToCell = function(x, y) {
                 var cell = new Cell();
                 cell.sex = Math.random() > 0.5;
                 cell.x = x;
                 cell.y = y;
-                
+
                 return cell;
             }
         }
-        
+
         if (typeof this.cloneCell != 'function') {
             Grid.prototype.cloneCell = function(cell) {
                 var cloneOfCell = new Cell();
@@ -79,11 +79,11 @@ var life = (function(canvas) {
                         cloneOfCell[property] = cell[property];
                     }
                 }
-                
+
                 return cloneOfCell;
             }
         }
-        
+
         if (typeof this.update != 'function') {
             Grid.prototype.update = function() {
                 let amountAlives;
@@ -109,13 +109,13 @@ var life = (function(canvas) {
                 }
                 this.generation = ++ this.generation;
                 this.grid = arr;
-                
+
                 this.countCells();
-                                            
+
                 return this.grid;
             }
         }
-        
+
         if (typeof this.show != 'function') {
             Grid.prototype.show = function() {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -131,14 +131,14 @@ var life = (function(canvas) {
                         }
                     }
                 }
-                
+
                 this.context.fillStyle = this.textColor;
                 this.context.font = this.font;
                 this.context.fillText(this.generation, 15, 20);
                 this.context.fillText(this.amountCells, 15, 40);
             }
         }
-        
+
         if (typeof this.countCells != 'function') {
             Grid.prototype.countCells = function() {
                 this.amountCells = 0;
@@ -158,13 +158,13 @@ var life = (function(canvas) {
                 }
             }
         }
-        
+
         if (typeof this.getAliveNeighbors != 'function') {
             Grid.prototype.getAliveNeighbors = function(x, y) {
                 var above, below, left, right, amountAlives = 0, coords = new Map();
-                
+
                 if (y > 0) {
-                    above = y - 1;	
+                    above = y - 1;
                 } else {
                     above = this.grid.length - 1;
                 }
@@ -193,50 +193,50 @@ var life = (function(canvas) {
                 amountAlives += this.grid[above][right] instanceof Cell && this.grid[above][right].isAlive ? 1 : 0
                 amountAlives += this.grid[below][left] instanceof Cell && this.grid[below][left].isAlive ? 1 : 0
                 */
-                
+
                 if (this.grid[y][left] instanceof Cell && this.grid[y][left].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[y][left]);
                     coords.set('sixthNeighbor', [left, y]);
-                    
+
                 }
-                
+
                 if (this.grid[y][right] instanceof Cell && this.grid[y][right].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[y][right]);
                     coords.set('secondNeighbor', [right, y]);
                 }
-                
+
                 if (this.grid[above][x] instanceof Cell && this.grid[above][x].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[above][x]);
                     coords.set('zerothNeighbor', [x, above]);
                 }
-                
+
                 if (this.grid[below][x] instanceof Cell && this.grid[below][x].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[below][x]);
                     coords.set('fourthNeighbor', [x, below]);
                 }
-                
+
                 if (this.grid[above][left] instanceof Cell && this.grid[above][left].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[above][left]);
                     coords.set('seventhNeighbor', [left, above]);
                 }
-                
+
                 if (this.grid[below][right] instanceof Cell && this.grid[below][right].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[below][right]);
                     coords.set('thirdNeighbor', [right, below]);
                 }
-                
+
                 if (this.grid[above][right] instanceof Cell && this.grid[above][right].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[above][right]);
                     coords.set('firstNeighbor', [right, above]);
                 }
-                
+
                 if (this.grid[below][left] instanceof Cell && this.grid[below][left].isAlive) {
                     ++amountAlives;
                     //coords.push(this.grid[below][left]);
@@ -246,13 +246,13 @@ var life = (function(canvas) {
                 var alives = new Map();
                 alives.set('coords', coords);
                 alives.set('amountAlives', amountAlives);
-                
+
                 return alives;
             }
         }
-        
-        
-        
+
+
+
         if (typeof this.start != 'function') {
             Grid.prototype.start = function(interval) {
                 this.speedTimer = setInterval(function() {
@@ -261,13 +261,13 @@ var life = (function(canvas) {
                 }.bind(this), interval);
             }
         }
-        
+
         if (typeof this.stop != 'function') {
             Grid.prototype.stop = function() {
                 clearInterval(this.speedTimer);
             }
         }
-        
+
         if (typeof this.setCanvas != 'function') {
             Grid.prototype.setCanvas = function(canvas) {
                 this.canvas = canvas;
@@ -283,28 +283,28 @@ var life = (function(canvas) {
                 }.bind(this));
             }
         }
-        
+
         if (typeof this.createCell != 'function') {
             Grid.prototype.createCell = function(x, y) {
                 this.grid[y][x] = this.giveBirthToCell(x, y);
             }
         }
-        
+
         if (typeof this.createGlider != 'function') {
             Grid.prototype.createGlider = function(x, y) {
                 let x1, y1, x2, y2;
-                
+
                 if (x >= this.width) {
                     x = 0;
                 }
-                
+
                 x1 = x + 1
                 if (x1 == this.width) {
                     x1 = 0;
                 } else if (x1 == this.width + 1) {
                     x1 = 1;
                 }
-                
+
                 x2 = x + 2
                 if (x2 == this.width) {
                     x2 = 0;
@@ -313,18 +313,18 @@ var life = (function(canvas) {
                 } else if (x2 == this.width + 2) {
                     x2 = 2;
                 }
-                
+
                 if (y >= this.height) {
                     y = 0;
                 }
-                
+
                 y1 = y + 1
                 if (y1 == this.height) {
                     y1 = 0;
                 } else if (y1 == this.height + 1) {
                     y1 = 1;
                 }
-                
+
                 y2 = y + 2
                 if (y2 == this.height) {
                     y2 = 0;
@@ -333,7 +333,7 @@ var life = (function(canvas) {
                 } else if (y2 == this.height + 2) {
                     y2 = 2;
                 }
-                
+
                 this.grid[y][x] = this.giveBirthToCell(x, y);
                 this.grid[y][x1] = this.giveBirthToCell(x1, y);
                 this.grid[y][x2] = this.giveBirthToCell(x2, y);
@@ -341,9 +341,9 @@ var life = (function(canvas) {
                 this.grid[y2][x1] = this.giveBirthToCell(x1, y2);
             }
         }
-        
+
     }	//Grid
-    
+
     function Cell() {
         this.isAlive = true;
         this.age = 0;
@@ -384,7 +384,7 @@ window.onload = function() {
         life.init(0);
         life.show()
     }
-    
+
     var init = function() {
         life.init(list.value);
         life.setCanvas (cnv);

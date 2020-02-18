@@ -87,8 +87,11 @@ class ZendTableGatewayMapper implements MapperInterface
      */
     public function insertGame($game)
     {
-        $this->gameTableGateway->insert($game);
-        $resultSet = $this->gameTableGateway->select(['game_id' => $game['game_id']]);
+        $hydrator = $this->gameTableGateway->getResultSetPrototype()->getHydrator();
+        $gameArray = $hydrator->extract($game);
+        unset($gameArray['game_id']);
+        $this->gameTableGateway->insert($gameArray);
+        $resultSet = $this->gameTableGateway->select(['game_id' => $game->getGameId()]);
         if (0 === count($resultSet)) {
             throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
         }
@@ -103,10 +106,10 @@ class ZendTableGatewayMapper implements MapperInterface
     {
         $hydrator = $this->gameTableGateway->getResultSetPrototype()->getHydrator();
         $gameArray = $hydrator->extract($game);
-        unset($gameArray['id']);
-        $this->gameTableGateway->update($gameArray, ['id = ?' => $game->getId()]);
+        unset($gameArray['game_id']);
+        $this->gameTableGateway->update($gameArray, ['game_id = ?' => $game->getId()]);
 
-        $resultSet = $this->gameTableGateway->select(['id' => $game->getId()]);
+        $resultSet = $this->gameTableGateway->select(['game_id' => $game->getId()]);
         if (0 === count($resultSet)) {
             throw new DataBaseErrorBlogException("Update operation failed or did not result in new row.");
         }
