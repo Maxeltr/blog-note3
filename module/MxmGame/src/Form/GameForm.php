@@ -86,6 +86,19 @@ class GameForm extends Form implements InputFilterProviderInterface {
         ]);
 
         $this->add([
+            'type' => 'checkbox',
+            'name' => 'isPublished',
+            'attributes' => [
+                'class' => 'form-control',
+            ],
+            'options' => [
+                'label' => $this->translator->translate('Publish'),
+                'checked_value' => 1,
+                'unchecked_value' => 0,
+            ],
+        ]);
+
+        $this->add([
             'type' => 'hidden',
             'name' => 'redirect'
         ]);
@@ -135,6 +148,14 @@ class GameForm extends Form implements InputFilterProviderInterface {
                         ]
                     ]
                 ]
+            ],
+            'isPublished' => [
+                'required' => true,
+                'filters' => [
+                    [
+                        'name' => 'Int'
+                    ],
+                ],
             ],
             'redirect' => [
                 'required' => false,

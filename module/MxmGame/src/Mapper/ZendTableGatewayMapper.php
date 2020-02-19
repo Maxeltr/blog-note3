@@ -23,6 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace MxmGame\Mapper;
 
 use Laminas\Paginator\Paginator;
@@ -41,8 +42,8 @@ use MxmUser\Model\UserInterface;
 use Laminas\Db\Sql\Where;
 use MxmGame\Exception\DataBaseErrorException;
 
-class ZendTableGatewayMapper implements MapperInterface
-{
+class ZendTableGatewayMapper implements MapperInterface {
+
     /**
      * @var Laminas\Db\TableGateway\TableGateway
      */
@@ -69,12 +70,12 @@ class ZendTableGatewayMapper implements MapperInterface
     protected $logger;
 
     public function __construct(
-        TableGateway $gameTableGateway,
-        TableGateway $textureTableGateway,
-        Config $config,
-        Response $response,
-        Logger $logger
-    ){
+            TableGateway $gameTableGateway,
+            TableGateway $textureTableGateway,
+            Config $config,
+            Response $response,
+            Logger $logger
+    ) {
         $this->gameTableGateway = $gameTableGateway;
         $this->textureTableGateway = $textureTableGateway;
         $this->config = $config;
@@ -85,8 +86,8 @@ class ZendTableGatewayMapper implements MapperInterface
     /*
      * {@inheritDoc}
      */
-    public function insertGame($game)
-    {
+
+    public function insertGame($game) {
         $hydrator = $this->gameTableGateway->getResultSetPrototype()->getHydrator();
         $gameArray = $hydrator->extract($game);
         unset($gameArray['game_id']);
@@ -102,8 +103,8 @@ class ZendTableGatewayMapper implements MapperInterface
     /*
      * {@inheritDoc}
      */
-    public function updateGame($game)
-    {
+
+    public function updateGame($game) {
         $hydrator = $this->gameTableGateway->getResultSetPrototype()->getHydrator();
         $gameArray = $hydrator->extract($game);
         unset($gameArray['game_id']);
@@ -120,9 +121,13 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findAllGames()
-    {
-        $paginator = new Paginator(new DbTableGateway($this->gameTableGateway, null, ['upload_date' => 'DESC']));
+    public function findAllGames($hideUnpublished = true) {
+        if ($hideUnpublished) {
+            $where = ['isPublished' => true];
+        } else {
+            $where = [];
+        }
+        $paginator = new Paginator(new DbTableGateway($this->gameTableGateway, $where, ['upload_date' => 'DESC']));
 
         return $paginator;
     }
@@ -130,9 +135,13 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findGameById($gameId)
-    {
-        $resultSet = $this->gameTableGateway->select(['game_id' => $gameId]);
+    public function findGameById($gameId, $hideUnpublished = true) {
+        if ($hideUnpublished) {
+            $where = ['game_id' => $gameId, 'isPublished' => true];
+        } else {
+            $where = ['game_id' => $gameId];
+        }
+        $resultSet = $this->gameTableGateway->select($where);
         if (0 === count($resultSet)) {
             throw new RecordNotFoundException('Game ' . $gameId . 'not found.');
         }
@@ -143,8 +152,7 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function findTextureById($textureId)
-    {
+    public function findTextureById($textureId) {
         $resultSet = $this->textureTableGateway->select(['texture_id' => $textureId]);
         if (0 === count($resultSet)) {
             throw new RecordNotFoundException('Texture ' . $textureId . 'not found.');
@@ -156,32 +164,31 @@ class ZendTableGatewayMapper implements MapperInterface
     /**
      * {@inheritDoc}
      */
-    public function deleteGame(GameInterface $game)
-    {
+    public function deleteGame(GameInterface $game) {
         $result = $this->unlinkFile($game->getPath());
-        if (! $result) {
+        if (!$result) {
             $this->logger->err("Cannot delete file. Id: " . $game->getGameId() . ".");
 
             return false;
         }
 
         $result = $this->gameTableGateway->delete(['game_id' => $game->getGameId()]);
-        if (! $result) {
+        if (!$result) {
             $this->logger->err("Cannot delete game record. Id: " . $game->getGameId() . ".");
         }
 
         return $result;
     }
 
-    private function unlinkFile($filePath)
-    {
+    private function unlinkFile($filePath) {
         ErrorHandler::start();
         $test = unlink($filePath);
         $error = ErrorHandler::stop();
-        if (! $test) {
+        if (!$test) {
             $this->logger->err('Cannot remove file ' . $filePath . '. ' . $error . '.');
         }
 
         return $test;
     }
+
 }
