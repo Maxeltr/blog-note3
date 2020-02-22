@@ -77,7 +77,7 @@ class WriteController extends AbstractActionController {
                 $savedGame = $this->gameService->insertGame($this->gameForm->getData());
 
                 return $this->redirect()->toRoute('detailGame',
-                                ['id' => $savedGame->getId()]);
+                                ['id' => $savedGame->getGameId()]);
             } else {
                 $error = true;
             }
@@ -101,7 +101,7 @@ class WriteController extends AbstractActionController {
                 $this->gameService->updateGame($game);
 
                 return $this->redirect()->toRoute('detailGame',
-                                ['id' => $game->getId()]
+                                ['id' => $game->getGameId()]
                 );
             } else {
                 $error = true;

@@ -108,9 +108,9 @@ class ZendTableGatewayMapper implements MapperInterface {
         $hydrator = $this->gameTableGateway->getResultSetPrototype()->getHydrator();
         $gameArray = $hydrator->extract($game);
         unset($gameArray['game_id']);
-        $this->gameTableGateway->update($gameArray, ['game_id = ?' => $game->getId()]);
+        $this->gameTableGateway->update($gameArray, ['game_id = ?' => $game->getGameId()]);
 
-        $resultSet = $this->gameTableGateway->select(['game_id' => $game->getId()]);
+        $resultSet = $this->gameTableGateway->select(['game_id' => $game->getGameId()]);
         if (0 === count($resultSet)) {
             throw new DataBaseErrorBlogException("Update operation failed or did not result in new row.");
         }
@@ -123,7 +123,7 @@ class ZendTableGatewayMapper implements MapperInterface {
      */
     public function findAllGames($hideUnpublished = true) {
         if ($hideUnpublished) {
-            $where = ['isPublished' => true];
+            $where = ['is_published' => true];
         } else {
             $where = [];
         }
@@ -137,7 +137,7 @@ class ZendTableGatewayMapper implements MapperInterface {
      */
     public function findGameById($gameId, $hideUnpublished = true) {
         if ($hideUnpublished) {
-            $where = ['game_id' => $gameId, 'isPublished' => true];
+            $where = ['game_id' => $gameId, 'is_published' => true];
         } else {
             $where = ['game_id' => $gameId];
         }

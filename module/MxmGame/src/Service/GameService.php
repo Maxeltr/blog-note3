@@ -69,13 +69,16 @@ class GameService implements GameServiceInterface {
      */
     protected $recordExists;
 
+    protected $datetime;
+
     public function __construct(
             AuthenticationService $authenticationService,
             AuthorizationService $authorizationService,
             Config $config,
             Logger $logger,
             MapperInterface $mapper,
-            RecordExists $recordExists
+            RecordExists $recordExists,
+            \DateTimeInterface $datetime
     ) {
         $this->authenticationService = $authenticationService;
         $this->authorizationService = $authorizationService;
@@ -83,20 +86,32 @@ class GameService implements GameServiceInterface {
         $this->logger = $logger;
         $this->mapper = $mapper;
         $this->recordExists = $recordExists;
+        $this->datetime = $datetime;
     }
 
     /**
      * {@inheritDoc}
      */
     public function findAllGames() {
-        return $this->mapper->findAllGames();
+        if ($this->authorizationService->isGranted('find.unpublished.games')) {
+            return $this->mapper->findAllGames(false);
+        }
+        return $this->mapper->findAllGames(true);
     }
 
     /**
      * {@inheritDoc}
      */
     public function findGameById($id) {
-        return $this->mapper->findGameById($id);
+//        return $this->mapper->findGameById($id);
+        $game = $this->mapper->findGameById($id, false);
+        if ($game->getIsPublished()) {
+            return $game;
+        }
+
+        $this->authorizationService->checkPermission('find.unpublished.game', $game);
+
+        return $game;
     }
 
     /**

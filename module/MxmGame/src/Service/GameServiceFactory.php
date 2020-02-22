@@ -50,6 +50,7 @@ class GameServiceFactory implements FactoryInterface {
             'field' => 'is_published',
             'adapter' => $dbAdapter,
         ]);
+        $dateTime = $container->get('datetime');
 
         return new GameService(
                 $authService,
@@ -57,7 +58,8 @@ class GameServiceFactory implements FactoryInterface {
                 $config,
                 $logger,
                 $mapper,
-                $recordExistsValidator
+                $recordExistsValidator,
+                $dateTime
         );
     }
 

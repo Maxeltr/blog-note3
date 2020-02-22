@@ -104,7 +104,9 @@ return [
                         'delete.category',
                         'edit.tag',
                         'delete.tag',
-
+                        'edit.game',
+                        'find.unpublished.game',
+                        'find.unpublished.games',
                     ]
                 ],
                 'author' => [

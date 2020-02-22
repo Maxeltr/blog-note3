@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-sm-8">
             <div>
-                <?php echo $this->partial('partial/' . $game->getGameId() . '.phtml'); ?> 
+                <?php echo $this->partial('partial/' . $game->getGameId() . '.phtml'); ?>
                 <p>
                     <?php echo $this->translate('Description'); ?>: <?php echo $this->escapeHtml($game->getDescription()); ?>
                 </p>
@@ -19,6 +19,12 @@
                 </p>
 
             </div>
+            <?php if ($this->isGranted('edit.game', $game)): ?>
+                <a role="button" class="btn btn-default" href="<?php echo $this->url('editGame', ['action' => 'editGame', 'id' => $game->getGameId()]); ?>"><?php echo $this->translate('Edit') ?></a>
+            <?php endif; ?>
+            <?php if ($this->isGranted('delete.game', $game)): ?>
+                <a role="button" class="btn btn-default" href="<?php echo $this->url('deleteGame', ['action' => 'deleteGame', 'id' => $game->getGameId()]); ?>"><?php echo $this->translate('Delete') ?></a>
+            <?php endif; ?>
         </div>
     </div>
 </div>

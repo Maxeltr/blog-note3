@@ -150,7 +150,7 @@ class GameForm extends Form implements InputFilterProviderInterface {
                 ]
             ],
             'isPublished' => [
-                'required' => true,
+                'required' => false,
                 'filters' => [
                     [
                         'name' => 'Int'
