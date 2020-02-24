@@ -28,7 +28,7 @@ define(function (require) {
         let bitmapModule = require('./Bitmap');
         let spriteModule = require('./Sprite');
         let animationModule = require('./Animation');
-        let arrowSpriteSheet = bitmapModule.create('http://blog-note3/img/game/arrowSpriteSheet.png', 64, 256, 64, 64);
+        let arrowSpriteSheet = bitmapModule.create(window.location.origin + '/img/game/arrowSpriteSheet.png', 64, 256, 64, 64);
 
         return function () {
             let arrowSprite = spriteModule.create('arrow', arrowSpriteSheet);

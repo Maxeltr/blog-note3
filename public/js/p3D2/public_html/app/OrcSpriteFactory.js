@@ -28,7 +28,7 @@ define(function (require) {
         let bitmapModule = require('./Bitmap');
         let spriteModule = require('./Sprite');
         let animationModule = require('./Animation');
-        let orcSpriteSheet = bitmapModule.create('http://blog-note3/img/game/orcSpriteSheet.png', 832, 1344, 64, 64);
+        let orcSpriteSheet = bitmapModule.create(window.location.origin + '/img/game/orcSpriteSheet.png', 832, 1344, 64, 64);
 
         return function () {
             let orcSprite = spriteModule.create('orc', orcSpriteSheet);

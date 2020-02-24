@@ -25,10 +25,11 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
+console.log(window.location.origin + '/js/p3D2/public_html/lib');
 requirejs.config({
-    baseUrl: 'http://blog-note3/js/p3D2/public_html/lib',
+    baseUrl: window.location.origin + '/js/p3D2/public_html/lib',
     paths: {
-        app: 'http://blog-note3/js/p3D2/public_html/app'
+        app: window.location.origin + '/js/p3D2/public_html/app'
     }
 });
 
