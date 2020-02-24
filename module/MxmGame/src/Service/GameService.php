@@ -117,6 +117,15 @@ class GameService implements GameServiceInterface {
     /**
      * {@inheritDoc}
      */
+    public function insertGame(GameInterface $game) {
+        $this->authorizationService->checkPermission('add.game');
+
+        return $this->mapper->insertGame($game);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function updateGame(GameInterface $game) {
         $this->authorizationService->checkPermission('edit.game', $game);
 

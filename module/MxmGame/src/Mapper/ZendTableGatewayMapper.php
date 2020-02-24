@@ -92,7 +92,12 @@ class ZendTableGatewayMapper implements MapperInterface {
         $gameArray = $hydrator->extract($game);
         unset($gameArray['game_id']);
         $this->gameTableGateway->insert($gameArray);
-        $resultSet = $this->gameTableGateway->select(['game_id' => $game->getGameId()]);
+        $newId = $this->gameTableGateway->getLastInsertValue();
+        if (!$newId) {
+            throw new DataBaseErrorException("Insert operation failed");
+        }
+
+        $resultSet = $this->gameTableGateway->select(['game_id' => $newId]);
         if (0 === count($resultSet)) {
             throw new DataBaseErrorException("Insert operation failed or did not result in new row.");
         }

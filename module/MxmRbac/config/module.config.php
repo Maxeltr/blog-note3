@@ -93,7 +93,8 @@ return [
                         'delete.tags',
                         'delete.logs',
                         'find.all.files',
-                        'download.file'
+                        'download.file',
+                        'add.game'
                     ]
                 ],
                 'moderator' => [

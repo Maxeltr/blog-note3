@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-'use strict';
+//'use strict';
 var life = (function(canvas) {
     function Grid(canvas) {
         this.height = 100;
@@ -57,7 +57,7 @@ var life = (function(canvas) {
                 }
 
                 return this.grid;
-            }
+            };
         }
 
         if (typeof this.giveBirthToCell != 'function') {
@@ -68,7 +68,7 @@ var life = (function(canvas) {
                 cell.y = y;
 
                 return cell;
-            }
+            };
         }
 
         if (typeof this.cloneCell != 'function') {
@@ -81,7 +81,7 @@ var life = (function(canvas) {
                 }
 
                 return cloneOfCell;
-            }
+            };
         }
 
         if (typeof this.update != 'function') {
@@ -113,7 +113,7 @@ var life = (function(canvas) {
                 this.countCells();
 
                 return this.grid;
-            }
+            };
         }
 
         if (typeof this.show != 'function') {
@@ -122,7 +122,7 @@ var life = (function(canvas) {
                 for (var i = 0; i < this.grid.length; i++) {
                     for (var j = 0; j < this.grid[i].length; j++) {
                         if (this.grid[i][j] instanceof Cell && this.grid[i][j].isAlive) {
-                            this.context.fillStyle = "blue";
+                            this.context.fillStyle = "green";
                             this.context.fillRect(this.dz * j, this.dz * i, this.dz, this.dz);
                         }
                         if (this.grid[i][j] instanceof Cell && ! this.grid[i][j].isAlive && this.showDead) {
@@ -136,7 +136,7 @@ var life = (function(canvas) {
                 this.context.font = this.font;
                 this.context.fillText(this.generation, 15, 20);
                 this.context.fillText(this.amountCells, 15, 40);
-            }
+            };
         }
 
         if (typeof this.countCells != 'function') {
@@ -156,7 +156,7 @@ var life = (function(canvas) {
                         }
                     }
                 }
-            }
+            };
         }
 
         if (typeof this.getAliveNeighbors != 'function') {
@@ -248,7 +248,7 @@ var life = (function(canvas) {
                 alives.set('amountAlives', amountAlives);
 
                 return alives;
-            }
+            };
         }
 
 
@@ -256,16 +256,16 @@ var life = (function(canvas) {
         if (typeof this.start != 'function') {
             Grid.prototype.start = function(interval) {
                 this.speedTimer = setInterval(function() {
-                    this.update()
-                    this.show()
+                    this.update();
+                    this.show();
                 }.bind(this), interval);
-            }
+            };
         }
 
         if (typeof this.stop != 'function') {
             Grid.prototype.stop = function() {
                 clearInterval(this.speedTimer);
-            }
+            };
         }
 
         if (typeof this.setCanvas != 'function') {
@@ -281,13 +281,13 @@ var life = (function(canvas) {
                     //this.createCell(xClick, yClick);
                     this.show();
                 }.bind(this));
-            }
+            };
         }
 
         if (typeof this.createCell != 'function') {
             Grid.prototype.createCell = function(x, y) {
                 this.grid[y][x] = this.giveBirthToCell(x, y);
-            }
+            };
         }
 
         if (typeof this.createGlider != 'function') {
@@ -298,14 +298,14 @@ var life = (function(canvas) {
                     x = 0;
                 }
 
-                x1 = x + 1
+                x1 = x + 1;
                 if (x1 == this.width) {
                     x1 = 0;
                 } else if (x1 == this.width + 1) {
                     x1 = 1;
                 }
 
-                x2 = x + 2
+                x2 = x + 2;
                 if (x2 == this.width) {
                     x2 = 0;
                 } else if (x2 == this.width + 1) {
@@ -318,14 +318,14 @@ var life = (function(canvas) {
                     y = 0;
                 }
 
-                y1 = y + 1
+                y1 = y + 1;
                 if (y1 == this.height) {
                     y1 = 0;
                 } else if (y1 == this.height + 1) {
                     y1 = 1;
                 }
 
-                y2 = y + 2
+                y2 = y + 2;
                 if (y2 == this.height) {
                     y2 = 0;
                 } else if (y2 == this.height + 1) {
@@ -339,7 +339,7 @@ var life = (function(canvas) {
                 this.grid[y][x2] = this.giveBirthToCell(x2, y);
                 this.grid[y1][x] = this.giveBirthToCell(x, y1);
                 this.grid[y2][x1] = this.giveBirthToCell(x1, y2);
-            }
+            };
         }
 
     }	//Grid
@@ -354,7 +354,7 @@ var life = (function(canvas) {
     }	//end Cell
 
     return new Grid(canvas);
-})()	//end life
+})();	//end life
 
 
 
@@ -365,7 +365,7 @@ var nameB = "Stop";
 var cnv;
 var eraseButton;
 
-window.onload = function() {
+window.addEventListener('load', function() {
     cnv = document.getElementById("mycanvas");
     document.getElementById("myform").style.width = cnv.width - 10 + "px";
     conf = document.getElementById("configuration");
@@ -382,13 +382,13 @@ window.onload = function() {
     eraseButton.disabled = false;
     eraseButton.onclick = function() {
         life.init(0);
-        life.show()
-    }
+        life.show();
+    };
 
     var init = function() {
         life.init(list.value);
         life.setCanvas (cnv);
-        life.show()
+        life.show();
 
     };
     init();
@@ -410,5 +410,5 @@ window.onload = function() {
             this.value = nameA;
             life.stop();
         }
-    }
-}
+    };
+}, false);

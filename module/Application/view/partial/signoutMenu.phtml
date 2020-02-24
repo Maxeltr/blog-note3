@@ -33,8 +33,8 @@
                     <a href="<?php echo $this->url('addTag', ['action' => 'addTag']); ?>"><?php echo $this->translate('Add tag') ?></a>
                 </li>
                 <li>
-                <?php if ($this->hasRole('admin')): ?>
-                    <a href="<?php echo $this->url('addGame', ['action' => 'addGame']); ?>"><?php echo $this->translate('Add game') ?></a>
+                <?php if ($this->isGranted('add.game')): ?>
+                    <a href="<?php echo $this->url('addGame', ['action' => 'addGame']); ?>"><?php echo $this->translate('Add game description') ?></a>
                     <?php endif; ?>
                 </li>
                 <li class="divider" role="separator"></li>
