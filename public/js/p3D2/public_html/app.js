@@ -25,7 +25,6 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
-console.log(window.location.origin + '/js/p3D2/public_html/lib');
 requirejs.config({
     baseUrl: window.location.origin + '/js/p3D2/public_html/lib',
     paths: {

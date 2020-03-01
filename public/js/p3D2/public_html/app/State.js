@@ -55,6 +55,8 @@ define(function () {
     };
 
     State.prototype.stop = function (object, seconds) {
+        object.currentSpeed = 0.0;
+        object.currentRotationSpeed = 0.0;
         object.getGraphics().setCurrentAnimation('stop');
         object.setState(this.container.getStopState());
     };

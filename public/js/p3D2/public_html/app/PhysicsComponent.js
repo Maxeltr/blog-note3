@@ -28,12 +28,20 @@ define(function () {
     }
 
     PhysicsComponent.prototype.rotate = function (object, seconds) {
-        let angle = object.rotationVelocity * seconds;
+        object.currentRotationSpeed += Math.abs(seconds) * object.rotationAcceleration;
+        if (object.currentRotationSpeed > object.maxRotationVelocity)
+            object.currentRotationSpeed = object.maxRotationVelocity;
+
+        let angle = object.currentRotationSpeed * seconds;
         object.direction = (object.direction + angle + Math.PI * 2) % (Math.PI * 2);
     };
 
     PhysicsComponent.prototype.move = function (object, seconds) {
-        let distance = seconds * object.movementVelocity;
+        object.currentMoveSpeed += Math.abs(seconds) * object.movementAcceleration;
+        if (object.currentMoveSpeed > object.maxMoveVelocity)
+            object.currentMoveSpeed = object.maxMoveVelocity;
+
+        let distance = seconds * object.currentMoveSpeed;
         let dx = Math.cos(object.direction) * distance;
         let dy = Math.sin(object.direction) * distance;
         let moveDirection = object.direction;

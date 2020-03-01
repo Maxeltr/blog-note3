@@ -65,8 +65,8 @@ define(function (require) {
         this.loop = require('./GameLoop').create();
 
         this.background = bitmapModule.create(window.location.origin + '/img/game/sky_daytime_blue.jpg', 2048, 1024, 2048, 1024);
-        //this.walls = bitmapModule.create(window.location.origin + '/img/game/textures.png', 384, 64, 64, 64);
-        this.walls = bitmapModule.create(window.location.origin + '/img/game/walls.png', 2560, 640, 640, 640);
+        this.walls = bitmapModule.create(window.location.origin + '/img/game/textures.png', 384, 64, 64, 64);
+//        this.walls = bitmapModule.create(window.location.origin + '/img/game/walls.png', 2560, 640, 640, 640);
 
         this.playerCamera = cameraModule.create(1024, 512);
         this.playerCamera.setCanvas(document.getElementById("3DView"));

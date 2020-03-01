@@ -35,7 +35,9 @@ define(function (require) {
         let target = this.player;
 
         for (let gameObject of this.gameObjectManager.getArrayObjects()) {
-            let states = {};
+            if (gameObject.type !== 'npc')
+                continue;
+			let states = {};
             if (this.checkSight(target, gameObject, this.map)) {
                 let distanceToTarget = Math.sqrt(Math.pow(target.x - gameObject.x, 2) + Math.pow(target.y - gameObject.y, 2));
                 if (distanceToTarget > gameObject.getWeapons().shotDistance) {
@@ -49,6 +51,26 @@ define(function (require) {
                     states.left = true;
                 } else if (this.isOnRight(gameObject, target)) {
                     states.right = true;
+                }
+
+            } else {
+                let waypoint = gameObject.waypoints.current();
+                if (waypoint) {
+                    let distanceWaypoint = Math.sqrt(Math.pow(waypoint[0] - gameObject.x, 2) + Math.pow(waypoint[1] - gameObject.y, 2));
+                    if (distanceWaypoint > gameObject.sizeRadius) {
+                        if (this.isOnLeft(gameObject, {x: waypoint[0], y: waypoint[1]})) {
+                            states.left = true;
+                        } else if (this.isOnRight(gameObject, {x: waypoint[0], y: waypoint[1]})) {
+                            states.right = true;
+                        } else {
+                            states.forward = true;
+                        }
+                    } else {
+                        let next = gameObject.waypoints.next();
+                        if (!next) {
+                            gameObject.waypoints.reverse();
+                        }
+                    }
                 }
 
             }

@@ -57,7 +57,10 @@ define(function (require) {
                     );
 
             gameObject.name = 'orc';
+			gameObject.type = 'npc';
             gameObject.sizeRadius = 0.15;
+			gameObject.movementAcceleration = 3.0;
+            gameObject.rotationAcceleration = 3.5;
 
             return gameObject;
         };

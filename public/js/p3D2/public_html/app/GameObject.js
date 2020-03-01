@@ -35,7 +35,11 @@ define(function () {
         this.sizeRadius = 0.2;
         this.destroy = false;
         this.movementVelocity = 3;
+		this.movementAcceleration = 2.0;
+        this.maxMoveVelocity = 5.0;
         this.rotationVelocity = Math.PI / 3;
+		this.rotationAcceleration = 2.5;
+        this.maxRotationVelocity = 3.0;
         this.physicsComponent = physicsComponent;
         this.graphicsComponent = graphicsComponent;
         this.inputComponent = inputComponent;
@@ -47,6 +51,32 @@ define(function () {
         this.sightDistance = 4.0;
         this.health = 100.0;
         this.damage = 0.0;
+		this.currentMoveSpeed = 0.0;
+        this.currentRotationSpeed = 0.0;
+        this.waypoints = {
+            waypoints: [], nextIndex: 0,
+            set: function (waypoints) {
+                this.waypoints = waypoints;
+            },
+
+            next: function () {
+                if (this.nextIndex < this.waypoints.length) {
+                    return this.waypoints[this.nextIndex++];
+                }
+            },
+
+            current: function () {
+                return this.waypoints[this.nextIndex];
+            },
+
+            rewind: function () {
+                this.nextIndex = 0;
+            },
+
+            reverse: function () {
+                this.waypoints.reverse();
+            }
+        };
     }
 
     GameObject.prototype.update = function (seconds) {
