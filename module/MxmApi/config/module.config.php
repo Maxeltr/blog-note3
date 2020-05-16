@@ -556,10 +556,10 @@ return [
                 'required' => true,
                 'validators' => [
                     0 => [
-                        'name' => \Laminas\Validator\File\MimeType::class,
+                        'name' => \Laminas\Validator\File\Extension::class,
                         'options' => [
-                            'mimeType' => [
-                                'text/plain'
+                            'extension' => [
+                                'log', 'jpg', 'jpeg', 'png'
                             ],
                         ],
                     ],
